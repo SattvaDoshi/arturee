@@ -8,7 +8,7 @@ const Footer = () => {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
           <div className="col-span-2">
             <div className="text-3xl font-display font-bold bg-linear-to-r from-sand via-nude to-warmgray bg-clip-text text-transparent mb-4">
-              ArtStream
+              Arturee
             </div>
             <p className="text-warmgray mb-6 max-w-sm">
               Empowering artists and creators to share their stories with the world. Stream, create, inspire.
@@ -61,7 +61,7 @@ const Footer = () => {
         </div>
         
         <div className="pt-8 border-t border-sand/30 flex flex-col md:flex-row items-center justify-between text-sm text-warmgray">
-          <p>&copy; 2024 ArtStream. All rights reserved.</p>
+          <p>&copy; 2026 Arturee. All rights reserved.</p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <a href="#" className="hover:text-deepbrown transition">Privacy Policy</a>
             <a href="#" className="hover:text-deepbrown transition">Terms of Service</a>

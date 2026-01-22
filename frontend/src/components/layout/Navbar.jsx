@@ -7,7 +7,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-8">
             <a href="#landing" className="text-2xl font-display font-bold bg-linear-to-r from-sand via-nude to-warmgray bg-clip-text text-transparent">
-              ArtStream
+              Arturee
             </a>
             <div className="hidden md:flex space-x-6">
               <a href="#landing" className="text-sm font-medium text-deepbrown hover:text-sand transition">
