@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Vivid | Where Art Finds Its Voice</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700;800;900&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ff6b6b",
+                        "coral": "#ff6b6b",
+                        "salmon": "#ff8e72",
+                        "teal": "#4ecdc4",
+                        "navy": "#1a2332",
+                        "darkblue": "#232f45",
+                        "cream": "#f8f9fa",
+                        "lightgray": "#e8eaed",
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .collage-cutout {
+                clip-path: polygon(5% 0%, 100% 0%, 95% 100%, 0% 100%);
+            }
+            .polaroid-shadow {
+                box-shadow: 8px 8px 0px rgba(0,0,0,1);
+            }
+            .sticker-label {
+                transform: rotate(-3deg);
+                box-shadow: 4px 4px 0px rgba(0,0,0,1);
+            }
+            .rough-border {
+                border: 3px solid #000;
+            }
+            .noise-bg {
+                background-image: url("https://www.transparenttextures.com/patterns/asfalt-dark.png");
+            }
+            .zine-grid {
+                background-image: radial-gradient(#000 1px, transparent 0);
+                background-size: 20px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-navy font-display text-cream selection:bg-teal/50">
+    <div class="relative min-h-screen w-full flex flex-col overflow-x-hidden">
+        <header class="sticky top-4 z-[100] mx-4 md:mx-10 my-4">
+            <div
+                class="bg-darkblue rough-border px-6 py-4 flex items-center justify-between shadow-[6px_6px_0px_#ff6b6b] border-coral">
+                <div class="flex items-center gap-3">
+                    <div class="bg-coral p-1.5 transform -rotate-12">
+                        <svg class="w-6 h-6 text-cream" fill="none" viewBox="0 0 48 48"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path clip-rule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z"
+                                fill="currentColor" fill-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-black tracking-tighter uppercase italic text-cream">ArtStream</h2>
+                </div>
+                <nav class="hidden md:flex items-center gap-6">
+                    <a class="text-sm font-black uppercase hover:bg-coral hover:text-white px-2 py-1 transition-all text-cream"
+                        href="#">Shows</a>
+                    <a class="text-sm font-black uppercase hover:bg-coral hover:text-white px-2 py-1 transition-all text-cream"
+                        href="#">Podcasts</a>
+                    <a class="text-sm font-black uppercase hover:bg-coral hover:text-white px-2 py-1 transition-all text-cream"
+                        href="#">Comedy</a>
+                    <a class="text-sm font-black uppercase hover:bg-coral hover:text-white px-2 py-1 transition-all text-cream"
+                        href="#">Pricing</a>
+                </nav>
+                <div class="flex items-center gap-4">
+                    <button
+                        class="hidden sm:block text-xs font-black uppercase underline decoration-4 underline-offset-4 text-cream">Sign
+                        In</button>
+                    <button
+                        class="bg-coral text-white px-6 py-2 text-sm font-black uppercase hover:bg-salmon hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all shadow-[4px_4px_0px_#4ecdc4]">Join
+                        Now</button>
+                </div>
+            </div>
+        </header>
+        <main class="flex-1">
+            <section class="relative px-6 py-12 md:py-20 md:px-20 overflow-hidden">
+                <div class="mx-auto max-w-[1200px] flex flex-col lg:flex-row items-center gap-12">
+                    <div class="w-full lg:w-1/2 z-20 space-y-8">
+                        <div class="inline-block bg-zine-green rough-border px-4 py-1 sticker-label mb-4">
+                            <span class="text-xs font-black uppercase tracking-tighter">New Originals Streaming
+                                Now</span>
+                        </div>
+                        <h1
+                            class="text-6xl md:text-8xl font-black leading-[0.85] tracking-tighter uppercase break-words">
+                            Where Art <br /> Finds Its <br />
+                            <span
+                                class="bg-zine-cyan px-4 py-2 inline-block transform rotate-2 rough-border">Voice</span>
+                        </h1>
+                        <div
+                            class="bg-white rough-border p-6 shadow-[10px_10px_0px_#bc13fe] max-w-md transform -rotate-1">
+                            <p class="text-lg md:text-xl font-bold leading-tight">
+                                The streaming home for the next generation of visionaries. Unfiltered, original, and
+                                exclusively yours.
+                            </p>
+                        </div>
+                        <div class="flex flex-wrap gap-6 pt-4">
+                            <button
+                                class="bg-black text-white px-10 py-5 text-xl font-black uppercase flex items-center gap-3 hover:bg-primary transition-colors shadow-[8px_8px_0px_#00ffff]">
+                                Start Watching
+                                <span class="material-symbols-outlined text-3xl">play_arrow</span>
+                            </button>
+                            <button
+                                class="bg-zine-magenta text-white rough-border px-10 py-5 text-xl font-black uppercase hover:bg-black transition-colors shadow-[8px_8px_0px_#ff6b6b]">
+                                Explore Shows
+                            </button>
+                        </div>
+                    </div>
+                    <div class="w-full lg:w-1/2 relative min-h-[500px]">
+                        <div
+                            class="absolute top-0 right-0 w-[80%] md:w-[70%] bg-white p-4 pb-16 rough-border polaroid-shadow transform rotate-3 z-10">
+                            <img class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500"
+                                data-alt="Modern musician playing synth in a neon lit studio"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnsgMc-9vWB2jVZnNY9OxoK8_BaZASds2u3vuoZZc4O7X0MDZWge7YPEJtPFWKGKcOK9n8fdj7q_tvvKjH2PIbS8sG1Rh3vDSk1TVEbhDVGK7u0LzC1JQLs6sPuTfmhUgDFENXG_haHS5GFKfnpXrpGLQOsFhHBaMxfIYhahDCScBhiD6VnLxXG9vvOAKh0kEvytrJhTXy5GHTF1QV8jVz5F5UQrBHINz-gtU7ujs1LMASn9d9VGc0bA9oKxl_LQt3M84YGgbN--4" />
+                            <div class="absolute bottom-4 left-6 font-black uppercase italic text-2xl tracking-tighter">
+                                VIVID_001</div>
+                        </div>
+                        <div
+                            class="absolute -bottom-10 left-0 w-48 h-48 bg-zine-yellow rough-border transform -rotate-12 z-20 flex items-center justify-center p-4">
+                            <span class="text-4xl font-black uppercase text-center leading-none italic">Unfiltered
+                                Flow</span>
+                        </div>
+                        <div
+                            class="absolute top-20 -left-10 w-64 h-80 bg-zine-cyan rough-border transform rotate-6 z-0 overflow-hidden hidden md:block">
+                            <img class="w-full h-full object-cover mix-blend-multiply opacity-60"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCt-jEXc91uTeJMaVK6zjnOMFJKCGus_B1r6AYlGDj7_wlxzJJBj_lRGPAWkyiE4Qr7cD4sfnnIdlZ3bSfgEuHe89crQEMsg3-ReTjP-VsU7nFrMufroLvl2bb7Hz5wWv1HzpQ_PZVZ_NebgzWxa_pBZpZLxR2Gpg8fOVsTWb9266HoYO5I924k2u04SvPfegjaO3GWO6B8EPlCUe2h44GXeTJD8Xeer3p1eV5E31cIXxxzHmgt5I0Sx4Ny_RKL1i8NICHTI6242mQ" />
+                        </div>
+                        <div
+                            class="absolute -top-10 right-20 bg-zine-green px-4 py-2 rough-border z-30 transform -rotate-6 font-black uppercase">
+                            CREATOR_FIRST
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="py-20 relative bg-darkblue/50 border-y-4 border-coral">
+                <div class="px-6 md:px-20 mx-auto max-w-[1300px]">
+                    <div class="flex flex-col md:flex-row items-start md:items-end justify-between mb-16 gap-6">
+                        <h2
+                            class="text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none bg-coral text-white px-6 py-2 transform -rotate-2">
+                            Exclusive Originals
+                        </h2>
+                        <a class="bg-teal rough-border px-6 py-3 font-black uppercase flex items-center gap-2 hover:translate-x-2 transition-transform shadow-[4px_4px_0px_#ff6b6b] text-navy border-darkblue"
+                            href="#">
+                            View All <span class="material-symbols-outlined font-black">arrow_forward</span>
+                        </a>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
+                        <div class="relative group">
+                            <div
+                                class="bg-darkblue p-4 pb-12 rough-border shadow-[10px_10px_0px_#4ecdc4] border-cream/20 transform group-hover:rotate-0 transition-transform -rotate-2 cursor-pointer">
+                                <div class="relative aspect-[3/4] overflow-hidden bg-black mb-4">
+                                    <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
+                                        data-alt="Neon silhouette of a DJ in a dark club"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCt-jEXc91uTeJMaVK6zjnOMFJKCGus_B1r6AYlGDj7_wlxzJJBj_lRGPAWkyiE4Qr7cD4sfnnIdlZ3bSfgEuHe89crQEMsg3-ReTjP-VsU7nFrMufroLvl2bb7Hz5wWv1HzpQ_PZVZ_NebgzWxa_pBZpZLxR2Gpg8fOVsTWb9266HoYO5I924k2u04SvPfegjaO3GWO6B8EPlCUe2h44GXeTJD8Xeer3p1eV5E31cIXxxzHmgt5I0Sx4Ny_RKL1i8NICHTI6242mQ" />
+                                    <div class="absolute top-2 right-2">
+                                        <span
+                                            class="px-2 py-1 bg-coral text-[10px] font-black uppercase rough-border text-white border-salmon">Trending</span>
+                                    </div>
+                                </div>
+                                <h3 class="text-xl font-black uppercase tracking-tighter leading-none mb-1 text-cream">
+                                    Digital Renaissance</h3>
+                                <p class="text-[10px] font-bold uppercase opacity-60 text-lightgray">Original Series • 8
+                                    Episodes</p>
+                            </div>
+                        </div>
+                        <div class="relative group lg:mt-10">
+                            <div
+                                class="bg-darkblue p-4 pb-12 rough-border shadow-[10px_10px_0px_#ff6b6b] border-cream/20 transform group-hover:rotate-0 transition-transform rotate-3 cursor-pointer">
+                                <div class="relative aspect-[3/4] overflow-hidden bg-black mb-4">
+                                    <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
+                                        data-alt="Abstract vibrant stage lights at a concert"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDORGisarDYAqiHhwqXhYY4WJNNlgj2-xTq1FnVgjAhSlFDLWIHSnN0BTssUzt-B3SegXY1P0OTnOLyOPsxsBP3HcUPad0uxdr7a3D5jEV2kEvyNbdgDyE4z8D4lnNshop8mrxEwEmvktNDOZq_7VYRiuDS-LNg9xnqAABIzCrNeTEPaFezdoe_QKqILe1LWPMYt8AXrdeSvSsbottdWIGtzjVO4KmsTHdxx8rB-u3hnWjRXN0FnFfTts5w-JYkpsSh_Q1C6LSR3Yg" />
+                                </div>
+                                <h3 class="text-xl font-black uppercase tracking-tighter leading-none mb-1 text-cream">
+                                    The Beat Lab</h3>
+                                <p class="text-[10px] font-bold uppercase opacity-60 text-lightgray">Documentary •
+                                    Feature Film</p>
+                            </div>
+                        </div>
+                        <div class="relative group">
+                            <div
+                                class="bg-darkblue p-4 pb-12 rough-border shadow-[10px_10px_0px_#4ecdc4] border-cream/20 transform group-hover:rotate-0 transition-transform -rotate-1 cursor-pointer">
+                                <div class="relative aspect-[3/4] overflow-hidden bg-black mb-4">
+                                    <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
+                                        data-alt="Singer performing with professional microphone in blue lighting"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSlu6MXincC_nuFxgb0-Qvvi98L2ihaUkswQOo-vb-lFvwESZwA-LdRVspW60Iny8RYTUaL4Ja1TMJ5JeFLL8V3SoUsgPHbo_goFB2AYNXyH1LExdnnkRSudA47pH8kPDDUHrFsLZDQ4AzPU98TYnGaWvPk4vRPLXdiyLiz15XJoDcjwmTc0hdzANZI83gpdb0XODPeJxofCLh9C_EenN5SJJsfR56_URLhCtCsiEWzYSKMLbTr3vs_cU9hGtU8mPKrldjwSdeMRo" />
+                                </div>
+                                <h3 class="text-xl font-black uppercase tracking-tighter leading-none mb-1 text-cream">
+                                    Vivid Sessions</h3>
+                                <p class="text-[10px] font-bold uppercase opacity-60 text-lightgray">Live Sessions •
+                                    Weekly</p>
+                            </div>
+                        </div>
+                        <div class="relative group lg:mt-6">
+                            <div
+                                class="bg-darkblue p-4 pb-12 rough-border shadow-[10px_10px_0px_#ff8e72] border-cream/20 transform group-hover:rotate-0 transition-transform rotate-2 cursor-pointer">
+                                <div class="relative aspect-[3/4] overflow-hidden bg-black mb-4">
+                                    <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
+                                        data-alt="Close up of a neon lit electric guitar"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsy8ybTozKR1HiRFdBhwUpfnIGozYNMfABlXdQSgfAjiMjlUC3_inSVNVMv0vf3VQy0tt5e39uzqccD28xR9aQjOTVCj1NBgt-KYcyYBysCMcUCR7RGxqHpPugUXfq18gRtF8JPVi6-lR_Fd7jsZlWfWVtAeB2YDeWTObwihEy4BFEbO5hckAKWe7z4Eo36D2eg2oIiitpulF8UxpA6mzZg9djheSNosdv_VdsKLChme6M28deuo6FmJKD7T5k3fPmH9h7PHjz_e8" />
+                                </div>
+                                <h3 class="text-xl font-black uppercase tracking-tighter leading-none mb-1 text-cream">
+                                    Neon Pulse</h3>
+                                <p class="text-[10px] font-bold uppercase opacity-60 text-lightgray">Music Series •
+                                    Original</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="py-24 px-6 md:px-20 relative overflow-hidden">
+                <div
+                    class="absolute -right-20 top-20 w-96 h-96 bg-zine-cyan rounded-full mix-blend-screen opacity-50 blur-3xl">
+                </div>
+                <div class="mx-auto max-w-[1200px]">
+                    <div class="mb-20 max-w-3xl">
+                        <h2 class="text-6xl md:text-8xl font-black uppercase tracking-tighter leading-[0.85] mb-8">
+                            The Platform <br /> <span class="text-coral italic">for Visionaries</span>
+                        </h2>
+                        <div
+                            class="bg-darkblue text-cream p-8 rough-border shadow-[12px_12px_0px_#4ecdc4] border-cream/20 transform -rotate-1">
+                            <p class="text-2xl font-bold leading-tight uppercase italic">Experience entertainment
+                                reimagined with creators at the center. No ads, no noise, just pure artistic expression.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                        <div
+                            class="bg-darkblue rough-border p-10 border-coral transform rotate-1 hover:rotate-0 transition-transform shadow-[8px_8px_0px_#ff6b6b]">
+                            <div
+                                class="w-20 h-20 bg-coral text-white rough-border flex items-center justify-center mb-8 transform -rotate-12">
+                                <span class="material-symbols-outlined text-5xl">play_circle</span>
+                            </div>
+                            <h3 class="text-3xl font-black uppercase tracking-tighter mb-4 leading-none">Crystal Clear
+                                Streaming</h3>
+                            <p class="font-bold uppercase text-sm leading-tight italic">Experience 4K HDR streaming with
+                                zero buffering and a seamless glassmorphic user interface.</p>
+                        </div>
+                        <div
+                            class="bg-darkblue rough-border p-10 border-teal transform -rotate-2 hover:rotate-0 transition-transform shadow-[8px_8px_0px_#ff6b6b]">
+                            <div
+                                class="w-20 h-20 bg-teal text-navy rough-border flex items-center justify-center mb-8 transform rotate-6">
+                                <span class="material-symbols-outlined text-5xl">center_focus_strong</span>
+                            </div>
+                            <h3 class="text-3xl font-black uppercase tracking-tighter mb-4 leading-none">Creator Focused
+                            </h3>
+                            <p class="font-bold uppercase text-sm leading-tight italic">Direct support for independent
+                                artists. Every minute you watch directly funds the creators you love.</p>
+                        </div>
+                        <div
+                            class="bg-darkblue rough-border p-10 border-salmon transform rotate-2 hover:rotate-0 transition-transform shadow-[8px_8px_0px_#ff6b6b]">
+                            <div
+                                class="w-20 h-20 bg-salmon text-white rough-border flex items-center justify-center mb-8 transform -rotate-3">
+                                <span class="material-symbols-outlined text-5xl">verified_user</span>
+                            </div>
+                            <h3 class="text-3xl font-black uppercase tracking-tighter mb-4 leading-none">Ad-Free Forever
+                            </h3>
+                            <p class="font-bold uppercase text-sm leading-tight italic">Pure immersion without any
+                                interruptions. Your flow stays intact from start to finish.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <footer class="border-t-[6px] border-coral py-16 px-6 md:px-20 bg-darkblue">
+            <div class="mx-auto max-w-[1200px] flex flex-col md:flex-row justify-between items-center gap-12">
+                <div class="flex items-center gap-3">
+                    <div class="bg-coral text-white p-2 transform rotate-45 rough-border">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                            <path clip-rule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z"
+                                fill="currentColor" fill-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <span class="font-black text-3xl uppercase tracking-tighter italic text-cream">Vivid</span>
+                </div>
+                <div class="flex flex-wrap justify-center gap-10">
+                    <a class="font-black uppercase text-lg hover:bg-coral hover:text-white px-2 transition-colors"
+                        href="#">Terms</a>
+                    <a class="font-black uppercase text-lg hover:bg-teal hover:text-white px-2 transition-colors"
+                        href="#">Privacy</a>
+                    <a class="font-black uppercase text-lg hover:bg-salmon px-2 transition-colors" href="#">Help</a>
+                    <a class="font-black uppercase text-lg hover:bg-teal px-2 transition-colors" href="#">Contact</a>
+                </div>
+                <div class="text-right">
+                    <p
+                        class="text-sm font-black uppercase italic tracking-widest bg-coral text-white px-4 py-1 inline-block">
+                        © 2024 Vivid Entertainment Inc.</p>
+                </div>
+            </div>
+            <div class="mt-12 text-center overflow-hidden whitespace-nowrap">
+                <div
+                    class="text-[120px] font-black uppercase opacity-5 tracking-tighter leading-none italic select-none">
+                    ART FINDS VOICE ART FINDS VOICE ART FINDS VOICE
+                </div>
+            </div>
+        </footer>
+    </div>
+
+</body>
+
+</html>

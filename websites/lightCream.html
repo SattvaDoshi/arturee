@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vivid | Where Art Finds Its Voice</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#F87171", // Soft Coral
+                        "accent": "#94A3B8", // Muted Slate
+                        "nude-100": "#FAF9F6", // Warm Off-white
+                        "nude-200": "#F5F2ED", // Soft Cream
+                        "nude-300": "#EFEAE2", // Beige
+                        "charcoal": "#1A1A1A", // Deep Charcoal
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+        }
+        .editorial-gradient {
+            background: radial-gradient(circle at 0% 0%, rgba(248, 113, 113, 0.05) 0%, transparent 50%),
+                        radial-gradient(circle at 100% 100%, rgba(239, 234, 226, 0.5) 0%, transparent 50%);
+        }
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        .text-editorial {
+            color: #1A1A1A;
+            letter-spacing: -0.02em;
+        }
+    </style>
+</head>
+<body class="bg-nude-100 font-display text-charcoal selection:bg-primary/20">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden editorial-gradient">
+<header class="sticky top-0 z-50 w-full border-b border-charcoal/5 bg-nude-100/80 backdrop-blur-md px-6 md:px-20 py-4">
+<div class="mx-auto flex max-w-[1200px] items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="bg-primary p-1.5 rounded-lg shadow-sm">
+<svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-xl font-black tracking-tight text-charcoal">Vivid</h2>
+</div>
+<nav class="hidden md:flex items-center gap-10">
+<a class="text-sm font-semibold text-charcoal/60 hover:text-charcoal transition-colors" href="#">Shows</a>
+<a class="text-sm font-semibold text-charcoal/60 hover:text-charcoal transition-colors" href="#">Podcasts</a>
+<a class="text-sm font-semibold text-charcoal/60 hover:text-charcoal transition-colors" href="#">Comedy</a>
+<a class="text-sm font-semibold text-charcoal/60 hover:text-charcoal transition-colors" href="#">Pricing</a>
+</nav>
+<div class="flex items-center gap-3">
+<button class="hidden sm:flex px-5 py-2 text-sm font-bold text-charcoal/70 hover:text-charcoal transition-colors">Sign In</button>
+<button class="bg-charcoal px-6 py-2 rounded-lg text-sm font-bold text-white hover:bg-charcoal/90 transition-all shadow-md">Join Now</button>
+</div>
+</div>
+</header>
+<main class="flex-1">
+<section class="relative px-6 py-16 md:py-28 md:px-20">
+<div class="mx-auto max-w-[1200px] grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+<div class="flex flex-col gap-8 order-2 lg:order-1">
+<div class="flex flex-col gap-6">
+<span class="inline-block w-fit px-4 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-charcoal border border-charcoal/10 rounded-full bg-white/50">New Originals Streaming Now</span>
+<h1 class="text-6xl md:text-[80px] font-black leading-[0.95] tracking-tight text-charcoal">
+                                Where Art <br/> Finds Its <span class="text-primary italic">Voice</span>
+</h1>
+<p class="text-lg md:text-xl text-charcoal/60 leading-relaxed max-w-lg font-medium">
+                                The streaming home for the next generation of visionaries. Unfiltered, original, and exclusively yours in high definition.
+                            </p>
+</div>
+<div class="flex flex-wrap gap-4">
+<button class="bg-primary text-white px-8 py-4 rounded-xl text-lg font-bold flex items-center gap-2 hover:brightness-105 transition-all shadow-lg shadow-primary/20">
+                                Start Watching
+                                <span class="material-symbols-outlined">play_arrow</span>
+</button>
+<button class="bg-white border border-charcoal/5 px-8 py-4 rounded-xl text-lg font-bold text-charcoal hover:bg-nude-200 transition-colors shadow-sm">
+                                Explore Shows
+                            </button>
+</div>
+</div>
+<div class="order-1 lg:order-2">
+<div class="relative w-full aspect-[4/5] lg:aspect-square rounded-[2.5rem] overflow-hidden border-8 border-white shadow-2xl">
+<img class="w-full h-full object-cover" data-alt="Modern musician playing synth in a neon lit studio" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnsgMc-9vWB2jVZnNY9OxoK8_BaZASds2u3vuoZZc4O7X0MDZWge7YPEJtPFWKGKcOK9n8fdj7q_tvvKjH2PIbS8sG1Rh3vDSk1TVEbhDVGK7u0LzC1JQLs6sPuTfmhUgDFENXG_haHS5GFKfnpXrpGLQOsFhHBaMxfIYhahDCScBhiD6VnLxXG9vvOAKh0kEvytrJhTXy5GHTF1QV8jVz5F5UQrBHINz-gtU7ujs1LMASn9d9VGc0bA9oKxl_LQt3M84YGgbN--4"/>
+<div class="absolute inset-0 bg-gradient-to-t from-charcoal/20 to-transparent"></div>
+</div>
+</div>
+</div>
+</section>
+<section class="py-20 bg-nude-200">
+<div class="px-6 md:px-20 mx-auto max-w-[1200px]">
+<div class="flex items-center justify-between mb-12">
+<h2 class="text-3xl md:text-4xl font-black tracking-tight text-charcoal">Exclusive Originals</h2>
+<a class="text-charcoal text-sm font-bold flex items-center gap-1 hover:opacity-60 transition-opacity" href="#">
+                            View All <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+<div class="flex overflow-x-auto gap-8 pb-10 snap-x">
+<div class="flex-none w-64 md:w-80 snap-start group cursor-pointer">
+<div class="relative aspect-[3/4] rounded-3xl overflow-hidden mb-5 shadow-xl group-hover:shadow-2xl transition-all duration-500">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="Neon silhouette of a DJ in a dark club" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCt-jEXc91uTeJMaVK6zjnOMFJKCGus_B1r6AYlGDj7_wlxzJJBj_lRGPAWkyiE4Qr7cD4sfnnIdlZ3bSfgEuHe89crQEMsg3-ReTjP-VsU7nFrMufroLvl2bb7Hz5wWv1HzpQ_PZVZ_NebgzWxa_pBZpZLxR2Gpg8fOVsTWb9266HoYO5I924k2u04SvPfegjaO3GWO6B8EPlCUe2h44GXeTJD8Xeer3p1eV5E31cIXxxzHmgt5I0Sx4Ny_RKL1i8NICHTI6242mQ"/>
+<div class="absolute top-4 left-4 z-20">
+<span class="px-3 py-1 bg-white/90 backdrop-blur-md text-charcoal text-[10px] font-black uppercase rounded-full shadow-sm">Trending</span>
+</div>
+</div>
+<h3 class="text-xl font-bold text-charcoal group-hover:text-primary transition-colors">Digital Renaissance</h3>
+<p class="text-charcoal/50 text-sm font-medium">Original Series • 8 Episodes</p>
+</div>
+<div class="flex-none w-64 md:w-80 snap-start group cursor-pointer">
+<div class="relative aspect-[3/4] rounded-3xl overflow-hidden mb-5 shadow-xl group-hover:shadow-2xl transition-all duration-500">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="Abstract vibrant stage lights at a concert" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDORGisarDYAqiHhwqXhYY4WJNNlgj2-xTq1FnVgjAhSlFDLWIHSnN0BTssUzt-B3SegXY1P0OTnOLyOPsxsBP3HcUPad0uxdr7a3D5jEV2kEvyNbdgDyE4z8D4lnNshop8mrxEwEmvktNDOZq_7VYRiuDS-LNg9xnqAABIzCrNeTEPaFezdoe_QKqILe1LWPMYt8AXrdeSvSsbottdWIGtzjVO4KmsTHdxx8rB-u3hnWjRXN0FnFfTts5w-JYkpsSh_Q1C6LSR3Yg"/>
+</div>
+<h3 class="text-xl font-bold text-charcoal group-hover:text-primary transition-colors">The Beat Lab</h3>
+<p class="text-charcoal/50 text-sm font-medium">Documentary • Feature Film</p>
+</div>
+<div class="flex-none w-64 md:w-80 snap-start group cursor-pointer">
+<div class="relative aspect-[3/4] rounded-3xl overflow-hidden mb-5 shadow-xl group-hover:shadow-2xl transition-all duration-500">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="Singer performing with professional microphone in blue lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSlu6MXincC_nuFxgb0-Qvvi98L2ihaUkswQOo-vb-lFvwESZwA-LdRVspW60Iny8RYTUaL4Ja1TMJ5JeFLL8V3SoUsgPHbo_goFB2AYNXyH1LExdnnkRSudA47pH8kPDDUHrFsLZDQ4AzPU98TYnGaWvPk4vRPLXdiyLiz15XJoDcjwmTc0hdzANZI83gpdb0XODPeJxofCLh9C_EenN5SJJsfR56_URLhCtCsiEWzYSKMLbTr3vs_cU9hGtU8mPKrldjwSdeMRo"/>
+</div>
+<h3 class="text-xl font-bold text-charcoal group-hover:text-primary transition-colors">Vivid Sessions</h3>
+<p class="text-charcoal/50 text-sm font-medium">Live Sessions • Weekly</p>
+</div>
+<div class="flex-none w-64 md:w-80 snap-start group cursor-pointer">
+<div class="relative aspect-[3/4] rounded-3xl overflow-hidden mb-5 shadow-xl group-hover:shadow-2xl transition-all duration-500">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="Close up of a neon lit electric guitar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsy8ybTozKR1HiRFdBhwUpfnIGozYNMfABlXdQSgfAjiMjlUC3_inSVNVMv0vf3VQy0tt5e39uzqccD28xR9aQjOTVCj1NBgt-KYcyYBysCMcUCR7RGxqHpPugUXfq18gRtF8JPVi6-lR_Fd7jsZlWfWVtAeB2YDeWTObwihEy4BFEbO5hckAKWe7z4Eo36D2eg2oIiitpulF8UxpA6mzZg9djheSNosdv_VdsKLChme6M28deuo6FmJKD7T5k3fPmH9h7PHjz_e8"/>
+</div>
+<h3 class="text-xl font-bold text-charcoal group-hover:text-primary transition-colors">Neon Pulse</h3>
+<p class="text-charcoal/50 text-sm font-medium">Music Series • Original</p>
+</div>
+</div>
+</div>
+</section>
+<section class="py-28 px-6 md:px-20 bg-nude-300">
+<div class="mx-auto max-w-[1200px]">
+<div class="mb-20 text-center flex flex-col items-center">
+<h2 class="text-4xl md:text-6xl font-black mb-6 text-charcoal tracking-tight">The Platform for Visionaries</h2>
+<p class="text-lg text-charcoal/60 max-w-2xl font-medium">Experience entertainment reimagined with creators at the center. No ads, no noise, just pure artistic expression in its most raw form.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="glass-card p-10 rounded-[2.5rem] flex flex-col gap-8 hover:translate-y-[-4px] transition-all duration-300">
+<div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-primary shadow-sm">
+<span class="material-symbols-outlined text-3xl">play_circle</span>
+</div>
+<div>
+<h3 class="text-2xl font-black mb-4 text-charcoal">Crystal Clear Streaming</h3>
+<p class="text-charcoal/60 leading-relaxed font-medium">Experience 4K HDR streaming with zero buffering and a seamless editorial user interface.</p>
+</div>
+</div>
+<div class="glass-card p-10 rounded-[2.5rem] flex flex-col gap-8 hover:translate-y-[-4px] transition-all duration-300">
+<div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-primary shadow-sm">
+<span class="material-symbols-outlined text-3xl">center_focus_strong</span>
+</div>
+<div>
+<h3 class="text-2xl font-black mb-4 text-charcoal">Creator Focused</h3>
+<p class="text-charcoal/60 leading-relaxed font-medium">Direct support for independent artists. Every minute you watch directly funds the creators you love.</p>
+</div>
+</div>
+<div class="glass-card p-10 rounded-[2.5rem] flex flex-col gap-8 hover:translate-y-[-4px] transition-all duration-300">
+<div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-primary shadow-sm">
+<span class="material-symbols-outlined text-3xl">verified_user</span>
+</div>
+<div>
+<h3 class="text-2xl font-black mb-4 text-charcoal">Ad-Free Forever</h3>
+<p class="text-charcoal/60 leading-relaxed font-medium">Pure immersion without any interruptions. Your flow stays intact from start to finish.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="border-t border-charcoal/5 py-16 px-6 md:px-20 bg-nude-100">
+<div class="mx-auto max-w-[1200px] flex flex-col md:flex-row justify-between items-center gap-10">
+<div class="flex items-center gap-3 grayscale opacity-60">
+<div class="bg-charcoal p-1.5 rounded shadow-sm">
+<svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<span class="font-black text-charcoal tracking-tighter text-xl">Vivid</span>
+</div>
+<div class="flex flex-wrap justify-center gap-10 text-sm font-bold text-charcoal/50">
+<a class="hover:text-charcoal transition-colors" href="#">Terms</a>
+<a class="hover:text-charcoal transition-colors" href="#">Privacy</a>
+<a class="hover:text-charcoal transition-colors" href="#">Help</a>
+<a class="hover:text-charcoal transition-colors" href="#">Contact</a>
+</div>
+<p class="text-xs font-bold text-charcoal/30 tracking-widest uppercase">© 2024 Vivid Entertainment Inc.</p>
+</div>
+</footer>
+</div>
+
+</body></html>

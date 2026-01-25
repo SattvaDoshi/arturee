@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arturee ✨ Where Artists Come Alive</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                        display: ['Fredoka', 'sans-serif'],
+                    },
+                    colors: {
+                        bubblegum: '#FF6B9D',
+                        hotpink: '#FF2E93',
+                        electricblue: '#00D4FF',
+                        neonpurple: '#B24BF3',
+                        lemonyellow: '#FFF500',
+                        mintgreen: '#00F5A0',
+                        peach: '#FFAA85',
+                        lavender: '#E8D5FF',
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'float-slow': 'float 8s ease-in-out infinite',
+                        'float-fast': 'float 4s ease-in-out infinite',
+                        'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
+                        'wiggle': 'wiggle 1s ease-in-out infinite',
+                        'bounce-slow': 'bounce 3s infinite',
+                        'spin-slow': 'spin 20s linear infinite',
+                        'gradient': 'gradient 8s ease infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                            '50%': { transform: 'translateY(-20px) rotate(5deg)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { boxShadow: '0 0 20px rgba(255, 107, 157, 0.5)' },
+                            '50%': { boxShadow: '0 0 40px rgba(255, 107, 157, 0.8), 0 0 60px rgba(0, 212, 255, 0.4)' },
+                        },
+                        wiggle: {
+                            '0%, 100%': { transform: 'rotate(-3deg)' },
+                            '50%': { transform: 'rotate(3deg)' },
+                        },
+                        gradient: {
+                            '0%': { backgroundPosition: '0% 50%' },
+                            '50%': { backgroundPosition: '100% 50%' },
+                            '100%': { backgroundPosition: '0% 50%' },
+                        },
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Splash Screen */
+        #splash-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #FF6B9D 0%, #B24BF3 50%, #00D4FF 100%);
+            background-size: 400% 400%;
+            animation: gradient 4s ease infinite;
+            transition: opacity 0.8s ease-out, visibility 0.8s ease-out;
+        }
+        
+        #splash-screen.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .splash-bubbles {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        .splash-logo {
+            width: 120px;
+            height: 120px;
+            background: white;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2), inset 0 -5px 20px rgba(255, 107, 157, 0.3);
+            animation: float 3s ease-in-out infinite, pulseGlow 2s ease-in-out infinite;
+        }
+        
+        .splash-logo svg {
+            width: 60px;
+            height: 60px;
+            fill: url(#logoGradient);
+        }
+        
+        .splash-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 4rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.1), 0 0 40px rgba(255, 255, 255, 0.5);
+            animation: wiggle 2s ease-in-out infinite;
+        }
+        
+        @media (min-width: 768px) {
+            .splash-title { font-size: 6rem; }
+        }
+        
+        .splash-tagline {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.25rem;
+            font-weight: 500;
+            letter-spacing: 0.2em;
+            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+        }
+        
+        .loader-bubbles {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .loader-bubble {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: white;
+            animation: bounce 1.4s ease-in-out infinite;
+        }
+        
+        .loader-bubble:nth-child(1) { animation-delay: 0s; }
+        .loader-bubble:nth-child(2) { animation-delay: 0.2s; }
+        .loader-bubble:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 107, 157, 0.5), 0 20px 60px rgba(0, 0, 0, 0.2); }
+            50% { box-shadow: 0 0 40px rgba(255, 107, 157, 0.8), 0 0 60px rgba(0, 212, 255, 0.4), 0 20px 60px rgba(0, 0, 0, 0.2); }
+        }
+        
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg); }
+        }
+        
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Main Styles */
+        .gradient-text {
+            background: linear-gradient(135deg, #FF6B9D, #B24BF3, #00D4FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #FF6B9D 0%, #B24BF3 50%, #00D4FF 100%);
+            background-size: 200% 200%;
+            animation: gradient 8s ease infinite;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 107, 157, 0.3);
+        }
+        
+        .neon-shadow {
+            box-shadow: 0 10px 40px rgba(255, 107, 157, 0.3), 
+                        0 0 0 1px rgba(255, 107, 157, 0.1);
+        }
+        
+        .neon-shadow-blue {
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.3);
+        }
+        
+        .neon-shadow-purple {
+            box-shadow: 0 10px 40px rgba(178, 75, 243, 0.3);
+        }
+        
+        .blob {
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+        }
+        
+        .wavy-border {
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+        }
+        
+        /* Fun Decorative Elements */
+        .star {
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+        }
+        
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-10px) rotate(1deg);
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #FFF0F5;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #FF6B9D, #B24BF3);
+            border-radius: 10px;
+            border: 2px solid #FFF0F5;
+        }
+        
+        /* Floating Elements */
+        .floating-elements {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        
+        .floating-shape {
+            position: absolute;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-pink-50 via-purple-50 to-cyan-50 text-gray-800 font-sans antialiased overflow-x-hidden">
+
+<!-- SVG Gradient Definition -->
+<svg width="0" height="0">
+    <defs>
+        <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#FF6B9D"/>
+            <stop offset="50%" style="stop-color:#B24BF3"/>
+            <stop offset="100%" style="stop-color:#00D4FF"/>
+        </linearGradient>
+    </defs>
+</svg>
+
+<!-- Splash Screen -->
+<div id="splash-screen">
+    <div class="splash-bubbles">
+        <div class="bubble" style="width: 80px; height: 80px; top: 10%; left: 10%; animation-delay: 0s;"></div>
+        <div class="bubble" style="width: 60px; height: 60px; top: 20%; right: 15%; animation-delay: 1s;"></div>
+        <div class="bubble" style="width: 100px; height: 100px; bottom: 15%; left: 20%; animation-delay: 2s;"></div>
+        <div class="bubble" style="width: 50px; height: 50px; bottom: 25%; right: 10%; animation-delay: 0.5s;"></div>
+        <div class="bubble" style="width: 70px; height: 70px; top: 50%; left: 5%; animation-delay: 1.5s;"></div>
+    </div>
+    
+    <div class="relative z-10 flex flex-col items-center">
+        <div class="splash-logo mb-8">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 5v14l11-7z"/>
+            </svg>
+        </div>
+        <h1 class="splash-title mb-4">Arturee</h1>
+        <p class="splash-tagline mb-12">✨ WHERE ARTISTS COME ALIVE ✨</p>
+        <div class="loader-bubbles">
+            <div class="loader-bubble"></div>
+            <div class="loader-bubble"></div>
+            <div class="loader-bubble"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            const splash = document.getElementById('splash-screen');
+            splash.classList.add('fade-out');
+            setTimeout(() => splash.remove(), 800);
+        }, 2500);
+    });
+</script>
+
+<!-- Floating Decorative Elements -->
+<div class="floating-elements">
+    <div class="floating-shape w-32 h-32 bg-gradient-to-br from-bubblegum/20 to-transparent rounded-full animate-float" style="top: 10%; left: 5%;"></div>
+    <div class="floating-shape w-24 h-24 bg-gradient-to-br from-electricblue/20 to-transparent rounded-full animate-float-slow" style="top: 30%; right: 8%;"></div>
+    <div class="floating-shape w-40 h-40 bg-gradient-to-br from-neonpurple/15 to-transparent rounded-full animate-float" style="bottom: 20%; left: 10%;"></div>
+    <div class="floating-shape w-20 h-20 bg-gradient-to-br from-lemonyellow/30 to-transparent rounded-full animate-float-fast" style="top: 60%; right: 15%;"></div>
+    <div class="floating-shape w-16 h-16 bg-gradient-to-br from-mintgreen/25 to-transparent rounded-full animate-float-slow" style="bottom: 40%; right: 5%;"></div>
+    
+    <!-- Stars -->
+    <div class="floating-shape star w-8 h-8 bg-lemonyellow/40 animate-spin-slow" style="top: 15%; right: 20%;"></div>
+    <div class="floating-shape star w-6 h-6 bg-bubblegum/40 animate-spin-slow" style="top: 45%; left: 15%;"></div>
+    <div class="floating-shape star w-10 h-10 bg-electricblue/30 animate-spin-slow" style="bottom: 30%; right: 25%;"></div>
+</div>
+
+<!-- Navigation -->
+<nav class="fixed top-0 left-0 right-0 z-50 p-4">
+    <div class="max-w-7xl mx-auto">
+        <div class="glass-card rounded-full px-6 py-3 flex items-center justify-between neon-shadow">
+            <div class="flex items-center space-x-8">
+                <div class="text-2xl font-display font-bold gradient-text flex items-center gap-2">
+                    <span class="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center">
+                        <i data-lucide="play" class="w-5 h-5 text-white"></i>
+                    </span>
+                    Arturee
+                </div>
+                <div class="hidden lg:flex space-x-2">
+                    <a href="#landing" class="px-4 py-2 rounded-full text-sm font-semibold bg-bubblegum/10 text-bubblegum hover:bg-bubblegum hover:text-white transition-all">Home</a>
+                    <a href="#discover" class="px-4 py-2 rounded-full text-sm font-medium text-gray-600 hover:bg-electricblue/10 hover:text-electricblue transition-all">Discover</a>
+                    <a href="#shows" class="px-4 py-2 rounded-full text-sm font-medium text-gray-600 hover:bg-neonpurple/10 hover:text-neonpurple transition-all">Shows</a>
+                    <a href="#podcasts" class="px-4 py-2 rounded-full text-sm font-medium text-gray-600 hover:bg-mintgreen/10 hover:text-mintgreen transition-all">Podcasts</a>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button class="hidden sm:block px-4 py-2 text-sm font-semibold text-gray-600 hover:text-bubblegum transition">Sign In</button>
+                <button class="px-6 py-3 gradient-bg rounded-full text-sm font-bold text-white hover:scale-105 transition-transform shadow-lg hover:shadow-bubblegum/50 flex items-center gap-2">
+                    <span>Start Free</span>
+                    <span class="text-lg">🎉</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section id="landing" class="relative min-h-screen pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <div class="max-w-7xl mx-auto relative z-10">
+        <div class="text-center mb-16">
+            <!-- Fun Badge -->
+            <div class="inline-flex items-center gap-2 px-6 py-3 bg-white rounded-full shadow-lg mb-8 animate-bounce-slow">
+                <span class="flex h-3 w-3 relative">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-bubblegum opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-bubblegum"></span>
+                </span>
+                <span class="text-sm font-semibold text-gray-700">🔥 50K+ Artists Already Joined!</span>
+            </div>
+            
+            <h1 class="text-5xl sm:text-6xl lg:text-8xl font-display font-bold mb-6 leading-tight">
+                <span class="text-gray-800">Where Artists</span><br/>
+                <span class="gradient-text inline-block animate-wiggle">Come Alive!</span>
+                <span class="text-5xl sm:text-6xl lg:text-7xl">✨</span>
+            </h1>
+            
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto mb-10 leading-relaxed">
+                Stream exclusive shows, podcasts & behind-the-scenes magic from the world's most creative minds. 
+                <span class="text-bubblegum font-semibold">Join the party!</span> 🎈
+            </p>
+            
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+                <button class="group px-10 py-5 gradient-bg rounded-full text-xl font-bold text-white hover:scale-110 transition-all duration-300 shadow-2xl shadow-bubblegum/40 flex items-center gap-3">
+                    <i data-lucide="play-circle" class="w-7 h-7 group-hover:scale-110 transition-transform"></i>
+                    <span>Start Watching Free</span>
+                </button>
+                <button class="px-10 py-5 bg-white rounded-full text-xl font-bold text-gray-700 hover:scale-105 transition-all duration-300 shadow-xl border-2 border-bubblegum/20 hover:border-bubblegum flex items-center gap-3">
+                    <span>🎨</span>
+                    <span>For Creators</span>
+                </button>
+            </div>
+            
+            <!-- Avatar Stack -->
+            <div class="flex items-center justify-center gap-4">
+                <div class="flex -space-x-4">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop" alt="User" class="w-12 h-12 rounded-full border-4 border-white shadow-lg"/>
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" alt="User" class="w-12 h-12 rounded-full border-4 border-white shadow-lg"/>
+                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop" alt="User" class="w-12 h-12 rounded-full border-4 border-white shadow-lg"/>
+                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop" alt="User" class="w-12 h-12 rounded-full border-4 border-white shadow-lg"/>
+                    <div class="w-12 h-12 rounded-full border-4 border-white shadow-lg gradient-bg flex items-center justify-center text-white font-bold text-sm">+5K</div>
+                </div>
+                <div class="text-left">
+                    <div class="flex items-center gap-1 text-lemonyellow">
+                        <i data-lucide="star" class="w-5 h-5 fill-lemonyellow"></i>
+                        <i data-lucide="star" class="w-5 h-5 fill-lemonyellow"></i>
+                        <i data-lucide="star" class="w-5 h-5 fill-lemonyellow"></i>
+                        <i data-lucide="star" class="w-5 h-5 fill-lemonyellow"></i>
+                        <i data-lucide="star" class="w-5 h-5 fill-lemonyellow"></i>
+                    </div>
+                    <p class="text-sm text-gray-500 font-medium">Loved by creators worldwide</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Featured Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
+            <!-- Card 1 -->
+            <div class="card-hover group cursor-pointer">
+                <div class="relative h-96 rounded-3xl overflow-hidden glass-card neon-shadow">
+                    <img src="https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=800&h=600&fit=crop" alt="Live Performance" class="w-full h-full object-cover"/>
+                    <div class="absolute inset-0 bg-gradient-to-t from-bubblegum/90 via-bubblegum/40 to-transparent"></div>
+                    
+                    <!-- Live Badge -->
+                    <div class="absolute top-4 left-4 flex items-center gap-2">
+                        <span class="px-4 py-2 bg-red-500 rounded-full text-sm font-bold text-white flex items-center gap-2 animate-pulse">
+                            <span class="w-2 h-2 bg-white rounded-full"></span>
+                            LIVE
+                        </span>
+                        <span class="px-4 py-2 bg-white/90 backdrop-blur rounded-full text-sm font-semibold text-gray-700">2.4K 👀</span>
+                    </div>
+                    
+                    <div class="absolute bottom-0 left-0 right-0 p-6">
+                        <h3 class="text-2xl font-display font-bold text-white mb-2">Jazz Night Sessions 🎷</h3>
+                        <p class="text-white/90 flex items-center gap-2">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop" alt="Marcus" class="w-8 h-8 rounded-full border-2 border-white"/>
+                            Marcus Cole • Brooklyn
+                        </p>
+                    </div>
+                    
+                    <!-- Play Button -->
+                    <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition-transform">
+                            <i data-lucide="play" class="w-8 h-8 text-bubblegum ml-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Card 2 -->
+            <div class="card-hover group cursor-pointer">
+                <div class="relative h-96 rounded-3xl overflow-hidden glass-card neon-shadow-purple">
+                    <img src="https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800&h=600&fit=crop" alt="Podcast" class="w-full h-full object-cover"/>
+                    <div class="absolute inset-0 bg-gradient-to-t from-neonpurple/90 via-neonpurple/40 to-transparent"></div>
+                    
+                    <div class="absolute top-4 left-4 flex items-center gap-2">
+                        <span class="px-4 py-2 bg-neonpurple rounded-full text-sm font-bold text-white">🎙️ PODCAST</span>
+                        <span class="px-4 py-2 bg-white/90 backdrop-blur rounded-full text-sm font-semibold text-gray-700">Ep. 42</span>
+                    </div>
+                    
+                    <div class="absolute bottom-0 left-0 right-0 p-6">
+                        <h3 class="text-2xl font-display font-bold text-white mb-2">Creative Minds 💭</h3>
+                        <p class="text-white/90">The Art of Storytelling</p>
+                    </div>
+                    
+                    <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition-transform">
+                            <i data-lucide="play" class="w-8 h-8 text-neonpurple ml-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Card 3 -->
+            <div class="card-hover group cursor-pointer">
+                <div class="relative h-96 rounded-3xl overflow-hidden glass-card neon-shadow-blue">
+                    <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&h=600&fit=crop" alt="Comedy" class="w-full h-full object-cover"/>
+                    <div class="absolute inset-0 bg-gradient-to-t from-electricblue/90 via-electricblue/40 to-transparent"></div>
+                    
+                    <div class="absolute top-4 left-4 flex items-center gap-2">
+                        <span class="px-4 py-2 bg-electricblue rounded-full text-sm font-bold text-white">😂 COMEDY</span>
+                        <span class="px-4 py-2 bg-lemonyellow rounded-full text-sm font-bold text-gray-800">NEW!</span>
+                    </div>
+                    
+                    <div class="absolute bottom-0 left-0 right-0 p-6">
+                        <h3 class="text-2xl font-display font-bold text-white mb-2">Sarah Chen: Raw 🎤</h3>
+                        <p class="text-white/90">Stand-up Special</p>
+                    </div>
+                    
+                    <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition-transform">
+                            <i data-lucide="play" class="w-8 h-8 text-electricblue ml-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div class="glass-card rounded-3xl p-6 text-center card-hover neon-shadow">
+                <div class="text-4xl font-display font-bold gradient-text mb-2">500+</div>
+                <div class="text-gray-600 font-medium">Artists 🎨</div>
+            </div>
+            <div class="glass-card rounded-3xl p-6 text-center card-hover neon-shadow-purple">
+                <div class="text-4xl font-display font-bold text-neonpurple mb-2">10K+</div>
+                <div class="text-gray-600 font-medium">Hours 📺</div>
+            </div>
+            <div class="glass-card rounded-3xl p-6 text-center card-hover neon-shadow-blue">
+                <div class="text-4xl font-display font-bold text-electricblue mb-2">50K+</div>
+                <div class="text-gray-600 font-medium">Viewers 👥</div>
+            </div>
+            <div class="glass-card rounded-3xl p-6 text-center card-hover" style="box-shadow: 0 10px 40px rgba(0, 245, 160, 0.3);">
+                <div class="text-4xl font-display font-bold text-mintgreen mb-2">24/7</div>
+                <div class="text-gray-600 font-medium">Live 🔴</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Discover Section -->
+<section id="discover" class="py-20 px-4 sm:px-6 lg:px-8 relative">
+    <div class="max-w-7xl mx-auto">
+        <!-- Section Header -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+            <div>
+                <span class="inline-block px-4 py-2 bg-bubblegum/10 text-bubblegum rounded-full text-sm font-bold mb-4">🔥 TRENDING</span>
+                <h2 class="text-4xl md:text-5xl font-display font-bold text-gray-800">
+                    Discover Amazing<br/>
+                    <span class="gradient-text">Content</span> ✨
+                </h2>
+            </div>
+            <div class="flex flex-wrap gap-3">
+                <button class="px-6 py-3 gradient-bg text-white rounded-full text-sm font-bold shadow-lg">All 🌟</button>
+                <button class="px-6 py-3 bg-white text-gray-600 rounded-full text-sm font-semibold hover:bg-bubblegum/10 hover:text-bubblegum transition border-2 border-gray-100">Shows 📺</button>
+                <button class="px-6 py-3 bg-white text-gray-600 rounded-full text-sm font-semibold hover:bg-neonpurple/10 hover:text-neonpurple transition border-2 border-gray-100">Podcasts 🎙️</button>
+                <button class="px-6 py-3 bg-white text-gray-600 rounded-full text-sm font-semibold hover:bg-electricblue/10 hover:text-electricblue transition border-2 border-gray-100">Music 🎵</button>
+            </div>
+        </div>
+
+        <!-- Trending Grid -->
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-20">
+            <div class="card-hover group cursor-pointer">
+                <div class="relative aspect-[2/3] rounded-3xl overflow-hidden mb-4 neon-shadow">
+                    <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=600&fit=crop" alt="Content" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-xl">
+                                <i data-lucide="play" class="w-6 h-6 text-bubblegum ml-0.5"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="absolute top-3 left-3 px-3 py-1 bg-bubblegum rounded-full text-xs font-bold text-white">#1 🔥</div>
+                </div>
+                <h4 class="font-bold text-gray-800 mb-1">Midnight Sessions</h4>
+                <p class="text-sm text-gray-500">Alex Rivera</p>
+            </div>
+            
+            <div class="card-hover group cursor-pointer">
+                <div class="relative aspect-[2/3] rounded-3xl overflow-hidden mb-4 neon-shadow-purple">
+                    <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&h=600&fit=crop" alt="Content" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-xl">
+                                <i data-lucide="play" class="w-6 h-6 text-neonpurple ml-0.5"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="absolute top-3 left-3 px-3 py-1 bg-neonpurple rounded-full text-xs font-bold text-white">#2 💜</div>
+                </div>
+                <h4 class="font-bold text-gray-800 mb-1">Urban Stories</h4>
+                <p class="text-sm text-gray-500">Maya Chen</p>
+            </div>
+            
+            <div class="card-hover group cursor-pointer">
+                <div class="relative aspect-[2/3] rounded-3xl overflow-hidden mb-4 neon-shadow-blue">
+                    <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&h=600&fit=crop" alt="Content" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-xl">
+                                <i data-lucide="play" class="w-6 h-6 text-electricblue ml-0.5"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="absolute top-3 left-3 px-3 py-1 bg-electricblue rounded-full text-xs font-bold text-white">#3 💙</div>
+                </div>
+                <h4 class="font-bold text-gray-800 mb-1">Sound & Vision</h4>
+                <p class="text-sm text-gray-500">Jordan Blake</p>
+            </div>
+            
+            <div class="card-hover group cursor-pointer">
+                <div class="relative aspect-[2/3] rounded-3xl overflow-hidden mb-4" style="box-shadow: 0 10px 40px rgba(0, 245, 160, 0.3);">
+                    <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=600&fit=crop" alt="Content" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-xl">
+                                <i data-lucide="play" class="w-6 h-6 text-mintgreen ml-0.5"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="absolute top-3 left-3 px-3 py-1 bg-mintgreen rounded-full text-xs font-bold text-gray-800">#4 💚</div>
+                </div>
+                <h4 class="font-bold text-gray-800 mb-1">Behind the Lens</h4>
+                <p class="text-sm text-gray-500">Sam Torres</p>
+            </div>
+            
+            <div class="card-hover group cursor-pointer">
+                <div class="relative aspect-[2/3] rounded-3xl overflow-hidden mb-4" style="box-shadow: 0 10px 40px rgba(255, 245, 0, 0.3);">
+                    <img src="https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=400&h=600&fit=crop" alt="Content" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-xl">
+                                <i data-lucide="play" class="w-6 h-6 text-yellow-500 ml-0.5"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="absolute top-3 left-3 px-3 py-1 bg-lemonyellow rounded-full text-xs font-bold text-gray-800">#5 💛</div>
+                </div>
+                <h4 class="font-bold text-gray-800 mb-1">Creative Flow</h4>
+                <p class="text-sm text-gray-500">Riley Park</p>
+            </div>
+        </div>
+
+        <!-- Podcasts Section -->
+        <div class="mb-16">
+            <h3 class="text-3xl font-display font-bold text-gray-800 mb-8">
+                Exclusive Podcasts 🎙️
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="glass-card rounded-3xl p-6 card-hover neon-shadow group cursor-pointer">
+                    <div class="flex items-start gap-4">
+                        <div class="relative">
+                            <img src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=200&h=200&fit=crop" alt="Podcast" class="w-24 h-24 rounded-2xl object-cover"/>
+                            <div class="absolute inset-0 flex items-center justify-center bg-bubblegum/80 rounded-2xl opacity-0 group-hover:opacity-100 transition">
+                                <i data-lucide="play" class="w-8 h-8 text-white"></i>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-display font-bold text-lg text-gray-800 mb-2">The Artist's Journey 🎨</h4>
+                            <p class="text-sm text-gray-500 mb-3 line-clamp-2">Deep conversations with creators about their craft and breakthroughs.</p>
+                            <div class="flex items-center gap-3 text-xs">
+                                <span class="px-3 py-1 bg-bubblegum/10 text-bubblegum rounded-full font-semibold">42 Episodes</span>
+                                <span class="text-gray-400">Weekly</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="glass-card rounded-3xl p-6 card-hover neon-shadow-purple group cursor-pointer">
+                    <div class="flex items-start gap-4">
+                        <div class="relative">
+                            <img src="https://images.unsplash.com/photo-1589903308904-1010c2294adc?w=200&h=200&fit=crop" alt="Podcast" class="w-24 h-24 rounded-2xl object-cover"/>
+                            <div class="absolute inset-0 flex items-center justify-center bg-neonpurple/80 rounded-2xl opacity-0 group-hover:opacity-100 transition">
+                                <i data-lucide="play" class="w-8 h-8 text-white"></i>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-display font-bold text-lg text-gray-800 mb-2">Unfiltered Creative 💜</h4>
+                            <p class="text-sm text-gray-500 mb-3 line-clamp-2">Raw, honest talks about the creative process and industry insights.</p>
+                            <div class="flex items-center gap-3 text-xs">
+                                <span class="px-3 py-1 bg-neonpurple/10 text-neonpurple rounded-full font-semibold">28 Episodes</span>
+                                <span class="text-gray-400">Bi-weekly</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="glass-card rounded-3xl p-6 card-hover neon-shadow-blue group cursor-pointer">
+                    <div class="flex items-start gap-4">
+                        <div class="relative">
+                            <img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=200&h=200&fit=crop" alt="Podcast" class="w-24 h-24 rounded-2xl object-cover"/>
+                            <div class="absolute inset-0 flex items-center justify-center bg-electricblue/80 rounded-2xl opacity-0 group-hover:opacity-100 transition">
+                                <i data-lucide="play" class="w-8 h-8 text-white"></i>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-display font-bold text-lg text-gray-800 mb-2">Behind the Curtain 💙</h4>
+                            <p class="text-sm text-gray-500 mb-3 line-clamp-2">Exclusive backstage access and stories from live performances.</p>
+                            <div class="flex items-center gap-3 text-xs">
+                                <span class="px-3 py-1 bg-electricblue/10 text-electricblue rounded-full font-semibold">35 Episodes</span>
+                                <span class="text-gray-400">Weekly</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-20 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-5xl mx-auto">
+        <div class="relative gradient-bg rounded-[3rem] p-12 md:p-20 text-center overflow-hidden">
+            <!-- Decorative Elements -->
+            <div class="absolute top-10 left-10 w-20 h-20 bg-white/20 rounded-full animate-float"></div>
+            <div class="absolute bottom-10 right-10 w-16 h-16 bg-white/20 rounded-full animate-float-slow"></div>
+            <div class="absolute top-1/2 left-5 w-10 h-10 bg-lemonyellow/40 rounded-full animate-float-fast"></div>
+            <div class="absolute bottom-20 left-20 w-8 h-8 bg-mintgreen/40 rounded-full animate-float"></div>
+            
+            <div class="relative z-10">
+                <span class="text-6xl mb-6 block">🚀</span>
+                <h2 class="text-4xl md:text-6xl font-display font-bold text-white mb-6">
+                    Ready to Join the<br/>Creative Revolution?
+                </h2>
+                <p class="text-xl text-white/90 mb-10 max-w-2xl mx-auto">
+                    Start streaming exclusive content from the world's most talented artists. 
+                    Your journey begins here! ✨
+                </p>
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <button class="px-10 py-5 bg-white rounded-full text-xl font-bold text-bubblegum hover:scale-110 transition-all duration-300 shadow-2xl flex items-center gap-3">
+                        <span>Start Free Trial</span>
+                        <span class="text-2xl">🎉</span>
+                    </button>
+                    <button class="px-10 py-5 bg-white/20 backdrop-blur rounded-full text-xl font-bold text-white hover:bg-white/30 transition-all duration-300 border-2 border-white/30">
+                        Learn More
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="py-16 px-4 sm:px-6 lg:px-8 bg-white/50 backdrop-blur-xl border-t border-bubblegum/10">
+    <div class="max-w-7xl mx-auto">
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
+            <div class="col-span-2">
+                <div class="text-3xl font-display font-bold gradient-text mb-4 flex items-center gap-3">
+                    <span class="w-12 h-12 gradient-bg rounded-2xl flex items-center justify-center">
+                        <i data-lucide="play" class="w-6 h-6 text-white"></i>
+                    </span>
+                    Arturee
+                </div>
+                <p class="text-gray-500 mb-6 max-w-sm">Empowering artists and creators to share their stories with the world. Stream, create, inspire! ✨</p>
+                <div class="flex space-x-3">
+                    <a href="#" class="w-12 h-12 bg-bubblegum/10 rounded-2xl flex items-center justify-center hover:bg-bubblegum hover:text-white transition text-bubblegum">
+                        <i data-lucide="twitter" class="w-5 h-5"></i>
+                    </a>
+                    <a href="#" class="w-12 h-12 bg-neonpurple/10 rounded-2xl flex items-center justify-center hover:bg-neonpurple hover:text-white transition text-neonpurple">
+                        <i data-lucide="instagram" class="w-5 h-5"></i>
+                    </a>
+                    <a href="#" class="w-12 h-12 bg-electricblue/10 rounded-2xl flex items-center justify-center hover:bg-electricblue hover:text-white transition text-electricblue">
+                        <i data-lucide="youtube" class="w-5 h-5"></i>
+                    </a>
+                    <a href="#" class="w-12 h-12 bg-mintgreen/10 rounded-2xl flex items-center justify-center hover:bg-mintgreen hover:text-white transition text-mintgreen">
+                        <i data-lucide="linkedin" class="w-5 h-5"></i>
+                    </a>
+                </div>
+            </div>
+            <div>
+                <h4 class="font-display font-bold mb-4 text-gray-800">Platform 📺</h4>
+                <ul class="space-y-3 text-sm text-gray-500">
+                    <li><a href="#" class="hover:text-bubblegum transition">Discover</a></li>
+                    <li><a href="#" class="hover:text-bubblegum transition">Live Shows</a></li>
+                    <li><a href="#" class="hover:text-bubblegum transition">Podcasts</a></li>
+                    <li><a href="#" class="hover:text-bubblegum transition">Comedy</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-display font-bold mb-4 text-gray-800">Creators 🎨</h4>
+                <ul class="space-y-3 text-sm text-gray-500">
+                    <li><a href="#" class="hover:text-neonpurple transition">Join as Creator</a></li>
+                    <li><a href="#" class="hover:text-neonpurple transition">Upload Content</a></li>
+                    <li><a href="#" class="hover:text-neonpurple transition">Resources</a></li>
+                    <li><a href="#" class="hover:text-neonpurple transition">Analytics</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-display font-bold mb-4 text-gray-800">Company 💼</h4>
+                <ul class="space-y-3 text-sm text-gray-500">
+                    <li><a href="#" class="hover:text-electricblue transition">About Us</a></li>
+                    <li><a href="#" class="hover:text-electricblue transition">Careers</a></li>
+                    <li><a href="#" class="hover:text-electricblue transition">Press</a></li>
+                    <li><a href="#" class="hover:text-electricblue transition">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="pt-8 border-t border-bubblegum/10 flex flex-col md:flex-row items-center justify-between text-sm text-gray-500">
+            <p>© 2026 Arturee. Made with 💖 for creators worldwide.</p>
+            <div class="flex space-x-6 mt-4 md:mt-0">
+                <a href="#" class="hover:text-bubblegum transition">Privacy</a>
+                <a href="#" class="hover:text-bubblegum transition">Terms</a>
+                <a href="#" class="hover:text-bubblegum transition">Cookies</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+    lucide.createIcons();
+</script>
+</body>
+</html>
