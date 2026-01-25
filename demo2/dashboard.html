@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en" style="height: auto; min-height: 100%;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArtStream - Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        coral: '#ff6b6b',
+                        salmon: '#ff8e72',
+                        teal: '#4ecdc4',
+                        navy: '#1a2332',
+                        darkblue: '#232f45',
+                        cream: '#f8f9fa',
+                        lightgray: '#e8eaed',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .gradient-overlay {
+            background: linear-gradient(to top, #1a2332 0%, transparent 50%);
+        }
+        .hero-gradient {
+            background: linear-gradient(90deg, #1a2332 0%, rgba(26, 35, 50, 0.8) 50%, transparent 100%);
+        }
+    </style>
+</head>
+<body class="bg-navy text-cream font-sans antialiased" style="height: auto; min-height: 100%;">
+    
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-darkblue/95 backdrop-blur-sm border-b border-cream/10">
+        <div class="max-w-full px-4 sm:px-6 lg:px-12">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex items-center space-x-8">
+                    <a href="index.html" class="text-2xl font-display font-bold bg-gradient-to-r from-coral via-teal to-salmon bg-clip-text text-transparent">ArtStream</a>
+                    <div class="hidden md:flex space-x-6">
+                        <a href="dashboard.html" class="text-sm font-semibold text-cream hover:text-coral transition">Home</a>
+                        <a href="#" class="text-sm font-medium text-lightgray hover:text-coral transition">Shows</a>
+                        <a href="#" class="text-sm font-medium text-lightgray hover:text-coral transition">Podcasts</a>
+                        <a href="#" class="text-sm font-medium text-lightgray hover:text-coral transition">Comedy</a>
+                        <a href="#" class="text-sm font-medium text-lightgray hover:text-coral transition">Live</a>
+                        <a href="#" class="text-sm font-medium text-lightgray hover:text-coral transition">My List</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="p-2 hover:bg-cream/10 rounded-full transition">
+                        <i data-lucide="search" class="w-5 h-5 text-cream"></i>
+                    </button>
+                    <button class="p-2 hover:bg-cream/10 rounded-full transition">
+                        <i data-lucide="bell" class="w-5 h-5 text-cream"></i>
+                    </button>
+                    <button class="flex items-center space-x-2 hover:bg-cream/10 rounded-full pl-2 pr-3 py-1 transition">
+                        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop" alt="User" class="w-8 h-8 rounded-full object-cover"/>
+                        <i data-lucide="chevron-down" class="w-4 h-4 text-cream"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="relative h-screen pt-20">
+        <div class="absolute inset-0">
+            <img src="https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=1920&h=1080&fit=crop" alt="Hero" class="w-full h-full object-cover"/>
+            <div class="absolute inset-0 bg-gradient-to-r from-navy via-navy/70 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-navy via-transparent to-transparent"></div>
+        </div>
+        
+        <div class="relative h-full flex items-center px-4 sm:px-6 lg:px-12">
+            <div class="max-w-2xl">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="px-4 py-1.5 bg-gradient-to-r from-coral to-salmon rounded-full text-xs font-bold text-white uppercase tracking-wider shadow-lg">Featured</span>
+                    <span class="px-4 py-1.5 bg-red-500 rounded-full text-xs font-bold text-white uppercase tracking-wider flex items-center space-x-1 shadow-lg">
+                        <span class="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+                        <span>Live Now</span>
+                    </span>
+                </div>
+                <h1 class="text-5xl sm:text-6xl lg:text-7xl font-display font-bold mb-6 text-cream leading-tight">Jazz Night<br/>Sessions</h1>
+                <p class="text-lg text-lightgray mb-8 leading-relaxed max-w-xl">Experience an intimate evening with Marcus Cole as he performs live from his Brooklyn studio. Join 2.4K viewers for an unforgettable night of smooth jazz, improvisation, and raw musical talent.</p>
+                <div class="flex items-center space-x-4 mb-8">
+                    <a href="videoDetails.html" class="px-8 py-4 bg-coral text-white rounded-full font-bold text-lg hover:shadow-lg hover:shadow-coral/40 transition transform hover:scale-105 shadow-xl flex items-center space-x-2 hover:bg-salmon">
+                        <i data-lucide="play" class="w-6 h-6"></i>
+                        <span>Watch Live</span>
+                    </a>
+                    <button class="px-8 py-4 bg-cream/10 text-cream rounded-full font-bold text-lg hover:bg-cream/20 transition flex items-center space-x-2 border border-cream/20">
+                        <i data-lucide="info" class="w-6 h-6"></i>
+                        <span>More Info</span>
+                    </button>
+                    <button class="p-4 bg-cream/10 text-cream rounded-full hover:bg-cream/20 transition border border-cream/20">
+                        <i data-lucide="plus" class="w-6 h-6"></i>
+                    </button>
+                </div>
+                <div class="flex items-center space-x-6 text-sm text-lightgray">
+                    <div class="flex items-center space-x-2">
+                        <i data-lucide="users" class="w-4 h-4"></i>
+                        <span>2.4K watching</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <i data-lucide="clock" class="w-4 h-4"></i>
+                        <span>Started 45 min ago</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <i data-lucide="star" class="w-4 h-4 fill-coral text-coral"></i>
+                        <span>4.9 Rating</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="relative -mt-32 z-10 px-4 sm:px-6 lg:px-12 pb-12">
+        <div class="mb-12">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-cream">Continue Watching</h2>
+                <button class="text-sm font-medium text-coral hover:text-salmon transition">View All</button>
+            </div>
+            <div class="flex space-x-4 overflow-x-auto scrollbar-hide pb-4">
+                <div class="flex-shrink-0 w-80 group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&h=450&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button class="w-16 h-16 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
+                                    <i data-lucide="play" class="w-7 h-7 text-navy ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-0 left-0 right-0 h-1 bg-beige/30">
+                            <div class="h-full bg-gradient-to-r from-sand to-nude" style="width: 35%"></div>
+                        </div>
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$9.99</div>
+                    </div>
+                    <h3 class="font-semibold mb-1 text-deepbrown">Sarah Chen: Raw</h3>
+                    <p class="text-sm text-warmgray">35 min remaining</p>
+                </div>
+                <div class="flex-shrink-0 w-80 group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&h=450&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button class="w-16 h-16 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
+                                    <i data-lucide="play" class="w-7 h-7 text-navy ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-0 left-0 right-0 h-1 bg-beige/30">
+                            <div class="h-full bg-gradient-to-r from-sand to-nude" style="width: 68%"></div>
+                        </div>
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$3.99</div>
+                    </div>
+                    <h3 class="font-semibold mb-1 text-deepbrown">Urban Stories Ep. 3</h3>
+                    <p class="text-sm text-warmgray">12 min remaining</p>
+                </div>
+                <div class="flex-shrink-0 w-80 group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800&h=450&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button class="w-16 h-16 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
+                                    <i data-lucide="play" class="w-7 h-7 text-navy ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-0 left-0 right-0 h-1 bg-beige/30">
+                            <div class="h-full bg-gradient-to-r from-sand to-nude" style="width: 22%"></div>
+                        </div>
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">Free</div>
+                    </div>
+                    <h3 class="font-semibold mb-1 text-deepbrown">Sound & Vision Podcast</h3>
+                    <p class="text-sm text-warmgray">42 min remaining</p>
+                </div>
+                <div class="flex-shrink-0 w-80 group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=450&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button class="w-16 h-16 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
+                                    <i data-lucide="play" class="w-7 h-7 text-navy ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-0 left-0 right-0 h-1 bg-beige/30">
+                            <div class="h-full bg-gradient-to-r from-sand to-nude" style="width: 89%"></div>
+                        </div>
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$4.99</div>
+                    </div>
+                    <h3 class="font-semibold mb-1 text-deepbrown">Behind the Lens</h3>
+                    <p class="text-sm text-warmgray">5 min remaining</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-12">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-deepbrown">Trending Now</h2>
+                <button class="text-sm font-medium text-sand hover:text-nude transition">View All</button>
+            </div>
+            <div class="flex space-x-4 overflow-x-auto scrollbar-hide pb-4">
+                <div class="flex-shrink-0 w-64 group cursor-pointer">
+                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=600&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-deepbrown/90 via-deepbrown/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <button class="w-14 h-14 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl mb-4">
+                                    <i data-lucide="play" class="w-6 h-6 text-navy ml-1"></i>
+                                </button>
+                            </div>
+                            <div class="absolute bottom-4 left-4 right-4">
+                                <p class="text-xs text-cream mb-2 line-clamp-2">An intimate look into the creative process of modern artists</p>
+                                <div class="flex items-center space-x-2 text-xs text-beige">
+                                    <span>1.2M views</span>
+                                    <span>•</span>
+                                    <span>45 min</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="absolute top-3 left-3 px-3 py-1 bg-red-500 rounded-full text-xs font-bold text-white">#1</div>
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$4.99</div>
+                    </div>
+                    <h3 class="font-semibold mb-1 text-deepbrown">Midnight Sessions</h3>
+                    <p class="text-sm text-warmgray">Alex Rivera</p>
+                </div>
+                <div class="flex-shrink-0 w-64 group cursor-pointer">
+                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&h=600&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-deepbrown/90 via-deepbrown/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <button class="w-14 h-14 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl mb-4">
+                                    <i data-lucide="play" class="w-6 h-6 text-navy ml-1"></i>
+                                </button>
+                            </div>
+                            <div class="absolute bottom-4 left-4 right-4">
+                                <p class="text-xs text-cream mb-2 line-clamp-2">Stories from the streets told through powerful visuals</p>
+                                <div class="flex items-center space-x-2 text-xs text-beige">
+                                    <span>890K views</span>
+                                    <span>•</span>
+                                    <span>32 min</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="absolute top-3 left-3 px-3 py-1 bg-red-500 rounded-full text-xs font-bold text-white">#2</div>
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$3.99</div>
+                    </div>
+                    <h3 class="font-semibold mb-1 text-deepbrown">Urban Stories</h3>
+                    <p class="text-sm text-warmgray">Maya Chen</p>
+                </div>
+                <div class="flex-shrink-0 w-64 group cursor-pointer">
+                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&h=600&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-deepbrown/90 via-deepbrown/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <button class="w-14 h-14 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl mb-4">
+                                    <i data-lucide="play" class="w-6 h-6 text-navy ml-1"></i>
+                                </button>
+                            </div>
+                            <div class="absolute bottom-4 left-4 right-4">
+                                <p class="text-xs text-cream mb-2 line-clamp-2">A journey through music and visual storytelling</p>
+                                <div class="flex items-center space-x-2 text-xs text-beige">
+                                    <span>750K views</span>
+                                    <span>•</span>
+                                    <span>52 min</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="absolute top-3 left-3 px-3 py-1 bg-red-500 rounded-full text-xs font-bold text-white">#3</div>
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$5.99</div>
+                    </div>
+                    <h3 class="font-semibold mb-1 text-deepbrown">Sound & Vision</h3>
+                    <p class="text-sm text-warmgray">Jordan Blake</p>
+                </div>
+                <div class="flex-shrink-0 w-64 group cursor-pointer">
+                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=600&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-deepbrown/90 via-deepbrown/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <button class="w-14 h-14 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl mb-4">
+                                    <i data-lucide="play" class="w-6 h-6 text-navy ml-1"></i>
+                                </button>
+                            </div>
+                            <div class="absolute bottom-4 left-4 right-4">
+                                <p class="text-xs text-cream mb-2 line-clamp-2">Exclusive behind-the-scenes documentary series</p>
+                                <div class="flex items-center space-x-2 text-xs text-beige">
+                                    <span>620K views</span>
+                                    <span>•</span>
+                                    <span>38 min</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="absolute top-3 left-3 px-3 py-1 bg-red-500 rounded-full text-xs font-bold text-white">#4</div>
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$4.99</div>
+                    </div>
+                    <h3 class="font-semibold mb-1 text-deepbrown">Behind the Lens</h3>
+                    <p class="text-sm text-warmgray">Sam Torres</p>
+                </div>
+                <div class="flex-shrink-0 w-64 group cursor-pointer">
+                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=400&h=600&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-deepbrown/90 via-deepbrown/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <button class="w-14 h-14 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl mb-4">
+                                    <i data-lucide="play" class="w-6 h-6 text-navy ml-1"></i>
+                                </button>
+                            </div>
+                            <div class="absolute bottom-4 left-4 right-4">
+                                <p class="text-xs text-cream mb-2 line-clamp-2">Exploring the intersection of art and creativity</p>
+                                <div class="flex items-center space-x-2 text-xs text-beige">
+                                    <span>580K views</span>
+                                    <span>•</span>
+                                    <span>41 min</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="absolute top-3 left-3 px-3 py-1 bg-red-500 rounded-full text-xs font-bold text-white">#5</div>
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$3.99</div>
+                    </div>
+                    <h3 class="font-semibold mb-1 text-deepbrown">Creative Flow</h3>
+                    <p class="text-sm text-warmgray">Riley Park</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-12">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-deepbrown">New Releases</h2>
+                <button class="text-sm font-medium text-sand hover:text-nude transition">View All</button>
+            </div>
+            <div class="flex space-x-4 overflow-x-auto scrollbar-hide pb-4">
+                <div class="flex-shrink-0 w-72 group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=800&h=450&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button class="w-16 h-16 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
+                                    <i data-lucide="play" class="w-7 h-7 text-navy ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="absolute top-3 left-3 px-3 py-1 bg-gradient-to-r from-sand to-nude rounded-full text-xs font-bold text-white">New</div>
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$6.99</div>
+                    </div>
+                    <h3 class="font-semibold mb-1 text-deepbrown">Acoustic Sessions Vol. 2</h3>
+                    <p class="text-sm text-warmgray mb-1">Marcus Cole • Released today</p>
+                    <div class="flex items-center space-x-2">
+                        <div class="flex items-center">
+                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
+                        </div>
+                        <span class="text-xs text-warmgray">5.0</span>
+                    </div>
+                </div>
+                <div class="flex-shrink-0 w-72 group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800&h=450&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button class="w-16 h-16 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
+                                    <i data-lucide="play" class="w-7 h-7 text-navy ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="absolute top-3 left-3 px-3 py-1 bg-gradient-to-r from-sand to-nude rounded-full text-xs font-bold text-white">New</div>
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">Free</div>
+                    </div>
+                    <h3 class="font-semibold mb-1 text-deepbrown">The Artist's Mind Podcast</h3>
+                    <p class="text-sm text-warmgray mb-1">Creative Minds • Episode 45</p>
+                    <div class="flex items-center space-x-2">
+                        <div class="flex items-center">
+                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
+                            <i data-lucide="star" class="w-4 h-4 text-beige"></i>
+                        </div>
+                        <span class="text-xs text-warmgray">4.8</span>
+                    </div>
+                </div>
+                <div class="flex-shrink-0 w-72 group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&h=450&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button class="w-16 h-16 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
+                                    <i data-lucide="play" class="w-7 h-7 text-navy ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="absolute top-3 left-3 px-3 py-1 bg-gradient-to-r from-sand to-nude rounded-full text-xs font-bold text-white">New</div>
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$8.99</div>
+                    </div>
+                    <h3 class="font-semibold mb-1 text-deepbrown">David Park: Unscripted</h3>
+                    <p class="text-sm text-warmgray mb-1">Comedy Special • 1h 20m</p>
+                    <div class="flex items-center space-x-2">
+                        <div class="flex items-center">
+                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
+                        </div>
+                        <span class="text-xs text-warmgray">4.9</span>
+                    </div>
+                </div>
+                <div class="flex-shrink-0 w-72 group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=800&h=450&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button class="w-16 h-16 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
+                                    <i data-lucide="play" class="w-7 h-7 text-navy ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="absolute top-3 left-3 px-3 py-1 bg-gradient-to-r from-sand to-nude rounded-full text-xs font-bold text-white">New</div>
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$5.99</div>
+                    </div>
+                    <h3 class="font-semibold mb-1 text-deepbrown">Street Art Chronicles</h3>
+                    <p class="text-sm text-warmgray mb-1">Documentary Series • Season 1</p>
+                    <div class="flex items-center space-x-2">
+                        <div class="flex items-center">
+                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
+                            <i data-lucide="star" class="w-4 h-4 text-beige"></i>
+                        </div>
+                        <span class="text-xs text-warmgray">4.7</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-12">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-deepbrown">Stand-Up Comedy</h2>
+                <button class="text-sm font-medium text-sand hover:text-nude transition">View All</button>
+            </div>
+            <div class="flex space-x-4 overflow-x-auto scrollbar-hide pb-4">
+                <div class="flex-shrink-0 w-56 group cursor-pointer">
+                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1527224857830-43a7acc85260?w=400&h=600&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button class="w-14 h-14 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
+                                    <i data-lucide="play" class="w-6 h-6 text-navy ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$9.99</div>
+                    </div>
+                    <h3 class="font-semibold mb-1 text-sm text-deepbrown">Sarah Chen: Raw</h3>
+                    <p class="text-xs text-warmgray">1h 15m</p>
+                </div>
+                <div class="flex-shrink-0 w-56 group cursor-pointer">
+                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=600&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button class="w-14 h-14 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
+                                    <i data-lucide="play" class="w-6 h-6 text-navy ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$8.99</div>
+                    </div>
+                    <h3 class="font-semibold mb-1 text-sm text-deepbrown">David Park: Unscripted</h3>
+                    <p class="text-xs text-warmgray">1h 20m</p>
+                </div>
+                <div class="flex-shrink-0 w-56 group cursor-pointer">
+                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=600&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button class="w-14 h-14 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
+                                    <i data-lucide="play" class="w-6 h-6 text-navy ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$7.99</div>
+                    </div>
+                    <h3 class="font-semibold mb-1 text-sm text-deepbrown">Mike Torres: Honest</h3>
+                    <p class="text-xs text-warmgray">58 min</p>
+                </div>
+                <div class="flex-shrink-0 w-56 group cursor-pointer">
+                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&h=600&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button class="w-14 h-14 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
+                                    <i data-lucide="play" class="w-6 h-6 text-navy ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$6.99</div>
+                    </div>
+                    <h3 class="font-semibold mb-1 text-sm text-deepbrown">Lisa Kim: Breakthrough</h3>
+                    <p class="text-xs text-warmgray">1h 5m</p>
+                </div>
+                <div class="flex-shrink-0 w-56 group cursor-pointer">
+                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=400&h=600&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button class="w-14 h-14 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
+                                    <i data-lucide="play" class="w-6 h-6 text-navy ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$8.99</div>
+                    </div>
+                    <h3 class="font-semibold mb-1 text-sm text-deepbrown">Alex Rivera: Unfiltered</h3>
+                    <p class="text-xs text-warmgray">1h 12m</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-12">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-deepbrown">Podcasts & Conversations</h2>
+                <button class="text-sm font-medium text-sand hover:text-nude transition">View All</button>
+            </div>
+            <div class="flex space-x-4 overflow-x-auto scrollbar-hide pb-4">
+                <div class="flex-shrink-0 w-80 group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800&h=450&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button class="w-16 h-16 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
+                                    <i data-lucide="play" class="w-7 h-7 text-navy ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">Free</div>
+                    </div>
+                    <h3 class="font-semibold mb-1 text-deepbrown">Creative Minds: The Art of Storytelling</h3>
+                    <p class="text-sm text-warmgray">Episode 42 • 45 min</p>
+                </div>
+                <div class="flex-shrink-0 w-80 group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=800&h=450&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button class="w-16 h-16 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
+                                    <i data-lucide="play" class="w-7 h-7 text-navy ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">Free</div>
+                    </div>
+                    <h3 class="font-semibold mb-1 text-deepbrown">Sound & Vision: Music Production</h3>
+                    <p class="text-sm text-warmgray">Episode 18 • 52 min</p>
+                </div>
+                <div class="flex-shrink-0 w-80 group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800&h=450&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button class="w-16 h-16 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
+                                    <i data-lucide="play" class="w-7 h-7 text-navy ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$2.99</div>
+                    </div>
+                    <h3 class="font-semibold mb-1 text-deepbrown">The Artist's Journey: Finding Your Voice</h3>
+                    <p class="text-sm text-warmgray">Episode 7 • 38 min</p>
+                </div>
+                <div class="flex-shrink-0 w-80 group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=800&h=450&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button class="w-16 h-16 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
+                                    <i data-lucide="play" class="w-7 h-7 text-navy ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">Free</div>
+                    </div>
+                    <h3 class="font-semibold mb-1 text-deepbrown">Behind the Canvas: Visual Arts</h3>
+                    <p class="text-sm text-warmgray">Episode 23 • 41 min</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-12">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-deepbrown">Live Performances</h2>
+                <button class="text-sm font-medium text-sand hover:text-nude transition">View All</button>
+            </div>
+            <div class="flex space-x-4 overflow-x-auto scrollbar-hide pb-4">
+                <div class="flex-shrink-0 w-72 group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=800&h=450&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button class="w-16 h-16 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
+                                    <i data-lucide="play" class="w-7 h-7 text-navy ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="absolute top-3 left-3 px-3 py-1 bg-red-500 rounded-full text-xs font-bold text-white flex items-center space-x-1">
+                            <span class="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+                            <span>LIVE</span>
+                        </div>
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">Free</div>
+                    </div>
+                    <h3 class="font-semibold mb-1 text-deepbrown">Jazz Night Sessions</h3>
+                    <p class="text-sm text-warmgray">Marcus Cole • 2.4K watching</p>
+                </div>
+                <div class="flex-shrink-0 w-72 group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=450&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button class="w-16 h-16 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
+                                    <i data-lucide="play" class="w-7 h-7 text-navy ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="absolute top-3 left-3 px-3 py-1 bg-beige rounded-full text-xs font-bold text-deepbrown">Upcoming</div>
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$4.99</div>
+                    </div>
+                    <h3 class="font-semibold mb-1 text-deepbrown">Acoustic Sessions</h3>
+                    <p class="text-sm text-warmgray">Riley Park • Tomorrow 8 PM</p>
+                </div>
+                <div class="flex-shrink-0 w-72 group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=450&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button class="w-16 h-16 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
+                                    <i data-lucide="play" class="w-7 h-7 text-navy ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="absolute top-3 left-3 px-3 py-1 bg-red-500 rounded-full text-xs font-bold text-white flex items-center space-x-1">
+                            <span class="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+                            <span>LIVE</span>
+                        </div>
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$3.99</div>
+                    </div>
+                    <h3 class="font-semibold mb-1 text-deepbrown">Behind the Lens Q&A</h3>
+                    <p class="text-sm text-warmgray">Sam Torres • 1.8K watching</p>
+                </div>
+                <div class="flex-shrink-0 w-72 group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=800&h=450&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button class="w-16 h-16 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
+                                    <i data-lucide="play" class="w-7 h-7 text-navy ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="absolute top-3 left-3 px-3 py-1 bg-beige rounded-full text-xs font-bold text-deepbrown">Upcoming</div>
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">Free</div>
+                    </div>
+                    <h3 class="font-semibold mb-1 text-deepbrown">Creative Flow Workshop</h3>
+                    <p class="text-sm text-warmgray">Maya Chen • Friday 7 PM</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-12">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-deepbrown">Because You Watched "Sarah Chen: Raw"</h2>
+                <button class="text-sm font-medium text-sand hover:text-nude transition">View All</button>
+            </div>
+            <div class="flex space-x-4 overflow-x-auto scrollbar-hide pb-4">
+                <div class="flex-shrink-0 w-64 group cursor-pointer">
+                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=600&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button class="w-14 h-14 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
+                                    <i data-lucide="play" class="w-6 h-6 text-navy ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$7.99</div>
+                        <div class="absolute bottom-3 left-3 px-3 py-1 bg-deepbrown/90 rounded-full text-xs font-semibold text-cream">95% Match</div>
+                    </div>
+                    <h3 class="font-semibold mb-1 text-sm text-deepbrown">Mike Torres: Honest</h3>
+                    <p class="text-xs text-warmgray">Stand-up Comedy</p>
+                </div>
+                <div class="flex-shrink-0 w-64 group cursor-pointer">
+                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=400&h=600&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button class="w-14 h-14 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
+                                    <i data-lucide="play" class="w-6 h-6 text-navy ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$8.99</div>
+                        <div class="absolute bottom-3 left-3 px-3 py-1 bg-deepbrown/90 rounded-full text-xs font-semibold text-cream">92% Match</div>
+                    </div>
+                    <h3 class="font-semibold mb-1 text-sm text-deepbrown">Alex Rivera: Unfiltered</h3>
+                    <p class="text-xs text-warmgray">Stand-up Comedy</p>
+                </div>
+                <div class="flex-shrink-0 w-64 group cursor-pointer">
+                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&h=600&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button class="w-14 h-14 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
+                                    <i data-lucide="play" class="w-6 h-6 text-navy ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$6.99</div>
+                        <div class="absolute bottom-3 left-3 px-3 py-1 bg-deepbrown/90 rounded-full text-xs font-semibold text-cream">88% Match</div>
+                    </div>
+                    <h3 class="font-semibold mb-1 text-sm text-deepbrown">Lisa Kim: Breakthrough</h3>
+                    <p class="text-xs text-warmgray">Stand-up Comedy</p>
+                </div>
+                <div class="flex-shrink-0 w-64 group cursor-pointer">
+                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1527224857830-43a7acc85260?w=400&h=600&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button class="w-14 h-14 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
+                                    <i data-lucide="play" class="w-6 h-6 text-navy ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$9.99</div>
+                        <div class="absolute bottom-3 left-3 px-3 py-1 bg-deepbrown/90 rounded-full text-xs font-semibold text-cream">85% Match</div>
+                    </div>
+                    <h3 class="font-semibold mb-1 text-sm text-deepbrown">Jordan Blake: Real Talk</h3>
+                    <p class="text-xs text-warmgray">Stand-up Comedy</p>
+                </div>
+                <div class="flex-shrink-0 w-64 group cursor-pointer">
+                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=600&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button class="w-14 h-14 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
+                                    <i data-lucide="play" class="w-6 h-6 text-navy ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$8.99</div>
+                        <div class="absolute bottom-3 left-3 px-3 py-1 bg-deepbrown/90 rounded-full text-xs font-semibold text-cream">82% Match</div>
+                    </div>
+                    <h3 class="font-semibold mb-1 text-sm text-deepbrown">David Park: Unscripted</h3>
+                    <p class="text-xs text-warmgray">Stand-up Comedy</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-16 px-4 sm:px-6 lg:px-12 bg-beige border-t border-sand/30">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
+                <div class="col-span-2">
+                    <div class="text-3xl font-display font-bold bg-gradient-to-r from-sand via-nude to-warmgray bg-clip-text text-transparent mb-4">ArtStream</div>
+                    <p class="text-warmgray mb-6 max-w-sm">Empowering artists and creators to share their stories with the world.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 bg-nude rounded-full flex items-center justify-center hover:bg-sand transition">
+                            <i data-lucide="twitter" class="w-5 h-5 text-deepbrown"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-nude rounded-full flex items-center justify-center hover:bg-sand transition">
+                            <i data-lucide="instagram" class="w-5 h-5 text-deepbrown"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-nude rounded-full flex items-center justify-center hover:bg-sand transition">
+                            <i data-lucide="youtube" class="w-5 h-5 text-deepbrown"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4 text-deepbrown">Platform</h4>
+                    <ul class="space-y-2 text-sm text-warmgray">
+                        <li><a href="#" class="hover:text-deepbrown transition">Shows</a></li>
+                        <li><a href="#" class="hover:text-deepbrown transition">Podcasts</a></li>
+                        <li><a href="#" class="hover:text-deepbrown transition">Comedy</a></li>
+                        <li><a href="#" class="hover:text-deepbrown transition">Live</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4 text-deepbrown">Support</h4>
+                    <ul class="space-y-2 text-sm text-warmgray">
+                        <li><a href="#" class="hover:text-deepbrown transition">Help Center</a></li>
+                        <li><a href="#" class="hover:text-deepbrown transition">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-deepbrown transition">FAQs</a></li>
+                        <li><a href="#" class="hover:text-deepbrown transition">Feedback</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4 text-deepbrown">Company</h4>
+                    <ul class="space-y-2 text-sm text-warmgray">
+                        <li><a href="#" class="hover:text-deepbrown transition">About</a></li>
+                        <li><a href="#" class="hover:text-deepbrown transition">Careers</a></li>
+                        <li><a href="#" class="hover:text-deepbrown transition">Press</a></li>
+                        <li><a href="#" class="hover:text-deepbrown transition">Blog</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="pt-8 border-t border-sand/30 flex flex-col md:flex-row items-center justify-between text-sm text-warmgray">
+                <p>&copy; 2024 ArtStream. All rights reserved.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-deepbrown transition">Privacy</a>
+                    <a href="#" class="hover:text-deepbrown transition">Terms</a>
+                    <a href="#" class="hover:text-deepbrown transition">Cookies</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

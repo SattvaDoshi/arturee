@@ -1,330 +1,436 @@
 <!DOCTYPE html>
-<html class="dark" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>ArtStream | Immersive Discovery Hub</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Artist Stream | Where Art Finds Its Voice</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
             theme: {
                 extend: {
-                    colors: {
-                        primary: "#ce6a6b", // coral
-                        accent: "#ebaca2",  // soft pink
-                        sage: "#bed3c3",    // sage green
-                        teal: "#4a919e",    // teal
-                        "background-light": "#ffffff",
-                        "background-dark": "#212e53", // deep navy
-                    },
                     fontFamily: {
-                        display: ["Space Grotesk", "sans-serif"],
-                        sans: ["Inter", "sans-serif"],
-                    },
-                    borderRadius: {
-                        DEFAULT: "12px",
-                        'xl': '24px',
-                        '2xl': '32px',
-                    },
+                        "display": ["Space Grotesk", "sans-serif"]
+                    }
                 },
             },
-        };
+        }
     </script>
-<style type="text/tailwindcss">
-        .glass-nav {
-            background: rgba(33, 46, 83, 0.8);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    <style type="text/tailwindcss">
+        @layer base {
+            body { 
+                @apply bg-[#212e53] text-white font-display; 
+                background-attachment: fixed;
+            }
         }
-        .hero-gradient {
-            background: linear-gradient(to bottom, rgba(33, 46, 83, 0.2), #212e53);
+        .glass { 
+            background: rgba(33, 46, 83, 0.7); 
+            backdrop-filter: blur(16px); 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08); 
         }
-        .mosaic-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            grid-auto-rows: 200px;
-            gap: 1.5rem;
+        .hero-gradient { 
+            background: linear-gradient(135deg, #212e53 0%, #4a919e 100%); 
         }
-        .mosaic-item-large {
-            grid-row: span 2;
-            grid-column: span 2;
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .founder-accent-line {
+            width: 40px;
+            height: 2px;
+            background-color: #ce6a6b;
         }
-        .mosaic-item-wide {
-            grid-column: span 2;
-        }
-        .mosaic-item-tall {
-            grid-row: span 2;
-        }
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #4a919e;
-            border-radius: 10px;
-        }
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        .quote-mark {
+            font-family: serif;
+            color: #ce6a6b;
+            font-size: 4rem;
+            line-height: 1;
+            opacity: 0.3;
         }
     </style>
 </head>
-<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-sans selection:bg-primary selection:text-white">
-<nav class="fixed top-0 w-full z-50 glass-nav">
-<div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-<div class="flex items-center gap-8">
-<a class="flex items-center gap-2 text-2xl font-display font-bold text-primary" href="#">
-<span class="material-symbols-outlined text-3xl">play_circle</span>
-                ArtStream
-            </a>
-<div class="hidden md:flex items-center gap-8 text-sm font-medium">
-<a class="hover:text-primary transition-colors" href="#">Explore</a>
-<a class="hover:text-primary transition-colors" href="#">Pricing</a>
-<a class="hover:text-primary transition-colors" href="#">For Creators</a>
-</div>
-</div>
-<div class="flex items-center gap-4">
-<button class="text-sm font-medium hover:text-accent transition-colors">Log In</button>
-<button class="bg-primary hover:bg-opacity-90 text-white px-6 py-2.5 rounded-full font-semibold transition-all shadow-lg shadow-primary/20">
-                Join Now
-            </button>
-</div>
-</div>
-</nav>
-<header class="relative pt-20 overflow-hidden min-h-[70vh] flex items-center">
-<div class="absolute inset-0 z-0">
-<img alt="Artistic landscape cinematic" class="w-full h-full object-cover opacity-60 dark:opacity-40" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtxGf1hV7Fna3Z7RLzfQBRO4mrF-O-XcPb0DGwtEJXgtzlmLUCfKQmNUW7_bz3kpHvl6X-V7DUe3-zHm0SdqOl_YxOVM4lTXMJt8keo_msBL_nJP6eunEe3tTV6sRdfqwbF5MadkW27QVQ39mZPQYX36e5gq4rCi3D1rSh3DfqY8nt8TXuceqZ_bCKPSAJwMhIBIticeYveTnJwjEDuycXno6qiOv8RDQZmxL6qFWxZhhOdpaTNhwhHSJUZrxCJwQtCWOFT_hYCn23"/>
-<div class="absolute inset-0 hero-gradient"></div>
-</div>
-<div class="relative z-10 max-w-7xl mx-auto px-6 text-center md:text-left">
-<span class="inline-block py-1 px-4 rounded-full bg-teal/20 text-teal font-semibold text-xs uppercase tracking-[0.2em] mb-6 border border-teal/30 backdrop-blur-sm">
-            Discover the Serendipitous
-        </span>
-<h1 class="text-6xl md:text-9xl font-display font-bold leading-none mb-8 tracking-tighter">
-            Your Immersive <br/>
-<span class="text-primary italic">Discovery Hub.</span>
-</h1>
-<p class="text-lg md:text-2xl text-slate-300 mb-12 max-w-2xl leading-relaxed mx-auto md:mx-0">
-            A fluid stream of raw creativity. Dive into a non-linear world of artists, renegades, and visual storytellers.
-        </p>
-<div class="flex flex-wrap gap-4 justify-center md:justify-start">
-<button class="bg-white text-background-dark px-10 py-5 rounded-2xl font-bold text-lg hover:scale-105 transition-transform flex items-center gap-2 shadow-2xl">
-<span class="material-symbols-outlined">explore</span>
-                Enter the Stream
-            </button>
-</div>
-</div>
-</header>
-<main class="pb-24 space-y-32">
-<section class="max-w-7xl mx-auto px-6">
-<div class="flex items-end justify-between mb-12">
-<div>
-<h2 class="text-4xl md:text-5xl font-display font-bold flex items-center gap-4">
-                    Today's Pulse: What's Trending
-                </h2>
-<p class="text-slate-400 mt-2">A curated chaos of what's moving the culture right now.</p>
-</div>
-<a class="text-teal font-semibold flex items-center gap-1 hover:underline mb-2" href="#">
-                Shuffle <span class="material-symbols-outlined text-sm">shuffle</span>
-</a>
-</div>
-<div class="mosaic-grid">
-<div class="mosaic-item-large relative group cursor-pointer overflow-hidden rounded-3xl">
-<img alt="Show poster" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2_1-_iag0DvmEdxoceGG9V1rMPZvG3Bq6VsxtU5XRb-fLSsQUC4-09LZ68I-TUSxZyAqSAKox8grXFXs8T1r2DxaDzVd3rUB1AiUwBdMyF3cefKAQAnJRoWTz2_A_qDDkuhFmMtNmE6sTZ7t3hX_L5Zz73gOvi6DhYOUTSqvfi-FkZhUAWwo5aPNrEgKirZMNDG-d1kwdv3DRcBRaS-io7MbPVIXFVFTFbMwk87Uj2pAhOAQ2oMPt-bUBBFk0LTkM9ERiDMF5SmYI"/>
-<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent p-8 flex flex-col justify-end">
-<span class="bg-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase w-fit mb-3">Featured Stream</span>
-<h3 class="text-3xl font-display font-bold text-white mb-2">The Digital Canvas</h3>
-<p class="text-slate-300 text-sm">A deep dive into the evolution of generative art.</p>
-</div>
-</div>
-<div class="mosaic-item-tall relative group cursor-pointer overflow-hidden rounded-3xl">
-<img alt="Podcast thumbnail" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBFYT6HdbEUP2juKKL8qmHy9LlcZGx8x5kSVLiNWHO1aeEpBQHRXz9rTK0HBrAPcB1A2p3fIlyilBC8vSDnpGg_rfCBvfNbSIHuauGtCOD2R9BJHRw003iQksSAyqmr8jFJ2XIsv42Wql8ct-Sh6vqyYwj8rmfn32yc8YH-NrjhbLrNPxGz5BdaJX-KEmr2YdaorSfrb93C52D8c7lPMbpSR1R2O9fwt4eSAZ_n3MEIGaVAYU3oJPJ9yTAtdYqv0M0CJBGTO6o5rdl"/>
-<div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors p-6 flex flex-col justify-between">
-<span class="material-symbols-outlined text-white self-end">mic</span>
-<div>
-<h4 class="font-display font-bold text-xl text-white">The Creative Soul</h4>
-<p class="text-xs text-slate-200">Mia Chen on finding flow.</p>
-</div>
-</div>
-</div>
-<div class="mosaic-item-wide relative group cursor-pointer overflow-hidden rounded-3xl">
-<img alt="Comedian live" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQqEhyVkq5d5FeDWeflc1fcnn8k5t8k9GTjLvGLkVqvkRcWS3C3PENfSsxpcluCI7ldGFpskVMEflrVZlb7awYZ9UOtQAqEp18a9SHhLt5A3fTjAX7HA5_Em7iFwsLC8IL0--_e23cYoQ7jeG0GCiV8jCxPm-BS5L2ck6qjnhP61nDFepTQ0ztenEk8Nk2nbrwkvrZk8l9b1v8fyt82ggwj6NaavC3-eae-KpSuglFMYjXG_tZTNY1mr5QDdDJ1xWr3vcs9wntlnZI"/>
-<div class="absolute inset-0 bg-gradient-to-r from-teal/80 to-transparent p-6 flex flex-col justify-center">
-<span class="text-[10px] font-bold uppercase tracking-widest text-white/80 mb-1">Live Highlight</span>
-<h3 class="text-2xl font-bold text-white">Late Night at The Cellar</h3>
-</div>
-</div>
-<div class="relative group cursor-pointer overflow-hidden rounded-3xl">
-<img alt="Show poster" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWYX9XUCwY_qD-up4tEi_IU38MfzaLDP2Fz6r8_A01L1FcE6I25e-IEJNY9C9Lo0S1YuRd5KGdbPLV60pllrBDfuwm42XQ1TtlGZhvckdx6RBe598c3iG61rttY1x1l-7mTh04bwzIBqVsbiYBbWsq8ooId0DOAvsc6aPd-0c1Wf1e0_SzAj8CbA2Nv6XseJeA83sxV3wR4ig4-nxsJQVX-6SQ4RAffqTCU8VJlQLr4NqDcGcttqfXPYgr2WajVvWodaPug1GJHpGI"/>
-<div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-primary/40 backdrop-blur-sm">
-<span class="material-symbols-outlined text-4xl text-white">play_arrow</span>
-</div>
-</div>
-<div class="relative group cursor-pointer overflow-hidden rounded-3xl bg-slate-800 p-6 flex flex-col justify-between border border-white/10 hover:border-accent transition-colors">
-<span class="material-symbols-outlined text-accent text-3xl">bolt</span>
-<p class="font-display font-bold text-lg leading-snug">New drops every 15 minutes. Stay tuned.</p>
-</div>
-<div class="relative group cursor-pointer overflow-hidden rounded-3xl">
-<img alt="Show poster" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzjyzNui1hFNcIXgYICnIAlz1xEZzN9ZSqXfMdyza__-J71sq_YIYPwyRwj0515Kt2V25bk2yKKnhkz2_hv76Krvwx60_ttLS-fhM9LuFsrriREDwE33iOW8j9tONoUTnyhFND370s2vbDMZVdoFlvLcbYt-OyXi5T3P_6PAJJLFhLCGUbnJqeYcxaMPCeiBpiHzjCCcVdm0MihrLKEBGd2cMvsMQPaBTdCXsZhk1e4y_uCGPhCRuDiOfnGT3KqTEaZemy6JgYmXr8"/>
-</div>
-</div>
-</section>
-<section class="bg-slate-900/50 py-24">
-<div class="max-w-7xl mx-auto px-6">
-<h2 class="text-4xl md:text-5xl font-display font-bold mb-16 text-center md:text-left">
-                Featured Creator Journeys
-            </h2>
-<div class="grid md:grid-cols-12 gap-12 items-center">
-<div class="md:col-span-7 grid grid-cols-2 gap-4">
-<div class="space-y-4">
-<div class="aspect-[4/5] rounded-[2.5rem] overflow-hidden">
-<img alt="Artist working" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAiMpCJH3gdgUSoOACNZxYmEhSaEi79K4jzggu7BUoJoDhlXjgMXzTNQca0IUgXhp1zj1NTy4aCdlcCYCjNfWHZW3NQtpzAOWZURmE1J0YztEBXxbgbPoeWw_ee7ojjYpJQB3ifr8AEjrbGgwzjCRPynbA32-qp26oIgM1YO2L5oqNmo3GJ_6pML-yROAUyeyoteGwzXlYoDQRb2qkx8YZUKTuLvAWXvTIPDf6jigO2vcxPPjV2Mv_qgSv7V7R-2fAKEVSR8I4TCgGz"/>
-</div>
-<div class="bg-sage/20 p-8 rounded-[2.5rem] border border-sage/30">
-<p class="font-display font-bold text-2xl text-sage mb-2">90%</p>
-<p class="text-sm text-slate-300">Of every dollar goes directly to the artist's pocket.</p>
-</div>
-</div>
-<div class="space-y-4 pt-12">
-<div class="bg-teal p-8 rounded-[2.5rem] flex flex-col justify-between aspect-square">
-<span class="material-symbols-outlined text-4xl text-white">auto_awesome</span>
-<p class="font-display font-bold text-xl text-white leading-tight">Authentic Stories, Real Revenue.</p>
-</div>
-<div class="aspect-[4/5] rounded-[2.5rem] overflow-hidden">
-<img alt="Content creation" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDc8ALdN5ylYzhRe6wdw7n5YdzzoRT_5K7-P5dCPc1lWzD6zO5JxkAvK9LFVVJF0WRBrvcr4a1xC1KwBtzK4sKiLA2dUyVreKf7a-iGpnH3qd4UR9RYSWlXbaSm2HjTyDO32beMfm6g99QGcTiIZoPN2TPM7frDJEhYhgUc4y-n5X35Ef6PCN1hBHOFUmO2iga1KUfLud-vDU-E-5N5XTksdmcuuTrmSafeuMGgz0I6clccqPY8g4YTqK9jEDOfVQiJqSp_pQUjSzwj"/>
-</div>
-</div>
-</div>
-<div class="md:col-span-5 space-y-8">
-<div class="inline-block px-4 py-1 rounded-full border border-primary/30 text-primary text-xs font-bold uppercase">Artist Spotlight</div>
-<h3 class="text-5xl font-display font-bold leading-tight">Built For the <br/><span class="text-accent underline decoration-primary decoration-4 underline-offset-8">Visionaries</span></h3>
-<p class="text-lg text-slate-400">We've scrapped the traditional studio model. This is where creators own their future, their data, and their connection with you.</p>
-<div class="space-y-6">
-<div class="flex items-start gap-4 p-4 rounded-2xl hover:bg-white/5 transition-colors">
-<div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 text-primary">
-<span class="material-symbols-outlined">favorite</span>
-</div>
-<p class="text-sm text-slate-300 font-medium pt-2">Direct fan-to-creator tipping ecosystem.</p>
-</div>
-<div class="flex items-start gap-4 p-4 rounded-2xl hover:bg-white/5 transition-colors">
-<div class="w-10 h-10 rounded-full bg-teal/20 flex items-center justify-center flex-shrink-0 text-teal">
-<span class="material-symbols-outlined">analytics</span>
-</div>
-<p class="text-sm text-slate-300 font-medium pt-2">Unfiltered data for creators to understand their tribe.</p>
-</div>
-</div>
-<button class="bg-primary text-white px-8 py-4 rounded-2xl font-display font-bold text-lg hover:scale-105 transition-transform flex items-center gap-3">
-                        Start Creating
-                        <span class="material-symbols-outlined">rocket_launch</span>
-</button>
-</div>
-</div>
-</div>
-</section>
-<section class="max-w-7xl mx-auto px-6">
-<div class="flex items-center justify-between mb-12">
-<h2 class="text-4xl md:text-5xl font-display font-bold">Dive into Live Performances</h2>
-<div class="hidden md:flex gap-2">
-<button class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/5"><span class="material-symbols-outlined">west</span></button>
-<button class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/5"><span class="material-symbols-outlined">east</span></button>
-</div>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-<div class="relative group cursor-pointer overflow-hidden rounded-[2.5rem] md:col-span-2">
-<div class="aspect-video relative">
-<img alt="Comedian live" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1qbannZ_lCJSNOaDMlZrjKfAN9EIQfXlv7Sll7RSwG3-PdHPQFb2EfW-4IVE9VJoRxyrEuLsTTkuxTgIDyQETGzcRV0gyVkNYmi_TTv4UIHE2B4oqAHjIsYRO02AA8l61_cqtrXfLW9QoVOgBqy470c9urVuWVKvlsDZS79wtnUL-is7GhUbkWZ0uFYVGkwRrAbfptoFH3qWw9hvrHWOfd_gotruWmay-gMw2RLCAmCB763cu3qZBRiR90yf3T6rWv1npco0nraWN"/>
-<div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent p-10 flex flex-col justify-end">
-<div class="flex items-center gap-3 mb-4">
-<span class="flex h-3 w-3 relative">
-<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-<span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-</span>
-<span class="text-sm font-bold uppercase tracking-widest text-white">Live Performance • 18.2k In Hub</span>
-</div>
-<h3 class="text-4xl font-display font-bold text-white mb-2">Punchline Marathon</h3>
-<p class="text-slate-300 text-lg">Unfiltered. Unscripted. Unforgettable.</p>
-</div>
-</div>
-</div>
-<div class="space-y-8">
-<div class="relative group cursor-pointer overflow-hidden rounded-[2rem] bg-slate-900 border border-white/5">
-<div class="aspect-[4/3] relative">
-<img alt="Comedian live" class="w-full h-full object-cover opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXUiwcBCf0uZnlUS7M79cOWWaqCHGQNUNnILKmdIR0B8053-zNq46rCFvPdFUmuAHeqCPBzjRiQaNfl5wUG_J1yUtFTOYI_7CrIN-Hgut1BWpljaZ8OwB5-ZzNPtFOL5w3tem2q9-jsanDMkWthROBN54I1hm9wJBlNpJDabJ6ii7xh0dA0w5_1C0tkXuABwKq_2XudJ54G7YKm4N-SxYX0xkN6C2mdHho9ml9ouwaf_I6YPPpINYYWQoZWXNWdzRXGz5neQxN4Jzp"/>
-<div class="absolute inset-0 p-6 flex flex-col justify-end bg-gradient-to-t from-black/80 to-transparent">
-<span class="text-[10px] font-bold uppercase text-slate-400 mb-1">Coming Up • 9 PM</span>
-<h4 class="text-xl font-bold text-white">The Improvisers</h4>
-</div>
-</div>
-</div>
-<div class="bg-primary/10 border border-primary/20 p-8 rounded-[2rem] flex flex-col items-center text-center">
-<span class="material-symbols-outlined text-4xl text-primary mb-4">stream</span>
-<h4 class="font-display font-bold text-xl mb-2">Never Miss a Beat</h4>
-<p class="text-sm text-slate-400 mb-6">Set notifications for your favorite live streams.</p>
-<button class="w-full py-3 bg-primary text-white rounded-xl font-bold text-sm">Notify Me</button>
-</div>
-</div>
-</div>
-</section>
-</main>
-<footer class="bg-slate-950 border-t border-white/5 py-24">
-<div class="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-5 gap-16">
-<div class="col-span-2">
-<a class="flex items-center gap-2 text-2xl font-display font-bold text-primary mb-8" href="#">
-<span class="material-symbols-outlined text-3xl">play_circle</span>
-                ArtStream
-            </a>
-<p class="text-slate-400 max-w-sm mb-10 leading-relaxed text-lg">
-                The immersive hub for Gen Z creators. Where discovery is serendipitous and art is rewarded.
-            </p>
-<div class="flex gap-6">
-<a class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary transition-colors group" href="#">
-<img alt="Instagram" class="w-6 h-6 invert opacity-60 group-hover:opacity-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCr0Q0Vc58LvCmE5MN3Y7Ov1q3Xg_JmhvihZS3aAF5_pyuqp32nD8HlK0aNafDneh6eVbX5iaizO4jq-Qiji1f_8jOXRmc_quMDC8HkwyTqOw8Xe87-AonReBHuJmdn543l9SFDy3MHlfZpeK_Zm68aqfV7jbKjJd0Y3pNCSc6eMgdKBw3jh1X55G-8c_DYcgiFpcjU_yddC8EWUqc0LLXhsgvas2Ay8m95arw2tCFY9byfz3Uq4-epsjiPEbeEgicLhQbXsUGR2Kop"/>
-</a>
-<a class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary transition-colors group" href="#">
-<img alt="TikTok" class="w-6 h-6 invert opacity-60 group-hover:opacity-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6r7-yUZo26smXL74wu9VcEoH1O58tVL5dh4iEaDiI1ByxUzQjCO6cZqIxcwvWnBjakoYSFQS9UTkia7IJp6MSyR3eNHqgG2Ixy_lkFb8GFEkWUyYUpLxG0by6xBzoXUaTYTNwBwoHR0HSDR32SQEj2L48s9O0Jx9Gcq8DY8zy_jZcym65qP2eU1jcowa7hJYRHcv3pLiPQlQwwo2ZqqLj6F-RjoKPDqhFln_Sv423tdUmGXCuM-zXrJVkMwepsNqoFjJrVUoR4K42"/>
-</a>
-<a class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary transition-colors group" href="#">
-<img alt="Twitter" class="w-6 h-6 invert opacity-60 group-hover:opacity-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAiTUGNwIsaBwLNSgOHY9DK-dmJ4cxwSSqw1MkXLfW1LPVsaVFbuqp46sXDomYywO0LYUURBAX3C3EF2Yg5wI6sCjc8MfqsCE51qYeJhIq7_3ma4N11qLaeDrBPLpb-hTiYVjuL-QMEreEMMlWqzQlty1Ocu1dXxzqvZ3GZv2oDy7KAtW-es-OzFfPA_-gV5zHi2tGbZRTjNGKYVTG1aOb6e_KSqKvc6LatInrmztN9WMwiMdGroeMRDYjz8vUGXESL8RIplPcngjdb"/>
-</a>
-</div>
-</div>
-<div>
-<h5 class="font-bold text-white mb-8">Pulse</h5>
-<ul class="space-y-5 text-slate-400">
-<li><a class="hover:text-primary transition-colors" href="#">Latest Drops</a></li>
-<li><a class="hover:text-primary transition-colors" href="#">Live Now</a></li>
-<li><a class="hover:text-primary transition-colors" href="#">Mosaics</a></li>
-<li><a class="hover:text-primary transition-colors" href="#">Originals</a></li>
-</ul>
-</div>
-<div>
-<h5 class="font-bold text-white mb-8">Join</h5>
-<ul class="space-y-5 text-slate-400">
-<li><a class="hover:text-primary transition-colors" href="#">Artist Hub</a></li>
-<li><a class="hover:text-primary transition-colors" href="#">Community</a></li>
-<li><a class="hover:text-primary transition-colors" href="#">Brand Kits</a></li>
-<li><a class="hover:text-primary transition-colors" href="#">Careers</a></li>
-</ul>
-</div>
-<div>
-<h5 class="font-bold text-white mb-8">Legal</h5>
-<ul class="space-y-5 text-slate-400">
-<li><a class="hover:text-primary transition-colors" href="#">Privacy Policy</a></li>
-<li><a class="hover:text-primary transition-colors" href="#">Cookie Settings</a></li>
-<li><a class="hover:text-primary transition-colors" href="#">Terms of Use</a></li>
-</ul>
-</div>
-</div>
-<div class="max-w-7xl mx-auto px-6 mt-24 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-slate-500 text-sm">
-<p>© 2024 ArtStream Inc. Built for the renegades.</p>
-<p class="flex items-center gap-2">
-            Designed with <span class="text-primary material-symbols-outlined text-sm">favorite</span> for the next generation.
-        </p>
-</div>
-</footer>
 
-</body></html>
+<body class="selection:bg-[#ce6a6b]/30">
+    <div class="relative flex min-h-screen flex-col overflow-x-hidden">
+        <header class="sticky top-0 z-50 w-full px-6 lg:px-20 py-4 glass">
+            <nav class="mx-auto flex max-w-[1400px] items-center justify-between">
+                <div class="flex items-center gap-12">
+                    <div class="flex items-center gap-3 text-white">
+                        <div
+                            class="size-9 bg-[#ce6a6b] rounded-lg flex items-center justify-center shadow-lg shadow-[#ce6a6b]/20">
+                            <span class="material-symbols-outlined text-white">movie_filter</span>
+                        </div>
+                        <h2 class="text-2xl font-bold tracking-tighter">ARTIST STREAM</h2>
+                    </div>
+                    <div class="hidden md:flex items-center gap-8">
+                        <a class="text-white/70 hover:text-white text-sm font-medium transition-colors"
+                            href="#">Browse</a>
+                        <a class="text-white/70 hover:text-white text-sm font-medium transition-colors"
+                            href="#">Artists</a>
+                        <a class="text-white/70 hover:text-white text-sm font-medium transition-colors"
+                            href="#">Pricing</a>
+                        <a class="text-white/70 hover:text-white text-sm font-medium transition-colors" href="#">FAQ</a>
+                    </div>
+                </div>
+                <div class="flex items-center gap-6">
+                    <label
+                        class="hidden lg:flex items-center bg-white/5 rounded-full px-4 py-2 border border-white/10 focus-within:border-[#ce6a6b]/50 transition-all">
+                        <span class="material-symbols-outlined text-white/40 text-xl">search</span>
+                        <input class="bg-transparent border-none focus:ring-0 text-sm placeholder:text-white/30 w-48"
+                            placeholder="Search the collection..." type="text" />
+                    </label>
+                    <button
+                        class="bg-[#ce6a6b] hover:bg-[#b85a5b] text-white px-8 py-2.5 rounded-full text-sm font-bold transition-all hover:shadow-xl hover:shadow-[#ce6a6b]/20">
+                        Join Community
+                    </button>
+                </div>
+            </nav>
+        </header>
+        <main class="flex-1">
+            <section class="relative px-6 lg:px-20 pt-8 pb-20">
+                <div class="mx-auto max-w-[1400px]">
+                    <div
+                        class="relative overflow-hidden rounded-[2.5rem] hero-gradient p-10 md:p-20 lg:p-32 flex flex-col justify-end min-h-[750px] shadow-2xl">
+                        <div class="absolute inset-0 opacity-40 mix-blend-overlay pointer-events-none">
+                            <div class="w-full h-full bg-cover bg-center"
+                                data-alt="Abstract cinematic light leaks and textures"
+                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBFhHjzouA5_xvNpX--3i-BsRaB_jjCa_Lw05rDMjf6qEOzYb_9Kf_MvShezNcOiTjgygJPHpiSU4bbjlynHR8BCpWYQqdax0GATj0J-pFHjtLmN1KMQkQ1r1PmfeYc3YjcJhI86pRqa2mrFhHsSNQCK88QWI6L8CbALaS8FPCLzsb6bWvdb5SUEET8O7ZcgXSoBGCXdlmghuWG34vUWr10_GsTjwa36uyTJp7_T6auZNKwSKxTTaD4OkDe8ZRp0aUjFptFTf3r0jE');">
+                            </div>
+                        </div>
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-[#212e53]/80 via-transparent to-transparent">
+                        </div>
+                        <div class="relative z-10 max-w-3xl">
+                            <div class="flex items-center gap-3 mb-6">
+                                <span class="founder-accent-line"></span>
+                                <span class="text-xs font-bold uppercase tracking-[0.3em] text-white/80">Premiere
+                                    Streaming Platform</span>
+                            </div>
+                            <h1 class="text-6xl md:text-8xl font-black leading-[0.95] tracking-tighter mb-8">
+                                WHERE ART <br /><span class="text-[#ce6a6b] italic">FINDS VOICE</span>
+                            </h1>
+                            <p class="text-xl md:text-2xl text-white/80 mb-12 leading-relaxed font-light max-w-2xl">
+                                A cinematic sanctuary for poetry, independent film, and performance art. Curated for
+                                those who see deeper.
+                            </p>
+                            <div class="flex flex-wrap gap-6">
+                                <button
+                                    class="bg-white text-[#212e53] px-10 py-5 rounded-full font-bold text-lg hover:bg-[#ce6a6b] hover:text-white transition-all shadow-2xl flex items-center gap-3 group">
+                                    <span class="material-symbols-outlined fill-1">play_arrow</span>
+                                    Start Exploring
+                                </button>
+                                <button
+                                    class="bg-white/10 backdrop-blur-md border border-white/20 text-white px-10 py-5 rounded-full font-bold text-lg hover:bg-white/20 transition-all">
+                                    Artist Catalog
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="px-6 lg:px-20 py-20 bg-[#212e53]">
+                <div class="mx-auto max-w-[1400px]">
+                    <div class="flex items-end justify-between mb-12">
+                        <div class="space-y-2">
+                            <h2 class="text-4xl font-bold tracking-tight">Curated Mediums</h2>
+                            <p class="text-white/40 text-lg">Hand-picked selections across the artistic spectrum</p>
+                        </div>
+                        <div class="flex gap-4">
+                            <button
+                                class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors">
+                                <span class="material-symbols-outlined">west</span>
+                            </button>
+                            <button
+                                class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors">
+                                <span class="material-symbols-outlined">east</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex overflow-x-auto hide-scrollbar gap-8 pb-10">
+                        <div class="group min-w-[320px] flex-shrink-0 cursor-pointer">
+                            <div class="aspect-[3/4] rounded-3xl overflow-hidden relative mb-4">
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-cinematic-deep/90 z-10">
+                                </div>
+                                <div class="w-full h-full bg-cover bg-center group-hover:scale-110 transition-transform duration-700"
+                                    data-alt="Microphone in a dark studio"
+                                    style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuByU9ZZbzPs6CXG67PpZOzotXdZXDpyd8d17cqzCt0r68AM4miJI0pILZ4nunJbv-ZW1dOOZkpmS8OxQo8YWD8_1Q7qOBRr8EaXffoQ7YH2eY85How0R6okX5JPNVCOv71Pe6QX0XXOF_hEppRRtKBENUq3o4VffmDKFehpDNDwW_kU9hQwZO_hJocKNJBwWglBKvYfz6qcGYf50sddvHeKm-4EdtKqElfdzc_FR83clGxsXgTYX9z8vcDLfM3KM94IpDkbxaM4DbY');">
+                                </div>
+                                <div class="absolute bottom-8 left-8 z-20">
+                                    <p class="text-2xl font-bold mb-1">Podcasts</p>
+                                    <p class="text-sm text-white/50 font-medium tracking-widest uppercase">The Intimate
+                                        Word</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="group min-w-[320px] flex-shrink-0 cursor-pointer">
+                            <div class="aspect-[3/4] rounded-3xl overflow-hidden relative mb-4">
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#212e53]/90 z-10">
+                                </div>
+                                <div class="w-full h-full bg-cover bg-center group-hover:scale-110 transition-transform duration-700"
+                                    data-alt="Theater stage with spotlight"
+                                    style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDe7PyeaNM_WvmC61DnVvipWeIXGdb0HVnBLZlGNUMToTtRHJoeJc8BLZR43FP8dB0hzRudZTedM6Wti3R6zdtxggxunDDtLG9NegO5CeBiSwl9jH-o1LwWhYvSa12boXBkXHEKEhmtkcGQ9fR5DpJmaSwUsrhvlzupfUH0IiUEYODnRRj4CkQoSjvbaC34D3iOQRjE7LVwivQ8Uvw2gj0OPYVDuuntH9E_tF6_7pRnm94BCh3Dcl74iV3Xpju01A6e4zMIIpi9V4E');">
+                                </div>
+                                <div class="absolute bottom-8 left-8 z-20">
+                                    <p class="text-2xl font-bold mb-1">Comedy</p>
+                                    <p class="text-sm text-white/50 font-medium tracking-widest uppercase">Subversive
+                                        Truths</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="group min-w-[320px] flex-shrink-0 cursor-pointer">
+                            <div class="aspect-[3/4] rounded-3xl overflow-hidden relative mb-4">
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#212e53]/90 z-10">
+                                </div>
+                                <div class="w-full h-full bg-cover bg-center group-hover:scale-110 transition-transform duration-700"
+                                    data-alt="Handwritten poetry"
+                                    style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAb0WXP4XTnHxx_8lJO0y-6CqtF7qGMYemeXTSkL7V1hgIUiIrQzUjrC6HnSvfs1iQS0LaFKyjtREzKdVHmJvVa_kPp3tc7C399phiO9HqZhOVyDS7uFb9aM_e6QlraKsur9p8nLITMV5WthLndA2y9v6PJ1aqtgGchljPUyWUcb4ZDafSXAW6PZ2WRvR5wHIRNyYBTjHbfTpDozN6UDkgyKdUPZkFcRtWy3atfo0CiRe_9VAuX8OOTdEotWvvDD_i7dNg_ZoBhGGM');">
+                                </div>
+                                <div class="absolute bottom-8 left-8 z-20">
+                                    <p class="text-2xl font-bold mb-1">Poetry</p>
+                                    <p class="text-sm text-white/50 font-medium tracking-widest uppercase">Rhythm &amp;
+                                        Soul</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="group min-w-[320px] flex-shrink-0 cursor-pointer">
+                            <div class="aspect-[3/4] rounded-3xl overflow-hidden relative mb-4">
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#212e53]/90 z-10">
+                                </div>
+                                <div class="w-full h-full bg-cover bg-center group-hover:scale-110 transition-transform duration-700"
+                                    data-alt="Music performance"
+                                    style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuChbiGcTJBxaVlOqg26FXsi50Bh91VFRBYoNd74FiUeOz68rY1PFPrjpj_i673AJhXgzbQU9xzRPjAj2N4bDP-BbE63hnrCHC772fIowYHf-M7jpNJ2Zvf7f2O_AKqKLYHOiGXP-TzfTivGA2yPK3O1bji6SJcmJsm1FXOstywcT67TtoY_RTEGipk1ZRHBGKZigrMCL50dvXBGrbQdGyzId3Dh0A3vPiJC4NNdwVscYOf19w3x_EgtPOidHwpubUO4R84jd44171o');">
+                                </div>
+                                <div class="absolute bottom-8 left-8 z-20">
+                                    <p class="text-2xl font-bold mb-1">Live Sets</p>
+                                    <p class="text-sm text-white/50 font-medium tracking-widest uppercase">Sonic
+                                        Journeys</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="bg-[#bed3c3] py-32 px-6 lg:px-20 overflow-hidden">
+                <div class="mx-auto max-w-[1400px]">
+                    <div class="mb-24 text-center lg:text-left max-w-2xl">
+                        <span
+                            class="inline-block px-4 py-1.5 rounded-full border border-[#212e53]/20 text-[10px] font-black uppercase tracking-[0.4em] mb-8 text-[#212e53]">The
+                            Minds Behind</span>
+                        <h2
+                            class="text-5xl md:text-7xl font-black text-[#212e53] mb-8 leading-[0.9] tracking-tighter">
+                            The Visionaries</h2>
+                        <p class="text-xl text-[#212e53]/70 font-light leading-relaxed">
+                            We didn't just want another platform. We wanted a gallery that breathes. A space where the
+                            digital medium honors the analog soul of creation.
+                        </p>
+                    </div>
+                    <div class="space-y-32">
+                        <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-24">
+                            <div class="w-full lg:w-3/5 relative group">
+                                <div
+                                    class="absolute -inset-4 bg-primary/10 rounded-[3rem] blur-2xl group-hover:bg-primary/20 transition-colors">
+                                </div>
+                                <div
+                                    class="relative aspect-[16/10] rounded-[2.5rem] overflow-hidden shadow-2xl border-8 border-white/30">
+                                    <div class="w-full h-full bg-cover bg-center" data-alt="Founder portrait"
+                                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDtBBFbXLkBJnaNtyq0WMUPTRGFrYZ0EnMAycSqgnBPEGpa-xdm9pmNaVfjSKbzWLmF8_gqHKopmmOuSWONrKUJ_hOlwukNXcQPoEjnwabPqj5h6DldsnOBNlDNGiBLUViNzj2cgSBMydqGWm-EWuYVEQJj_ZiKyuomKFfpc7XyoWsSIymcIjVkg38d2uqyzIoyewrmVTZrc4Y1wse0MMdRUudKIGJMraQh9ALeSYYrKSDgLRnJ_9ds3t9tFSJs3JCbO3y02tOE3gQ');">
+                                    </div>
+                                    <div
+                                        class="absolute inset-0 bg-gradient-to-r from-[#212e53]/40 to-transparent">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="w-full lg:w-2/5 space-y-8 relative">
+                                <span class="quote-mark absolute -top-10 -left-6">“</span>
+                                <div class="space-y-4">
+                                    <h3 class="text-3xl font-black text-[#212e53] tracking-tight">Elias Thorne</h3>
+                                    <p class="text-xs font-bold text-[#ce6a6b] tracking-widest uppercase">Chief Creative
+                                        Architect</p>
+                                </div>
+                                <p class="text-lg text-[#212e53]/80 leading-relaxed font-light">
+                                    "Art is the only way to run away without leaving home. My mission was to build a
+                                    sanctuary where those journeys are never interrupted by algorithms, only enhanced by
+                                    curation."
+                                </p>
+                                <div
+                                    class="p-8 bg-white/40 backdrop-blur-sm rounded-3xl border border-white/50 relative overflow-hidden">
+                                    <div class="absolute top-0 left-0 w-1 h-full bg-[#ce6a6b]"></div>
+                                    <p class="text-sm italic font-medium text-[#212e53] leading-relaxed">
+                                        "We curate for the soul, not for the scroll. If a piece of art doesn't make you
+                                        pause your breath, it isn't ready for our gallery."
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col lg:flex-row-reverse items-center gap-12 lg:gap-24">
+                            <div class="w-full lg:w-3/5 relative group">
+                                <div
+                                    class="absolute -inset-4 bg-primary/10 rounded-[3rem] blur-2xl group-hover:bg-primary/20 transition-colors">
+                                </div>
+                                <div
+                                    class="relative aspect-[16/10] rounded-[2.5rem] overflow-hidden shadow-2xl border-8 border-white/30">
+                                    <div class="w-full h-full bg-cover bg-center" data-alt="Founder portrait"
+                                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCr5z4_n5O1sPNaPj6prn7e7Hx4HIRgWkTOGMuapn59CyfK_6dB0DM_KFUb7HYofIhCHluSXWHaUKzoYuCmVavhzwrFGbcX8A1noDyi08OIqt8iDUvfP71jk34zxraA7m1KYte2mkzizZEERhjiUFfDbemZ3kGE5QpjLA8z5ZFI4X_ZGMq5XKWwuoSSY3JOxN46dV9na9ySlZE2waKvX93b93A94KOP5VGMFPJFPhs23--DIhN3Hqv_kFo0Q65uH1hrPGuEy9SNyc0');">
+                                    </div>
+                                    <div
+                                        class="absolute inset-0 bg-gradient-to-l from-[#212e53]/40 to-transparent">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="w-full lg:w-2/5 space-y-8 relative text-right lg:text-left">
+                                <span class="quote-mark absolute -top-10 -right-6 lg:-right-auto lg:-left-6">“</span>
+                                <div class="space-y-4">
+                                    <h3 class="text-3xl font-black text-[#212e53] tracking-tight">Sienna Vance</h3>
+                                    <p class="text-xs font-bold text-[#ce6a6b] tracking-widest uppercase">Editorial
+                                        Director</p>
+                                </div>
+                                <p class="text-lg text-[#212e53]/80 leading-relaxed font-light">
+                                    "The modern world is loud; we chose to be quiet. Our philosophy centers on the
+                                    resonance of the human voice—whether spoken in a poem or captured in a frame."
+                                </p>
+                                <div
+                                    class="p-8 bg-white/40 backdrop-blur-sm rounded-3xl border border-white/50 relative overflow-hidden text-left">
+                                    <div class="absolute top-0 right-0 lg:left-0 lg:right-auto w-1 h-full bg-[#ce6a6b]">
+                                    </div>
+                                    <p class="text-sm italic font-medium text-[#212e53] leading-relaxed">
+                                        "When you give artists 85% of the revenue, you aren't just paying them; you're
+                                        buying the time they need to create their next masterpiece."
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="bg-[#212e53] py-32 px-6 lg:px-20 relative overflow-hidden">
+                <div class="absolute top-0 left-1/4 w-96 h-96 bg-[#ce6a6b]/5 rounded-full blur-[100px]"></div>
+                <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-[#4a919e]/5 rounded-full blur-[100px]"></div>
+                <div class="mx-auto max-w-[900px] relative z-10">
+                    <div class="text-center mb-20 space-y-6">
+                        <h2 class="text-4xl md:text-5xl font-bold tracking-tight">Common Inquiries</h2>
+                        <div class="w-24 h-1.5 bg-[#ce6a6b] mx-auto rounded-full"></div>
+                    </div>
+                    <div class="space-y-6">
+                        <div
+                            class="group bg-white/[0.03] rounded-3xl border border-white/10 overflow-hidden hover:bg-white/[0.05] hover:border-[#ce6a6b]/40 transition-all duration-300">
+                            <button class="w-full flex items-center justify-between p-8 text-left focus:outline-none">
+                                <span class="text-xl font-semibold text-[#ebaca2]">How does the revenue sharing
+                                    work?</span>
+                                <span
+                                    class="material-symbols-outlined text-[#ce6a6b] group-hover:rotate-180 transition-transform duration-500">expand_more</span>
+                            </button>
+                            <div class="px-8 pb-8 text-white/50 leading-relaxed text-lg">
+                                We operate on a radical transparency model. 85% of net subscription fees are pooled and
+                                distributed to creators based on a weighted engagement metric that values completion
+                                rates over "clickbait" views.
+                            </div>
+                        </div>
+                        <div
+                            class="group bg-white/[0.03] rounded-3xl border border-white/10 overflow-hidden hover:bg-white/[0.05] hover:border-[#ce6a6b]/40 transition-all duration-300">
+                            <button class="w-full flex items-center justify-between p-8 text-left focus:outline-none">
+                                <span class="text-xl font-semibold text-[#ebaca2]">Is there a focus on specific art
+                                    forms?</span>
+                                <span
+                                    class="material-symbols-outlined text-[#ce6a6b] group-hover:rotate-180 transition-transform duration-500">expand_more</span>
+                            </button>
+                            <div class="hidden px-8 pb-8 text-white/50 leading-relaxed text-lg">
+                                While we host a diverse range of content, our core pillars are poetry, cinematic shorts,
+                                deep-dive podcasts, and live performance art that challenges the status quo.
+                            </div>
+                        </div>
+                        <div
+                            class="group bg-white/[0.03] rounded-3xl border border-white/10 overflow-hidden hover:bg-white/[0.05] hover:border-[#ce6a6b]/40 transition-all duration-300">
+                            <button class="w-full flex items-center justify-between p-8 text-left focus:outline-none">
+                                <span class="text-xl font-semibold text-[#ebaca2]">Can I download content for offline
+                                    viewing?</span>
+                                <span
+                                    class="material-symbols-outlined text-[#ce6a6b] group-hover:rotate-180 transition-transform duration-500">expand_more</span>
+                            </button>
+                            <div class="hidden px-8 pb-8 text-white/50 leading-relaxed text-lg">
+                                Yes, all members can download their favorite pieces via our mobile applications to enjoy
+                                art wherever their journey takes them.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-20 text-center">
+                        <p class="text-white/30 mb-8 italic text-lg">Seeking something more specific?</p>
+                        <a class="inline-flex items-center gap-2 text-[#ce6a6b] font-bold hover:text-white transition-colors group"
+                            href="#">
+                            Connect with our curators
+                            <span
+                                class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <footer class="bg-[#212e53] border-t border-white/5 pt-20 pb-10 px-6 lg:px-20">
+            <div class="mx-auto max-w-[1400px]">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
+                    <div class="col-span-1 md:col-span-2 space-y-6">
+                        <div class="flex items-center gap-3">
+                            <div class="size-8 bg-[#ce6a6b] rounded flex items-center justify-center">
+                                <span class="material-symbols-outlined text-white text-sm">movie_filter</span>
+                            </div>
+                            <span class="text-2xl font-black tracking-tighter">ARTIST STREAM</span>
+                        </div>
+                        <p class="text-white/40 max-w-sm leading-relaxed">
+                            The world's premier cinematic gallery for independent voices and artistic visionaries.
+                            Stream, support, and discover.
+                        </p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold mb-6 text-white/80">Platform</h4>
+                        <ul class="space-y-4 text-sm text-white/40">
+                            <li><a class="hover:text-[#ce6a6b] transition-colors" href="#">Library</a></li>
+                            <li><a class="hover:text-[#ce6a6b] transition-colors" href="#">Artist Portal</a></li>
+                            <li><a class="hover:text-[#ce6a6b] transition-colors" href="#">Pricing Plans</a></li>
+                            <li><a class="hover:text-[#ce6a6b] transition-colors" href="#">Gift Access</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-bold mb-6 text-white/80">Follow the Journey</h4>
+                        <div class="flex gap-4">
+                            <a class="size-11 rounded-xl bg-white/5 flex items-center justify-center hover:bg-[#ce6a6b] transition-all group"
+                                href="#">
+                                <span
+                                    class="material-symbols-outlined text-xl text-white/60 group-hover:text-white">share</span>
+                            </a>
+                            <a class="size-11 rounded-xl bg-white/5 flex items-center justify-center hover:bg-[#ce6a6b] transition-all group"
+                                href="#">
+                                <span
+                                    class="material-symbols-outlined text-xl text-white/60 group-hover:text-white">alternate_email</span>
+                            </a>
+                            <a class="size-11 rounded-xl bg-white/5 flex items-center justify-center hover:bg-[#ce6a6b] transition-all group"
+                                href="#">
+                                <span
+                                    class="material-symbols-outlined text-xl text-white/60 group-hover:text-white">public</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
+                    <p class="text-white/20 text-xs">© 2024 Artist Stream Cinematic Platform. Crafted for the curious.
+                    </p>
+                    <div class="flex gap-8 text-xs text-white/20">
+                        <a class="hover:text-white transition-colors" href="#">Privacy</a>
+                        <a class="hover:text-white transition-colors" href="#">Terms</a>
+                        <a class="hover:text-white transition-colors" href="#">Cookies</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+</body>
+
+</html>

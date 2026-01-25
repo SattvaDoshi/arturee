@@ -1,25 +1,21 @@
 <!DOCTYPE html>
-<html lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Vivid | Where Art Finds Its Voice</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Vivid | Where Art Finds Its Voice</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700;800;900&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
             theme: {
                 extend: {
-                    colors: {
-                        "primary": "#B9A5F8", // Pastel Lavender
-                        "secondary": "#E8FF8E", // Fresh Lime Green
-                        "accent": "#FFF48E", // Energetic Light Yellow
-                        "nude-100": "#FAF9F6", // Warm Off-white
-                        "nude-200": "#F5F2ED", // Soft Cream
-                        "nude-300": "#EFEAE2", // Beige
-                        "charcoal": "#1A1A1A", // Deep Charcoal
-                    },
                     fontFamily: {
                         "display": ["Spline Sans", "sans-serif"]
                     },
@@ -36,7 +32,7 @@
             },
         }
     </script>
-<style type="text/tailwindcss">
+    <style type="text/tailwindcss">
         .glass-card {
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(16px);
@@ -60,176 +56,237 @@
         }
     </style>
 </head>
-<body class="bg-nude-100 font-display text-charcoal selection:bg-primary/30">
-<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden editorial-gradient">
-<header class="sticky top-0 z-50 w-full border-b border-charcoal/5 bg-white/80 backdrop-blur-md px-6 md:px-20 py-4">
-<div class="mx-auto flex max-w-[1400px] items-center justify-between">
-<div class="flex items-center gap-3">
-<div class="bg-primary p-1.5 rounded-lg shadow-sm">
-<svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-<path clip-rule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z" fill="currentColor" fill-rule="evenodd"></path>
-</svg>
-</div>
-<h2 class="text-xl font-black tracking-tight text-charcoal">Vivid</h2>
-</div>
-<nav class="hidden md:flex items-center gap-10">
-<a class="text-sm font-semibold text-charcoal/60 hover:text-primary transition-colors" href="#">Shows</a>
-<a class="text-sm font-semibold text-charcoal/60 hover:text-primary transition-colors" href="#">Podcasts</a>
-<a class="text-sm font-semibold text-charcoal/60 hover:text-primary transition-colors" href="#">Comedy</a>
-<a class="text-sm font-semibold text-charcoal/60 hover:text-primary transition-colors" href="#">Pricing</a>
-</nav>
-<div class="flex items-center gap-3">
-<button class="hidden sm:flex px-5 py-2 text-sm font-bold text-charcoal/70 hover:text-charcoal transition-colors">Sign In</button>
-<button class="bg-charcoal px-6 py-2 rounded-full text-sm font-bold text-white hover:bg-primary transition-all shadow-md">Join Now</button>
-</div>
-</div>
-</header>
-<main class="flex-1">
-<section class="px-6 pt-12 pb-6 md:px-20">
-<div class="mx-auto max-w-[1400px]">
-<div class="flex flex-col items-center text-center gap-8 mb-12">
-<span class="inline-block px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-charcoal bg-accent rounded-full shadow-sm">New Originals Streaming Now</span>
-<h1 class="text-5xl md:text-7xl lg:text-8xl font-black leading-[0.9] tracking-tighter text-charcoal max-w-4xl">
-                        Where Art Finds Its <span class="text-primary italic">Voice</span>
-</h1>
-<div class="flex flex-wrap justify-center gap-4">
-<button class="bg-primary text-white px-10 py-4 rounded-full text-lg font-bold flex items-center gap-2 hover:scale-105 transition-all shadow-xl shadow-primary/20">
-                            Start Watching
-                            <span class="material-symbols-outlined">play_arrow</span>
-</button>
-<button class="bg-white border border-charcoal/10 px-10 py-4 rounded-full text-lg font-bold text-charcoal hover:bg-nude-200 transition-colors shadow-sm">
-                            Explore Shows
-                        </button>
-</div>
-</div>
-</div>
-</section>
-<section class="py-12 md:px-20 px-6">
-<div class="mx-auto max-w-[1400px]">
-<div class="flex items-end justify-between mb-10">
-<div>
-<h2 class="text-3xl md:text-5xl font-black tracking-tighter text-charcoal">Exclusive Originals</h2>
-<p class="text-charcoal/50 mt-2 font-medium">Immerse yourself in our hand-picked masterpieces</p>
-</div>
-<a class="bg-secondary px-6 py-2 rounded-full text-charcoal text-sm font-bold flex items-center gap-1 hover:brightness-95 transition-all" href="#">
-                        View All <span class="material-symbols-outlined text-sm">arrow_forward</span>
-</a>
-</div>
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 auto-rows-[200px]">
-<div class="lg:col-span-2 lg:row-span-2 rounded-4xl overflow-hidden group relative shadow-2xl">
-<img alt="Hero Featured" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnsgMc-9vWB2jVZnNY9OxoK8_BaZASds2u3vuoZZc4O7X0MDZWge7YPEJtPFWKGKcOK9n8fdj7q_tvvKjH2PIbS8sG1Rh3vDSk1TVEbhDVGK7u0LzC1JQLs6sPuTfmhUgDFENXG_haHS5GFKfnpXrpGLQOsFhHBaMxfIYhahDCScBhiD6VnLxXG9vvOAKh0kEvytrJhTXy5GHTF1QV8jVz5F5UQrBHINz-gtU7ujs1LMASn9d9VGc0bA9oKxl_LQt3M84YGgbN--4"/>
-<div class="absolute inset-0 bg-gradient-to-t from-charcoal/60 via-transparent to-transparent"></div>
-<div class="absolute bottom-8 left-8 right-8 text-white">
-<span class="bg-accent text-charcoal text-[10px] font-black px-3 py-1 rounded-full uppercase mb-4 inline-block">Featured Premiere</span>
-<h3 class="text-3xl font-black">Visual Symphony</h3>
-</div>
-</div>
-<div class="lg:col-span-1 lg:row-span-3 rounded-4xl overflow-hidden group relative shadow-xl">
-<img alt="Digital Renaissance" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCt-jEXc91uTeJMaVK6zjnOMFJKCGus_B1r6AYlGDj7_wlxzJJBj_lRGPAWkyiE4Qr7cD4sfnnIdlZ3bSfgEuHe89crQEMsg3-ReTjP-VsU7nFrMufroLvl2bb7Hz5wWv1HzpQ_PZVZ_NebgzWxa_pBZpZLxR2Gpg8fOVsTWb9266HoYO5I924k2u04SvPfegjaO3GWO6B8EPlCUe2h44GXeTJD8Xeer3p1eV5E31cIXxxzHmgt5I0Sx4Ny_RKL1i8NICHTI6242mQ"/>
-<div class="absolute top-6 left-6">
-<span class="px-3 py-1 bg-primary/90 backdrop-blur-md text-white text-[10px] font-black uppercase rounded-full">Trending</span>
-</div>
-<div class="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-<div class="absolute bottom-6 left-6 right-6 text-white opacity-0 group-hover:opacity-100 transition-transform translate-y-4 group-hover:translate-y-0 transition-all">
-<h3 class="text-xl font-bold">Digital Renaissance</h3>
-<p class="text-white/70 text-sm">Original Series • 8 Episodes</p>
-</div>
-</div>
-<div class="lg:col-span-1 lg:row-span-2 rounded-4xl overflow-hidden group relative shadow-xl">
-<img alt="The Beat Lab" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDORGisarDYAqiHhwqXhYY4WJNNlgj2-xTq1FnVgjAhSlFDLWIHSnN0BTssUzt-B3SegXY1P0OTnOLyOPsxsBP3HcUPad0uxdr7a3D5jEV2kEvyNbdgDyE4z8D4lnNshop8mrxEwEmvktNDOZq_7VYRiuDS-LNg9xnqAABIzCrNeTEPaFezdoe_QKqILe1LWPMYt8AXrdeSvSsbottdWIGtzjVO4KmsTHdxx8rB-u3hnWjRXN0FnFfTts5w-JYkpsSh_Q1C6LSR3Yg"/>
-<div class="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-<div class="absolute bottom-6 left-6 right-6 text-white opacity-0 group-hover:opacity-100 transition-all">
-<h3 class="text-xl font-bold">The Beat Lab</h3>
-<p class="text-white/70 text-sm">Documentary • Feature Film</p>
-</div>
-</div>
-<div class="lg:col-span-1 lg:row-span-2 rounded-4xl overflow-hidden group relative shadow-xl">
-<img alt="Vivid Sessions" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSlu6MXincC_nuFxgb0-Qvvi98L2ihaUkswQOo-vb-lFvwESZwA-LdRVspW60Iny8RYTUaL4Ja1TMJ5JeFLL8V3SoUsgPHbo_goFB2AYNXyH1LExdnnkRSudA47pH8kPDDUHrFsLZDQ4AzPU98TYnGaWvPk4vRPLXdiyLiz15XJoDcjwmTc0hdzANZI83gpdb0XODPeJxofCLh9C_EenN5SJJsfR56_URLhCtCsiEWzYSKMLbTr3vs_cU9hGtU8mPKrldjwSdeMRo"/>
-<div class="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-<div class="absolute bottom-6 left-6 right-6 text-white opacity-0 group-hover:opacity-100 transition-all">
-<h3 class="text-xl font-bold">Vivid Sessions</h3>
-<p class="text-white/70 text-sm">Live Sessions • Weekly</p>
-</div>
-</div>
-<div class="lg:col-span-1 lg:row-span-1 rounded-4xl overflow-hidden group relative shadow-xl">
-<img alt="Neon Pulse" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsy8ybTozKR1HiRFdBhwUpfnIGozYNMfABlXdQSgfAjiMjlUC3_inSVNVMv0vf3VQy0tt5e39uzqccD28xR9aQjOTVCj1NBgt-KYcyYBysCMcUCR7RGxqHpPugUXfq18gRtF8JPVi6-lR_Fd7jsZlWfWVtAeB2YDeWTObwihEy4BFEbO5hckAKWe7z4Eo36D2eg2oIiitpulF8UxpA6mzZg9djheSNosdv_VdsKLChme6M28deuo6FmJKD7T5k3fPmH9h7PHjz_e8"/>
-<div class="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-<div class="absolute bottom-4 left-4 right-4 text-white opacity-0 group-hover:opacity-100 transition-all">
-<h3 class="text-lg font-bold">Neon Pulse</h3>
-</div>
-</div>
-</div>
-</div>
-</section>
-<section class="py-24 px-6 md:px-20 bg-nude-200">
-<div class="mx-auto max-w-[1000px]">
-<div class="mb-20 text-center">
-<h2 class="text-4xl md:text-6xl font-black mb-6 text-charcoal tracking-tight">The Platform for Visionaries</h2>
-<p class="text-lg text-charcoal/60 max-w-2xl mx-auto font-medium">Experience entertainment reimagined with creators at the center. No ads, no noise, just pure artistic expression.</p>
-</div>
-<div class="flex flex-col gap-12">
-<div class="flex flex-col md:flex-row items-center gap-8 group">
-<div class="w-full md:w-1/2 flex justify-center md:justify-end">
-<div class="w-24 h-24 bg-secondary rounded-3xl flex items-center justify-center text-charcoal shadow-lg group-hover:rotate-6 transition-transform">
-<span class="material-symbols-outlined text-4xl">play_circle</span>
-</div>
-</div>
-<div class="w-full md:w-1/2 text-center md:text-left">
-<div class="glass-card p-8 rounded-3xl">
-<h3 class="text-2xl font-black mb-3 text-charcoal">Crystal Clear Streaming</h3>
-<p class="text-charcoal/60 leading-relaxed font-medium">Experience 4K HDR streaming with zero buffering and a seamless editorial user interface.</p>
-</div>
-</div>
-</div>
-<div class="flex flex-col md:flex-row-reverse items-center gap-8 group">
-<div class="w-full md:w-1/2 flex justify-center md:justify-start">
-<div class="w-24 h-24 bg-primary rounded-3xl flex items-center justify-center text-white shadow-lg group-hover:-rotate-6 transition-transform">
-<span class="material-symbols-outlined text-4xl">center_focus_strong</span>
-</div>
-</div>
-<div class="w-full md:w-1/2 text-center md:text-right">
-<div class="glass-card p-8 rounded-3xl border-accent/20 border-2">
-<h3 class="text-2xl font-black mb-3 text-charcoal">Creator Focused</h3>
-<p class="text-charcoal/60 leading-relaxed font-medium">Direct support for independent artists. Every minute you watch directly funds the creators you love.</p>
-</div>
-</div>
-</div>
-<div class="flex flex-col md:flex-row items-center gap-8 group">
-<div class="w-full md:w-1/2 flex justify-center md:justify-end">
-<div class="w-24 h-24 bg-accent rounded-3xl flex items-center justify-center text-charcoal shadow-lg group-hover:scale-110 transition-transform">
-<span class="material-symbols-outlined text-4xl">verified_user</span>
-</div>
-</div>
-<div class="w-full md:w-1/2 text-center md:text-left">
-<div class="glass-card p-8 rounded-3xl">
-<h3 class="text-2xl font-black mb-3 text-charcoal">Ad-Free Forever</h3>
-<p class="text-charcoal/60 leading-relaxed font-medium">Pure immersion without any interruptions. Your flow stays intact from start to finish.</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-</main>
-<footer class="border-t border-charcoal/5 py-16 px-6 md:px-20 bg-white">
-<div class="mx-auto max-w-[1400px] flex flex-col md:flex-row justify-between items-center gap-10">
-<div class="flex items-center gap-3 grayscale opacity-60">
-<div class="bg-charcoal p-1.5 rounded shadow-sm">
-<svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-<path clip-rule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z" fill="currentColor" fill-rule="evenodd"></path>
-</svg>
-</div>
-<span class="font-black text-charcoal tracking-tighter text-xl">Vivid</span>
-</div>
-<div class="flex flex-wrap justify-center gap-10 text-sm font-bold text-charcoal/50">
-<a class="hover:text-primary transition-colors" href="#">Terms</a>
-<a class="hover:text-primary transition-colors" href="#">Privacy</a>
-<a class="hover:text-primary transition-colors" href="#">Help</a>
-<a class="hover:text-primary transition-colors" href="#">Contact</a>
-</div>
-<p class="text-xs font-bold text-charcoal/30 tracking-widest uppercase">© 2024 Vivid Entertainment Inc.</p>
-</div>
-</footer>
-</div>
 
-</body></html>
+<body class="bg-[#FAF9F6] font-display text-[#1A1A1A] selection:bg-[#B9A5F8]/30">
+    <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden editorial-gradient">
+        <header
+            class="sticky top-0 z-50 w-full border-b border-[#1A1A1A]/5 bg-white/80 backdrop-blur-md px-6 md:px-20 py-4">
+            <div class="mx-auto flex max-w-[1400px] items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="bg-[#B9A5F8] p-1.5 rounded-lg shadow-sm">
+                        <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 48 48"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path clip-rule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z"
+                                fill="currentColor" fill-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-black tracking-tight text-[#1A1A1A]">Vivid</h2>
+                </div>
+                <nav class="hidden md:flex items-center gap-10">
+                    <a class="text-sm font-semibold text-[#1A1A1A]/60 hover:text-[#B9A5F8] transition-colors"
+                        href="#">Shows</a>
+                    <a class="text-sm font-semibold text-[#1A1A1A]/60 hover:text-[#B9A5F8] transition-colors"
+                        href="#">Podcasts</a>
+                    <a class="text-sm font-semibold text-[#1A1A1A]/60 hover:text-[#B9A5F8] transition-colors"
+                        href="#">Comedy</a>
+                    <a class="text-sm font-semibold text-[#1A1A1A]/60 hover:text-[#B9A5F8] transition-colors"
+                        href="#">Pricing</a>
+                </nav>
+                <div class="flex items-center gap-3">
+                    <button
+                        class="hidden sm:flex px-5 py-2 text-sm font-bold text-[#1A1A1A]/70 hover:text-[#1A1A1A] transition-colors">Sign
+                        In</button>
+                    <button
+                        class="bg-[#1A1A1A] px-6 py-2 rounded-full text-sm font-bold text-white hover:bg-[#B9A5F8] transition-all shadow-md">Join
+                        Now</button>
+                </div>
+            </div>
+        </header>
+        <main class="flex-1">
+            <section class="px-6 pt-12 pb-6 md:px-20">
+                <div class="mx-auto max-w-[1400px]">
+                    <div class="flex flex-col items-center text-center gap-8 mb-12">
+                        <span
+                            class="inline-block px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#1A1A1A] bg-[#FFF48E] rounded-full shadow-sm">New
+                            Originals Streaming Now</span>
+                        <h1
+                            class="text-5xl md:text-7xl lg:text-8xl font-black leading-[0.9] tracking-tighter text-[#1A1A1A] max-w-4xl">
+                            Where Art Finds Its <span class="text-[#B9A5F8] italic">Voice</span>
+                        </h1>
+                        <div class="flex flex-wrap justify-center gap-4">
+                            <button
+                                class="bg-[#B9A5F8] text-white px-10 py-4 rounded-full text-lg font-bold flex items-center gap-2 hover:scale-105 transition-all shadow-xl shadow-[#B9A5F8]/20">
+                                Start Watching
+                                <span class="material-symbols-outlined">play_arrow</span>
+                            </button>
+                            <button
+                                class="bg-white border border-[#1A1A1A]/10 px-10 py-4 rounded-full text-lg font-bold text-[#1A1A1A] hover:bg-[#F5F2ED] transition-colors shadow-sm">
+                                Explore Shows
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="py-12 md:px-20 px-6">
+                <div class="mx-auto max-w-[1400px]">
+                    <div class="flex items-end justify-between mb-10">
+                        <div>
+                            <h2 class="text-3xl md:text-5xl font-black tracking-tighter text-[#1A1A1A]">Exclusive
+                                Originals</h2>
+                            <p class="text-[#1A1A1A]/50 mt-2 font-medium">Immerse yourself in our hand-picked
+                                masterpieces</p>
+                        </div>
+                        <a class="bg-[#E8FF8E] px-6 py-2 rounded-full text-[#1A1A1A] text-sm font-bold flex items-center gap-1 hover:brightness-95 transition-all"
+                            href="#">
+                            View All <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                        </a>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 auto-rows-[200px]">
+                        <div class="lg:col-span-2 lg:row-span-2 rounded-4xl overflow-hidden group relative shadow-2xl">
+                            <img alt="Hero Featured"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnsgMc-9vWB2jVZnNY9OxoK8_BaZASds2u3vuoZZc4O7X0MDZWge7YPEJtPFWKGKcOK9n8fdj7q_tvvKjH2PIbS8sG1Rh3vDSk1TVEbhDVGK7u0LzC1JQLs6sPuTfmhUgDFENXG_haHS5GFKfnpXrpGLQOsFhHBaMxfIYhahDCScBhiD6VnLxXG9vvOAKh0kEvytrJhTXy5GHTF1QV8jVz5F5UQrBHINz-gtU7ujs1LMASn9d9VGc0bA9oKxl_LQt3M84YGgbN--4" />
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-[#1A1A1A]/60 via-transparent to-transparent">
+                            </div>
+                            <div class="absolute bottom-8 left-8 right-8 text-white">
+                                <span
+                                    class="bg-[#FFF48E] text-[#1A1A1A] text-[10px] font-black px-3 py-1 rounded-full uppercase mb-4 inline-block">Featured
+                                    Premiere</span>
+                                <h3 class="text-3xl font-black">Visual Symphony</h3>
+                            </div>
+                        </div>
+                        <div class="lg:col-span-1 lg:row-span-3 rounded-4xl overflow-hidden group relative shadow-xl">
+                            <img alt="Digital Renaissance"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCt-jEXc91uTeJMaVK6zjnOMFJKCGus_B1r6AYlGDj7_wlxzJJBj_lRGPAWkyiE4Qr7cD4sfnnIdlZ3bSfgEuHe89crQEMsg3-ReTjP-VsU7nFrMufroLvl2bb7Hz5wWv1HzpQ_PZVZ_NebgzWxa_pBZpZLxR2Gpg8fOVsTWb9266HoYO5I924k2u04SvPfegjaO3GWO6B8EPlCUe2h44GXeTJD8Xeer3p1eV5E31cIXxxzHmgt5I0Sx4Ny_RKL1i8NICHTI6242mQ" />
+                            <div class="absolute top-6 left-6">
+                                <span
+                                    class="px-3 py-1 bg-[#B9A5F8]/90 backdrop-blur-md text-white text-[10px] font-black uppercase rounded-full">Trending</span>
+                            </div>
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-[#1A1A1A]/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                            </div>
+                            <div
+                                class="absolute bottom-6 left-6 right-6 text-white opacity-0 group-hover:opacity-100 transition-transform translate-y-4 group-hover:translate-y-0 transition-all">
+                                <h3 class="text-xl font-bold">Digital Renaissance</h3>
+                                <p class="text-white/70 text-sm">Original Series • 8 Episodes</p>
+                            </div>
+                        </div>
+                        <div class="lg:col-span-1 lg:row-span-2 rounded-4xl overflow-hidden group relative shadow-xl">
+                            <img alt="The Beat Lab"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDORGisarDYAqiHhwqXhYY4WJNNlgj2-xTq1FnVgjAhSlFDLWIHSnN0BTssUzt-B3SegXY1P0OTnOLyOPsxsBP3HcUPad0uxdr7a3D5jEV2kEvyNbdgDyE4z8D4lnNshop8mrxEwEmvktNDOZq_7VYRiuDS-LNg9xnqAABIzCrNeTEPaFezdoe_QKqILe1LWPMYt8AXrdeSvSsbottdWIGtzjVO4KmsTHdxx8rB-u3hnWjRXN0FnFfTts5w-JYkpsSh_Q1C6LSR3Yg" />
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-[#1A1A1A]/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                            </div>
+                            <div
+                                class="absolute bottom-6 left-6 right-6 text-white opacity-0 group-hover:opacity-100 transition-all">
+                                <h3 class="text-xl font-bold">The Beat Lab</h3>
+                                <p class="text-white/70 text-sm">Documentary • Feature Film</p>
+                            </div>
+                        </div>
+                        <div class="lg:col-span-1 lg:row-span-2 rounded-4xl overflow-hidden group relative shadow-xl">
+                            <img alt="Vivid Sessions"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSlu6MXincC_nuFxgb0-Qvvi98L2ihaUkswQOo-vb-lFvwESZwA-LdRVspW60Iny8RYTUaL4Ja1TMJ5JeFLL8V3SoUsgPHbo_goFB2AYNXyH1LExdnnkRSudA47pH8kPDDUHrFsLZDQ4AzPU98TYnGaWvPk4vRPLXdiyLiz15XJoDcjwmTc0hdzANZI83gpdb0XODPeJxofCLh9C_EenN5SJJsfR56_URLhCtCsiEWzYSKMLbTr3vs_cU9hGtU8mPKrldjwSdeMRo" />
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-[#1A1A1A]/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                            </div>
+                            <div
+                                class="absolute bottom-6 left-6 right-6 text-white opacity-0 group-hover:opacity-100 transition-all">
+                                <h3 class="text-xl font-bold">Vivid Sessions</h3>
+                                <p class="text-white/70 text-sm">Live Sessions • Weekly</p>
+                            </div>
+                        </div>
+                        <div class="lg:col-span-1 lg:row-span-1 rounded-4xl overflow-hidden group relative shadow-xl">
+                            <img alt="Neon Pulse"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsy8ybTozKR1HiRFdBhwUpfnIGozYNMfABlXdQSgfAjiMjlUC3_inSVNVMv0vf3VQy0tt5e39uzqccD28xR9aQjOTVCj1NBgt-KYcyYBysCMcUCR7RGxqHpPugUXfq18gRtF8JPVi6-lR_Fd7jsZlWfWVtAeB2YDeWTObwihEy4BFEbO5hckAKWe7z4Eo36D2eg2oIiitpulF8UxpA6mzZg9djheSNosdv_VdsKLChme6M28deuo6FmJKD7T5k3fPmH9h7PHjz_e8" />
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-[#1A1A1A]/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                            </div>
+                            <div
+                                class="absolute bottom-4 left-4 right-4 text-white opacity-0 group-hover:opacity-100 transition-all">
+                                <h3 class="text-lg font-bold">Neon Pulse</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="py-24 px-6 md:px-20 bg-[#F5F2ED]">
+                <div class="mx-auto max-w-[1000px]">
+                    <div class="mb-20 text-center">
+                        <h2 class="text-4xl md:text-6xl font-black mb-6 text-[#1A1A1A] tracking-tight">The Platform for
+                            Visionaries</h2>
+                        <p class="text-lg text-[#1A1A1A]/60 max-w-2xl mx-auto font-medium">Experience entertainment
+                            reimagined with creators at the center. No ads, no noise, just pure artistic expression.</p>
+                    </div>
+                    <div class="flex flex-col gap-12">
+                        <div class="flex flex-col md:flex-row items-center gap-8 group">
+                            <div class="w-full md:w-1/2 flex justify-center md:justify-end">
+                                <div
+                                    class="w-24 h-24 bg-[#E8FF8E] rounded-3xl flex items-center justify-center text-[#1A1A1A] shadow-lg group-hover:rotate-6 transition-transform">
+                                    <span class="material-symbols-outlined text-4xl">play_circle</span>
+                                </div>
+                            </div>
+                            <div class="w-full md:w-1/2 text-center md:text-left">
+                                <div class="glass-card p-8 rounded-3xl">
+                                    <h3 class="text-2xl font-black mb-3 text-[#1A1A1A]">Crystal Clear Streaming</h3>
+                                    <p class="text-[#1A1A1A]/60 leading-relaxed font-medium">Experience 4K HDR streaming
+                                        with zero buffering and a seamless editorial user interface.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col md:flex-row-reverse items-center gap-8 group">
+                            <div class="w-full md:w-1/2 flex justify-center md:justify-start">
+                                <div
+                                    class="w-24 h-24 bg-[#B9A5F8] rounded-3xl flex items-center justify-center text-white shadow-lg group-hover:-rotate-6 transition-transform">
+                                    <span class="material-symbols-outlined text-4xl">center_focus_strong</span>
+                                </div>
+                            </div>
+                            <div class="w-full md:w-1/2 text-center md:text-right">
+                                <div class="glass-card p-8 rounded-3xl border-[#FFF48E]/20 border-2">
+                                    <h3 class="text-2xl font-black mb-3 text-[#1A1A1A]">Creator Focused</h3>
+                                    <p class="text-[#1A1A1A]/60 leading-relaxed font-medium">Direct support for
+                                        independent artists. Every minute you watch directly funds the creators you
+                                        love.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col md:flex-row items-center gap-8 group">
+                            <div class="w-full md:w-1/2 flex justify-center md:justify-end">
+                                <div
+                                    class="w-24 h-24 bg-[#FFF48E] rounded-3xl flex items-center justify-center text-[#1A1A1A] shadow-lg group-hover:scale-110 transition-transform">
+                                    <span class="material-symbols-outlined text-4xl">verified_user</span>
+                                </div>
+                            </div>
+                            <div class="w-full md:w-1/2 text-center md:text-left">
+                                <div class="glass-card p-8 rounded-3xl">
+                                    <h3 class="text-2xl font-black mb-3 text-[#1A1A1A]">Ad-Free Forever</h3>
+                                    <p class="text-[#1A1A1A]/60 leading-relaxed font-medium">Pure immersion without any
+                                        interruptions. Your flow stays intact from start to finish.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <footer class="border-t border-[#1A1A1A]/5 py-16 px-6 md:px-20 bg-white">
+            <div class="mx-auto max-w-[1400px] flex flex-col md:flex-row justify-between items-center gap-10">
+                <div class="flex items-center gap-3 grayscale opacity-60">
+                    <div class="bg-[#1A1A1A] p-1.5 rounded shadow-sm">
+                        <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 48 48"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path clip-rule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z"
+                                fill="currentColor" fill-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <span class="font-black text-[#1A1A1A] tracking-tighter text-xl">Vivid</span>
+                </div>
+                <div class="flex flex-wrap justify-center gap-10 text-sm font-bold text-[#1A1A1A]/50">
+                    <a class="hover:text-[#B9A5F8] transition-colors" href="#">Terms</a>
+                    <a class="hover:text-[#B9A5F8] transition-colors" href="#">Privacy</a>
+                    <a class="hover:text-[#B9A5F8] transition-colors" href="#">Help</a>
+                    <a class="hover:text-[#B9A5F8] transition-colors" href="#">Contact</a>
+                </div>
+                <p class="text-xs font-bold text-[#1A1A1A]/30 tracking-widest uppercase">© 2024 Vivid Entertainment Inc.
+                </p>
+            </div>
+        </footer>
+    </div>
+
+</body>
+
+</html>
