@@ -1,87 +1,53 @@
 import React from 'react'
-import FeaturedCard from '../cards/FeaturedCard'
 
 const HeroSection = () => {
-  const featuredContent = [
-    {
-      image: "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=800&h=600&fit=crop",
-      badge: "LIVE",
-      badgeColor: "red",
-      subtitle: "2.4K watching",
-      title: "Jazz Night Sessions",
-      description: "Marcus Cole Live from Brooklyn"
-    },
-    {
-      image: "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800&h=600&fit=crop",
-      badge: "PODCAST",
-      badgeColor: "sand",
-      subtitle: "Episode 42",
-      title: "Creative Minds",
-      description: "The Art of Storytelling"
-    },
-    {
-      image: "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&h=600&fit=crop",
-      badge: "COMEDY",
-      badgeColor: "orange",
-      subtitle: "New Special",
-      title: "Sarah Chen: Raw",
-      description: "Stand-up Comedy Special"
-    }
-  ]
-
-  const stats = [
-    { value: "500+", label: "Artists" },
-    { value: "10K+", label: "Hours of Content" },
-    { value: "50K+", label: "Active Viewers" },
-    { value: "24/7", label: "Live Streams" }
-  ]
-
   return (
-    <section id="landing" className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0 bg-linear-to-br from-beige/30 via-cream to-nude/20" />
-      <div className="absolute top-20 left-10 w-96 h-96 bg-sand/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-20 right-10 w-96 h-96 bg-nude/15 rounded-full blur-3xl" />
-      
-      <div className="relative max-w-7xl mx-auto">
-        {/* Hero Content */}
-        <div className="text-center mb-16">
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-display font-bold mb-6 leading-tight text-deepbrown">
-            Where Artists<br/>
-            <span className="bg-linear-to-r from-sand via-nude to-warmgray bg-clip-text text-transparent">
-              Come Alive
+    <section className="relative px-6 py-12 md:py-20 md:px-20 mb-12 md:mb-20">
+      <div className="mx-auto max-w-[1200px] flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+        <div className="w-full lg:w-1/2 z-20 space-y-6 md:space-y-8">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black leading-[0.9] tracking-tighter uppercase break-words">
+            Where Art <br /> Finds Its <br />
+            <span className="bg-linear-to-r from-primary to-lime text-white px-3 py-1 md:px-4 md:py-2 inline-block transform rotate-2 rough-border text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl shadow-lg">
+              Voice
             </span>
           </h1>
-          <p className="text-xl text-warmgray max-w-2xl mx-auto mb-8">
-            Stream exclusive shows, podcasts, and behind-the-scenes content from the world's most creative minds. Join a community built for artists, by artists.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button className="px-8 py-4 bg-linear-to-r from-sand to-nude rounded-full text-lg font-semibold text-white hover:shadow-2xl hover:shadow-sand/40 transition transform hover:scale-105">
-              Start Watching Free
-            </button>
-            <button className="px-8 py-4 bg-beige rounded-full text-lg font-semibold text-deepbrown hover:bg-nude transition border border-sand/30">
-              For Creators
-            </button>
+          <div className="bg-white/90 backdrop-blur-sm rough-border p-4 md:p-6 shadow-[6px_6px_0px_#4DD0E1] md:shadow-[10px_10px_0px_#4DD0E1] max-w-md transform -rotate-1">
+            <p className="text-base md:text-lg lg:text-xl font-bold leading-tight text-navy">
+              The streaming home for the next generation of visionaries. Unfiltered, original, and exclusively yours.
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row flex-wrap gap-4 md:gap-6 pt-2 md:pt-4">
+            <a href="#discover" className="bg-navy text-white px-6 py-3 md:px-10 md:py-5 text-base md:text-xl font-black uppercase hover:scale-105 transition-all shadow-[6px_6px_0px_#4DD0E1] md:shadow-[8px_8px_0px_#4DD0E1] rounded-lg text-center">
+              Start Watching
+            </a>
+            <a href="#discover" className="bg-linear-to-r from-primary to-lime text-white rough-border px-6 py-3 md:px-10 md:py-5 text-base md:text-xl font-black uppercase hover:shadow-lg hover:scale-105 transition-all shadow-[6px_6px_0px_#00BCD4] md:shadow-[8px_8px_0px_#00BCD4] rounded-lg text-center">
+              Explore Shows
+            </a>
           </div>
         </div>
-
-        {/* Featured Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
-          {featuredContent.map((content, index) => (
-            <FeaturedCard key={index} {...content} />
-          ))}
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-          {stats.map((stat, index) => (
-            <div key={index}>
-              <div className="text-4xl font-bold bg-linear-to-r from-sand to-nude bg-clip-text text-transparent mb-2">
-                {stat.value}
-              </div>
-              <div className="text-sm text-warmgray">{stat.label}</div>
+        <div className="w-full lg:w-1/2 relative min-h-[500px] sm:min-h-[550px] md:min-h-[600px] mt-8 lg:mt-0 mb-16 sm:mb-20">
+          {/* Background cyan frame - hidden on mobile */}
+          <div className="absolute top-20 md:top-16 lg:top-20 -left-6 md:-left-10 w-48 h-60 md:w-56 md:h-72 lg:w-64 lg:h-80 bg-linear-to-br from-salmon to-lime rough-border transform rotate-6 z-0 overflow-hidden hidden md:block">
+            <img className="w-full h-full object-cover mix-blend-multiply opacity-60" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCt-jEXc91uTeJMaVK6zjnOMFJKCGus_B1r6AYlGDj7_wlxzJJBj_lRGPAWkyiE4Qr7cD4sfnnIdlZ3bSfgEuHe89crQEMsg3-ReTjP-VsU7nFrMufroLvl2bb7Hz5wWv1HzpQ_PZVZ_NebgzWxa_pBZpZLxR2Gpg8fOVsTWb9266HoYO5I924k2u04SvPfegjaO3GWO6B8EPlCUe2h44GXeTJD8Xeer3p1eV5E31cIXxxzHmgt5I0Sx4Ny_RKL1i8NICHTI6242mQ" alt="Background" />
+          </div>
+          
+          {/* Main polaroid image */}
+          <div className="absolute top-0 right-0 sm:right-4 md:right-8 lg:right-0 w-[75%] sm:w-[70%] md:w-[65%] bg-white p-3 pb-12 md:p-4 md:pb-16 rough-border polaroid-shadow transform rotate-3 z-10">
+            <img className="w-full aspect-[4/5] object-cover grayscale hover:grayscale-0 transition-all duration-500" alt="Featured Artist" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnsgMc-9vWB2jVZnNY9OxoK8_BaZASds2u3vuoZZc4O7X0MDZWge7YPEJtPFWKGKcOK9n8fdj7q_tvvKjH2PIbS8sG1Rh3vDSk1TVEbhDVGK7u0LzC1JQLs6sPuTfmhUgDFENXG_haHS5GFKfnpXrpGLQOsFhHBaMxfIYhahDCScBhiD6VnLxXG9vvOAKh0kEvytrJhTXy5GHTF1QV8jVz5F5UQrBHINz-gtU7ujs1LMASn9d9VGc0bA9oKxl_LQt3M84YGgbN--4" />
+            <div className="absolute bottom-3 left-4 md:bottom-4 md:left-6 font-black uppercase italic text-base sm:text-lg md:text-2xl tracking-tighter text-navy">
+              VIVID_001
             </div>
-          ))}
+          </div>
+          
+          {/* Yellow sticker - repositioned to avoid overlap */}
+          <div className="absolute bottom-0 left-0 sm:left-2 w-32 h-32 sm:w-36 sm:h-36 md:w-44 md:h-44 lg:w-48 lg:h-48 bg-linear-to-br from-primary to-lime rough-border transform -rotate-12 z-20 flex items-center justify-center p-3 md:p-4 shadow-[6px_6px_0px_rgba(33,46,83,0.3)]">
+            <span className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black uppercase text-center leading-[0.9] italic text-white">Unfiltered<br/>Flow</span>
+          </div>
+          
+          {/* Top label */}
+          <div className="absolute -top-6 md:-top-8 right-8 sm:right-12 md:right-16 lg:right-20 bg-linear-to-r from-yellow to-lime px-3 py-1 md:px-4 md:py-2 rough-border z-30 transform -rotate-6 font-black uppercase text-xs md:text-sm text-navy shadow-md">
+            CREATOR_FIRST
+          </div>
         </div>
       </div>
     </section>

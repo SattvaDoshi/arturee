@@ -1,114 +1,83 @@
 import React from 'react'
-import VideoCard from '../cards/VideoCard'
 
 const CreatorProfileSection = () => {
-  const tabs = ['Videos', 'Podcasts', 'Live', 'About']
-  
-  const videos = [
-    {
-      image: "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=225&fit=crop",
-      title: "Sarah Chen: Raw - Full Special",
-      views: "1.2M views",
-      time: "2 weeks ago",
-      duration: "1:15:34",
-      price: "$9.99"
-    },
-    {
-      image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&h=225&fit=crop",
-      title: "Behind the Scenes: Making of Raw",
-      views: "450K views",
-      time: "1 week ago",
-      duration: "12:34",
-      price: "$2.99"
-    },
-    {
-      image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&h=225&fit=crop",
-      title: "Podcast: The Creative Process",
-      views: "320K views",
-      time: "2 weeks ago",
-      duration: "8:45",
-      price: "Free"
-    },
-    {
-      image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=225&fit=crop",
-      title: "Live Q&A with Fans",
-      views: "580K views",
-      time: "3 weeks ago",
-      duration: "15:22",
-      price: "Free"
-    }
-  ]
-
   return (
-    <section id="creator-profile" className="py-20 px-4 sm:px-6 lg:px-8 bg-linear-to-b from-cream to-beige/50">
-      <div className="max-w-7xl mx-auto">
-        {/* Cover Image */}
-        <div className="relative h-80 rounded-3xl overflow-hidden mb-8 shadow-xl">
-          <img 
-            src="https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=1400&h=400&fit=crop" 
-            alt="Cover" 
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-linear-to-t from-deepbrown via-deepbrown/50 to-transparent" />
+    <section className="bg-linear-to-br from-[#E0F7FA]/70 via-[#B2EBF2]/40 to-[#F1F8E9]/60 pb-20 px-6 lg:px-20 overflow-hidden relative">
+      <div className="mx-auto max-w-[1200px]">
+        <div className="flex flex-col items-center mb-16 text-center">
+          <span className="font-mono text-navy/50 text-[10px] uppercase tracking-[0.5em] mb-6">
+            Confidential Repository / Personnel
+          </span>
+          <h2 className="text-6xl font-display italic text-navy font-black tracking-tighter">
+            The Custodians
+          </h2>
         </div>
-        
-        {/* Profile Info */}
-        <div className="flex flex-col md:flex-row items-start md:items-end space-y-6 md:space-y-0 md:space-x-8 -mt-32 relative z-10 mb-12">
-          <img 
-            src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop" 
-            alt="Creator" 
-            className="w-32 h-32 rounded-2xl object-cover border-4 border-cream shadow-2xl"
-          />
-          <div className="flex-1">
-            <div className="flex items-center space-x-3 mb-2">
-              <h1 className="text-4xl font-display font-bold text-deepbrown">Sarah Chen</h1>
-              <span className="px-3 py-1 bg-linear-to-r from-sand to-nude rounded-full text-xs font-semibold text-white">
-                Verified Creator
-              </span>
-            </div>
-            <p className="text-warmgray mb-4">Stand-up Comedian • Podcast Host • Creative Storyteller</p>
-            <div className="flex items-center space-x-6 text-sm mb-4">
-              <div>
-                <span className="font-bold text-deepbrown">245K</span>{' '}
-                <span className="text-warmgray">Subscribers</span>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          {/* First Creator Card */}
+          <div className="p-12 lg:-rotate-1 bg-amber-50 shadow-xl border border-black/5 rounded-lg">
+            <div className="flex flex-col md:flex-row gap-8 mb-12">
+              <div className="w-48 h-64 grayscale border-4 border-white shadow-lg shrink-0">
+                <div 
+                  className="w-full h-full bg-cover bg-center"
+                  style={{backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDtBBFbXLkBJnaNtyq0WMUPTRGFrYZ0EnMAycSqgnBPEGpa-xdm9pmNaVfjSKbzWLmF8_gqHKopmmOuSWONrKUJ_hOlwukNXcQPoEjnwabPqj5h6DldsnOBNlDNGiBLUViNzj2cgSBMydqGWm-EWuYVEQJj_ZiKyuomKFfpc7XyoWsSIymcIjVkg38d2uqyzIoyewrmVTZrc4Y1wse0MMdRUudKIGJMraQh9ALeSYYrKSDgLRnJ_9ds3t9tFSJs3JCbO3y02tOE3gQ')"}}
+                />
               </div>
-              <div>
-                <span className="font-bold text-deepbrown">42</span>{' '}
-                <span className="text-warmgray">Videos</span>
-              </div>
-              <div>
-                <span className="font-bold text-deepbrown">5.2M</span>{' '}
-                <span className="text-warmgray">Total Views</span>
+              <div className="space-y-4 pt-4">
+                <div className="inline-block px-3 py-1 bg-[#ce6a6b]/10 text-[#ce6a6b] font-mono text-[10px] uppercase">
+                  Subject: New Users
+                </div>
+                <h3 className="text-4xl font-display text-[#1a2332] italic font-bold">Suchi</h3>
+                <p className="text-navy/50 font-mono text-xs uppercase">Founder / Principal Curator</p>
+                <div className="h-px w-full bg-navy/10"></div>
               </div>
             </div>
-            <button className="px-8 py-3 bg-linear-to-r from-sand to-nude rounded-full font-semibold text-white hover:shadow-lg hover:shadow-sand/40 transition">
-              Subscribe
-            </button>
+            <div className="relative">
+              <div className="absolute -top-6 -right-4 w-32 h-32 opacity-10 pointer-events-none">
+                <img 
+                  alt="" 
+                  className="w-full h-full object-cover"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhrnU_SBMTZP-Kz9lRkOwcTw4KMoVOGPaDc8TEEfYuZe-Q4WTiOAcnfWc7wS_dgRIglpFfFvjm5cJcpKEYAcpcWVeM5kNt8DQmpWccFNRebaI6eK71NtgSFRQD3hQKZSNJDANRfzk9MmckE-JRrS9VEVDt6cdbOSv5e-FYjhXfAx6OpQNeJ_Ph7kGAch5lGIFEo0KUj0jiMWN5PSKk2PMUsCX-2Y_U_X08EQ9Ea5M1QVuCjdnRGOKlKphcHw9AUAGW2FNpoZmQDf4" 
+                />
+              </div>
+              <div className="text-2xl text-navy/80 mb-8 leading-snug italic">
+                "Art is the only way to run away without leaving home. My mission was to build a sanctuary where those journeys are never interrupted by algorithms, only enhanced by curation."
+              </div>
+              <div className="border-l-2 border-[#ce6a6b] pl-6 py-2">
+                <p className="text-navy/60 text-sm italic">
+                  Personal Journal Entry #402: We curate for the soul, not for the scroll. If a piece of art doesn't make you pause your breath, it isn't ready for our gallery.
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
-        
-        {/* Tabs & Content */}
-        <div className="mb-12">
-          <div className="flex items-center space-x-6 mb-8 border-b border-sand/30">
-            {tabs.map((tab, index) => (
-              <button
-                key={tab}
-                className={`pb-4 font-semibold transition ${
-                  index === 0
-                    ? 'border-b-2 border-sand text-deepbrown'
-                    : 'text-warmgray hover:text-deepbrown'
-                }`}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
-          
-          {/* Videos Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {videos.map((video, index) => (
-              <VideoCard key={index} {...video} />
-            ))}
+
+          {/* Second Creator Card */}
+          <div className="p-12 lg:rotate-1 bg-amber-50 shadow-xl border border-black/5 lg:mt-32 rounded-lg">
+            <div className="flex flex-col md:flex-row-reverse gap-8 mb-12">
+              <div className="w-48 h-64 grayscale border-4 border-white shadow-lg shrink-0">
+                <div 
+                  className="w-full h-full bg-cover bg-center"
+                  style={{backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuCr5z4_n5O1sPNaPj6prn7e7Hx4HIRgWkTOGMuapn59CyfK_6dB0DM_KFUb7HYofIhCHluSXWHaUKzoYuCmVavhzwrFGbcX8A1noDyi08OIqt8iDUvfP71jk34zxraA7m1KYte2mkzizZEERhjiUFfDbemZ3kGE5QpjLA8z5ZFI4X_ZGMq5XKWwuoSSY3JOxN46dV9na9ySlZE2waKvX93b93A94KOP5VGMFPJFPhs23--DIhN3Hqv_kFo0Q65uH1hrPGuEy9SNyc0')"}}
+                />
+              </div>
+              <div className="space-y-4 pt-4 text-right md:text-left">
+                <div className="inline-block px-3 py-1 bg-[#4a919e]/10 text-[#4a919e] font-mono text-[10px] uppercase">
+                  Subject: Variation
+                </div>
+                <h3 className="text-4xl font-display text-navy italic font-bold">Anjali Mehta</h3>
+                <p className="text-navy/50 font-mono text-xs uppercase">Editorial Director</p>
+                <div className="h-px w-full bg-navy/10"></div>
+              </div>
+            </div>
+            <div className="relative">
+              <div className="text-2xl text-[#1a2332]/80 mb-8 leading-snug italic">
+                "The modern world is loud; we chose to be quiet. Our philosophy centers on the resonance of the human voice—whether spoken in a poem or captured in a frame."
+              </div>
+              <div className="border-l-2 border-[#4a919e] pl-6 py-2">
+                <p className="text-[#2d3748] text-sm italic">
+                  Foundational Philosophy: When you give artists 85% of the revenue, you aren't just paying them; you're buying the time they need to create their next masterpiece.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
