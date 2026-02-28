@@ -1,837 +1,739 @@
 <!DOCTYPE html>
-<html lang="en" style="height: auto; min-height: 100%;">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ArtStream - Home</title>
+    <title>ArtStream | Home of Creative Cinema</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        display: ['Playfair Display', 'serif'],
+                        sans:    ['Space Grotesk', 'Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
                     },
                     colors: {
-                        coral: '#ff6b6b',
-                        salmon: '#ff8e72',
-                        teal: '#4ecdc4',
-                        navy: '#1a2332',
-                        darkblue: '#232f45',
-                        cream: '#f8f9fa',
-                        lightgray: '#e8eaed',
+                        primary:  '#4DD0E1',
+                        lime:     '#C0E863',
+                        teal:     '#00BCD4',
+                        navy:     '#051d2e',
+                        navymid:  '#213a52',
+                        cream:    '#f0fdfa',
+                        muted:    '#5a7a8a',
+                        bg:       '#e0f7fa',
+                        bgmid:    '#b2ebf2',
+                        surface:  '#ffffff',
                     }
                 }
             }
         }
     </script>
     <style>
-        .scrollbar-hide::-webkit-scrollbar {
-            display: none;
+        /* Scrollbar */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Glows & gradients */
+        .cyan-glow      { box-shadow: 0 0 24px rgba(77,208,225,0.55); }
+        .lime-glow      { box-shadow: 0 0 24px rgba(192,232,99,0.45); }
+        .grad-text      { background: linear-gradient(135deg,#4DD0E1,#C0E863); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+        .grad-btn       { background: linear-gradient(135deg,#4DD0E1,#C0E863); }
+        .price-badge    { background: linear-gradient(135deg,#4DD0E1,#00BCD4); }
+        .progress-bar   { background: linear-gradient(90deg,#4DD0E1,#C0E863); }
+
+        /* Glassmorphism nav */
+        .glass-nav {
+            background: rgba(224,247,250,0.88);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(77,208,225,0.25);
         }
-        .scrollbar-hide {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        .gradient-overlay {
-            background: linear-gradient(to top, #1a2332 0%, transparent 50%);
-        }
-        .hero-gradient {
-            background: linear-gradient(90deg, #1a2332 0%, rgba(26, 35, 50, 0.8) 50%, transparent 100%);
-        }
+
+        /* Hero gradient */
+        .hero-overlay-left  { background: linear-gradient(90deg, rgba(5,29,46,0.90) 0%, rgba(5,29,46,0.65) 45%, transparent 100%); }
+        .hero-overlay-btm   { background: linear-gradient(to top, #e0f7fa 0%, rgba(224,247,250,0.3) 35%, transparent 65%); }
+
+        /* Card hover */
+        .card-lift { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+        .card-lift:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(77,208,225,0.22); }
+
+        /* Section pill */
+        .section-pill { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg,rgba(77,208,225,0.15),rgba(192,232,99,0.12)); border: 1px solid rgba(77,208,225,0.3); border-radius: 999px; padding: 4px 14px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #051d2e; }
+
+        /* Mobile menu */
+        #mobile-menu { display: none; }
+        #mobile-menu.open { display: block; }
+
+        /* Material icon alignment */
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; line-height: 1; vertical-align: middle; }
+        .material-symbols-outlined.fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
     </style>
 </head>
-<body class="bg-navy text-cream font-sans antialiased" style="height: auto; min-height: 100%;">
-    
-    <nav class="fixed top-0 left-0 right-0 z-50 bg-darkblue/95 backdrop-blur-sm border-b border-cream/10">
-        <div class="max-w-full px-4 sm:px-6 lg:px-12">
-            <div class="flex items-center justify-between h-20">
-                <div class="flex items-center space-x-8">
-                    <a href="index.html" class="text-2xl font-display font-bold bg-gradient-to-r from-coral via-teal to-salmon bg-clip-text text-transparent">ArtStream</a>
-                    <div class="hidden md:flex space-x-6">
-                        <a href="dashboard.html" class="text-sm font-semibold text-cream hover:text-coral transition">Home</a>
-                        <a href="#" class="text-sm font-medium text-lightgray hover:text-coral transition">Shows</a>
-                        <a href="#" class="text-sm font-medium text-lightgray hover:text-coral transition">Podcasts</a>
-                        <a href="#" class="text-sm font-medium text-lightgray hover:text-coral transition">Comedy</a>
-                        <a href="#" class="text-sm font-medium text-lightgray hover:text-coral transition">Live</a>
-                        <a href="#" class="text-sm font-medium text-lightgray hover:text-coral transition">My List</a>
+<body class="font-sans antialiased overflow-x-hidden" style="background: linear-gradient(160deg,#e0f7fa 0%,#b2ebf2 50%,#e8f5e9 100%); min-height:100vh; color:#051d2e;">
+
+    <!-- ═══════════════════════════ NAV ═══════════════════════════ -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-nav">
+        <div class="max-w-screen-2xl mx-auto px-5 sm:px-8 lg:px-14">
+            <div class="flex items-center justify-between h-18 md:h-20 gap-6">
+
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center gap-2.5 shrink-0 group">
+                    <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)">
+                        <span class="material-symbols-outlined text-navy text-xl" style="font-size:20px">palette</span>
                     </div>
+                    <span class="text-xl md:text-2xl font-bold tracking-tight grad-text">ArtStream</span>
+                </a>
+
+                <!-- Nav links -->
+                <div class="hidden lg:flex items-center gap-7">
+                    <a href="dashboard.html" class="text-sm font-bold text-navy border-b-2 border-primary pb-0.5 tracking-wide">Home</a>
+                    <a href="#" class="text-sm font-semibold text-muted hover:text-navy transition tracking-wide">Shows</a>
+                    <a href="#" class="text-sm font-semibold text-muted hover:text-navy transition tracking-wide">Podcasts</a>
+                    <a href="#" class="text-sm font-semibold text-muted hover:text-navy transition tracking-wide">Comedy</a>
+                    <a href="#" class="text-sm font-semibold text-muted hover:text-navy transition tracking-wide">Live</a>
+                    <a href="#" class="text-sm font-semibold text-muted hover:text-navy transition tracking-wide">My List</a>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <button class="p-2 hover:bg-cream/10 rounded-full transition">
-                        <i data-lucide="search" class="w-5 h-5 text-cream"></i>
+
+                <!-- Search + Actions -->
+                <div class="flex items-center gap-3">
+                    <!-- Search bar (desktop) -->
+                    <div class="relative hidden md:block">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-muted" style="font-size:18px">search</span>
+                        <input type="text" placeholder="Search films, artists..."
+                               class="bg-white/60 border border-primary/25 rounded-full py-2 pl-9 pr-4 text-sm w-56 lg:w-64 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/50 transition placeholder:text-muted/60 text-navy"/>
+                    </div>
+
+                    <!-- Notification -->
+                    <button class="relative p-2 hover:bg-primary/15 rounded-full transition">
+                        <i data-lucide="bell" class="w-5 h-5 text-muted"></i>
+                        <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-lime border-2 border-white/60"></span>
                     </button>
-                    <button class="p-2 hover:bg-cream/10 rounded-full transition">
-                        <i data-lucide="bell" class="w-5 h-5 text-cream"></i>
-                    </button>
-                    <button class="flex items-center space-x-2 hover:bg-cream/10 rounded-full pl-2 pr-3 py-1 transition">
-                        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop" alt="User" class="w-8 h-8 rounded-full object-cover"/>
-                        <i data-lucide="chevron-down" class="w-4 h-4 text-cream"></i>
+
+                    <!-- Sign Up / Login (desktop) -->
+                    <div class="hidden sm:flex items-center gap-2">
+                        <button class="px-5 py-2 text-sm font-bold rounded-lg text-navy transition hover:brightness-105 cyan-glow" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)">Sign Up</button>
+                        <button class="px-5 py-2 text-sm font-bold rounded-lg border border-navy/20 hover:bg-navy/8 transition text-navy">Login</button>
+                    </div>
+
+                    <!-- Avatar -->
+                    <div class="w-9 h-9 rounded-full ring-2 ring-lime/70 ring-offset-2 ring-offset-transparent overflow-hidden cursor-pointer shrink-0">
+                        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop" alt="User" class="w-full h-full object-cover"/>
+                    </div>
+
+                    <!-- Mobile hamburger -->
+                    <button class="lg:hidden p-2 hover:bg-primary/15 rounded-full transition" onclick="document.getElementById('mobile-menu').classList.toggle('open')">
+                        <i data-lucide="menu" class="w-5 h-5 text-navy"></i>
                     </button>
                 </div>
+            </div>
+        </div>
+
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="lg:hidden bg-white/95 backdrop-blur border-t border-primary/20 px-6 py-5 space-y-3">
+            <a href="dashboard.html" class="block text-sm font-bold text-primary tracking-wider">Home</a>
+            <a href="#" class="block text-sm font-semibold text-muted hover:text-navy tracking-wider">Shows</a>
+            <a href="#" class="block text-sm font-semibold text-muted hover:text-navy tracking-wider">Podcasts</a>
+            <a href="#" class="block text-sm font-semibold text-muted hover:text-navy tracking-wider">Comedy</a>
+            <a href="#" class="block text-sm font-semibold text-muted hover:text-navy tracking-wider">Live</a>
+            <a href="#" class="block text-sm font-semibold text-muted hover:text-navy tracking-wider">My List</a>
+            <div class="pt-2 flex gap-2 border-t border-primary/10">
+                <button class="px-4 py-2 text-sm font-bold rounded-lg text-navy grad-btn">Sign Up</button>
+                <button class="px-4 py-2 text-sm font-bold rounded-lg border border-navy/20 text-navy">Login</button>
             </div>
         </div>
     </nav>
 
-    <section class="relative h-screen pt-20">
-        <div class="absolute inset-0">
+    <!-- ═══════════════════════════ HERO ═══════════════════════════ -->
+    <header class="relative w-full min-h-screen flex items-center overflow-hidden">
+        <!-- Background -->
+        <div class="absolute inset-0 z-0">
             <img src="https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=1920&h=1080&fit=crop" alt="Hero" class="w-full h-full object-cover"/>
-            <div class="absolute inset-0 bg-gradient-to-r from-navy via-navy/70 to-transparent"></div>
-            <div class="absolute inset-0 bg-gradient-to-t from-navy via-transparent to-transparent"></div>
+            <div class="absolute inset-0 hero-overlay-left"></div>
+            <div class="absolute inset-0 hero-overlay-btm"></div>
         </div>
-        
-        <div class="relative h-full flex items-center px-4 sm:px-6 lg:px-12">
-            <div class="max-w-2xl">
-                <div class="flex items-center space-x-3 mb-4">
-                    <span class="px-4 py-1.5 bg-gradient-to-r from-coral to-salmon rounded-full text-xs font-bold text-white uppercase tracking-wider shadow-lg">Featured</span>
-                    <span class="px-4 py-1.5 bg-red-500 rounded-full text-xs font-bold text-white uppercase tracking-wider flex items-center space-x-1 shadow-lg">
-                        <span class="w-2 h-2 bg-white rounded-full animate-pulse"></span>
-                        <span>Live Now</span>
+
+        <!-- Content -->
+        <div class="relative z-10 w-full max-w-screen-2xl mx-auto px-5 sm:px-8 lg:px-14 pt-24 pb-16 md:pb-24">
+            <div class="max-w-2xl space-y-6">
+
+                <!-- Badges -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="section-pill">
+                        <span class="material-symbols-outlined" style="font-size:14px">stars</span>
+                        Featured Premiere
+                    </span>
+                    <span class="flex items-center gap-1.5 px-3 py-1 bg-red-500 rounded-full text-xs font-bold text-white shadow-lg">
+                        <span class="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>Live Now
                     </span>
                 </div>
-                <h1 class="text-5xl sm:text-6xl lg:text-7xl font-display font-bold mb-6 text-cream leading-tight">Jazz Night<br/>Sessions</h1>
-                <p class="text-lg text-lightgray mb-8 leading-relaxed max-w-xl">Experience an intimate evening with Marcus Cole as he performs live from his Brooklyn studio. Join 2.4K viewers for an unforgettable night of smooth jazz, improvisation, and raw musical talent.</p>
-                <div class="flex items-center space-x-4 mb-8">
-                    <a href="videoDetails.html" class="px-8 py-4 bg-coral text-white rounded-full font-bold text-lg hover:shadow-lg hover:shadow-coral/40 transition transform hover:scale-105 shadow-xl flex items-center space-x-2 hover:bg-salmon">
-                        <i data-lucide="play" class="w-6 h-6"></i>
-                        <span>Watch Live</span>
+
+                <!-- Title -->
+                <h1 class="text-5xl sm:text-7xl md:text-8xl font-bold leading-[0.88] tracking-tighter text-cream">
+                    Jazz Night<br/><span class="grad-text italic">Sessions</span>
+                </h1>
+
+                <!-- Description card -->
+                <div class="bg-white/80 backdrop-blur-md rounded-2xl p-5 max-w-lg border border-primary/20 shadow-lg">
+                    <p class="text-sm md:text-base text-navy leading-relaxed font-medium">Experience an intimate evening with Marcus Cole as he performs live from his Brooklyn studio. Join 2.4K viewers for an unforgettable night of smooth jazz, improvisation, and raw musical talent.</p>
+                </div>
+
+                <!-- CTA Buttons -->
+                <div class="flex flex-wrap gap-3 pt-1">
+                    <a href="videoDetails.html" class="flex items-center gap-2 px-7 py-3.5 md:px-9 md:py-4 rounded-xl font-bold text-navy hover:scale-105 transition-all cyan-glow text-sm md:text-base" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)">
+                        <span class="material-symbols-outlined fill" style="font-size:20px">play_arrow</span>Watch Live
                     </a>
-                    <button class="px-8 py-4 bg-cream/10 text-cream rounded-full font-bold text-lg hover:bg-cream/20 transition flex items-center space-x-2 border border-cream/20">
-                        <i data-lucide="info" class="w-6 h-6"></i>
-                        <span>More Info</span>
+                    <button class="flex items-center gap-2 px-7 py-3.5 md:px-9 md:py-4 bg-white/80 text-navy rounded-xl font-bold hover:bg-white transition border border-primary/25 text-sm md:text-base backdrop-blur-sm">
+                        <span class="material-symbols-outlined" style="font-size:20px">info</span>More Info
                     </button>
-                    <button class="p-4 bg-cream/10 text-cream rounded-full hover:bg-cream/20 transition border border-cream/20">
-                        <i data-lucide="plus" class="w-6 h-6"></i>
+                    <button class="p-3.5 md:p-4 bg-white/80 text-navy rounded-xl hover:bg-white transition border border-primary/25 backdrop-blur-sm">
+                        <i data-lucide="plus" class="w-5 h-5"></i>
                     </button>
                 </div>
-                <div class="flex items-center space-x-6 text-sm text-lightgray">
-                    <div class="flex items-center space-x-2">
-                        <i data-lucide="users" class="w-4 h-4"></i>
-                        <span>2.4K watching</span>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <i data-lucide="clock" class="w-4 h-4"></i>
-                        <span>Started 45 min ago</span>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <i data-lucide="star" class="w-4 h-4 fill-coral text-coral"></i>
-                        <span>4.9 Rating</span>
-                    </div>
+
+                <!-- Meta info -->
+                <div class="flex flex-wrap items-center gap-5 text-xs md:text-sm text-cream/80 font-medium">
+                    <div class="flex items-center gap-1.5"><i data-lucide="users" class="w-4 h-4 text-primary"></i><span>2.4K watching</span></div>
+                    <div class="flex items-center gap-1.5"><i data-lucide="clock" class="w-4 h-4 text-primary"></i><span>Started 45 min ago</span></div>
+                    <div class="flex items-center gap-1.5"><i data-lucide="star" class="w-4 h-4 text-lime fill-lime"></i><span>4.9 Rating</span></div>
                 </div>
             </div>
         </div>
-    </section>
+    </header>
 
-    <section class="relative -mt-32 z-10 px-4 sm:px-6 lg:px-12 pb-12">
-        <div class="mb-12">
+    <!-- CONTENT ROWS -->
+    <section class="relative z-10 px-4 sm:px-6 lg:px-12 py-14 space-y-12">
+
+        <!-- Continue Watching -->
+        <div>
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-2xl font-bold text-cream">Continue Watching</h2>
-                <button class="text-sm font-medium text-coral hover:text-salmon transition">View All</button>
+                <h2 class="text-xl md:text-2xl font-black uppercase tracking-tighter text-navy">Continue Watching</h2>
+                <button class="text-xs md:text-sm font-black text-teal hover:text-navy transition uppercase tracking-wider">View All &rarr;</button>
             </div>
-            <div class="flex space-x-4 overflow-x-auto scrollbar-hide pb-4">
-                <div class="flex-shrink-0 w-80 group cursor-pointer">
-                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg">
+            <div class="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
+                <div class="flex-shrink-0 w-64 sm:w-72 md:w-80 group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg border border-primary/20">
                         <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&h=450&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <button class="w-16 h-16 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
-                                    <i data-lucide="play" class="w-7 h-7 text-navy ml-1"></i>
-                                </button>
-                            </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                            <button class="w-14 h-14 rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl cyan-glow" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)"><i data-lucide="play" class="w-6 h-6 text-navy ml-0.5"></i></button>
                         </div>
-                        <div class="absolute bottom-0 left-0 right-0 h-1 bg-beige/30">
-                            <div class="h-full bg-gradient-to-r from-sand to-nude" style="width: 35%"></div>
-                        </div>
-                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$9.99</div>
+                        <div class="absolute bottom-0 left-0 right-0 h-1 bg-navy/10"><div class="h-full progress-bar" style="width:35%"></div></div>
+                        <div class="absolute top-2 right-2 px-2.5 py-1 price-badge rounded-full text-[10px] font-black text-navy">$9.99</div>
                     </div>
-                    <h3 class="font-semibold mb-1 text-deepbrown">Sarah Chen: Raw</h3>
-                    <p class="text-sm text-warmgray">35 min remaining</p>
+                    <h3 class="font-black text-sm text-navy mb-0.5 truncate">Sarah Chen: Raw</h3>
+                    <p class="text-xs text-navy/60">35 min remaining</p>
                 </div>
-                <div class="flex-shrink-0 w-80 group cursor-pointer">
-                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg">
+                <div class="flex-shrink-0 w-64 sm:w-72 md:w-80 group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg border border-primary/20">
                         <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&h=450&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <button class="w-16 h-16 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
-                                    <i data-lucide="play" class="w-7 h-7 text-navy ml-1"></i>
-                                </button>
-                            </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                            <button class="w-14 h-14 rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl cyan-glow" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)"><i data-lucide="play" class="w-6 h-6 text-navy ml-0.5"></i></button>
                         </div>
-                        <div class="absolute bottom-0 left-0 right-0 h-1 bg-beige/30">
-                            <div class="h-full bg-gradient-to-r from-sand to-nude" style="width: 68%"></div>
-                        </div>
-                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$3.99</div>
+                        <div class="absolute bottom-0 left-0 right-0 h-1 bg-navy/10"><div class="h-full progress-bar" style="width:68%"></div></div>
+                        <div class="absolute top-2 right-2 px-2.5 py-1 price-badge rounded-full text-[10px] font-black text-navy">$3.99</div>
                     </div>
-                    <h3 class="font-semibold mb-1 text-deepbrown">Urban Stories Ep. 3</h3>
-                    <p class="text-sm text-warmgray">12 min remaining</p>
+                    <h3 class="font-black text-sm text-navy mb-0.5 truncate">Urban Stories Ep. 3</h3>
+                    <p class="text-xs text-navy/60">12 min remaining</p>
                 </div>
-                <div class="flex-shrink-0 w-80 group cursor-pointer">
-                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg">
+                <div class="flex-shrink-0 w-64 sm:w-72 md:w-80 group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg border border-primary/20">
                         <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800&h=450&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <button class="w-16 h-16 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
-                                    <i data-lucide="play" class="w-7 h-7 text-navy ml-1"></i>
-                                </button>
-                            </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                            <button class="w-14 h-14 rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl cyan-glow" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)"><i data-lucide="play" class="w-6 h-6 text-navy ml-0.5"></i></button>
                         </div>
-                        <div class="absolute bottom-0 left-0 right-0 h-1 bg-beige/30">
-                            <div class="h-full bg-gradient-to-r from-sand to-nude" style="width: 22%"></div>
-                        </div>
-                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">Free</div>
+                        <div class="absolute bottom-0 left-0 right-0 h-1 bg-navy/10"><div class="h-full progress-bar" style="width:22%"></div></div>
+                        <div class="absolute top-2 right-2 px-2.5 py-1 rounded-full text-[10px] font-black text-navy" style="background:#C0E863">Free</div>
                     </div>
-                    <h3 class="font-semibold mb-1 text-deepbrown">Sound & Vision Podcast</h3>
-                    <p class="text-sm text-warmgray">42 min remaining</p>
+                    <h3 class="font-black text-sm text-navy mb-0.5 truncate">Sound &amp; Vision Podcast</h3>
+                    <p class="text-xs text-navy/60">42 min remaining</p>
                 </div>
-                <div class="flex-shrink-0 w-80 group cursor-pointer">
-                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg">
+                <div class="flex-shrink-0 w-64 sm:w-72 md:w-80 group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg border border-primary/20">
                         <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=450&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <button class="w-16 h-16 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
-                                    <i data-lucide="play" class="w-7 h-7 text-navy ml-1"></i>
-                                </button>
-                            </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                            <button class="w-14 h-14 rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl cyan-glow" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)"><i data-lucide="play" class="w-6 h-6 text-navy ml-0.5"></i></button>
                         </div>
-                        <div class="absolute bottom-0 left-0 right-0 h-1 bg-beige/30">
-                            <div class="h-full bg-gradient-to-r from-sand to-nude" style="width: 89%"></div>
-                        </div>
-                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$4.99</div>
+                        <div class="absolute bottom-0 left-0 right-0 h-1 bg-navy/10"><div class="h-full progress-bar" style="width:89%"></div></div>
+                        <div class="absolute top-2 right-2 px-2.5 py-1 price-badge rounded-full text-[10px] font-black text-navy">$4.99</div>
                     </div>
-                    <h3 class="font-semibold mb-1 text-deepbrown">Behind the Lens</h3>
-                    <p class="text-sm text-warmgray">5 min remaining</p>
+                    <h3 class="font-black text-sm text-navy mb-0.5 truncate">Behind the Lens</h3>
+                    <p class="text-xs text-navy/60">5 min remaining</p>
                 </div>
             </div>
         </div>
 
-        <div class="mb-12">
+        <!-- Trending Now -->
+        <div>
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-2xl font-bold text-deepbrown">Trending Now</h2>
-                <button class="text-sm font-medium text-sand hover:text-nude transition">View All</button>
+                <h2 class="text-xl md:text-2xl font-black uppercase tracking-tighter text-navy">Trending Now</h2>
+                <button class="text-xs md:text-sm font-black text-teal hover:text-navy transition uppercase tracking-wider">View All &rarr;</button>
             </div>
-            <div class="flex space-x-4 overflow-x-auto scrollbar-hide pb-4">
-                <div class="flex-shrink-0 w-64 group cursor-pointer">
-                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg">
+            <div class="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
+                <div class="flex-shrink-0 w-44 sm:w-52 md:w-64 group cursor-pointer">
+                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg border border-primary/20">
                         <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=600&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-deepbrown/90 via-deepbrown/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
                             <div class="absolute inset-0 flex flex-col items-center justify-center">
-                                <button class="w-14 h-14 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl mb-4">
-                                    <i data-lucide="play" class="w-6 h-6 text-navy ml-1"></i>
-                                </button>
+                                <button class="w-12 h-12 rounded-full flex items-center justify-center hover:scale-110 transition mb-3 cyan-glow" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)"><i data-lucide="play" class="w-5 h-5 text-navy ml-0.5"></i></button>
                             </div>
-                            <div class="absolute bottom-4 left-4 right-4">
-                                <p class="text-xs text-cream mb-2 line-clamp-2">An intimate look into the creative process of modern artists</p>
-                                <div class="flex items-center space-x-2 text-xs text-beige">
-                                    <span>1.2M views</span>
-                                    <span>•</span>
-                                    <span>45 min</span>
-                                </div>
+                            <div class="absolute bottom-4 left-3 right-3">
+                                <p class="text-[10px] text-cream/80 mb-1 line-clamp-2">An intimate look into the creative process of modern artists</p>
+                                <div class="flex items-center gap-1.5 text-[10px] text-primary"><span>1.2M views</span><span>&bull;</span><span>45 min</span></div>
                             </div>
                         </div>
-                        <div class="absolute top-3 left-3 px-3 py-1 bg-red-500 rounded-full text-xs font-bold text-white">#1</div>
-                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$4.99</div>
+                        <div class="absolute top-2 left-2 px-2 py-0.5 bg-red-500 rounded-full text-[10px] font-black text-white">#1</div>
+                        <div class="absolute top-2 right-2 px-2 py-0.5 price-badge rounded-full text-[10px] font-black text-navy">$4.99</div>
                     </div>
-                    <h3 class="font-semibold mb-1 text-deepbrown">Midnight Sessions</h3>
-                    <p class="text-sm text-warmgray">Alex Rivera</p>
+                    <h3 class="font-black text-sm text-navy mb-0.5 truncate">Midnight Sessions</h3>
+                    <p class="text-xs text-navy/60">Alex Rivera</p>
                 </div>
-                <div class="flex-shrink-0 w-64 group cursor-pointer">
-                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg">
+                <div class="flex-shrink-0 w-44 sm:w-52 md:w-64 group cursor-pointer">
+                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg border border-primary/20">
                         <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&h=600&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-deepbrown/90 via-deepbrown/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
                             <div class="absolute inset-0 flex flex-col items-center justify-center">
-                                <button class="w-14 h-14 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl mb-4">
-                                    <i data-lucide="play" class="w-6 h-6 text-navy ml-1"></i>
-                                </button>
+                                <button class="w-12 h-12 rounded-full flex items-center justify-center hover:scale-110 transition mb-3 cyan-glow" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)"><i data-lucide="play" class="w-5 h-5 text-navy ml-0.5"></i></button>
                             </div>
-                            <div class="absolute bottom-4 left-4 right-4">
-                                <p class="text-xs text-cream mb-2 line-clamp-2">Stories from the streets told through powerful visuals</p>
-                                <div class="flex items-center space-x-2 text-xs text-beige">
-                                    <span>890K views</span>
-                                    <span>•</span>
-                                    <span>32 min</span>
-                                </div>
+                            <div class="absolute bottom-4 left-3 right-3">
+                                <p class="text-[10px] text-cream/80 mb-1 line-clamp-2">Stories from the streets told through powerful visuals</p>
+                                <div class="flex items-center gap-1.5 text-[10px] text-primary"><span>890K views</span><span>&bull;</span><span>32 min</span></div>
                             </div>
                         </div>
-                        <div class="absolute top-3 left-3 px-3 py-1 bg-red-500 rounded-full text-xs font-bold text-white">#2</div>
-                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$3.99</div>
+                        <div class="absolute top-2 left-2 px-2 py-0.5 bg-red-500 rounded-full text-[10px] font-black text-white">#2</div>
+                        <div class="absolute top-2 right-2 px-2 py-0.5 price-badge rounded-full text-[10px] font-black text-navy">$3.99</div>
                     </div>
-                    <h3 class="font-semibold mb-1 text-deepbrown">Urban Stories</h3>
-                    <p class="text-sm text-warmgray">Maya Chen</p>
+                    <h3 class="font-black text-sm text-navy mb-0.5 truncate">Urban Stories</h3>
+                    <p class="text-xs text-navy/60">Maya Chen</p>
                 </div>
-                <div class="flex-shrink-0 w-64 group cursor-pointer">
-                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg">
+                <div class="flex-shrink-0 w-44 sm:w-52 md:w-64 group cursor-pointer">
+                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg border border-primary/20">
                         <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&h=600&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-deepbrown/90 via-deepbrown/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
                             <div class="absolute inset-0 flex flex-col items-center justify-center">
-                                <button class="w-14 h-14 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl mb-4">
-                                    <i data-lucide="play" class="w-6 h-6 text-navy ml-1"></i>
-                                </button>
+                                <button class="w-12 h-12 rounded-full flex items-center justify-center hover:scale-110 transition mb-3 cyan-glow" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)"><i data-lucide="play" class="w-5 h-5 text-navy ml-0.5"></i></button>
                             </div>
-                            <div class="absolute bottom-4 left-4 right-4">
-                                <p class="text-xs text-cream mb-2 line-clamp-2">A journey through music and visual storytelling</p>
-                                <div class="flex items-center space-x-2 text-xs text-beige">
-                                    <span>750K views</span>
-                                    <span>•</span>
-                                    <span>52 min</span>
-                                </div>
+                            <div class="absolute bottom-4 left-3 right-3">
+                                <p class="text-[10px] text-cream/80 mb-1 line-clamp-2">A journey through music and visual storytelling</p>
+                                <div class="flex items-center gap-1.5 text-[10px] text-primary"><span>750K views</span><span>&bull;</span><span>52 min</span></div>
                             </div>
                         </div>
-                        <div class="absolute top-3 left-3 px-3 py-1 bg-red-500 rounded-full text-xs font-bold text-white">#3</div>
-                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$5.99</div>
+                        <div class="absolute top-2 left-2 px-2 py-0.5 bg-red-500 rounded-full text-[10px] font-black text-white">#3</div>
+                        <div class="absolute top-2 right-2 px-2 py-0.5 price-badge rounded-full text-[10px] font-black text-navy">$5.99</div>
                     </div>
-                    <h3 class="font-semibold mb-1 text-deepbrown">Sound & Vision</h3>
-                    <p class="text-sm text-warmgray">Jordan Blake</p>
+                    <h3 class="font-black text-sm text-navy mb-0.5 truncate">Sound &amp; Vision</h3>
+                    <p class="text-xs text-navy/60">Jordan Blake</p>
                 </div>
-                <div class="flex-shrink-0 w-64 group cursor-pointer">
-                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg">
+                <div class="flex-shrink-0 w-44 sm:w-52 md:w-64 group cursor-pointer">
+                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg border border-primary/20">
                         <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=600&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-deepbrown/90 via-deepbrown/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
                             <div class="absolute inset-0 flex flex-col items-center justify-center">
-                                <button class="w-14 h-14 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl mb-4">
-                                    <i data-lucide="play" class="w-6 h-6 text-navy ml-1"></i>
-                                </button>
+                                <button class="w-12 h-12 rounded-full flex items-center justify-center hover:scale-110 transition mb-3 cyan-glow" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)"><i data-lucide="play" class="w-5 h-5 text-navy ml-0.5"></i></button>
                             </div>
-                            <div class="absolute bottom-4 left-4 right-4">
-                                <p class="text-xs text-cream mb-2 line-clamp-2">Exclusive behind-the-scenes documentary series</p>
-                                <div class="flex items-center space-x-2 text-xs text-beige">
-                                    <span>620K views</span>
-                                    <span>•</span>
-                                    <span>38 min</span>
-                                </div>
+                            <div class="absolute bottom-4 left-3 right-3">
+                                <p class="text-[10px] text-cream/80 mb-1 line-clamp-2">Exclusive behind-the-scenes documentary series</p>
+                                <div class="flex items-center gap-1.5 text-[10px] text-primary"><span>620K views</span><span>&bull;</span><span>38 min</span></div>
                             </div>
                         </div>
-                        <div class="absolute top-3 left-3 px-3 py-1 bg-red-500 rounded-full text-xs font-bold text-white">#4</div>
-                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$4.99</div>
+                        <div class="absolute top-2 left-2 px-2 py-0.5 bg-red-500 rounded-full text-[10px] font-black text-white">#4</div>
+                        <div class="absolute top-2 right-2 px-2 py-0.5 price-badge rounded-full text-[10px] font-black text-navy">$4.99</div>
                     </div>
-                    <h3 class="font-semibold mb-1 text-deepbrown">Behind the Lens</h3>
-                    <p class="text-sm text-warmgray">Sam Torres</p>
+                    <h3 class="font-black text-sm text-navy mb-0.5 truncate">Behind the Lens</h3>
+                    <p class="text-xs text-navy/60">Sam Torres</p>
                 </div>
-                <div class="flex-shrink-0 w-64 group cursor-pointer">
-                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg">
+                <div class="flex-shrink-0 w-44 sm:w-52 md:w-64 group cursor-pointer">
+                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg border border-primary/20">
                         <img src="https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=400&h=600&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-deepbrown/90 via-deepbrown/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
                             <div class="absolute inset-0 flex flex-col items-center justify-center">
-                                <button class="w-14 h-14 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl mb-4">
-                                    <i data-lucide="play" class="w-6 h-6 text-navy ml-1"></i>
-                                </button>
+                                <button class="w-12 h-12 rounded-full flex items-center justify-center hover:scale-110 transition mb-3 cyan-glow" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)"><i data-lucide="play" class="w-5 h-5 text-navy ml-0.5"></i></button>
                             </div>
-                            <div class="absolute bottom-4 left-4 right-4">
-                                <p class="text-xs text-cream mb-2 line-clamp-2">Exploring the intersection of art and creativity</p>
-                                <div class="flex items-center space-x-2 text-xs text-beige">
-                                    <span>580K views</span>
-                                    <span>•</span>
-                                    <span>41 min</span>
-                                </div>
+                            <div class="absolute bottom-4 left-3 right-3">
+                                <p class="text-[10px] text-cream/80 mb-1 line-clamp-2">Exploring the intersection of art and creativity</p>
+                                <div class="flex items-center gap-1.5 text-[10px] text-primary"><span>580K views</span><span>&bull;</span><span>41 min</span></div>
                             </div>
                         </div>
-                        <div class="absolute top-3 left-3 px-3 py-1 bg-red-500 rounded-full text-xs font-bold text-white">#5</div>
-                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$3.99</div>
+                        <div class="absolute top-2 left-2 px-2 py-0.5 bg-red-500 rounded-full text-[10px] font-black text-white">#5</div>
+                        <div class="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[10px] font-black text-navy" style="background:#C0E863">$3.99</div>
                     </div>
-                    <h3 class="font-semibold mb-1 text-deepbrown">Creative Flow</h3>
-                    <p class="text-sm text-warmgray">Riley Park</p>
+                    <h3 class="font-black text-sm text-navy mb-0.5 truncate">Creative Flow</h3>
+                    <p class="text-xs text-navy/60">Riley Park</p>
                 </div>
             </div>
         </div>
 
-        <div class="mb-12">
+        <!-- New Releases -->
+        <div>
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-2xl font-bold text-deepbrown">New Releases</h2>
-                <button class="text-sm font-medium text-sand hover:text-nude transition">View All</button>
+                <h2 class="text-xl md:text-2xl font-black uppercase tracking-tighter text-navy">New Releases</h2>
+                <button class="text-xs md:text-sm font-black text-teal hover:text-navy transition uppercase tracking-wider">View All &rarr;</button>
             </div>
-            <div class="flex space-x-4 overflow-x-auto scrollbar-hide pb-4">
-                <div class="flex-shrink-0 w-72 group cursor-pointer">
-                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg">
+            <div class="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
+                <div class="flex-shrink-0 w-56 sm:w-64 md:w-72 group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg border border-primary/20">
                         <img src="https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=800&h=450&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <button class="w-16 h-16 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
-                                    <i data-lucide="play" class="w-7 h-7 text-navy ml-1"></i>
-                                </button>
-                            </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                            <button class="w-14 h-14 rounded-full flex items-center justify-center hover:scale-110 transition cyan-glow" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)"><i data-lucide="play" class="w-6 h-6 text-navy ml-0.5"></i></button>
                         </div>
-                        <div class="absolute top-3 left-3 px-3 py-1 bg-gradient-to-r from-sand to-nude rounded-full text-xs font-bold text-white">New</div>
-                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$6.99</div>
+                        <div class="absolute top-2 left-2 px-2.5 py-1 rounded-full text-[10px] font-black text-navy" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)">New</div>
+                        <div class="absolute top-2 right-2 px-2.5 py-1 price-badge rounded-full text-[10px] font-black text-navy">$6.99</div>
                     </div>
-                    <h3 class="font-semibold mb-1 text-deepbrown">Acoustic Sessions Vol. 2</h3>
-                    <p class="text-sm text-warmgray mb-1">Marcus Cole • Released today</p>
-                    <div class="flex items-center space-x-2">
-                        <div class="flex items-center">
-                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
-                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
-                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
-                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
-                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
-                        </div>
-                        <span class="text-xs text-warmgray">5.0</span>
-                    </div>
+                    <h3 class="font-black text-sm text-navy mb-0.5 truncate">Acoustic Sessions Vol. 2</h3>
+                    <p class="text-xs text-navy/60 mb-1">Marcus Cole &bull; Released today</p>
+                    <div class="flex items-center gap-1"><i data-lucide="star" class="w-3 h-3 text-lime fill-lime"></i><i data-lucide="star" class="w-3 h-3 text-lime fill-lime"></i><i data-lucide="star" class="w-3 h-3 text-lime fill-lime"></i><i data-lucide="star" class="w-3 h-3 text-lime fill-lime"></i><i data-lucide="star" class="w-3 h-3 text-lime fill-lime"></i><span class="text-[10px] text-navy/60 ml-1">5.0</span></div>
                 </div>
-                <div class="flex-shrink-0 w-72 group cursor-pointer">
-                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg">
+                <div class="flex-shrink-0 w-56 sm:w-64 md:w-72 group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg border border-primary/20">
                         <img src="https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800&h=450&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <button class="w-16 h-16 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
-                                    <i data-lucide="play" class="w-7 h-7 text-navy ml-1"></i>
-                                </button>
-                            </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                            <button class="w-14 h-14 rounded-full flex items-center justify-center hover:scale-110 transition cyan-glow" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)"><i data-lucide="play" class="w-6 h-6 text-navy ml-0.5"></i></button>
                         </div>
-                        <div class="absolute top-3 left-3 px-3 py-1 bg-gradient-to-r from-sand to-nude rounded-full text-xs font-bold text-white">New</div>
-                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">Free</div>
+                        <div class="absolute top-2 left-2 px-2.5 py-1 rounded-full text-[10px] font-black text-navy" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)">New</div>
+                        <div class="absolute top-2 right-2 px-2.5 py-1 rounded-full text-[10px] font-black text-navy" style="background:#C0E863">Free</div>
                     </div>
-                    <h3 class="font-semibold mb-1 text-deepbrown">The Artist's Mind Podcast</h3>
-                    <p class="text-sm text-warmgray mb-1">Creative Minds • Episode 45</p>
-                    <div class="flex items-center space-x-2">
-                        <div class="flex items-center">
-                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
-                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
-                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
-                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
-                            <i data-lucide="star" class="w-4 h-4 text-beige"></i>
-                        </div>
-                        <span class="text-xs text-warmgray">4.8</span>
-                    </div>
+                    <h3 class="font-black text-sm text-navy mb-0.5 truncate">The Artist's Mind Podcast</h3>
+                    <p class="text-xs text-navy/60 mb-1">Creative Minds &bull; Episode 45</p>
+                    <div class="flex items-center gap-1"><i data-lucide="star" class="w-3 h-3 text-lime fill-lime"></i><i data-lucide="star" class="w-3 h-3 text-lime fill-lime"></i><i data-lucide="star" class="w-3 h-3 text-lime fill-lime"></i><i data-lucide="star" class="w-3 h-3 text-lime fill-lime"></i><i data-lucide="star" class="w-3 h-3 text-muted"></i><span class="text-[10px] text-navy/60 ml-1">4.8</span></div>
                 </div>
-                <div class="flex-shrink-0 w-72 group cursor-pointer">
-                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg">
+                <div class="flex-shrink-0 w-56 sm:w-64 md:w-72 group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg border border-primary/20">
                         <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&h=450&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <button class="w-16 h-16 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
-                                    <i data-lucide="play" class="w-7 h-7 text-navy ml-1"></i>
-                                </button>
-                            </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                            <button class="w-14 h-14 rounded-full flex items-center justify-center hover:scale-110 transition cyan-glow" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)"><i data-lucide="play" class="w-6 h-6 text-navy ml-0.5"></i></button>
                         </div>
-                        <div class="absolute top-3 left-3 px-3 py-1 bg-gradient-to-r from-sand to-nude rounded-full text-xs font-bold text-white">New</div>
-                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$8.99</div>
+                        <div class="absolute top-2 left-2 px-2.5 py-1 rounded-full text-[10px] font-black text-navy" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)">New</div>
+                        <div class="absolute top-2 right-2 px-2.5 py-1 price-badge rounded-full text-[10px] font-black text-navy">$8.99</div>
                     </div>
-                    <h3 class="font-semibold mb-1 text-deepbrown">David Park: Unscripted</h3>
-                    <p class="text-sm text-warmgray mb-1">Comedy Special • 1h 20m</p>
-                    <div class="flex items-center space-x-2">
-                        <div class="flex items-center">
-                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
-                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
-                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
-                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
-                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
-                        </div>
-                        <span class="text-xs text-warmgray">4.9</span>
-                    </div>
+                    <h3 class="font-black text-sm text-navy mb-0.5 truncate">David Park: Unscripted</h3>
+                    <p class="text-xs text-navy/60 mb-1">Comedy Special &bull; 1h 20m</p>
+                    <div class="flex items-center gap-1"><i data-lucide="star" class="w-3 h-3 text-lime fill-lime"></i><i data-lucide="star" class="w-3 h-3 text-lime fill-lime"></i><i data-lucide="star" class="w-3 h-3 text-lime fill-lime"></i><i data-lucide="star" class="w-3 h-3 text-lime fill-lime"></i><i data-lucide="star" class="w-3 h-3 text-lime fill-lime"></i><span class="text-[10px] text-navy/60 ml-1">4.9</span></div>
                 </div>
-                <div class="flex-shrink-0 w-72 group cursor-pointer">
-                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg">
+                <div class="flex-shrink-0 w-56 sm:w-64 md:w-72 group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg border border-primary/20">
                         <img src="https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=800&h=450&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <button class="w-16 h-16 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
-                                    <i data-lucide="play" class="w-7 h-7 text-navy ml-1"></i>
-                                </button>
-                            </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                            <button class="w-14 h-14 rounded-full flex items-center justify-center hover:scale-110 transition cyan-glow" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)"><i data-lucide="play" class="w-6 h-6 text-navy ml-0.5"></i></button>
                         </div>
-                        <div class="absolute top-3 left-3 px-3 py-1 bg-gradient-to-r from-sand to-nude rounded-full text-xs font-bold text-white">New</div>
-                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$5.99</div>
+                        <div class="absolute top-2 left-2 px-2.5 py-1 rounded-full text-[10px] font-black text-navy" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)">New</div>
+                        <div class="absolute top-2 right-2 px-2.5 py-1 price-badge rounded-full text-[10px] font-black text-navy">$5.99</div>
                     </div>
-                    <h3 class="font-semibold mb-1 text-deepbrown">Street Art Chronicles</h3>
-                    <p class="text-sm text-warmgray mb-1">Documentary Series • Season 1</p>
-                    <div class="flex items-center space-x-2">
-                        <div class="flex items-center">
-                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
-                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
-                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
-                            <i data-lucide="star" class="w-4 h-4 fill-sand text-sand"></i>
-                            <i data-lucide="star" class="w-4 h-4 text-beige"></i>
-                        </div>
-                        <span class="text-xs text-warmgray">4.7</span>
-                    </div>
+                    <h3 class="font-black text-sm text-navy mb-0.5 truncate">Street Art Chronicles</h3>
+                    <p class="text-xs text-navy/60 mb-1">Documentary &bull; Season 1</p>
+                    <div class="flex items-center gap-1"><i data-lucide="star" class="w-3 h-3 text-lime fill-lime"></i><i data-lucide="star" class="w-3 h-3 text-lime fill-lime"></i><i data-lucide="star" class="w-3 h-3 text-lime fill-lime"></i><i data-lucide="star" class="w-3 h-3 text-lime fill-lime"></i><i data-lucide="star" class="w-3 h-3 text-muted"></i><span class="text-[10px] text-navy/60 ml-1">4.7</span></div>
                 </div>
             </div>
         </div>
 
-        <div class="mb-12">
+        <!-- Stand-Up Comedy -->
+        <div>
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-2xl font-bold text-deepbrown">Stand-Up Comedy</h2>
-                <button class="text-sm font-medium text-sand hover:text-nude transition">View All</button>
+                <h2 class="text-xl md:text-2xl font-black uppercase tracking-tighter text-navy">Stand-Up Comedy</h2>
+                <button class="text-xs md:text-sm font-black text-teal hover:text-navy transition uppercase tracking-wider">View All &rarr;</button>
             </div>
-            <div class="flex space-x-4 overflow-x-auto scrollbar-hide pb-4">
-                <div class="flex-shrink-0 w-56 group cursor-pointer">
-                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg">
+            <div class="flex gap-3 md:gap-4 overflow-x-auto scrollbar-hide pb-2">
+                <div class="flex-shrink-0 w-36 sm:w-44 md:w-56 group cursor-pointer">
+                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-2 shadow-lg border border-primary/20">
                         <img src="https://images.unsplash.com/photo-1527224857830-43a7acc85260?w=400&h=600&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <button class="w-14 h-14 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
-                                    <i data-lucide="play" class="w-6 h-6 text-navy ml-1"></i>
-                                </button>
-                            </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                            <button class="w-11 h-11 rounded-full flex items-center justify-center hover:scale-110 transition cyan-glow" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)"><i data-lucide="play" class="w-5 h-5 text-navy ml-0.5"></i></button>
                         </div>
-                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$9.99</div>
+                        <div class="absolute top-2 right-2 px-2 py-0.5 price-badge rounded-full text-[10px] font-black text-navy">$9.99</div>
                     </div>
-                    <h3 class="font-semibold mb-1 text-sm text-deepbrown">Sarah Chen: Raw</h3>
-                    <p class="text-xs text-warmgray">1h 15m</p>
+                    <h3 class="font-black text-xs text-navy mb-0.5 truncate">Sarah Chen: Raw</h3>
+                    <p class="text-[10px] text-navy/60">1h 15m</p>
                 </div>
-                <div class="flex-shrink-0 w-56 group cursor-pointer">
-                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg">
+                <div class="flex-shrink-0 w-36 sm:w-44 md:w-56 group cursor-pointer">
+                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-2 shadow-lg border border-primary/20">
                         <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=600&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <button class="w-14 h-14 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
-                                    <i data-lucide="play" class="w-6 h-6 text-navy ml-1"></i>
-                                </button>
-                            </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                            <button class="w-11 h-11 rounded-full flex items-center justify-center hover:scale-110 transition cyan-glow" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)"><i data-lucide="play" class="w-5 h-5 text-navy ml-0.5"></i></button>
                         </div>
-                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$8.99</div>
+                        <div class="absolute top-2 right-2 px-2 py-0.5 price-badge rounded-full text-[10px] font-black text-navy">$8.99</div>
                     </div>
-                    <h3 class="font-semibold mb-1 text-sm text-deepbrown">David Park: Unscripted</h3>
-                    <p class="text-xs text-warmgray">1h 20m</p>
+                    <h3 class="font-black text-xs text-navy mb-0.5 truncate">David Park: Unscripted</h3>
+                    <p class="text-[10px] text-navy/60">1h 20m</p>
                 </div>
-                <div class="flex-shrink-0 w-56 group cursor-pointer">
-                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg">
+                <div class="flex-shrink-0 w-36 sm:w-44 md:w-56 group cursor-pointer">
+                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-2 shadow-lg border border-primary/20">
                         <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=600&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <button class="w-14 h-14 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
-                                    <i data-lucide="play" class="w-6 h-6 text-navy ml-1"></i>
-                                </button>
-                            </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                            <button class="w-11 h-11 rounded-full flex items-center justify-center hover:scale-110 transition cyan-glow" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)"><i data-lucide="play" class="w-5 h-5 text-navy ml-0.5"></i></button>
                         </div>
-                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$7.99</div>
+                        <div class="absolute top-2 right-2 px-2 py-0.5 price-badge rounded-full text-[10px] font-black text-navy">$7.99</div>
                     </div>
-                    <h3 class="font-semibold mb-1 text-sm text-deepbrown">Mike Torres: Honest</h3>
-                    <p class="text-xs text-warmgray">58 min</p>
+                    <h3 class="font-black text-xs text-navy mb-0.5 truncate">Mike Torres: Honest</h3>
+                    <p class="text-[10px] text-navy/60">58 min</p>
                 </div>
-                <div class="flex-shrink-0 w-56 group cursor-pointer">
-                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg">
+                <div class="flex-shrink-0 w-36 sm:w-44 md:w-56 group cursor-pointer">
+                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-2 shadow-lg border border-primary/20">
                         <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&h=600&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <button class="w-14 h-14 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
-                                    <i data-lucide="play" class="w-6 h-6 text-navy ml-1"></i>
-                                </button>
-                            </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                            <button class="w-11 h-11 rounded-full flex items-center justify-center hover:scale-110 transition cyan-glow" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)"><i data-lucide="play" class="w-5 h-5 text-navy ml-0.5"></i></button>
                         </div>
-                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$6.99</div>
+                        <div class="absolute top-2 right-2 px-2 py-0.5 price-badge rounded-full text-[10px] font-black text-navy">$6.99</div>
                     </div>
-                    <h3 class="font-semibold mb-1 text-sm text-deepbrown">Lisa Kim: Breakthrough</h3>
-                    <p class="text-xs text-warmgray">1h 5m</p>
+                    <h3 class="font-black text-xs text-navy mb-0.5 truncate">Lisa Kim: Breakthrough</h3>
+                    <p class="text-[10px] text-navy/60">1h 5m</p>
                 </div>
-                <div class="flex-shrink-0 w-56 group cursor-pointer">
-                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg">
+                <div class="flex-shrink-0 w-36 sm:w-44 md:w-56 group cursor-pointer">
+                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-2 shadow-lg border border-primary/20">
                         <img src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=400&h=600&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <button class="w-14 h-14 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
-                                    <i data-lucide="play" class="w-6 h-6 text-navy ml-1"></i>
-                                </button>
-                            </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                            <button class="w-11 h-11 rounded-full flex items-center justify-center hover:scale-110 transition cyan-glow" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)"><i data-lucide="play" class="w-5 h-5 text-navy ml-0.5"></i></button>
                         </div>
-                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$8.99</div>
+                        <div class="absolute top-2 right-2 px-2 py-0.5 price-badge rounded-full text-[10px] font-black text-navy">$8.99</div>
                     </div>
-                    <h3 class="font-semibold mb-1 text-sm text-deepbrown">Alex Rivera: Unfiltered</h3>
-                    <p class="text-xs text-warmgray">1h 12m</p>
+                    <h3 class="font-black text-xs text-navy mb-0.5 truncate">Alex Rivera: Unfiltered</h3>
+                    <p class="text-[10px] text-navy/60">1h 12m</p>
                 </div>
             </div>
         </div>
 
-        <div class="mb-12">
+        <!-- Podcasts & Conversations -->
+        <div>
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-2xl font-bold text-deepbrown">Podcasts & Conversations</h2>
-                <button class="text-sm font-medium text-sand hover:text-nude transition">View All</button>
+                <h2 class="text-xl md:text-2xl font-black uppercase tracking-tighter text-navy">Podcasts &amp; Conversations</h2>
+                <button class="text-xs md:text-sm font-black text-teal hover:text-navy transition uppercase tracking-wider">View All &rarr;</button>
             </div>
-            <div class="flex space-x-4 overflow-x-auto scrollbar-hide pb-4">
-                <div class="flex-shrink-0 w-80 group cursor-pointer">
-                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg">
+            <div class="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
+                <div class="flex-shrink-0 w-64 sm:w-72 md:w-80 group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg border border-primary/20">
                         <img src="https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800&h=450&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <button class="w-16 h-16 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
-                                    <i data-lucide="play" class="w-7 h-7 text-navy ml-1"></i>
-                                </button>
-                            </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                            <button class="w-14 h-14 rounded-full flex items-center justify-center hover:scale-110 transition cyan-glow" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)"><i data-lucide="play" class="w-6 h-6 text-navy ml-0.5"></i></button>
                         </div>
-                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">Free</div>
+                        <div class="absolute top-2 right-2 px-2.5 py-1 rounded-full text-[10px] font-black text-navy" style="background:#C0E863">Free</div>
                     </div>
-                    <h3 class="font-semibold mb-1 text-deepbrown">Creative Minds: The Art of Storytelling</h3>
-                    <p class="text-sm text-warmgray">Episode 42 • 45 min</p>
+                    <h3 class="font-black text-sm text-navy mb-0.5 truncate">Creative Minds: The Art of Storytelling</h3>
+                    <p class="text-xs text-navy/60">Episode 42 &bull; 45 min</p>
                 </div>
-                <div class="flex-shrink-0 w-80 group cursor-pointer">
-                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg">
+                <div class="flex-shrink-0 w-64 sm:w-72 md:w-80 group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg border border-primary/20">
                         <img src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=800&h=450&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <button class="w-16 h-16 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
-                                    <i data-lucide="play" class="w-7 h-7 text-navy ml-1"></i>
-                                </button>
-                            </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                            <button class="w-14 h-14 rounded-full flex items-center justify-center hover:scale-110 transition cyan-glow" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)"><i data-lucide="play" class="w-6 h-6 text-navy ml-0.5"></i></button>
                         </div>
-                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">Free</div>
+                        <div class="absolute top-2 right-2 px-2.5 py-1 rounded-full text-[10px] font-black text-navy" style="background:#C0E863">Free</div>
                     </div>
-                    <h3 class="font-semibold mb-1 text-deepbrown">Sound & Vision: Music Production</h3>
-                    <p class="text-sm text-warmgray">Episode 18 • 52 min</p>
+                    <h3 class="font-black text-sm text-navy mb-0.5 truncate">Sound &amp; Vision: Music Production</h3>
+                    <p class="text-xs text-navy/60">Episode 18 &bull; 52 min</p>
                 </div>
-                <div class="flex-shrink-0 w-80 group cursor-pointer">
-                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg">
+                <div class="flex-shrink-0 w-64 sm:w-72 md:w-80 group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg border border-primary/20">
                         <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800&h=450&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <button class="w-16 h-16 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
-                                    <i data-lucide="play" class="w-7 h-7 text-navy ml-1"></i>
-                                </button>
-                            </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                            <button class="w-14 h-14 rounded-full flex items-center justify-center hover:scale-110 transition cyan-glow" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)"><i data-lucide="play" class="w-6 h-6 text-navy ml-0.5"></i></button>
                         </div>
-                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$2.99</div>
+                        <div class="absolute top-2 right-2 px-2.5 py-1 price-badge rounded-full text-[10px] font-black text-navy">$2.99</div>
                     </div>
-                    <h3 class="font-semibold mb-1 text-deepbrown">The Artist's Journey: Finding Your Voice</h3>
-                    <p class="text-sm text-warmgray">Episode 7 • 38 min</p>
+                    <h3 class="font-black text-sm text-navy mb-0.5 truncate">The Artist's Journey: Finding Your Voice</h3>
+                    <p class="text-xs text-navy/60">Episode 7 &bull; 38 min</p>
                 </div>
-                <div class="flex-shrink-0 w-80 group cursor-pointer">
-                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg">
+                <div class="flex-shrink-0 w-64 sm:w-72 md:w-80 group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg border border-primary/20">
                         <img src="https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=800&h=450&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <button class="w-16 h-16 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
-                                    <i data-lucide="play" class="w-7 h-7 text-navy ml-1"></i>
-                                </button>
-                            </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                            <button class="w-14 h-14 rounded-full flex items-center justify-center hover:scale-110 transition cyan-glow" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)"><i data-lucide="play" class="w-6 h-6 text-navy ml-0.5"></i></button>
                         </div>
-                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">Free</div>
+                        <div class="absolute top-2 right-2 px-2.5 py-1 rounded-full text-[10px] font-black text-navy" style="background:#C0E863">Free</div>
                     </div>
-                    <h3 class="font-semibold mb-1 text-deepbrown">Behind the Canvas: Visual Arts</h3>
-                    <p class="text-sm text-warmgray">Episode 23 • 41 min</p>
+                    <h3 class="font-black text-sm text-navy mb-0.5 truncate">Behind the Canvas: Visual Arts</h3>
+                    <p class="text-xs text-navy/60">Episode 23 &bull; 41 min</p>
                 </div>
             </div>
         </div>
 
-        <div class="mb-12">
+        <!-- Live Performances -->
+        <div>
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-2xl font-bold text-deepbrown">Live Performances</h2>
-                <button class="text-sm font-medium text-sand hover:text-nude transition">View All</button>
+                <h2 class="text-xl md:text-2xl font-black uppercase tracking-tighter text-navy">Live Performances</h2>
+                <button class="text-xs md:text-sm font-black text-teal hover:text-navy transition uppercase tracking-wider">View All &rarr;</button>
             </div>
-            <div class="flex space-x-4 overflow-x-auto scrollbar-hide pb-4">
-                <div class="flex-shrink-0 w-72 group cursor-pointer">
-                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg">
+            <div class="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
+                <div class="flex-shrink-0 w-56 sm:w-64 md:w-72 group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg border border-primary/20">
                         <img src="https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=800&h=450&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <button class="w-16 h-16 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
-                                    <i data-lucide="play" class="w-7 h-7 text-navy ml-1"></i>
-                                </button>
-                            </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                            <button class="w-14 h-14 rounded-full flex items-center justify-center hover:scale-110 transition cyan-glow" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)"><i data-lucide="play" class="w-6 h-6 text-navy ml-0.5"></i></button>
                         </div>
-                        <div class="absolute top-3 left-3 px-3 py-1 bg-red-500 rounded-full text-xs font-bold text-white flex items-center space-x-1">
-                            <span class="w-2 h-2 bg-white rounded-full animate-pulse"></span>
-                            <span>LIVE</span>
-                        </div>
-                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">Free</div>
+                        <div class="absolute top-2 left-2 px-2.5 py-1 bg-red-500 rounded-full text-[10px] font-black text-white flex items-center gap-1"><span class="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>LIVE</div>
+                        <div class="absolute top-2 right-2 px-2.5 py-1 rounded-full text-[10px] font-black text-navy" style="background:#C0E863">Free</div>
                     </div>
-                    <h3 class="font-semibold mb-1 text-deepbrown">Jazz Night Sessions</h3>
-                    <p class="text-sm text-warmgray">Marcus Cole • 2.4K watching</p>
+                    <h3 class="font-black text-sm text-navy mb-0.5 truncate">Jazz Night Sessions</h3>
+                    <p class="text-xs text-navy/60">Marcus Cole &bull; 2.4K watching</p>
                 </div>
-                <div class="flex-shrink-0 w-72 group cursor-pointer">
-                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg">
+                <div class="flex-shrink-0 w-56 sm:w-64 md:w-72 group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg border border-primary/20">
                         <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=450&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <button class="w-16 h-16 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
-                                    <i data-lucide="play" class="w-7 h-7 text-navy ml-1"></i>
-                                </button>
-                            </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                            <button class="w-14 h-14 rounded-full flex items-center justify-center hover:scale-110 transition cyan-glow" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)"><i data-lucide="play" class="w-6 h-6 text-navy ml-0.5"></i></button>
                         </div>
-                        <div class="absolute top-3 left-3 px-3 py-1 bg-beige rounded-full text-xs font-bold text-deepbrown">Upcoming</div>
-                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$4.99</div>
+                        <div class="absolute top-2 left-2 px-2.5 py-1 rounded-full text-[10px] font-black border border-primary/30" style="background:rgba(77,208,225,0.15);color:#4DD0E1">Upcoming</div>
+                        <div class="absolute top-2 right-2 px-2.5 py-1 price-badge rounded-full text-[10px] font-black text-navy">$4.99</div>
                     </div>
-                    <h3 class="font-semibold mb-1 text-deepbrown">Acoustic Sessions</h3>
-                    <p class="text-sm text-warmgray">Riley Park • Tomorrow 8 PM</p>
+                    <h3 class="font-black text-sm text-navy mb-0.5 truncate">Acoustic Sessions</h3>
+                    <p class="text-xs text-navy/60">Riley Park &bull; Tomorrow 8 PM</p>
                 </div>
-                <div class="flex-shrink-0 w-72 group cursor-pointer">
-                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg">
+                <div class="flex-shrink-0 w-56 sm:w-64 md:w-72 group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg border border-primary/20">
                         <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=450&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <button class="w-16 h-16 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
-                                    <i data-lucide="play" class="w-7 h-7 text-navy ml-1"></i>
-                                </button>
-                            </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                            <button class="w-14 h-14 rounded-full flex items-center justify-center hover:scale-110 transition cyan-glow" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)"><i data-lucide="play" class="w-6 h-6 text-navy ml-0.5"></i></button>
                         </div>
-                        <div class="absolute top-3 left-3 px-3 py-1 bg-red-500 rounded-full text-xs font-bold text-white flex items-center space-x-1">
-                            <span class="w-2 h-2 bg-white rounded-full animate-pulse"></span>
-                            <span>LIVE</span>
-                        </div>
-                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$3.99</div>
+                        <div class="absolute top-2 left-2 px-2.5 py-1 bg-red-500 rounded-full text-[10px] font-black text-white flex items-center gap-1"><span class="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>LIVE</div>
+                        <div class="absolute top-2 right-2 px-2.5 py-1 price-badge rounded-full text-[10px] font-black text-navy">$3.99</div>
                     </div>
-                    <h3 class="font-semibold mb-1 text-deepbrown">Behind the Lens Q&A</h3>
-                    <p class="text-sm text-warmgray">Sam Torres • 1.8K watching</p>
+                    <h3 class="font-black text-sm text-navy mb-0.5 truncate">Behind the Lens Q&amp;A</h3>
+                    <p class="text-xs text-navy/60">Sam Torres &bull; 1.8K watching</p>
                 </div>
-                <div class="flex-shrink-0 w-72 group cursor-pointer">
-                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg">
+                <div class="flex-shrink-0 w-56 sm:w-64 md:w-72 group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg border border-primary/20">
                         <img src="https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=800&h=450&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <button class="w-16 h-16 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
-                                    <i data-lucide="play" class="w-7 h-7 text-navy ml-1"></i>
-                                </button>
-                            </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                            <button class="w-14 h-14 rounded-full flex items-center justify-center hover:scale-110 transition cyan-glow" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)"><i data-lucide="play" class="w-6 h-6 text-navy ml-0.5"></i></button>
                         </div>
-                        <div class="absolute top-3 left-3 px-3 py-1 bg-beige rounded-full text-xs font-bold text-deepbrown">Upcoming</div>
-                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">Free</div>
+                        <div class="absolute top-2 left-2 px-2.5 py-1 rounded-full text-[10px] font-black border border-primary/30" style="background:rgba(77,208,225,0.15);color:#4DD0E1">Upcoming</div>
+                        <div class="absolute top-2 right-2 px-2.5 py-1 rounded-full text-[10px] font-black text-navy" style="background:#C0E863">Free</div>
                     </div>
-                    <h3 class="font-semibold mb-1 text-deepbrown">Creative Flow Workshop</h3>
-                    <p class="text-sm text-warmgray">Maya Chen • Friday 7 PM</p>
+                    <h3 class="font-black text-sm text-navy mb-0.5 truncate">Creative Flow Workshop</h3>
+                    <p class="text-xs text-navy/60">Maya Chen &bull; Friday 7 PM</p>
                 </div>
             </div>
         </div>
 
-        <div class="mb-12">
+        <!-- Because You Watched -->
+        <div>
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-2xl font-bold text-deepbrown">Because You Watched "Sarah Chen: Raw"</h2>
-                <button class="text-sm font-medium text-sand hover:text-nude transition">View All</button>
+                <div>
+                    <h2 class="text-lg md:text-2xl font-black uppercase tracking-tighter text-navy">Because You Watched</h2>
+                    <p class="text-xs text-primary font-mono tracking-widest">&ldquo;Sarah Chen: Raw&rdquo;</p>
+                </div>
+                <button class="text-xs md:text-sm font-black text-teal hover:text-navy transition uppercase tracking-wider shrink-0 ml-4">View All &rarr;</button>
             </div>
-            <div class="flex space-x-4 overflow-x-auto scrollbar-hide pb-4">
-                <div class="flex-shrink-0 w-64 group cursor-pointer">
-                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg">
+            <div class="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
+                <div class="flex-shrink-0 w-44 sm:w-52 md:w-64 group cursor-pointer">
+                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg border border-primary/20">
                         <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=600&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <button class="w-14 h-14 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
-                                    <i data-lucide="play" class="w-6 h-6 text-navy ml-1"></i>
-                                </button>
-                            </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                            <button class="w-12 h-12 rounded-full flex items-center justify-center hover:scale-110 transition cyan-glow" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)"><i data-lucide="play" class="w-5 h-5 text-navy ml-0.5"></i></button>
                         </div>
-                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$7.99</div>
-                        <div class="absolute bottom-3 left-3 px-3 py-1 bg-deepbrown/90 rounded-full text-xs font-semibold text-cream">95% Match</div>
+                        <div class="absolute top-2 right-2 px-2 py-0.5 price-badge rounded-full text-[10px] font-black text-navy">$7.99</div>
+                        <div class="absolute bottom-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-black text-navy" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)">95% Match</div>
                     </div>
-                    <h3 class="font-semibold mb-1 text-sm text-deepbrown">Mike Torres: Honest</h3>
-                    <p class="text-xs text-warmgray">Stand-up Comedy</p>
+                    <h3 class="font-black text-xs text-navy mb-0.5 truncate">Mike Torres: Honest</h3>
+                    <p class="text-[10px] text-navy/60">Stand-up Comedy</p>
                 </div>
-                <div class="flex-shrink-0 w-64 group cursor-pointer">
-                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg">
+                <div class="flex-shrink-0 w-44 sm:w-52 md:w-64 group cursor-pointer">
+                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg border border-primary/20">
                         <img src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=400&h=600&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <button class="w-14 h-14 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
-                                    <i data-lucide="play" class="w-6 h-6 text-navy ml-1"></i>
-                                </button>
-                            </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                            <button class="w-12 h-12 rounded-full flex items-center justify-center hover:scale-110 transition cyan-glow" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)"><i data-lucide="play" class="w-5 h-5 text-navy ml-0.5"></i></button>
                         </div>
-                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$8.99</div>
-                        <div class="absolute bottom-3 left-3 px-3 py-1 bg-deepbrown/90 rounded-full text-xs font-semibold text-cream">92% Match</div>
+                        <div class="absolute top-2 right-2 px-2 py-0.5 price-badge rounded-full text-[10px] font-black text-navy">$8.99</div>
+                        <div class="absolute bottom-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-black text-navy" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)">92% Match</div>
                     </div>
-                    <h3 class="font-semibold mb-1 text-sm text-deepbrown">Alex Rivera: Unfiltered</h3>
-                    <p class="text-xs text-warmgray">Stand-up Comedy</p>
+                    <h3 class="font-black text-xs text-navy mb-0.5 truncate">Alex Rivera: Unfiltered</h3>
+                    <p class="text-[10px] text-navy/60">Stand-up Comedy</p>
                 </div>
-                <div class="flex-shrink-0 w-64 group cursor-pointer">
-                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg">
+                <div class="flex-shrink-0 w-44 sm:w-52 md:w-64 group cursor-pointer">
+                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg border border-primary/20">
                         <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&h=600&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <button class="w-14 h-14 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
-                                    <i data-lucide="play" class="w-6 h-6 text-navy ml-1"></i>
-                                </button>
-                            </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                            <button class="w-12 h-12 rounded-full flex items-center justify-center hover:scale-110 transition cyan-glow" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)"><i data-lucide="play" class="w-5 h-5 text-navy ml-0.5"></i></button>
                         </div>
-                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$6.99</div>
-                        <div class="absolute bottom-3 left-3 px-3 py-1 bg-deepbrown/90 rounded-full text-xs font-semibold text-cream">88% Match</div>
+                        <div class="absolute top-2 right-2 px-2 py-0.5 price-badge rounded-full text-[10px] font-black text-navy">$6.99</div>
+                        <div class="absolute bottom-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-black text-navy" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)">88% Match</div>
                     </div>
-                    <h3 class="font-semibold mb-1 text-sm text-deepbrown">Lisa Kim: Breakthrough</h3>
-                    <p class="text-xs text-warmgray">Stand-up Comedy</p>
+                    <h3 class="font-black text-xs text-navy mb-0.5 truncate">Lisa Kim: Breakthrough</h3>
+                    <p class="text-[10px] text-navy/60">Stand-up Comedy</p>
                 </div>
-                <div class="flex-shrink-0 w-64 group cursor-pointer">
-                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg">
+                <div class="flex-shrink-0 w-44 sm:w-52 md:w-64 group cursor-pointer">
+                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg border border-primary/20">
                         <img src="https://images.unsplash.com/photo-1527224857830-43a7acc85260?w=400&h=600&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <button class="w-14 h-14 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
-                                    <i data-lucide="play" class="w-6 h-6 text-navy ml-1"></i>
-                                </button>
-                            </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                            <button class="w-12 h-12 rounded-full flex items-center justify-center hover:scale-110 transition cyan-glow" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)"><i data-lucide="play" class="w-5 h-5 text-navy ml-0.5"></i></button>
                         </div>
-                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$9.99</div>
-                        <div class="absolute bottom-3 left-3 px-3 py-1 bg-deepbrown/90 rounded-full text-xs font-semibold text-cream">85% Match</div>
+                        <div class="absolute top-2 right-2 px-2 py-0.5 price-badge rounded-full text-[10px] font-black text-navy">$9.99</div>
+                        <div class="absolute bottom-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-black text-navy" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)">85% Match</div>
                     </div>
-                    <h3 class="font-semibold mb-1 text-sm text-deepbrown">Jordan Blake: Real Talk</h3>
-                    <p class="text-xs text-warmgray">Stand-up Comedy</p>
+                    <h3 class="font-black text-xs text-navy mb-0.5 truncate">Jordan Blake: Real Talk</h3>
+                    <p class="text-[10px] text-navy/60">Stand-up Comedy</p>
                 </div>
-                <div class="flex-shrink-0 w-64 group cursor-pointer">
-                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg">
+                <div class="flex-shrink-0 w-44 sm:w-52 md:w-64 group cursor-pointer">
+                    <div class="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg border border-primary/20">
                         <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=600&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <button class="w-14 h-14 bg-cream rounded-full flex items-center justify-center hover:scale-110 transition shadow-2xl">
-                                    <i data-lucide="play" class="w-6 h-6 text-navy ml-1"></i>
-                                </button>
-                            </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                            <button class="w-12 h-12 rounded-full flex items-center justify-center hover:scale-110 transition cyan-glow" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)"><i data-lucide="play" class="w-5 h-5 text-navy ml-0.5"></i></button>
                         </div>
-                        <div class="absolute top-3 right-3 px-3 py-1 bg-sand rounded-full text-xs font-bold text-white">$8.99</div>
-                        <div class="absolute bottom-3 left-3 px-3 py-1 bg-deepbrown/90 rounded-full text-xs font-semibold text-cream">82% Match</div>
+                        <div class="absolute top-2 right-2 px-2 py-0.5 price-badge rounded-full text-[10px] font-black text-navy">$8.99</div>
+                        <div class="absolute bottom-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-black text-navy" style="background:linear-gradient(135deg,#4DD0E1,#C0E863)">82% Match</div>
                     </div>
-                    <h3 class="font-semibold mb-1 text-sm text-deepbrown">David Park: Unscripted</h3>
-                    <p class="text-xs text-warmgray">Stand-up Comedy</p>
+                    <h3 class="font-black text-xs text-navy mb-0.5 truncate">David Park: Unscripted</h3>
+                    <p class="text-[10px] text-navy/60">Stand-up Comedy</p>
                 </div>
             </div>
         </div>
+
     </section>
 
-    <footer class="py-16 px-4 sm:px-6 lg:px-12 bg-beige border-t border-sand/30">
+    <!-- FOOTER -->
+    <footer class="py-12 md:py-16 px-4 sm:px-6 lg:px-12 border-t-2 border-primary/30" style="background:linear-gradient(135deg,#e0f7fa,#f1f8e9)">
         <div class="max-w-7xl mx-auto">
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
-                <div class="col-span-2">
-                    <div class="text-3xl font-display font-bold bg-gradient-to-r from-sand via-nude to-warmgray bg-clip-text text-transparent mb-4">ArtStream</div>
-                    <p class="text-warmgray mb-6 max-w-sm">Empowering artists and creators to share their stories with the world.</p>
-                    <div class="flex space-x-4">
-                        <a href="#" class="w-10 h-10 bg-nude rounded-full flex items-center justify-center hover:bg-sand transition">
-                            <i data-lucide="twitter" class="w-5 h-5 text-deepbrown"></i>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-nude rounded-full flex items-center justify-center hover:bg-sand transition">
-                            <i data-lucide="instagram" class="w-5 h-5 text-deepbrown"></i>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-nude rounded-full flex items-center justify-center hover:bg-sand transition">
-                            <i data-lucide="youtube" class="w-5 h-5 text-deepbrown"></i>
-                        </a>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8 mb-10">
+                <div class="col-span-2 sm:col-span-3 md:col-span-2">
+                    <div class="text-2xl md:text-3xl font-display font-black grad-text mb-3 tracking-tight">ArtStream</div>
+                    <p class="text-navy/60 text-sm mb-5 max-w-sm leading-relaxed">Empowering artists and creators to share their stories with the world. Unfiltered, original, exclusively yours.</p>
+                    <div class="flex gap-3">
+                        <a href="#" class="w-9 h-9 rounded-full flex items-center justify-center border border-primary/20 hover:border-primary hover:bg-primary/10 transition"><i data-lucide="twitter" class="w-4 h-4 text-muted"></i></a>
+                        <a href="#" class="w-9 h-9 rounded-full flex items-center justify-center border border-primary/20 hover:border-primary hover:bg-primary/10 transition"><i data-lucide="instagram" class="w-4 h-4 text-muted"></i></a>
+                        <a href="#" class="w-9 h-9 rounded-full flex items-center justify-center border border-primary/20 hover:border-primary hover:bg-primary/10 transition"><i data-lucide="youtube" class="w-4 h-4 text-muted"></i></a>
                     </div>
                 </div>
                 <div>
-                    <h4 class="font-bold mb-4 text-deepbrown">Platform</h4>
-                    <ul class="space-y-2 text-sm text-warmgray">
-                        <li><a href="#" class="hover:text-deepbrown transition">Shows</a></li>
-                        <li><a href="#" class="hover:text-deepbrown transition">Podcasts</a></li>
-                        <li><a href="#" class="hover:text-deepbrown transition">Comedy</a></li>
-                        <li><a href="#" class="hover:text-deepbrown transition">Live</a></li>
+                    <h4 class="font-black text-sm uppercase tracking-wider text-navy mb-4">Platform</h4>
+                    <ul class="space-y-2 text-sm text-navy/60">
+                        <li><a href="#" class="hover:text-primary transition">Shows</a></li>
+                        <li><a href="#" class="hover:text-primary transition">Podcasts</a></li>
+                        <li><a href="#" class="hover:text-primary transition">Comedy</a></li>
+                        <li><a href="#" class="hover:text-primary transition">Live</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="font-bold mb-4 text-deepbrown">Support</h4>
-                    <ul class="space-y-2 text-sm text-warmgray">
-                        <li><a href="#" class="hover:text-deepbrown transition">Help Center</a></li>
-                        <li><a href="#" class="hover:text-deepbrown transition">Contact Us</a></li>
-                        <li><a href="#" class="hover:text-deepbrown transition">FAQs</a></li>
-                        <li><a href="#" class="hover:text-deepbrown transition">Feedback</a></li>
+                    <h4 class="font-black text-sm uppercase tracking-wider text-navy mb-4">Support</h4>
+                    <ul class="space-y-2 text-sm text-navy/60">
+                        <li><a href="#" class="hover:text-primary transition">Help Center</a></li>
+                        <li><a href="#" class="hover:text-primary transition">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-primary transition">FAQs</a></li>
+                        <li><a href="#" class="hover:text-primary transition">Feedback</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="font-bold mb-4 text-deepbrown">Company</h4>
-                    <ul class="space-y-2 text-sm text-warmgray">
-                        <li><a href="#" class="hover:text-deepbrown transition">About</a></li>
-                        <li><a href="#" class="hover:text-deepbrown transition">Careers</a></li>
-                        <li><a href="#" class="hover:text-deepbrown transition">Press</a></li>
-                        <li><a href="#" class="hover:text-deepbrown transition">Blog</a></li>
+                    <h4 class="font-black text-sm uppercase tracking-wider text-navy mb-4">Company</h4>
+                    <ul class="space-y-2 text-sm text-navy/60">
+                        <li><a href="#" class="hover:text-primary transition">About</a></li>
+                        <li><a href="#" class="hover:text-primary transition">Careers</a></li>
+                        <li><a href="#" class="hover:text-primary transition">Press</a></li>
+                        <li><a href="#" class="hover:text-primary transition">Blog</a></li>
                     </ul>
                 </div>
             </div>
-            <div class="pt-8 border-t border-sand/30 flex flex-col md:flex-row items-center justify-between text-sm text-warmgray">
-                <p>&copy; 2024 ArtStream. All rights reserved.</p>
-                <div class="flex space-x-6 mt-4 md:mt-0">
-                    <a href="#" class="hover:text-deepbrown transition">Privacy</a>
-                    <a href="#" class="hover:text-deepbrown transition">Terms</a>
-                    <a href="#" class="hover:text-deepbrown transition">Cookies</a>
+            <div class="h-px w-full mb-8" style="background:linear-gradient(90deg,transparent,#4DD0E1,#C0E863,transparent)"></div>
+            <div class="flex flex-col sm:flex-row items-center justify-between text-xs text-navy/60 gap-3">
+                <p class="font-mono tracking-wide text-navy/60">&copy; 2026 ArtStream. All rights reserved.</p>
+                <div class="flex gap-5">
+                    <a href="#" class="hover:text-primary transition">Privacy</a>
+                    <a href="#" class="hover:text-primary transition">Terms</a>
+                    <a href="#" class="hover:text-primary transition">Cookies</a>
                 </div>
             </div>
         </div>
     </footer>
 
-    <script>
-        lucide.createIcons();
-    </script>
+    <script>lucide.createIcons();</script>
 </body>
 </html>
