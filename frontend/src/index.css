@@ -239,3 +239,47 @@
   border-radius: 10px;
 }
 
+/* ── Dashboard / Streaming page utilities ─────────────────────── */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+.cyan-glow      { box-shadow: 0 0 24px rgba(77,208,225,0.55); }
+.lime-glow      { box-shadow: 0 0 24px rgba(192,232,99,0.45); }
+
+.dash-grad-text {
+  background: linear-gradient(135deg,#4DD0E1,#C0E863);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.grad-btn       { background: linear-gradient(135deg,#4DD0E1,#C0E863); }
+.price-badge    { background: linear-gradient(135deg,#4DD0E1,#00BCD4); }
+.progress-bar   { background: linear-gradient(90deg,#4DD0E1,#C0E863); }
+
+.glass-nav-dash {
+  background: rgba(224,247,250,0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(77,208,225,0.25);
+}
+
+.hero-overlay-left { background: linear-gradient(90deg, rgba(5,29,46,0.90) 0%, rgba(5,29,46,0.65) 45%, transparent 100%); }
+.hero-overlay-btm  { background: linear-gradient(to top, #e0f7fa 0%, rgba(224,247,250,0.3) 35%, transparent 65%); }
+
+.card-lift { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+.card-lift:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(77,208,225,0.22); }
+
+.section-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg,rgba(77,208,225,0.15),rgba(192,232,99,0.12));
+  border: 1px solid rgba(77,208,225,0.3);
+  border-radius: 999px;
+  padding: 4px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #051d2e;
+}

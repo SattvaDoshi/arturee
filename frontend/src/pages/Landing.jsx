@@ -6,6 +6,7 @@ import DiscoverSection from '../components/sections/DiscoverSection'
 import CreatorProfileSection from '../components/sections/CreatorProfileSection'
 import CTASection from '../components/sections/CTASection'
 import SplashScreen from '../components/SplashScreen'
+import InstallPrompt from '../components/InstallPrompt'
 
 const App = () => {
   const [showSplash, setShowSplash] = useState(true)
@@ -22,6 +23,7 @@ const App = () => {
           <CTASection />
         </main>
         <Footer />
+        <InstallPrompt />
       </div>
     </>
   )

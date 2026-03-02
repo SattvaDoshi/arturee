@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 const HeroSection = () => {
   return (
@@ -17,9 +18,9 @@ const HeroSection = () => {
             </p>
           </div>
           <div className="flex flex-col sm:flex-row flex-wrap gap-4 md:gap-6 pt-2 md:pt-4">
-            <a href="#discover" className="bg-navy text-white px-6 py-3 md:px-10 md:py-5 text-base md:text-xl font-black uppercase hover:scale-105 transition-all shadow-[6px_6px_0px_#4DD0E1] md:shadow-[8px_8px_0px_#4DD0E1] rounded-lg text-center">
+            <Link to="/dashboard" className="bg-navy text-white px-6 py-3 md:px-10 md:py-5 text-base md:text-xl font-black uppercase hover:scale-105 transition-all shadow-[6px_6px_0px_#4DD0E1] md:shadow-[8px_8px_0px_#4DD0E1] rounded-lg text-center">
               Start Watching
-            </a>
+            </Link>
             <a href="#discover" className="bg-linear-to-r from-primary to-lime text-white rough-border px-6 py-3 md:px-10 md:py-5 text-base md:text-xl font-black uppercase hover:shadow-lg hover:scale-105 transition-all shadow-[6px_6px_0px_#00BCD4] md:shadow-[8px_8px_0px_#00BCD4] rounded-lg text-center">
               Explore Shows
             </a>
