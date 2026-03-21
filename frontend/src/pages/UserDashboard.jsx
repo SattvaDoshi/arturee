@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import { Play, Plus, Users, Clock, Star, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Play, Plus, Users, Clock, Star, ChevronLeft, ChevronRight, BookmarkCheck, ShoppingBag, CheckCircle } from 'lucide-react'
 import UserLayout from '../components/layout/UserLayout'
 
 /* ─── Hero Slides Data ─────────────────────────────────── */
@@ -52,14 +52,24 @@ const GradText = ({ children, className = '' }) => (
   <span className={`dash-grad-text ${className}`}>{children}</span>
 )
 
-const PlayBtn = ({ size = 14 }) => (
-  <button
-    className="rounded-full flex items-center justify-center hover:scale-110 transition cyan-glow"
-    style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)', width: size * 4, height: size * 4 }}
-  >
-    <Play style={{ width: size, height: size }} className="text-[#051d2e] ml-0.5" fill="#051d2e" />
-  </button>
-)
+const PlayBtn = ({ size = 14 }) => {
+  const isLarge = size >= 20
+  return (
+    <button
+      className={`rounded-full flex items-center justify-center hover:scale-110 transition cyan-glow
+        ${isLarge
+          ? 'w-9 h-9 sm:w-14 sm:h-14 md:w-20 md:h-20'
+          : 'w-7 h-7 sm:w-10 sm:h-10 md:w-14 md:h-14'}`}
+      style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
+    >
+      <Play
+        className={`ml-0.5 text-[#051d2e]
+          ${isLarge ? 'w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5' : 'w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-3.5 md:h-3.5'}`}
+        fill="#051d2e"
+      />
+    </button>
+  )
+}
 
 const StarFilled = ({ className = '' }) => (
   <Star className={`w-3 h-3 text-[#C0E863] ${className}`} fill="#C0E863" />
@@ -92,15 +102,24 @@ const HoverOverlayTall = ({ desc, stats }) => (
   </div>
 )
 
-const SectionHeader = ({ title, sub }) => (
+const SectionHeader = ({ title, sub, viewAllTo }) => (
   <div className="flex items-center justify-between mb-4">
     <div>
       <h2 className="text-xl md:text-2xl font-black uppercase tracking-tighter text-[#051d2e]">{title}</h2>
       {sub && <p className="text-xs text-[#4DD0E1] font-mono tracking-widest">{sub}</p>}
     </div>
-    <button className="text-xs md:text-sm font-black text-[#00BCD4] hover:text-[#051d2e] transition uppercase tracking-wider shrink-0 ml-4">
-      View All →
-    </button>
+    {viewAllTo ? (
+      <Link
+        to={viewAllTo}
+        className="text-xs md:text-sm font-black text-[#00BCD4] hover:text-[#051d2e] transition uppercase tracking-wider shrink-0 ml-4"
+      >
+        View All →
+      </Link>
+    ) : (
+      <button className="text-xs md:text-sm font-black text-[#00BCD4] hover:text-[#051d2e] transition uppercase tracking-wider shrink-0 ml-4">
+        View All →
+      </button>
+    )}
   </div>
 )
 
@@ -276,7 +295,7 @@ export default function UserDashboard() {
 
         {/* Continue Watching */}
         <div id="continue">
-          <SectionHeader title="Continue Watching" />
+          <SectionHeader title="Continue Watching" viewAllTo="/dashboard/continue" />
           <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
             {[
               { img: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&h=450&fit=crop', title: 'Sarah Chen: Raw', sub: '35 min remaining', progress: 35, price: '$9.99' },
@@ -443,28 +462,60 @@ export default function UserDashboard() {
           </div>
         </div>
 
-        {/* Because You Watched */}
+        {/* My List */}
         <div id="mylist">
-          <SectionHeader title="Because You Watched" sub='"Sarah Chen: Raw"' />
+          <SectionHeader title="My List" sub="SAVED BY YOU" viewAllTo="/dashboard/mylist" />
           <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
             {[
-              { img: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=600&fit=crop', title: 'Mike Torres: Honest', sub: 'Stand-up Comedy', price: '$7.99', match: '95%' },
-              { img: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=400&h=600&fit=crop', title: 'Alex Rivera: Unfiltered', sub: 'Stand-up Comedy', price: '$8.99', match: '92%' },
-              { img: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&h=600&fit=crop', title: 'Lisa Kim: Breakthrough', sub: 'Stand-up Comedy', price: '$6.99', match: '88%' },
-              { img: 'https://images.unsplash.com/photo-1527224857830-43a7acc85260?w=400&h=600&fit=crop', title: 'Jordan Blake: Real Talk', sub: 'Stand-up Comedy', price: '$9.99', match: '85%' },
-              { img: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=600&fit=crop', title: 'David Park: Unscripted', sub: 'Stand-up Comedy', price: '$8.99', match: '82%' },
+              { img: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400&h=600&fit=crop', title: 'Jazz Night Sessions', sub: 'Marcus Cole', price: '$4.99', genre: 'Music' },
+              { img: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=600&fit=crop', title: 'Midnight Sessions', sub: 'Alex Rivera', price: '$4.99', genre: 'Music' },
+              { img: 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800&h=450&fit=crop', title: "The Artist's Mind Podcast", sub: 'Creative Minds', free: true, genre: 'Podcast' },
+              { img: 'https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=400&h=600&fit=crop', title: 'Street Art Chronicles', sub: 'Documentary', price: '$5.99', genre: 'Doc' },
+              { img: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=600&fit=crop', title: 'Mike Torres: Honest', sub: 'Stand-up Comedy', price: '$7.99', genre: 'Comedy' },
+              { img: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=600&fit=crop', title: 'Behind the Lens', sub: 'Sam Torres', price: '$4.99', genre: 'Doc' },
             ].map((item) => (
-              <Link to="/video" key={item.title + item.match} className="flex-shrink-0 w-44 sm:w-52 md:w-64 group cursor-pointer block">
+              <Link to="/video" key={item.title} className="flex-shrink-0 w-44 sm:w-52 md:w-64 group cursor-pointer block">
                 <div className="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg border border-[#4DD0E1]/20">
                   <img src={item.img} alt="Video" className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#051d2e]/95 via-[#051d2e]/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
                     <PlayBtn size={20} />
                   </div>
-                  <PriceBadge>{item.price}</PriceBadge>
-                  <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>{item.match} Match</div>
+                  {item.free
+                    ? <div className="absolute top-2 right-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: '#C0E863' }}>Free</div>
+                    : <PriceBadge>{item.price}</PriceBadge>}
+                  <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold text-[#051d2e]/80 border border-[#4DD0E1]/30" style={{ background: 'rgba(255,255,255,0.85)' }}>{item.genre}</div>
+                  <button className="absolute bottom-2 right-2 p-1.5 rounded-full text-[#C0E863] opacity-0 group-hover:opacity-100 transition">
+                    <BookmarkCheck className="w-4 h-4" fill="currentColor" />
+                  </button>
                 </div>
                 <h3 className="font-black text-xs text-[#051d2e] mb-0.5 truncate">{item.title}</h3>
                 <p className="text-[10px] text-[#051d2e]/60">{item.sub}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Purchased */}
+        <div id="purchased">
+          <SectionHeader title="Purchased" sub="YOUR LIBRARY" viewAllTo="/dashboard/purchased" />
+          <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
+            {[
+              { img: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&h=450&fit=crop', title: 'Sarah Chen: Raw', sub: 'Stand-up Comedy • 1h 15m', price: '$9.99', date: 'Mar 2' },
+              { img: 'https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=800&h=450&fit=crop', title: 'Street Art Chronicles', sub: 'Documentary • Season 1', price: '$5.99', date: 'Feb 14' },
+              { img: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=450&fit=crop', title: 'Midnight Sessions', sub: 'Music • 45 min', price: '$4.99', date: 'Jan 28' },
+              { img: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&h=450&fit=crop', title: 'Urban Stories', sub: 'Series • 3 Episodes', price: '$3.99', date: 'Jan 10' },
+            ].map((item) => (
+              <Link to="/video" key={item.title} className="flex-shrink-0 w-64 sm:w-72 md:w-80 group cursor-pointer block">
+                <div className="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg border border-[#4DD0E1]/20">
+                  <img src={item.img} alt="Video" className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
+                  <HoverOverlayWide />
+                  <div className="absolute top-2 left-2 flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>
+                    <CheckCircle className="w-3 h-3" /> Owned
+                  </div>
+                  <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-semibold border border-white/20 text-white/80" style={{ background: 'rgba(5,29,46,0.6)' }}>Bought {item.date}</div>
+                </div>
+                <h3 className="font-black text-sm text-[#051d2e] mb-0.5 truncate">{item.title}</h3>
+                <p className="text-xs text-[#051d2e]/60">{item.sub}</p>
               </Link>
             ))}
           </div>

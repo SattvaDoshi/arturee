@@ -7,9 +7,9 @@ import {
 
 const navItems = [
   { label: 'Home',              icon: Home,          to: '/dashboard' },
-  { label: 'Continue Watching', icon: Play,          to: '/dashboard#continue' },
-  { label: 'My List',           icon: BookmarkCheck, to: '/dashboard#mylist' },
-  { label: 'Purchased',         icon: ShoppingBag,   to: '/dashboard#purchased' },
+  { label: 'Continue Watching', icon: Play,          to: '/dashboard/continue' },
+  { label: 'My List',           icon: BookmarkCheck, to: '/dashboard/mylist' },
+  { label: 'Purchased',         icon: ShoppingBag,   to: '/dashboard/purchased' },
   { label: 'Account',           icon: User,          to: '/account' },
 ]
 
@@ -21,7 +21,7 @@ const Tip = ({ label, show, children }) => (
       <div className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 z-50
         opacity-0 group-hover/tip:opacity-100 translate-x-1 group-hover/tip:translate-x-0
         transition-all duration-150 whitespace-nowrap">
-        <div className="px-3 py-1.5 rounded-lg text-xs font-semibold text-[#f0fdfa] shadow-2xl"
+        <div className="px-3 py-1.5 rounded-lg text-xs font-semibold text-lightgray shadow-2xl"
           style={{ background: '#051d2e' }}>
           {label}
           <div className="absolute right-full top-1/2 -translate-y-1/2
@@ -44,8 +44,8 @@ const UserSidebar = ({ mobile = false, onMobileClose }) => {
 
   const NavLink = ({ label, icon: Icon, to }) => {
     const active =
-      location.pathname + location.hash === to ||
-      (location.pathname === to.split('#')[0] && !to.includes('#') && !location.hash)
+      location.pathname === to ||
+      (to !== '/dashboard' && location.pathname.startsWith(to))
 
     const link = (
       <Link

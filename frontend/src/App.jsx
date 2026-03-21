@@ -4,9 +4,17 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Landing from './pages/Landing'
 import VideoDetail from './pages/VideoDetail'
 
+// Auth
+import Login from './pages/Login'
+import Signup from './pages/Signup'
+
 // Dashboards (each brings its own layout)
 import UserDashboard from './pages/UserDashboard'
 import AdminDashboard from './pages/AdminDashboard'
+import Account from './pages/Account'
+import ContinueWatching from './pages/ContinueWatching'
+import MyList from './pages/MyList'
+import Purchased from './pages/Purchased'
 
 /** True when the app is running as an installed PWA (standalone) */
 const isStandalone = () =>
@@ -25,8 +33,16 @@ const App = () => {
         />
         <Route path="/video" element={<VideoDetail />} />
 
+        {/* ── Auth ── */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+
         {/* ── User Dashboard (UserLayout) ── */}
         <Route path="/dashboard" element={<UserDashboard />} />
+        <Route path="/dashboard/continue" element={<ContinueWatching />} />
+        <Route path="/dashboard/mylist" element={<MyList />} />
+        <Route path="/dashboard/purchased" element={<Purchased />} />
+        <Route path="/account" element={<Account />} />
 
         {/* ── Admin Dashboard (AdminLayout) ── */}
         <Route path="/admin" element={<AdminDashboard />} />
