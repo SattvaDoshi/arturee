@@ -189,7 +189,7 @@ const SplashScreen = ({ onComplete }) => {
             className="text-sm md:text-base tracking-[0.45em] uppercase font-black animate-[fadeSlideUp_0.8s_ease-out_1.2s_forwards] opacity-0"
             style={{ color: '#4DD0E1' }}
           >
-            Where Art Finds Its Voice
+             where heart meets art
           </p>
         </div>
 
@@ -202,7 +202,7 @@ const SplashScreen = ({ onComplete }) => {
             className="w-1.5 h-1.5 rounded-full animate-[pulse_1s_ease-in-out_infinite]"
             style={{ background: '#C0E863' }}
           />
-          Unfiltered · Original · Yours
+          Arts Comes Home
         </div>
 
         {/* Loading bar */}

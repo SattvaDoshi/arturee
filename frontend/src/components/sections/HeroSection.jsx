@@ -9,12 +9,12 @@ const HeroSection = () => {
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black leading-[0.9] tracking-tighter uppercase break-words">
             Where Art <br /> Finds Its <br />
             <span className="bg-linear-to-r from-primary to-lime text-white px-3 py-1 md:px-4 md:py-2 inline-block transform rotate-2 rough-border text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl shadow-lg">
-              Voice
+              Home
             </span>
           </h1>
           <div className="bg-white/90 backdrop-blur-sm rough-border p-4 md:p-6 shadow-[6px_6px_0px_#4DD0E1] md:shadow-[10px_10px_0px_#4DD0E1] max-w-md transform -rotate-1">
             <p className="text-base md:text-lg lg:text-xl font-bold leading-tight text-navy">
-              The streaming home for the next generation of visionaries. Unfiltered, original, and exclusively yours.
+                Modern life has its weights; <br /> Art makes it worth living
             </p>
           </div>
           <div className="flex flex-col sm:flex-row flex-wrap gap-4 md:gap-6 pt-2 md:pt-4">
@@ -22,7 +22,7 @@ const HeroSection = () => {
               Start Watching
             </Link>
             <a href="#discover" className="bg-linear-to-r from-primary to-lime text-white rough-border px-6 py-3 md:px-10 md:py-5 text-base md:text-xl font-black uppercase hover:shadow-lg hover:scale-105 transition-all shadow-[6px_6px_0px_#00BCD4] md:shadow-[8px_8px_0px_#00BCD4] rounded-lg text-center">
-              Explore Shows
+              Sign Up
             </a>
           </div>
         </div>
@@ -42,12 +42,12 @@ const HeroSection = () => {
           
           {/* Yellow sticker - repositioned to avoid overlap */}
           <div className="absolute bottom-0 left-0 sm:left-2 w-32 h-32 sm:w-36 sm:h-36 md:w-44 md:h-44 lg:w-48 lg:h-48 bg-linear-to-br from-primary to-lime rough-border transform -rotate-12 z-20 flex items-center justify-center p-3 md:p-4 shadow-[6px_6px_0px_rgba(33,46,83,0.3)]">
-            <span className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black uppercase text-center leading-[0.9] italic text-white">Unfiltered<br/>Flow</span>
+            <span className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black uppercase text-center leading-[0.9] italic text-white">Art at your<br/>fingertips</span>
           </div>
           
           {/* Top label */}
           <div className="absolute -top-6 md:-top-8 right-8 sm:right-12 md:right-16 lg:right-20 bg-linear-to-r from-yellow to-lime px-3 py-1 md:px-4 md:py-2 rough-border z-30 transform -rotate-6 font-black uppercase text-xs md:text-sm text-navy shadow-md">
-            CREATOR_FIRST
+            ART_FIRST
           </div>
         </div>
       </div>

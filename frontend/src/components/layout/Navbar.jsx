@@ -8,11 +8,11 @@ const Navbar = () => {
           <img src="./logo.png" className='h-full w-full object-contain' alt="" />
         </div>
         <nav className="hidden md:flex items-center gap-6">
-          <a className="text-sm font-black uppercase hover:bg-linear-to-r hover:from-primary hover:to-lime hover:text-white px-2 py-1 transition-all text-navy rounded" href="#dashboard">Dashboard</a>
-          <a className="text-sm font-black uppercase hover:bg-linear-to-r hover:from-primary hover:to-lime hover:text-white px-2 py-1 transition-all text-navy rounded" href="#shows">Shows</a>
-          <a className="text-sm font-black uppercase hover:bg-linear-to-r hover:from-primary hover:to-lime hover:text-white px-2 py-1 transition-all text-navy rounded" href="#podcasts">Podcasts</a>
-          <a className="text-sm font-black uppercase hover:bg-linear-to-r hover:from-primary hover:to-lime hover:text-white px-2 py-1 transition-all text-navy rounded" href="#comedy">Comedy</a>
-          <a className="text-sm font-black uppercase hover:bg-linear-to-r hover:from-primary hover:to-lime hover:text-white px-2 py-1 transition-all text-navy rounded" href="#pricing">Pricing</a>
+          <a className="text-sm font-black uppercase hover:bg-linear-to-r hover:from-primary hover:to-lime hover:text-white px-2 py-1 transition-all text-navy rounded" href="/">Dashboard</a>
+          <a className="text-sm font-black uppercase hover:bg-linear-to-r hover:from-primary hover:to-lime hover:text-white px-2 py-1 transition-all text-navy rounded" href="/genres ">Genre</a>
+          <a className="text-sm font-black uppercase hover:bg-linear-to-r hover:from-primary hover:to-lime hover:text-white px-2 py-1 transition-all text-navy rounded" href="/artists">Artists</a>
+          <a className="text-sm font-black uppercase hover:bg-linear-to-r hover:from-primary hover:to-lime hover:text-white px-2 py-1 transition-all text-navy rounded" href="/aboutus">Who are we</a>
+          <a className="text-sm font-black uppercase hover:bg-linear-to-r hover:from-primary hover:to-lime hover:text-white px-2 py-1 transition-all text-navy rounded" href="/pricing">Pricing</a>
         </nav>
         <div className="flex items-center gap-4">
           <button className="hidden sm:block text-xs font-black uppercase underline decoration-4 underline-offset-4 decoration-lime text-navy">Sign In</button>

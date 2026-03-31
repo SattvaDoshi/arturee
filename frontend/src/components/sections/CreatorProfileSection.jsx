@@ -12,6 +12,22 @@ const CreatorProfileSection = () => {
             The Custodians
           </h2>
         </div>
+
+        {/* Arturee Intro */}
+        <div className="max-w-3xl mx-auto mb-20 text-center space-y-5">
+          <p className="text-lg text-navy/70 leading-relaxed">
+            Arturee is an exclusive online video streaming platform — a passion-driven space where every frame is crafted specially for <span className="font-semibold text-navy">YOU</span>.
+          </p>
+          <p className="text-lg text-navy/70 leading-relaxed">
+            Modern life has its weights; <em>art makes it worth living.</em> We are the weighing scale between Artists and art lovers — your art meal plan to support your{' '}
+            <span className="text-[#ce6a6b] font-semibold">heART</span>.
+          </p>
+          <p className="text-lg text-navy/70 leading-relaxed">
+            Responsibilities often make life a little gloomy. Arturee is the rainbow in that sky — a sky where art gets to fly, spread its wings, and find its way to you.
+          </p>
+          <div className="w-16 h-0.5 bg-linear-to-r from-[#ce6a6b] to-[#4a919e] mx-auto mt-4 rounded-full"></div>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* First Creator Card */}
           <div className="p-12 lg:-rotate-1 bg-amber-50 shadow-xl border border-black/5 rounded-lg">
@@ -24,10 +40,10 @@ const CreatorProfileSection = () => {
               </div>
               <div className="space-y-4 pt-4">
                 <div className="inline-block px-3 py-1 bg-[#ce6a6b]/10 text-[#ce6a6b] font-mono text-[10px] uppercase">
-                  Subject: New Users
+                  Subject: Founder
                 </div>
-                <h3 className="text-4xl font-display text-[#1a2332] italic font-bold">Suchi</h3>
-                <p className="text-navy/50 font-mono text-xs uppercase">Founder / Principal Curator</p>
+                <h3 className="text-4xl font-display text-[#1a2332] italic font-bold">Suchi Bansal</h3>
+                <p className="text-navy/50 font-mono text-xs uppercase">Founder / Poetess & Storyteller</p>
                 <div className="h-px w-full bg-navy/10"></div>
               </div>
             </div>
@@ -40,11 +56,11 @@ const CreatorProfileSection = () => {
                 />
               </div>
               <div className="text-2xl text-navy/80 mb-8 leading-snug italic">
-                "Art is the only way to run away without leaving home. My mission was to build a sanctuary where those journeys are never interrupted by algorithms, only enhanced by curation."
+                "I am a poetess, a storyteller, an aspiring author — and also a Chartered Accountant who genuinely loves her job. Art and numbers both tell stories; I just speak both languages."
               </div>
               <div className="border-l-2 border-[#ce6a6b] pl-6 py-2">
                 <p className="text-navy/60 text-sm italic">
-                  Personal Journal Entry #402: We curate for the soul, not for the scroll. If a piece of art doesn't make you pause your breath, it isn't ready for our gallery.
+                  Suchi's travels aren't just holidays — they're chapters. Every new place widens her lens, sharpens her voice, and feeds the storyteller within. Arturee was born from that same hunger: to explore, to feel, and to share.
                 </p>
               </div>
             </div>
@@ -61,20 +77,20 @@ const CreatorProfileSection = () => {
               </div>
               <div className="space-y-4 pt-4 text-right md:text-left">
                 <div className="inline-block px-3 py-1 bg-[#4a919e]/10 text-[#4a919e] font-mono text-[10px] uppercase">
-                  Subject: Variation
+                  Subject: Partner
                 </div>
-                <h3 className="text-4xl font-display text-navy italic font-bold">Anjali Mehta</h3>
-                <p className="text-navy/50 font-mono text-xs uppercase">Editorial Director</p>
+                <h3 className="text-4xl font-display text-navy italic font-bold">Anjali Jain</h3>
+                <p className="text-navy/50 font-mono text-xs uppercase">Partner / Author & Artist</p>
                 <div className="h-px w-full bg-navy/10"></div>
               </div>
             </div>
             <div className="relative">
               <div className="text-2xl text-[#1a2332]/80 mb-8 leading-snug italic">
-                "The modern world is loud; we chose to be quiet. Our philosophy centers on the resonance of the human voice—whether spoken in a poem or captured in a frame."
+                "Art didn't just give me a purpose; it saved my life."
               </div>
               <div className="border-l-2 border-[#4a919e] pl-6 py-2">
                 <p className="text-[#2d3748] text-sm italic">
-                  Foundational Philosophy: When you give artists 85% of the revenue, you aren't just paying them; you're buying the time they need to create their next masterpiece.
+                  Anjali Jain is the author of <em>Inking Emotions</em> — a world record holder, award-winning performer, and a featured artist on many esteemed stages. For Anjali, writing isn't a hobby; it's worship. She fights every day to keep her inner artist alive against all odds and societal norms.
                 </p>
               </div>
             </div>

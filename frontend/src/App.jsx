@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 
 // Public
-import Landing from './pages/Landing'
+import Landing from './pages/Landing/Landing'
 import VideoDetail from './pages/VideoDetail'
 
 // Auth
@@ -15,6 +15,10 @@ import Account from './pages/Account'
 import ContinueWatching from './pages/ContinueWatching'
 import MyList from './pages/MyList'
 import Purchased from './pages/Purchased'
+import AboutUs from './pages/Landing/AboutUs'
+import Pricing from './pages/Landing/Pricing'
+import Genre from './pages/Landing/Genre'
+import Artist from './pages/Landing/Artist'
 
 /** True when the app is running as an installed PWA (standalone) */
 const isStandalone = () =>
@@ -32,6 +36,11 @@ const App = () => {
           element={isStandalone() ? <Navigate to="/dashboard" replace /> : <Landing />}
         />
         <Route path="/video" element={<VideoDetail />} />
+
+        <Route path="/aboutus" element={<AboutUs />} />
+        <Route path="/pricing" element={<Pricing />} />
+        <Route path="/genres" element={<Genre />} />
+        <Route path="/artists" element={<Artist />} />
 
         {/* ── Auth ── */}
         <Route path="/login" element={<Login />} />
