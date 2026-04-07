@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   ArrowLeft, Play, Users, Clock, Calendar, Star,
-  ThumbsUp, ThumbsDown, Share2, Bookmark, MoreHorizontal, Check,
+  Bookmark, Check,
   ChevronDown, Music,
 } from 'lucide-react'
 import UserLayout from '../components/layout/UserLayout'
@@ -80,6 +80,14 @@ const COMMENTS = [
   { img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop', name: 'Sarah Mitchell', time: '2 hours ago', text: 'This is absolutely incredible! The improvisation at 45:30 gave me chills. Marcus, you\'re a true master of your craft. Can\'t wait for the new album! 🎵', likes: 245 },
   { img: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100&h=100&fit=crop', name: 'James Park', time: '3 hours ago', text: 'Been following Marcus since his early days. This performance is everything I hoped for and more. The chemistry with the band is phenomenal!', likes: 189 },
   { img: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop', name: 'Riley Chen', time: '4 hours ago', text: 'The sound quality is amazing! Love that we can experience this live from anywhere in the world. This is the future of music streaming! 🎶', likes: 156 },
+]
+
+const REACTIONS = [
+  { id: 'heart', emoji: '❤️', label: 'Love', count: 1264 },
+  { id: 'party', emoji: '🎉', label: 'Party', count: 842 },
+  { id: 'fire', emoji: '🔥', label: 'Fire', count: 663 },
+  { id: 'wow', emoji: '😍', label: 'Wow', count: 579 },
+  { id: 'star', emoji: '⭐', label: 'Star', count: 932 },
 ]
 
 /* ─── sub-components ─────────────────────────────────────── */
@@ -166,11 +174,36 @@ const VideoCard = ({ item }) => {
 
 /* ═══════════════════════════════════════════════════════════ */
 export default function VideoDetail() {
-  const [liked, setLiked] = useState(false)
+  const [activeReaction, setActiveReaction] = useState(null)
+  const [reactionCounts, setReactionCounts] = useState(
+    REACTIONS.reduce((acc, reaction) => {
+      acc[reaction.id] = reaction.count
+      return acc
+    }, {})
+  )
   const [saved, setSaved] = useState(false)
   const [commentText, setCommentText] = useState('')
   const [descExpanded, setDescExpanded] = useState(false)
   const navigate = useNavigate()
+
+  const handleReactionClick = (reactionId) => {
+    setReactionCounts((prev) => {
+      const next = { ...prev }
+
+      if (activeReaction === reactionId) {
+        next[reactionId] = Math.max(0, next[reactionId] - 1)
+      } else {
+        if (activeReaction) {
+          next[activeReaction] = Math.max(0, next[activeReaction] - 1)
+        }
+        next[reactionId] += 1
+      }
+
+      return next
+    })
+
+    setActiveReaction((prev) => (prev === reactionId ? null : reactionId))
+  }
 
   return (
     <UserLayout>
@@ -237,10 +270,6 @@ export default function VideoDetail() {
                       <div className="flex items-center gap-1.5">
                         <Calendar className="w-4 h-4" style={{ color: C.primary }} /><span>Dec 15, 2024</span>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Star className="w-4 h-4" style={{ color: C.lime, fill: C.lime }} />
-                        <span className="font-semibold" style={{ color: C.navy }}>4.9</span>
-                      </div>
                     </div>
                   </div>
                   <span className="inline-flex items-center px-5 py-2 rounded-full text-sm font-bold shrink-0"
@@ -250,22 +279,41 @@ export default function VideoDetail() {
                 </div>
 
                 {/* Actions */}
-                <div className="flex flex-wrap items-center gap-2 md:gap-3 pt-4"
+                <div className="flex flex-wrap items-center justify-between gap-3 pt-4"
                   style={{ borderTop: '1px solid rgba(77,208,225,0.15)' }}>
-                  <GradBtn
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm text-[#051d2e]"
-                    onClick={() => setLiked(l => !l)}
-                  >
-                    <ThumbsUp className="w-4 h-4" fill={liked ? C.navy : 'none'} />
-                    <span>{liked ? '3.2K+' : '3.2K'}</span>
-                  </GradBtn>
-                  <ActionBtn icon={<ThumbsDown className="w-4 h-4" />} />
-                  <ActionBtn icon={<Share2 className="w-4 h-4" />} label="Share" />
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {REACTIONS.map((reaction) => {
+                      const selected = activeReaction === reaction.id
+                      return (
+                        <button
+                          key={reaction.id}
+                          type="button"
+                          onClick={() => handleReactionClick(reaction.id)}
+                          className="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition-all"
+                          style={selected
+                            ? {
+                                color: C.navy,
+                                background: 'linear-gradient(135deg,rgba(77,208,225,0.28),rgba(192,232,99,0.28))',
+                                border: '1px solid rgba(77,208,225,0.65)',
+                                boxShadow: '0 0 14px rgba(77,208,225,0.26)',
+                              }
+                            : {
+                                color: C.navy,
+                                background: 'rgba(255,255,255,0.75)',
+                                border: '1px solid rgba(77,208,225,0.24)',
+                              }}
+                          aria-label={`${reaction.label} reaction`}
+                        >
+                          <span className="text-base leading-none">{reaction.emoji}</span>
+                          <span className="text-xs md:text-sm">{reactionCounts[reaction.id]}</span>
+                        </button>
+                      )
+                    })}
+                  </div>
                   <ActionBtn
                     icon={<Bookmark className="w-4 h-4" fill={saved ? C.navy : 'none'} />}
                     label="Save"
                   />
-                  <ActionBtn icon={<MoreHorizontal className="w-4 h-4" />} />
                 </div>
               </GlassCard>
 
@@ -286,13 +334,7 @@ export default function VideoDetail() {
                         <Check className="w-3 h-3" style={{ color: C.navy }} />
                       </div>
                     </div>
-                    <p className="text-sm mb-3" style={{ color: C.muted }}>124K subscribers</p>
-                    <GradBtn className="px-5 py-2 rounded-xl font-bold text-sm text-[#051d2e]">Subscribe</GradBtn>
-                  </div>
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    <StarRating count={5} />
-                    <span className="text-sm font-bold" style={{ color: C.navy }}>4.9</span>
-                  </div>
+                     </div>
                 </div>
                 <div className="pt-4 space-y-3" style={{ borderTop: '1px solid rgba(77,208,225,0.15)' }}>
                   <p className="text-sm md:text-base leading-relaxed" style={{ color: `${C.navy}cc` }}>
@@ -328,64 +370,6 @@ export default function VideoDetail() {
                 </div>
               </div>
 
-              {/* Comments */}
-              <div>
-                <h2 className="text-lg md:text-2xl font-black uppercase tracking-tighter mb-4" style={{ color: C.navy }}>
-                  Comments <span style={{ color: C.primary }}>(1,234)</span>
-                </h2>
-
-                {/* Add comment */}
-                <GlassCard className="p-5 mb-4">
-                  <div className="flex items-start gap-3 mb-3">
-                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop" alt="User"
-                      className="w-9 h-9 rounded-full object-cover shrink-0"
-                      style={{ outline: '2px solid rgba(77,208,225,0.4)', outlineOffset: '2px' }} />
-                    <input
-                      type="text"
-                      value={commentText}
-                      onChange={e => setCommentText(e.target.value)}
-                      placeholder="Add a comment…"
-                      className="flex-1 px-4 py-3 rounded-xl text-sm focus:outline-none transition"
-                      style={{ background: 'rgba(224,247,250,0.7)', border: '1px solid rgba(77,208,225,0.25)', focusBorderColor: C.primary, color: C.navy }}
-                    />
-                  </div>
-                  <div className="flex justify-end gap-2">
-                    <button className="px-5 py-2 text-sm font-semibold rounded-xl transition"
-                      style={{ color: C.muted }}
-                      onClick={() => setCommentText('')}>Cancel</button>
-                    <GradBtn className="px-5 py-2 rounded-xl font-bold text-sm text-[#051d2e]">Comment</GradBtn>
-                  </div>
-                </GlassCard>
-
-                {/* Comment list */}
-                <div className="space-y-3">
-                  {COMMENTS.map(c => (
-                    <GlassCard key={c.name} className="p-5">
-                      <div className="flex items-start gap-3">
-                        <img src={c.img} alt={c.name} className="w-9 h-9 rounded-full object-cover shrink-0" />
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="font-bold text-sm" style={{ color: C.navy }}>{c.name}</span>
-                            <span className="text-xs" style={{ color: C.muted }}>{c.time}</span>
-                          </div>
-                          <p className="text-sm leading-relaxed mb-3" style={{ color: `${C.navy}cc` }}>{c.text}</p>
-                          <div className="flex items-center gap-4 text-sm">
-                            <button className="flex items-center gap-1.5 transition hover:text-primary" style={{ color: C.muted }}>
-                              <ThumbsUp className="w-3.5 h-3.5" /><span>{c.likes}</span>
-                            </button>
-                            <button className="flex items-center gap-1.5 transition hover:text-primary" style={{ color: C.muted }}>
-                              <ThumbsDown className="w-3.5 h-3.5" />
-                            </button>
-                            <button className="font-semibold transition hover:text-primary" style={{ color: C.muted }}>Reply</button>
-                          </div>
-                        </div>
-                      </div>
-                    </GlassCard>
-                  ))}
-                  <button className="w-full py-3 text-sm font-black uppercase tracking-wider transition"
-                    style={{ color: C.teal }}>Show more comments ↓</button>
-                </div>
-              </div>
             </div>
 
             {/* ── RIGHT COLUMN (recommended) ── */}

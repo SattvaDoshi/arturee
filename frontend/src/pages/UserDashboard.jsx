@@ -227,7 +227,6 @@ export default function UserDashboard() {
             <div className="flex flex-wrap items-center gap-5 text-xs md:text-sm text-[#f0fdfa]/80 font-medium">
               <div className="flex items-center gap-1.5"><Users className="w-4 h-4 text-[#4DD0E1]" /><span>{slide.meta.viewers}</span></div>
               <div className="flex items-center gap-1.5"><Clock className="w-4 h-4 text-[#4DD0E1]" /><span>{slide.meta.time}</span></div>
-              <div className="flex items-center gap-1.5"><Star className="w-4 h-4 text-[#C0E863]" fill="#C0E863" /><span>{slide.meta.rating}</span></div>
             </div>
           </div>
         </div>

@@ -93,32 +93,7 @@ const termsItems = [
 
 const Pricing = () => {
   const [tab, setTab] = useState('subscribe')
-  const [cart, setCart] = useState([])
   const [openTerm, setOpenTerm] = useState(null)
-
-  const addToCart = (video) => {
-    if (cart.find((v) => v.id === video.id)) return
-    if (cart.length >= 3) return
-    setCart([...cart, video])
-  }
-
-  const removeFromCart = (id) => setCart(cart.filter((v) => v.id !== id))
-
-  const bundlePrice =
-    cart.length === 1
-      ? videoPrices.single
-      : cart.length === 2
-      ? videoPrices.double
-      : cart.length === 3
-      ? videoPrices.triple
-      : 0
-
-  const savings =
-    cart.length === 2
-      ? cart.length * videoPrices.single - videoPrices.double
-      : cart.length === 3
-      ? cart.length * videoPrices.single - videoPrices.triple
-      : 0
 
   return (
     <div>
@@ -259,116 +234,6 @@ const Pricing = () => {
                   )}
                 </div>
               ))}
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Video selector */}
-              <div className="lg:col-span-2">
-                <p className="text-navy font-semibold mb-4 text-sm">
-                  Pick up to <span className="text-primary font-bold">3 videos</span> to build your bundle
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {sampleVideos.map((video) => {
-                    const inCart = cart.find((v) => v.id === video.id)
-                    const cartFull = cart.length >= 3 && !inCart
-                    return (
-                      <div
-                        key={video.id}
-                        className={`group bg-white rounded-2xl border overflow-hidden transition-all duration-200 ${
-                          inCart
-                            ? 'border-primary shadow-md shadow-primary/20'
-                            : cartFull
-                            ? 'border-black/5 opacity-50'
-                            : 'border-black/5 hover:border-primary/40 hover:shadow-md'
-                        }`}
-                      >
-                        <div className={`h-24 bg-linear-to-br ${thumbColors[video.thumb]} flex items-center justify-center`}>
-                          <span className="text-white/60 text-3xl">▶</span>
-                        </div>
-                        <div className="p-4 flex items-start justify-between gap-3">
-                          <div>
-                            <p className="font-semibold text-navy text-sm">{video.title}</p>
-                            <p className="text-navy/40 text-xs">{video.artist} · {video.genre}</p>
-                          </div>
-                          <button
-                            disabled={cartFull}
-                            onClick={() => (inCart ? removeFromCart(video.id) : addToCart(video))}
-                            className={`shrink-0 w-8 h-8 rounded-full text-sm font-bold transition-all duration-200 ${
-                              inCart
-                                ? 'bg-primary text-white'
-                                : 'bg-primary/10 text-primary hover:bg-primary hover:text-white'
-                            }`}
-                          >
-                            {inCart ? '✓' : '+'}
-                          </button>
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-
-              {/* Cart */}
-              <div className="relative">
-                <div className="sticky top-24 bg-white border border-primary/20 rounded-3xl p-6 shadow-lg">
-                  <h3 className="font-bold text-navy text-lg mb-1">Your Bundle</h3>
-                  <p className="text-navy/40 text-xs mb-5">Max 3 videos · 2 watches per purchase</p>
-
-                  {cart.length === 0 ? (
-                    <div className="py-10 text-center text-navy/30 text-sm border-2 border-dashed border-primary/20 rounded-2xl">
-                      Add videos from the list
-                    </div>
-                  ) : (
-                    <ul className="space-y-3 mb-5">
-                      {cart.map((v) => (
-                        <li key={v.id} className="flex items-center justify-between gap-3 bg-primary/5 rounded-xl px-3 py-2.5">
-                          <div>
-                            <p className="text-sm font-semibold text-navy">{v.title}</p>
-                            <p className="text-xs text-navy/40">{v.artist}</p>
-                          </div>
-                          <button
-                            onClick={() => removeFromCart(v.id)}
-                            className="text-navy/30 hover:text-coral text-lg leading-none"
-                          >
-                            ×
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-
-                  {cart.length > 0 && (
-                    <>
-                      <div className="border-t border-black/5 pt-4 space-y-2 mb-5">
-                        <div className="flex justify-between text-sm text-navy/50">
-                          <span>{cart.length} video{cart.length > 1 ? 's' : ''}</span>
-                          <span>₹{cart.length * videoPrices.single}</span>
-                        </div>
-                        {savings > 0 && (
-                          <div className="flex justify-between text-sm text-lime font-semibold">
-                            <span>Bundle discount</span>
-                            <span>−₹{savings}</span>
-                          </div>
-                        )}
-                        <div className="flex justify-between text-base font-bold text-navy pt-1">
-                          <span>Total</span>
-                          <span>₹{bundlePrice}</span>
-                        </div>
-                      </div>
-                      <button className="w-full py-3 rounded-2xl bg-linear-to-r from-primary to-teal text-white font-bold text-sm hover:shadow-lg hover:shadow-primary/30 transition-all duration-200">
-                        Proceed to Pay
-                      </button>
-                    </>
-                  )}
-
-                  <div className="mt-4 flex items-start gap-2 bg-[#ce6a6b]/8 rounded-xl p-3">
-                    <span className="text-[#ce6a6b] text-sm mt-0.5">ℹ</span>
-                    <p className="text-[#ce6a6b] text-xs leading-relaxed">
-                      Each purchased video can be watched <strong>2 times maximum</strong>. After that, a new purchase is needed.
-                    </p>
-                  </div>
-                </div>
-              </div>
             </div>
 
             <p className="text-center text-navy/40 text-xs mt-6 font-mono">

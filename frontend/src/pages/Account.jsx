@@ -81,7 +81,7 @@ const CardTitle = ({ children }) => (
   </h3>
 )
 
-const TABS = ['Profile', 'Subscription', 'Notifications', 'Security']
+const TABS = ['Profile', 'Subscription', 'Security']
 
 const NOTIF_PREFS = [
   { label: 'New releases from followed creators', desc: 'Notified when your favourite artists drop new content', defaultOn: true },
@@ -242,27 +242,6 @@ export default function Account() {
               <OutlineBtn className="w-fit">Add Payment Method</OutlineBtn>
             </Card>
           </div>
-        )}
-
-        {/* ══ Notifications tab ══ */}
-        {activeTab === 'Notifications' && (
-          <Card>
-            <CardTitle>Notification Preferences</CardTitle>
-            <div className="space-y-1">
-              {NOTIF_PREFS.map(({ label, desc }, i) => (
-                <div
-                  key={label}
-                  className="flex items-center justify-between py-3.5 border-b border-[#4DD0E1]/10 last:border-0 gap-4"
-                >
-                  <div className="min-w-0">
-                    <p className="text-sm font-bold text-[#051d2e]">{label}</p>
-                    <p className="text-xs text-[#051d2e]/50 mt-0.5">{desc}</p>
-                  </div>
-                  <Toggle on={notifs[i]} onToggle={() => setNotifs(v => v.map((x, j) => j === i ? !x : x))} />
-                </div>
-              ))}
-            </div>
-          </Card>
         )}
 
         {/* ══ Security tab ══ */}
