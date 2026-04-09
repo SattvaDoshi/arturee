@@ -9,7 +9,7 @@ export default function Signup() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    navigate('/dashboard')
+    navigate('/verify-otp')
   }
 
   return (

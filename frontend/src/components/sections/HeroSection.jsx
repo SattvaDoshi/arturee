@@ -21,9 +21,9 @@ const HeroSection = () => {
             <Link to="/dashboard" className="bg-navy text-white px-6 py-3 md:px-10 md:py-5 text-base md:text-xl font-black uppercase hover:scale-105 transition-all shadow-[6px_6px_0px_#4DD0E1] md:shadow-[8px_8px_0px_#4DD0E1] rounded-lg text-center">
               Start Watching
             </Link>
-            <a href="#discover" className="bg-linear-to-r from-primary to-lime text-white rough-border px-6 py-3 md:px-10 md:py-5 text-base md:text-xl font-black uppercase hover:shadow-lg hover:scale-105 transition-all shadow-[6px_6px_0px_#00BCD4] md:shadow-[8px_8px_0px_#00BCD4] rounded-lg text-center">
+            <Link to="/signup" className="bg-linear-to-r from-primary to-lime text-white rough-border px-6 py-3 md:px-10 md:py-5 text-base md:text-xl font-black uppercase hover:shadow-lg hover:scale-105 transition-all shadow-[6px_6px_0px_#00BCD4] md:shadow-[8px_8px_0px_#00BCD4] rounded-lg text-center">
               Sign Up
-            </a>
+            </Link>
           </div>
         </div>
         <div className="w-full lg:w-1/2 relative min-h-[500px] sm:min-h-[550px] md:min-h-[600px] mt-8 lg:mt-0 mb-16 sm:mb-20">

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Play, ChevronLeft, CheckCircle, ShoppingBag, Download } from 'lucide-react'
+import { Play, ChevronLeft, CheckCircle, ShoppingBag, AlertCircle } from 'lucide-react'
 import UserLayout from '../components/layout/UserLayout'
 
 const ITEMS = [
@@ -28,57 +28,70 @@ export default function Purchased() {
   return (
     <UserLayout>
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-12 py-10">
-
-        {/* ── Page header ── */}
-        <div className="flex items-center gap-4 mb-2">
-          <Link
-            to="/dashboard"
-            className="flex items-center justify-center w-9 h-9 rounded-xl border border-[#4DD0E1]/30 text-[#051d2e]/60 hover:text-[#051d2e] hover:border-[#4DD0E1] hover:bg-white/50 transition shrink-0"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </Link>
+        <div className="mb-8 grid gap-5 lg:grid-cols-[1fr_280px] lg:items-start">
           <div>
-            <h1 className="text-3xl font-black text-[#051d2e] tracking-tight">Your Library</h1>
-            <p className="text-sm text-[#051d2e]/50 mt-0.5">Videos and shows you own — yours forever</p>
-          </div>
-        </div>
-
-        {/* ── Stats strip ── */}
-        <div className="flex flex-wrap gap-3 mt-6 mb-8">
-          <div
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[#4DD0E1]/20 text-sm font-semibold text-[#051d2e]/70"
-            style={{ background: 'rgba(255,255,255,0.7)' }}
-          >
-            <ShoppingBag className="w-4 h-4 text-[#4DD0E1]" />
-            {ITEMS.length} items owned
-          </div>
-          <div
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[#4DD0E1]/20 text-sm font-semibold text-[#051d2e]/70"
-            style={{ background: 'rgba(255,255,255,0.7)' }}
-          >
-            <CheckCircle className="w-4 h-4 text-[#4DD0E1]" />
-            ${totalSpent} total spent
-          </div>
-        </div>
-
-        {/* ── Sort control ── */}
-        <div className="flex items-center gap-3 mb-6">
-          <span className="text-xs font-bold text-[#051d2e]/45 uppercase tracking-widest">Sort by</span>
-          <div className="flex gap-2 flex-wrap">
-            {SORT_OPTIONS.map(opt => (
-              <button
-                key={opt}
-                onClick={() => setSort(opt)}
-                className="px-4 py-1.5 rounded-full text-xs font-bold transition-all"
-                style={
-                  sort === opt
-                    ? { background: 'linear-gradient(135deg,#4DD0E1,#C0E863)', color: '#051d2e' }
-                    : { background: 'rgba(255,255,255,0.7)', color: 'rgba(5,29,46,0.55)', border: '1px solid rgba(77,208,225,0.25)' }
-                }
+            {/* ── Page header ── */}
+            <div className="flex items-center gap-4 mb-2">
+              <Link
+                to="/dashboard"
+                className="flex items-center justify-center w-9 h-9 rounded-xl border border-[#4DD0E1]/30 text-[#051d2e]/60 hover:text-[#051d2e] hover:border-[#4DD0E1] hover:bg-white/50 transition shrink-0"
               >
-                {opt}
-              </button>
-            ))}
+                <ChevronLeft className="w-4 h-4" />
+              </Link>
+              <div>
+                <h1 className="text-3xl font-black text-[#051d2e] tracking-tight">Your Library</h1>
+                <p className="text-sm text-[#051d2e]/50 mt-0.5">Videos and shows you own — yours forever</p>
+              </div>
+            </div>
+
+            {/* ── Stats strip ── */}
+            <div className="flex flex-wrap gap-3 mt-6 mb-5">
+              <div
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[#4DD0E1]/20 text-sm font-semibold text-[#051d2e]/70"
+                style={{ background: 'rgba(255,255,255,0.7)' }}
+              >
+                <ShoppingBag className="w-4 h-4 text-[#4DD0E1]" />
+                {ITEMS.length} items owned
+              </div>
+            </div>
+
+            {/* ── Sort control ── */}
+            <div className="flex items-center gap-3 mb-0">
+              <span className="text-xs font-bold text-[#051d2e]/45 uppercase tracking-widest">Sort by</span>
+              <div className="flex gap-2 flex-wrap">
+                {SORT_OPTIONS.map(opt => (
+                  <button
+                    key={opt}
+                    onClick={() => setSort(opt)}
+                    className="px-4 py-1.5 rounded-full text-xs font-bold transition-all"
+                    style={
+                      sort === opt
+                        ? { background: 'linear-gradient(135deg,#4DD0E1,#C0E863)', color: '#051d2e' }
+                        : { background: 'rgba(255,255,255,0.7)', color: 'rgba(5,29,46,0.55)', border: '1px solid rgba(77,208,225,0.25)' }
+                    }
+                  >
+                    {opt}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div
+            className="rounded-2xl border border-[#4DD0E1]/20 p-4"
+            style={{ background: 'rgba(255,255,255,0.65)' }}
+          >
+            <div className="flex items-start gap-2">
+              <div className="mt-0.5 rounded-full bg-white/70 p-1.5 border border-[#4DD0E1]/15">
+                <AlertCircle className="w-3.5 h-3.5 text-[#051d2e]/45" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-[#051d2e]/45 mb-1">Watch policy</p>
+                <p className="text-sm font-semibold text-[#051d2e] leading-snug">
+                  Each title can be watched twice. After that, it returns to Unpurchased.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -132,12 +145,7 @@ export default function Purchased() {
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-black text-[#051d2e]">${item.price.toFixed(2)}</span>
-                    <button
-                      className="flex items-center justify-center w-8 h-8 rounded-lg border border-[#4DD0E1]/30 text-[#051d2e]/50 hover:border-[#4DD0E1] hover:text-[#051d2e] hover:bg-white/60 transition"
-                      title="Download"
-                    >
-                      <Download className="w-3.5 h-3.5" />
-                    </button>
+                    
                   </div>
                 </div>
               </div>

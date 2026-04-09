@@ -49,18 +49,20 @@ const Field = ({ label, icon: Icon, type = 'text', defaultValue, placeholder }) 
   )
 }
 
-const GradBtn = ({ children, className = '' }) => (
+const GradBtn = ({ children, className = '', ...props }) => (
   <button
-    className={`px-6 py-2.5 rounded-xl font-bold text-[#051d2e] text-sm hover:opacity-90 active:scale-95 transition ${className}`}
+    {...props}
+    className={`px-6 py-2.5 rounded-xl font-bold text-[#051d2e] text-sm hover:opacity-90 active:scale-95 transition cursor-pointer ${className}`}
     style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
   >
     {children}
   </button>
 )
 
-const OutlineBtn = ({ children, className = '', danger }) => (
+const OutlineBtn = ({ children, className = '', danger, ...props }) => (
   <button
-    className={`px-5 py-2.5 rounded-xl border font-semibold text-sm transition ${danger ? 'border-red-200 text-red-500 hover:bg-red-50' : 'border-[#4DD0E1]/30 text-[#051d2e]/60 hover:border-[#4DD0E1] hover:text-[#051d2e]'} ${className}`}
+    {...props}
+    className={`px-5 py-2.5 rounded-xl cursor-pointer border font-semibold text-sm transition ${danger ? 'border-red-200 text-red-500 hover:bg-red-50' : 'border-[#4DD0E1]/30 text-[#051d2e]/60 hover:border-[#4DD0E1] hover:text-[#051d2e]'} ${className}`}
   >
     {children}
   </button>
@@ -94,6 +96,11 @@ const NOTIF_PREFS = [
 export default function Account() {
   const [activeTab, setActiveTab] = useState('Profile')
   const [notifs, setNotifs] = useState(NOTIF_PREFS.map(n => n.defaultOn))
+  
+  // Delete Modal state
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [selectedReason, setSelectedReason] = useState('')
+  const [otherMessage, setOtherMessage] = useState('')
 
   return (
     <UserLayout>
@@ -260,8 +267,99 @@ export default function Account() {
               <p className="text-sm text-[#051d2e]/60">
                 Deleting your account is permanent and cannot be undone. All your data, purchases, and history will be lost.
               </p>
-              <OutlineBtn danger>Delete My Account</OutlineBtn>
+              <OutlineBtn danger onClick={() => setShowDeleteModal(true)}>Delete My Account</OutlineBtn>
             </Card>
+
+            {/* ── Delete Account Modal ── */}
+            {showDeleteModal && (
+              <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                <div 
+                  className="absolute inset-0 bg-[#051d2e]/40 backdrop-blur-sm"
+                  onClick={() => setShowDeleteModal(false)}
+                />
+                <div 
+                  className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden border border-[#4DD0E1]/20 animate-in fade-in zoom-in duration-300 flex flex-col max-h-[90vh]"
+                >
+                  {/* Gradient Header - Sticky */}
+                  <div 
+                    className="p-6 text-center shrink-0 border-b border-[#4DD0E1]/10"
+                    style={{ background: 'linear-gradient(135deg, rgba(77,208,225,0.1), rgba(192,232,99,0.1))' }}
+                  >
+                    <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-red-200">
+                      <LogOut className="w-8 h-8 text-red-500" />
+                    </div>
+                    <h2 className="text-2xl font-black text-[#051d2e] tracking-tight">Wait! Before you go...</h2>
+                    <p className="text-sm text-[#051d2e]/60 mt-2">Could you tell us why you're leaving? We'd love to improve.</p>
+                  </div>
+
+                  {/* Scrollable Body */}
+                  <div className="p-8 space-y-6 overflow-y-auto custom-scrollbar flex-1">
+                    <div className="space-y-3">
+                      <label className="text-xs font-bold text-[#051d2e]/55 uppercase tracking-widest pl-1">Reason for leaving</label>
+                      <div className="grid gap-2">
+                        {[
+                          "Found a better alternative",
+                          "Too expensive",
+                          "Missing features I need",
+                          "Technical issues/Bugs",
+                          "No longer need it",
+                          "Other"
+                        ].map((reason) => (
+                          <button
+                            key={reason}
+                            onClick={() => {
+                              setSelectedReason(reason)
+                              if (reason !== 'Other') setOtherMessage('')
+                            }}
+                            className={`flex items-center gap-3 p-3.5 rounded-xl border text-sm font-semibold transition-all ${
+                              selectedReason === reason 
+                                ? 'border-[#4DD0E1] bg-[#4DD0E1]/5 text-[#051d2e]' 
+                                : 'border-[#4DD0E1]/15 hover:border-[#4DD0E1]/40 text-[#051d2e]/60'
+                            }`}
+                          >
+                            <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${
+                              selectedReason === reason ? 'border-[#4DD0E1] bg-[#4DD0E1]' : 'border-[#4DD0E1]/30'
+                            }`}>
+                              {selectedReason === reason && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                            </div>
+                            {reason}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {selectedReason === 'Other' && (
+                      <div className="space-y-2 animate-in slide-in-from-top-2 duration-300">
+                        <label className="text-xs font-bold text-[#051d2e]/55 uppercase tracking-widest pl-1">Tell us more</label>
+                        <textarea
+                          placeholder="Please share your thoughts..."
+                          value={otherMessage}
+                          onChange={(e) => setOtherMessage(e.target.value)}
+                          rows={3}
+                          className="w-full bg-white border border-[#4DD0E1]/30 rounded-xl px-4 py-3 text-sm text-[#051d2e] focus:outline-none focus:ring-2 focus:ring-[#4DD0E1]/50 focus:border-[#4DD0E1] transition resize-none"
+                        />
+                      </div>
+                    )}
+
+                    <div className="flex gap-3 pt-2">
+                      <button
+                        onClick={() => setShowDeleteModal(false)}
+                        className="flex-1 px-6 py-3.5 rounded-xl font-bold text-[#051d2e]/60 text-sm border border-[#4DD0E1]/20 hover:bg-[#051d2e]/5 transition active:scale-95"
+                      >
+                        Keep Account
+                      </button>
+                      <button
+                        disabled={!selectedReason || (selectedReason === 'Other' && !otherMessage.trim())}
+                        className="flex-1 px-6 py-3.5 rounded-xl font-bold text-white text-sm shadow-lg shadow-red-200 hover:opacity-90 active:scale-95 transition disabled:opacity-50 disabled:grayscale disabled:scale-100"
+                        style={{ background: 'linear-gradient(135deg, #ef4444, #f87171)' }}
+                      >
+                        Delete Permanently
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

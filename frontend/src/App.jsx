@@ -7,6 +7,8 @@ import VideoDetail from './pages/VideoDetail'
 // Auth
 import Login from './pages/Login'
 import Signup from './pages/Signup'
+import ForgotPassword from './pages/ForgotPassword'
+import VerifyOTP from './pages/VerifyOTP'
 
 // Dashboards (each brings its own layout)
 import UserDashboard from './pages/UserDashboard'
@@ -45,6 +47,8 @@ const App = () => {
         {/* ── Auth ── */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/verify-otp" element={<VerifyOTP />} />
 
         {/* ── User Dashboard (UserLayout) ── */}
         <Route path="/dashboard" element={<UserDashboard />} />
