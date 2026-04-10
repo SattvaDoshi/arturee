@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Navbar from '../../components/layout/Navbar'
 
 const subscriptionPlans = [
@@ -92,6 +93,7 @@ const termsItems = [
 ]
 
 const Pricing = () => {
+  const navigate = useNavigate()
   const [tab, setTab] = useState('subscribe')
   const [openTerm, setOpenTerm] = useState(null)
 
@@ -192,9 +194,10 @@ const Pricing = () => {
                     ))}
                   </ul>
                   <button
+                    onClick={() => navigate('/checkout', { state: { type: 'subscription', plan: plan.label, price: plan.price } })}
                     className={`w-full py-3 rounded-2xl font-bold text-sm transition-all duration-200 ${
                       plan.highlight
-                        ? 'bg-lime text-navy hover:bg-yellow'
+                        ? 'bg-lime text-navy hover:bg-[#a8d356]'
                         : 'bg-linear-to-r from-primary to-teal text-white hover:shadow-lg hover:shadow-primary/30'
                     }`}
                   >
@@ -223,7 +226,8 @@ const Pricing = () => {
               ].map((tier) => (
                 <div
                   key={tier.count}
-                  className="flex-1 max-w-xs bg-white border border-primary/20 rounded-2xl p-5 text-center shadow-sm"
+                  onClick={() => navigate('/checkout', { state: { type: 'video', plan: tier.label, price: tier.price } })}
+                  className="flex-1 max-w-xs bg-white border border-primary/20 rounded-2xl p-5 text-center shadow-sm cursor-pointer transition-transform hover:-translate-y-2 hover:shadow-lg"
                 >
                   <p className="text-navy/40 font-mono text-[10px] uppercase tracking-widest mb-1">{tier.label}</p>
                   <p className="text-3xl font-black text-navy">₹{tier.price}</p>

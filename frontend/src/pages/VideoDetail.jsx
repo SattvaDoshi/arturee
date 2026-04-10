@@ -328,7 +328,13 @@ export default function VideoDetail() {
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2 mb-1">
-                      <h3 className="text-lg md:text-xl font-bold" style={{ color: C.navy }}>Marcus Cole</h3>
+                      <button
+                        onClick={() => navigate('/artist/marcus-cole')}
+                        className="text-lg md:text-xl font-bold transition hover:opacity-80"
+                        style={{ color: C.navy }}
+                      >
+                        Marcus Cole
+                      </button>
                       <div className="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
                         style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>
                         <Check className="w-3 h-3" style={{ color: C.navy }} />
@@ -362,8 +368,13 @@ export default function VideoDetail() {
                   <h2 className="text-lg md:text-2xl font-black uppercase tracking-tighter" style={{ color: C.navy }}>
                     More from Marcus Cole
                   </h2>
-                  <button className="text-xs md:text-sm font-black uppercase tracking-wider transition hover:text-navy"
-                    style={{ color: C.teal }}>View All →</button>
+                  <button
+                    className="text-xs md:text-sm font-black uppercase tracking-wider transition hover:text-navy"
+                    style={{ color: C.teal }}
+                    onClick={() => navigate('/artist/marcus-cole')}
+                  >
+                    View All →
+                  </button>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {MORE_FROM_MARCUS.map(item => <VideoCard key={item.title} item={item} />)}
