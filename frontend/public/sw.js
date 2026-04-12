@@ -1,10 +1,10 @@
-const CACHE_NAME = 'arturee-pwa-v3'
+const CACHE_NAME = 'arturee-pwa-v4'
 const PRECACHE_URLS = [
   '/',
   '/dashboard',
-  '/manifest.json',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png',
+  '/manifest.json?v=20260412',
+  '/icons/icon-192x192.png?v=20260412',
+  '/icons/icon-512x512.png?v=20260412',
 ]
 
 // Install — pre-cache shell
