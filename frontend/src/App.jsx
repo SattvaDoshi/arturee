@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import SplashScreen from './components/SplashScreen'
+import { CartProvider } from './context/CartContext'
 
 // Public
 import Landing from './pages/Landing/Landing'
@@ -42,8 +43,9 @@ const App = () => {
   return (
     <>
       {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
-      <BrowserRouter>
-        <Routes>
+      <CartProvider>
+        <BrowserRouter>
+          <Routes>
           {/* ── Public / Landing ── */}
           {/* Installed PWA → skip landing, go straight to dashboard */}
           <Route
@@ -76,7 +78,8 @@ const App = () => {
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/*" element={<AdminDashboard />} />
         </Routes>
-      </BrowserRouter>
+        </BrowserRouter>
+      </CartProvider>
     </>
   )
 }

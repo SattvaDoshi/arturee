@@ -4,7 +4,7 @@ import Navbar from '../../components/layout/Navbar'
 
 const AboutUs = () => {
   return (
-    <div>
+    <div className="min-h-screen bg-linear-to-br from-[#E0F7FA] via-[#B2EBF2] to-[#F1F8E9]">
         <Navbar/>
         <CreatorProfileSection />
     </div>

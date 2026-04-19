@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Search, Bell, Menu } from 'lucide-react'
+import CartButton from '../../cards/CartButton'
+import SavedListButton from '../../cards/SavedListButton'
 
 const UserTopbar = ({ onMobileMenuToggle }) => {
   const [searchFocused, setSearchFocused] = useState(false)
@@ -31,6 +33,12 @@ const UserTopbar = ({ onMobileMenuToggle }) => {
 
       {/* Right — actions */}
       <div className="flex items-center gap-2 shrink-0">
+        {/* Saved List */}
+        <SavedListButton />
+
+        {/* Shopping Cart */}
+        <CartButton />
+
         {/* Notification bell */}
         <button className="relative p-2 hover:bg-[#4DD0E1]/15 rounded-full transition">
           <Bell className="w-5 h-5 text-[#051d2e]" />

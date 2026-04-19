@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
+import CartButton from '../cards/CartButton'
+import SavedListButton from '../cards/SavedListButton'
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -32,6 +34,10 @@ const Navbar = () => {
           ))}
         </nav>
         <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+          {/* Cart & Saved List */}
+          <SavedListButton />
+          <CartButton />
+
           <button
             type="button"
             className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded border-2 border-black bg-white text-navy transition-colors hover:bg-lightgray"

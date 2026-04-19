@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import { Play, Plus, Users, Clock, Star, ChevronLeft, ChevronRight, BookmarkCheck, ShoppingBag, CheckCircle } from 'lucide-react'
+import { Play, Plus, Users, Clock, Star, ChevronLeft, ChevronRight, BookmarkCheck, ShoppingBag, CheckCircle, Bookmark, BookmarkPlus, ShoppingCart } from 'lucide-react'
 import UserLayout from '../components/layout/UserLayout'
+import { useCart } from '../context/CartContext'
 
 /* ─── Hero Slides Data ─────────────────────────────────── */
 const HERO_SLIDES = [
@@ -122,6 +123,45 @@ const SectionHeader = ({ title, sub, viewAllTo }) => (
     )}
   </div>
 )
+
+const VideoActionButtons = ({ videoId, videoData }) => {
+  const { toggleCart, toggleSavedList, isInCart, isInSavedList } = useCart()
+
+  const handleAddToCart = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    toggleCart(videoData)
+  }
+
+  const handleSaveToList = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    toggleSavedList(videoData)
+  }
+
+  return (
+    <div className="absolute bottom-2 right-2 flex items-center gap-2 lg:opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
+      <button
+        onClick={handleSaveToList}
+        className="p-1.5 md:p-2 rounded-full bg-white/90 hover:bg-[#4DD0E1]/80 shadow-md backdrop-blur-sm transition transform hover:scale-110"
+        title="Save to list"
+      >
+        {isInSavedList(videoId) ? (
+          <Bookmark className="w-4 h-4 text-[#051d2e] fill-[#051d2e]" />
+        ) : (
+          <BookmarkPlus className="w-4 h-4 text-[#051d2e]" />
+        )}
+      </button>
+      <button
+        onClick={handleAddToCart}
+        className="p-1.5 md:p-2 rounded-full bg-[#4DD0E1]/90 hover:bg-[#00BCD4] shadow-md backdrop-blur-sm transition transform hover:scale-110"
+        title="Add to cart"
+      >
+        <ShoppingCart className={`w-4 h-4 text-[#051d2e] ${isInCart(videoId) ? 'fill-[#051d2e]' : ''}`} />
+      </button>
+    </div>
+  )
+}
 
 /* ═══════════════════════════════════════════════════════ */
 export default function UserDashboard() {
@@ -297,15 +337,16 @@ export default function UserDashboard() {
           <SectionHeader title="Continue Watching" viewAllTo="/dashboard/continue" />
           <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
             {[
-              { img: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&h=450&fit=crop', title: 'Sarah Chen: Raw', sub: '35 min remaining', progress: 35, price: '$9.99' },
-              { img: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&h=450&fit=crop', title: 'Urban Stories Ep. 3', sub: '12 min remaining', progress: 68, price: '$3.99' },
-              { img: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800&h=450&fit=crop', title: 'Sound & Vision Podcast', sub: '42 min remaining', progress: 22, free: true },
-              { img: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=450&fit=crop', title: 'Behind the Lens', sub: '5 min remaining', progress: 89, price: '$4.99' },
+              { id: 'cw-1', img: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&h=450&fit=crop', title: 'Sarah Chen: Raw', sub: '35 min remaining', progress: 35, price: '$9.99', creator: 'Sarah Chen' },
+              { id: 'cw-2', img: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&h=450&fit=crop', title: 'Urban Stories Ep. 3', sub: '12 min remaining', progress: 68, price: '$3.99', creator: 'Maya Chen' },
+              { id: 'cw-3', img: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800&h=450&fit=crop', title: 'Sound & Vision Podcast', sub: '42 min remaining', progress: 22, free: true, creator: 'Jordan Blake' },
+              { id: 'cw-4', img: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=450&fit=crop', title: 'Behind the Lens', sub: '5 min remaining', progress: 89, price: '$4.99', creator: 'Sam Torres' },
             ].map((item) => (
-              <Link to="/video" key={item.title} className="flex-shrink-0 w-64 sm:w-72 md:w-80 group cursor-pointer block">
+              <Link to="/video" key={item.id} className="flex-shrink-0 w-64 sm:w-72 md:w-80 group cursor-pointer block">
                 <div className="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg border border-[#4DD0E1]/20">
                   <img src={item.img} alt="Video" className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
                   <HoverOverlayWide />
+                  <VideoActionButtons videoId={item.id} videoData={{ id: item.id, image: item.img, title: item.title, creator: item.creator, price: item.price || 'Free' }} />
                   <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#051d2e]/10">
                     <div className="h-full progress-bar" style={{ width: `${item.progress}%` }} />
                   </div>
@@ -325,16 +366,17 @@ export default function UserDashboard() {
           <SectionHeader title="Trending Now" />
           <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
             {[
-              { img: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=600&fit=crop', title: 'Midnight Sessions', sub: 'Alex Rivera', rank: '#1', price: '$4.99', desc: 'An intimate look into the creative process', stats: <><span>1.2M views</span><span>•</span><span>45 min</span></> },
-              { img: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&h=600&fit=crop', title: 'Urban Stories', sub: 'Maya Chen', rank: '#2', price: '$3.99', desc: 'Stories from the streets told through visuals', stats: <><span>890K views</span><span>•</span><span>32 min</span></> },
-              { img: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&h=600&fit=crop', title: 'Sound & Vision', sub: 'Jordan Blake', rank: '#3', price: '$5.99', desc: 'A journey through music and visual storytelling', stats: <><span>750K views</span><span>•</span><span>52 min</span></> },
-              { img: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=600&fit=crop', title: 'Behind the Lens', sub: 'Sam Torres', rank: '#4', price: '$4.99', desc: 'Exclusive behind-the-scenes documentary series', stats: <><span>620K views</span><span>•</span><span>38 min</span></> },
-              { img: 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=400&h=600&fit=crop', title: 'Creative Flow', sub: 'Riley Park', rank: '#5', price: '$3.99', desc: 'Exploring the intersection of art and creativity', stats: <><span>580K views</span><span>•</span><span>41 min</span></> },
+              { id: 'tn-1', img: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=600&fit=crop', title: 'Midnight Sessions', sub: 'Alex Rivera', rank: '#1', price: '$4.99', desc: 'An intimate look into the creative process', stats: <><span>1.2M views</span><span>•</span><span>45 min</span></>, creator: 'Alex Rivera' },
+              { id: 'tn-2', img: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&h=600&fit=crop', title: 'Urban Stories', sub: 'Maya Chen', rank: '#2', price: '$3.99', desc: 'Stories from the streets told through visuals', stats: <><span>890K views</span><span>•</span><span>32 min</span></>, creator: 'Maya Chen' },
+              { id: 'tn-3', img: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&h=600&fit=crop', title: 'Sound & Vision', sub: 'Jordan Blake', rank: '#3', price: '$5.99', desc: 'A journey through music and visual storytelling', stats: <><span>750K views</span><span>•</span><span>52 min</span></>, creator: 'Jordan Blake' },
+              { id: 'tn-4', img: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=600&fit=crop', title: 'Behind the Lens', sub: 'Sam Torres', rank: '#4', price: '$4.99', desc: 'Exclusive behind-the-scenes documentary series', stats: <><span>620K views</span><span>•</span><span>38 min</span></>, creator: 'Sam Torres' },
+              { id: 'tn-5', img: 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=400&h=600&fit=crop', title: 'Creative Flow', sub: 'Riley Park', rank: '#5', price: '$3.99', desc: 'Exploring the intersection of art and creativity', stats: <><span>580K views</span><span>•</span><span>41 min</span></>, creator: 'Riley Park' },
             ].map((item) => (
-              <Link to="/video" key={item.title} className="flex-shrink-0 w-44 sm:w-52 md:w-64 group cursor-pointer block">
+              <Link to="/video" key={item.id} className="flex-shrink-0 w-44 sm:w-52 md:w-64 group cursor-pointer block">
                 <div className="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg border border-[#4DD0E1]/20">
                   <img src={item.img} alt="Video" className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
                   <HoverOverlayTall desc={item.desc} stats={item.stats} />
+                  <VideoActionButtons videoId={item.id} videoData={{ id: item.id, image: item.img, title: item.title, creator: item.creator, price: item.price }} />
                   <div className="absolute top-2 left-2 px-2 py-0.5 bg-red-500 rounded-full text-[10px] font-black text-white">{item.rank}</div>
                   <PriceBadge>{item.price}</PriceBadge>
                 </div>
@@ -350,15 +392,16 @@ export default function UserDashboard() {
           <SectionHeader title="New Releases" />
           <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
             {[
-              { img: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=800&h=450&fit=crop', title: 'Acoustic Sessions Vol. 2', sub: 'Marcus Cole • Released today', price: '$6.99', rating: 5 },
-              { img: 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800&h=450&fit=crop', title: "The Artist's Mind Podcast", sub: 'Creative Minds • Episode 45', free: true, rating: 4.8 },
-              { img: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&h=450&fit=crop', title: 'David Park: Unscripted', sub: 'Comedy Special • 1h 20m', price: '$8.99', rating: 4.9 },
-              { img: 'https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=800&h=450&fit=crop', title: 'Street Art Chronicles', sub: 'Documentary • Season 1', price: '$5.99', rating: 4.7 },
+              { id: 'nr-1', img: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=800&h=450&fit=crop', title: 'Acoustic Sessions Vol. 2', sub: 'Marcus Cole • Released today', price: '$6.99', rating: 5, creator: 'Marcus Cole' },
+              { id: 'nr-2', img: 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800&h=450&fit=crop', title: "The Artist's Mind Podcast", sub: 'Creative Minds • Episode 45', free: true, rating: 4.8, creator: 'Creative Minds' },
+              { id: 'nr-3', img: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&h=450&fit=crop', title: 'David Park: Unscripted', sub: 'Comedy Special • 1h 20m', price: '$8.99', rating: 4.9, creator: 'David Park' },
+              { id: 'nr-4', img: 'https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=800&h=450&fit=crop', title: 'Street Art Chronicles', sub: 'Documentary • Season 1', price: '$5.99', rating: 4.7, creator: 'Documentary' },
             ].map((item) => (
-              <Link to="/video" key={item.title} className="flex-shrink-0 w-56 sm:w-64 md:w-72 group cursor-pointer block">
+              <Link to="/video" key={item.id} className="flex-shrink-0 w-56 sm:w-64 md:w-72 group cursor-pointer block">
                 <div className="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg border border-[#4DD0E1]/20">
                   <img src={item.img} alt="Video" className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
                   <HoverOverlayWide />
+                  <VideoActionButtons videoId={item.id} videoData={{ id: item.id, image: item.img, title: item.title, creator: item.creator, price: item.price || 'Free' }} />
                   <div className="absolute top-2 left-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>New</div>
                   {item.free
                     ? <div className="absolute top-2 right-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: '#C0E863' }}>Free</div>
@@ -382,18 +425,19 @@ export default function UserDashboard() {
           <SectionHeader title="Stand-Up Comedy" />
           <div className="flex gap-3 md:gap-4 overflow-x-auto scrollbar-hide pb-2">
             {[
-              { img: 'https://images.unsplash.com/photo-1527224857830-43a7acc85260?w=400&h=600&fit=crop', title: 'Sarah Chen: Raw', dur: '1h 15m', price: '$9.99' },
-              { img: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=600&fit=crop', title: 'David Park: Unscripted', dur: '1h 20m', price: '$8.99' },
-              { img: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=600&fit=crop', title: 'Mike Torres: Honest', dur: '58 min', price: '$7.99' },
-              { img: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&h=600&fit=crop', title: 'Lisa Kim: Breakthrough', dur: '1h 5m', price: '$6.99' },
-              { img: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=400&h=600&fit=crop', title: 'Alex Rivera: Unfiltered', dur: '1h 12m', price: '$8.99' },
+              { id: 'sc-1', img: 'https://images.unsplash.com/photo-1527224857830-43a7acc85260?w=400&h=600&fit=crop', title: 'Sarah Chen: Raw', dur: '1h 15m', price: '$9.99', creator: 'Sarah Chen' },
+              { id: 'sc-2', img: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=600&fit=crop', title: 'David Park: Unscripted', dur: '1h 20m', price: '$8.99', creator: 'David Park' },
+              { id: 'sc-3', img: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=600&fit=crop', title: 'Mike Torres: Honest', dur: '58 min', price: '$7.99', creator: 'Mike Torres' },
+              { id: 'sc-4', img: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&h=600&fit=crop', title: 'Lisa Kim: Breakthrough', dur: '1h 5m', price: '$6.99', creator: 'Lisa Kim' },
+              { id: 'sc-5', img: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=400&h=600&fit=crop', title: 'Alex Rivera: Unfiltered', dur: '1h 12m', price: '$8.99', creator: 'Alex Rivera' },
             ].map((item) => (
-              <Link to="/video" key={item.title} className="flex-shrink-0 w-36 sm:w-44 md:w-56 group cursor-pointer block">
+              <Link to="/video" key={item.id} className="flex-shrink-0 w-36 sm:w-44 md:w-56 group cursor-pointer block">
                 <div className="relative aspect-[2/3] rounded-xl overflow-hidden mb-2 shadow-lg border border-[#4DD0E1]/20">
                   <img src={item.img} alt="Video" className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#051d2e]/95 via-[#051d2e]/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
                     <PlayBtn size={20} />
                   </div>
+                  <VideoActionButtons videoId={item.id} videoData={{ id: item.id, image: item.img, title: item.title, creator: item.creator, price: item.price }} />
                   <PriceBadge>{item.price}</PriceBadge>
                 </div>
                 <h3 className="font-black text-xs text-[#051d2e] mb-0.5 truncate">{item.title}</h3>
@@ -408,15 +452,16 @@ export default function UserDashboard() {
           <SectionHeader title="Podcasts & Conversations" />
           <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
             {[
-              { img: 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800&h=450&fit=crop', title: 'Creative Minds: The Art of Storytelling', sub: 'Episode 42 • 45 min', free: true },
-              { img: 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=800&h=450&fit=crop', title: 'Sound & Vision: Music Production', sub: 'Episode 18 • 52 min', free: true },
-              { img: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800&h=450&fit=crop', title: "The Artist's Journey: Finding Your Voice", sub: 'Episode 7 • 38 min', price: '$2.99' },
-              { img: 'https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=800&h=450&fit=crop', title: 'Behind the Canvas: Visual Arts', sub: 'Episode 23 • 41 min', free: true },
+              { id: 'pod-1', img: 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800&h=450&fit=crop', title: 'Creative Minds: The Art of Storytelling', sub: 'Episode 42 • 45 min', free: true, creator: 'Creative Minds' },
+              { id: 'pod-2', img: 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=800&h=450&fit=crop', title: 'Sound & Vision: Music Production', sub: 'Episode 18 • 52 min', free: true, creator: 'Sound & Vision' },
+              { id: 'pod-3', img: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800&h=450&fit=crop', title: "The Artist's Journey: Finding Your Voice", sub: 'Episode 7 • 38 min', price: '$2.99', creator: "The Artist's Journey" },
+              { id: 'pod-4', img: 'https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=800&h=450&fit=crop', title: 'Behind the Canvas: Visual Arts', sub: 'Episode 23 • 41 min', free: true, creator: 'Behind the Canvas' },
             ].map((item) => (
-              <Link to="/video" key={item.title} className="flex-shrink-0 w-64 sm:w-72 md:w-80 group cursor-pointer block">
+              <Link to="/video" key={item.id} className="flex-shrink-0 w-64 sm:w-72 md:w-80 group cursor-pointer block">
                 <div className="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg border border-[#4DD0E1]/20">
                   <img src={item.img} alt="Video" className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
                   <HoverOverlayWide />
+                  <VideoActionButtons videoId={item.id} videoData={{ id: item.id, image: item.img, title: item.title, creator: item.creator, price: item.price || 'Free' }} />
                   {item.free
                     ? <div className="absolute top-2 right-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: '#C0E863' }}>Free</div>
                     : <PriceBadge>{item.price}</PriceBadge>}
@@ -433,15 +478,16 @@ export default function UserDashboard() {
           <SectionHeader title="Live Performances" />
           <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
             {[
-              { img: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=800&h=450&fit=crop', title: 'Jazz Night Sessions', sub: 'Marcus Cole • 2.4K watching', live: true, free: true },
-              { img: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=450&fit=crop', title: 'Acoustic Sessions', sub: 'Riley Park • Tomorrow 8 PM', upcoming: true, price: '$4.99' },
-              { img: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=450&fit=crop', title: 'Behind the Lens Q&A', sub: 'Sam Torres • 1.8K watching', live: true, price: '$3.99' },
-              { img: 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=800&h=450&fit=crop', title: 'Creative Flow Workshop', sub: 'Maya Chen • Friday 7 PM', upcoming: true, free: true },
+              { id: 'live-1', img: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=800&h=450&fit=crop', title: 'Jazz Night Sessions', sub: 'Marcus Cole • 2.4K watching', live: true, free: true, creator: 'Marcus Cole' },
+              { id: 'live-2', img: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=450&fit=crop', title: 'Acoustic Sessions', sub: 'Riley Park • Tomorrow 8 PM', upcoming: true, price: '$4.99', creator: 'Riley Park' },
+              { id: 'live-3', img: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=450&fit=crop', title: 'Behind the Lens Q&A', sub: 'Sam Torres • 1.8K watching', live: true, price: '$3.99', creator: 'Sam Torres' },
+              { id: 'live-4', img: 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=800&h=450&fit=crop', title: 'Creative Flow Workshop', sub: 'Maya Chen • Friday 7 PM', upcoming: true, free: true, creator: 'Maya Chen' },
             ].map((item) => (
-              <Link to="/video" key={item.title} className="flex-shrink-0 w-56 sm:w-64 md:w-72 group cursor-pointer block">
+              <Link to="/video" key={item.id} className="flex-shrink-0 w-56 sm:w-64 md:w-72 group cursor-pointer block">
                 <div className="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg border border-[#4DD0E1]/20">
                   <img src={item.img} alt="Video" className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
                   <HoverOverlayWide />
+                  <VideoActionButtons videoId={item.id} videoData={{ id: item.id, image: item.img, title: item.title, creator: item.creator, price: item.price || 'Free' }} />
                   {item.live && (
                     <div className="absolute top-2 left-2 px-2.5 py-1 bg-red-500 rounded-full text-[10px] font-black text-white flex items-center gap-1">
                       <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />LIVE
@@ -466,26 +512,24 @@ export default function UserDashboard() {
           <SectionHeader title="My List" sub="SAVED BY YOU" viewAllTo="/dashboard/mylist" />
           <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
             {[
-              { img: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400&h=600&fit=crop', title: 'Jazz Night Sessions', sub: 'Marcus Cole', price: '$4.99', genre: 'Music' },
-              { img: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=600&fit=crop', title: 'Midnight Sessions', sub: 'Alex Rivera', price: '$4.99', genre: 'Music' },
-              { img: 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800&h=450&fit=crop', title: "The Artist's Mind Podcast", sub: 'Creative Minds', free: true, genre: 'Podcast' },
-              { img: 'https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=400&h=600&fit=crop', title: 'Street Art Chronicles', sub: 'Documentary', price: '$5.99', genre: 'Doc' },
-              { img: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=600&fit=crop', title: 'Mike Torres: Honest', sub: 'Stand-up Comedy', price: '$7.99', genre: 'Comedy' },
-              { img: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=600&fit=crop', title: 'Behind the Lens', sub: 'Sam Torres', price: '$4.99', genre: 'Doc' },
+              { id: 'ml-1', img: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400&h=600&fit=crop', title: 'Jazz Night Sessions', sub: 'Marcus Cole', price: '$4.99', genre: 'Music', creator: 'Marcus Cole' },
+              { id: 'ml-2', img: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=600&fit=crop', title: 'Midnight Sessions', sub: 'Alex Rivera', price: '$4.99', genre: 'Music', creator: 'Alex Rivera' },
+              { id: 'ml-3', img: 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800&h=450&fit=crop', title: "The Artist's Mind Podcast", sub: 'Creative Minds', free: true, genre: 'Podcast', creator: 'Creative Minds' },
+              { id: 'ml-4', img: 'https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=400&h=600&fit=crop', title: 'Street Art Chronicles', sub: 'Documentary', price: '$5.99', genre: 'Doc', creator: 'Documentary' },
+              { id: 'ml-5', img: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=600&fit=crop', title: 'Mike Torres: Honest', sub: 'Stand-up Comedy', price: '$7.99', genre: 'Comedy', creator: 'Mike Torres' },
+              { id: 'ml-6', img: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=600&fit=crop', title: 'Behind the Lens', sub: 'Sam Torres', price: '$4.99', genre: 'Doc', creator: 'Sam Torres' },
             ].map((item) => (
-              <Link to="/video" key={item.title} className="flex-shrink-0 w-44 sm:w-52 md:w-64 group cursor-pointer block">
+              <Link to="/video" key={item.id} className="flex-shrink-0 w-44 sm:w-52 md:w-64 group cursor-pointer block">
                 <div className="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg border border-[#4DD0E1]/20">
                   <img src={item.img} alt="Video" className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#051d2e]/95 via-[#051d2e]/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
                     <PlayBtn size={20} />
                   </div>
+                  <VideoActionButtons videoId={item.id} videoData={{ id: item.id, image: item.img, title: item.title, creator: item.creator, price: item.price || 'Free' }} />
                   {item.free
                     ? <div className="absolute top-2 right-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: '#C0E863' }}>Free</div>
                     : <PriceBadge>{item.price}</PriceBadge>}
                   <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold text-[#051d2e]/80 border border-[#4DD0E1]/30" style={{ background: 'rgba(255,255,255,0.85)' }}>{item.genre}</div>
-                  <button className="absolute bottom-2 right-2 p-1.5 rounded-full text-[#C0E863] opacity-0 group-hover:opacity-100 transition">
-                    <BookmarkCheck className="w-4 h-4" fill="currentColor" />
-                  </button>
                 </div>
                 <h3 className="font-black text-xs text-[#051d2e] mb-0.5 truncate">{item.title}</h3>
                 <p className="text-[10px] text-[#051d2e]/60">{item.sub}</p>
@@ -499,15 +543,16 @@ export default function UserDashboard() {
           <SectionHeader title="Purchased" sub="YOUR LIBRARY" viewAllTo="/dashboard/purchased" />
           <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
             {[
-              { img: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&h=450&fit=crop', title: 'Sarah Chen: Raw', sub: 'Stand-up Comedy • 1h 15m', price: '$9.99', date: 'Mar 2' },
-              { img: 'https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=800&h=450&fit=crop', title: 'Street Art Chronicles', sub: 'Documentary • Season 1', price: '$5.99', date: 'Feb 14' },
-              { img: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=450&fit=crop', title: 'Midnight Sessions', sub: 'Music • 45 min', price: '$4.99', date: 'Jan 28' },
-              { img: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&h=450&fit=crop', title: 'Urban Stories', sub: 'Series • 3 Episodes', price: '$3.99', date: 'Jan 10' },
+              { id: 'pur-1', img: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&h=450&fit=crop', title: 'Sarah Chen: Raw', sub: 'Stand-up Comedy • 1h 15m', price: '$9.99', date: 'Mar 2', creator: 'Sarah Chen' },
+              { id: 'pur-2', img: 'https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=800&h=450&fit=crop', title: 'Street Art Chronicles', sub: 'Documentary • Season 1', price: '$5.99', date: 'Feb 14', creator: 'Documentary' },
+              { id: 'pur-3', img: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=450&fit=crop', title: 'Midnight Sessions', sub: 'Music • 45 min', price: '$4.99', date: 'Jan 28', creator: 'Alex Rivera' },
+              { id: 'pur-4', img: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&h=450&fit=crop', title: 'Urban Stories', sub: 'Series • 3 Episodes', price: '$3.99', date: 'Jan 10', creator: 'Maya Chen' },
             ].map((item) => (
               <Link to="/video" key={item.title} className="flex-shrink-0 w-64 sm:w-72 md:w-80 group cursor-pointer block">
                 <div className="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg border border-[#4DD0E1]/20">
                   <img src={item.img} alt="Video" className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
                   <HoverOverlayWide />
+                    <VideoActionButtons videoId={item.id} videoData={{ id: item.id, image: item.img, title: item.title, creator: item.creator, price: item.price }} />
                   <div className="absolute top-2 left-2 flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>
                     <CheckCircle className="w-3 h-3" /> Owned
                   </div>
