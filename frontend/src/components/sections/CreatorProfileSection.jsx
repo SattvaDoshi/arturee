@@ -95,6 +95,37 @@ const CreatorProfileSection = () => {
               </div>
             </div>
           </div>
+
+          {/* Third Creator Card */}
+          <div className="lg:col-span-2 flex justify-center lg:mt-8">
+            <div className="p-12 lg:-rotate-2 bg-amber-50 shadow-xl border border-black/5 rounded-lg w-full max-w-[580px]">
+              <div className="flex flex-col md:flex-row gap-8 mb-12">
+              <div className="w-48 h-64 grayscale border-4 border-white shadow-lg shrink-0">
+                <div 
+                  className="w-full h-full bg-cover bg-center bg-[#e2e8f0]"
+                />
+              </div>
+              <div className="space-y-4 pt-4">
+                <div className="inline-block px-3 py-1 bg-[#e07a5f]/10 text-[#e07a5f] font-mono text-[10px] uppercase">
+                  Subject: Team Arturee
+                </div>
+                <h3 className="text-4xl font-display text-navy italic font-bold">Shravani K.</h3>
+                <p className="text-navy/50 font-mono text-xs uppercase">Team Arturee</p>
+                <div className="h-px w-full bg-navy/10"></div>
+              </div>
+            </div>
+            <div className="relative">
+              <div className="text-2xl text-[#1a2332]/80 mb-8 leading-snug italic">
+                "Life is too short to follow just one path"
+              </div>
+              <div className="border-l-2 border-[#e07a5f] pl-6 py-2">
+                <p className="text-[#2d3748] text-sm italic">
+                  So now she's a jack of all trades. Shravani tells stories through different mediums — through photography, videography, video editing, creative writing and much more yet to explore. She's also a bharatnatyam dancer, creating, performing and living art in every possible way!
+                </p>
+              </div>
+            </div>
+          </div>
+          </div>
         </div>
       </div>
     </section>
