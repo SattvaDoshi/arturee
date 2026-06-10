@@ -85,7 +85,7 @@ const COMMENTS = [
 const REACTIONS = [
   { id: 'heart', emoji: '❤️', label: 'Love', count: 1264 },
   { id: 'party', emoji: '🎉', label: 'Party', count: 842 },
-  { id: 'fire', emoji: '🔥', label: 'Fire', count: 663 },
+  { id: 'fire', emoji: '👏', label: 'Clap', count: 663 },
   { id: 'wow', emoji: '😍', label: 'Wow', count: 579 },
   { id: 'star', emoji: '⭐', label: 'Star', count: 932 },
 ]

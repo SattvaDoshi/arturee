@@ -138,7 +138,7 @@ const Pricing = () => {
                   : 'text-navy/50 hover:text-navy'
               }`}
             >
-              Pay Per Video
+              Bundle
             </button>
           </div>
         </div>
@@ -214,7 +214,7 @@ const Pricing = () => {
           </div>
         )}
 
-        {/* ── PAY PER VIDEO ── */}
+        {/* ── Bundle ── */}
         {tab === 'video' && (
           <div className="max-w-[1200px] mx-auto">
             {/* Bundle pricing info */}

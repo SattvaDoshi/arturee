@@ -82,7 +82,7 @@ const ARTIST_VIDEOS = [
 const ARTIST_REACTIONS = [
   { id: 'heart', emoji: '❤️', label: 'Love', count: 1264 },
   { id: 'party', emoji: '🎉', label: 'Party', count: 842 },
-  { id: 'fire', emoji: '🔥', label: 'Fire', count: 663 },
+  { id: 'fire', emoji: '👏', label: 'Clap', count: 663 },
   { id: 'wow', emoji: '😍', label: 'Wow', count: 579 },
   { id: 'star', emoji: '⭐', label: 'Star', count: 932 },
 ]
@@ -150,7 +150,7 @@ const ArtistDetail = () => {
           <section className="rounded-3xl border p-5 md:p-6" style={{ background: 'rgba(255,255,255,0.85)', borderColor: 'rgba(77,208,225,0.25)' }}>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
               <h3 className="text-base md:text-lg font-black" style={{ color: C.navy }}>
-                Audience Reaction Popularity
+                Reaction 
               </h3>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
@@ -162,7 +162,6 @@ const ArtistDetail = () => {
                 >
                   <div className="flex items-center gap-2">
                     <span className="text-xl leading-none">{reaction.emoji}</span>
-                    <span className="text-xs font-semibold" style={{ color: C.muted }}>{reaction.label}</span>
                   </div>
                   <span className="text-base font-black" style={{ color: C.navy }}>{reaction.count.toLocaleString()}</span>
                 </div>

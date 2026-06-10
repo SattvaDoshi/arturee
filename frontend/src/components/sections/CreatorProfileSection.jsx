@@ -9,7 +9,7 @@ const CreatorProfileSection = () => {
             Confidential Repository / Personnel
           </span>
           <h2 className="text-6xl font-display italic text-navy font-black tracking-tighter">
-            The Custodians
+            The Dreamers
           </h2>
         </div>
 
@@ -39,11 +39,8 @@ const CreatorProfileSection = () => {
                 />
               </div>
               <div className="space-y-4 pt-4">
-                <div className="inline-block px-3 py-1 bg-[#ce6a6b]/10 text-[#ce6a6b] font-mono text-[10px] uppercase">
-                  Subject: Founder
-                </div>
                 <h3 className="text-4xl font-display text-[#1a2332] italic font-bold">Suchi Bansal</h3>
-                <p className="text-navy/50 font-mono text-xs uppercase">Founder / Poetess & Storyteller</p>
+                <p className="text-navy/50 font-mono text-xs uppercase">Founder</p>
                 <div className="h-px w-full bg-navy/10"></div>
               </div>
             </div>
@@ -76,11 +73,8 @@ const CreatorProfileSection = () => {
                 />
               </div>
               <div className="space-y-4 pt-4 text-right md:text-left">
-                <div className="inline-block px-3 py-1 bg-[#4a919e]/10 text-[#4a919e] font-mono text-[10px] uppercase">
-                  Subject: Partner
-                </div>
                 <h3 className="text-4xl font-display text-navy italic font-bold">Anjali Jain</h3>
-                <p className="text-navy/50 font-mono text-xs uppercase">Partner / Author & Artist</p>
+                <p className="text-navy/50 font-mono text-xs uppercase">Team Arturee</p>
                 <div className="h-px w-full bg-navy/10"></div>
               </div>
             </div>
@@ -106,9 +100,6 @@ const CreatorProfileSection = () => {
                 />
               </div>
               <div className="space-y-4 pt-4">
-                <div className="inline-block px-3 py-1 bg-[#e07a5f]/10 text-[#e07a5f] font-mono text-[10px] uppercase">
-                  Subject: Team Arturee
-                </div>
                 <h3 className="text-4xl font-display text-navy italic font-bold">Shravani K.</h3>
                 <p className="text-navy/50 font-mono text-xs uppercase">Team Arturee</p>
                 <div className="h-px w-full bg-navy/10"></div>

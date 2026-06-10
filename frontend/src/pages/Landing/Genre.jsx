@@ -129,7 +129,7 @@ const Genre = () => {
             </span>
           </h1>
           <p className="text-navy/55 text-base max-w-md mx-auto">
-            Every art form tells a different story. Find yours.
+            Passionate, fearless, and unapologetically authentic.
           </p>
           <div className="relative max-w-sm mx-auto mt-2">
             <input
@@ -231,7 +231,7 @@ const Genre = () => {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                 {videos.map((video) => (
-                  <div key={video.id} className="group cursor-pointer">
+                  <Link to="/video" key={video.id} className="group cursor-pointer block">
                     <div className="relative rounded-2xl overflow-hidden mb-3 shadow-md" style={{ aspectRatio: '16/9' }}>
                       <div className={`w-full h-full bg-linear-to-br ${video.gradient} flex items-center justify-center`}>
                         <span className="text-white/50 text-4xl group-hover:scale-110 transition-transform duration-300">▶</span>
@@ -243,7 +243,7 @@ const Genre = () => {
                     </div>
                     <h4 className="font-semibold text-navy text-sm truncate">{video.title}</h4>
                     <p className="text-navy/40 text-xs mt-0.5">{video.artist} · {video.views} views</p>
-                  </div>
+                  </Link>
                 ))}
               </div>
             )}

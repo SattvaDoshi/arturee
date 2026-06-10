@@ -40,10 +40,41 @@ const HeroSection = () => {
             </div>
           </div>
           
-          {/* Yellow sticker - repositioned to avoid overlap */}
-          <div className="absolute bottom-0 left-0 sm:left-2 w-32 h-32 sm:w-36 sm:h-36 md:w-44 md:h-44 lg:w-48 lg:h-48 bg-linear-to-br from-primary to-lime rough-border transform -rotate-12 z-20 flex items-center justify-center p-3 md:p-4 shadow-[6px_6px_0px_rgba(33,46,83,0.3)]">
-            <span className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black uppercase text-center leading-[0.9] italic text-white">Art at your<br/>fingertips</span>
-          </div>
+        {/* Sticker */}
+<div
+  className="
+    absolute bottom-0 left-0 sm:left-2
+    w-40 h-40 sm:w-44 sm:h-44 md:w-52 md:h-52 lg:w-56 lg:h-56
+    bg-gradient-to-br from-primary to-lime
+    rough-border
+    -rotate-12
+    z-20
+    flex items-center justify-center
+    p-3 md:p-3
+    shadow-[6px_6px_0px_rgba(33,46,83,0.3)]
+    overflow-hidden
+  "
+>
+  <span
+    className="
+      block
+      text-center
+      uppercase
+      font-black
+      italic
+      text-white
+      leading-none
+      text-xl sm:text-2xl md:text-3xl lg:text-[2.2rem]
+      max-w-full
+    "
+  >
+    ART AT
+    <br />
+    YOUR
+    <br />
+    FINGERTIPS
+  </span>
+</div>
           
           {/* Top label */}
           <div className="absolute -top-6 md:-top-8 right-8 sm:right-12 md:right-16 lg:right-20 bg-linear-to-r from-yellow to-lime px-3 py-1 md:px-4 md:py-2 rough-border z-30 transform -rotate-6 font-black uppercase text-xs md:text-sm text-navy shadow-md">

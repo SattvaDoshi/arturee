@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
 import Navbar from '../../components/layout/Navbar'
 
 const artists = [
@@ -141,7 +142,7 @@ const Artist = () => {
             </span>
           </h1>
           <p className="text-navy/55 text-base max-w-md mx-auto">
-            Passionate, fearless, and unapologetically authentic. These are the souls behind the art.
+            Every art form tells a different story. Find yours.
           </p>
           <div className="relative max-w-sm mx-auto mt-2">
             <input
@@ -182,10 +183,11 @@ const Artist = () => {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {filtered.map((artist) => (
-                <div
+                <Link
+                  to="/artist/marcus-cole"
                   key={artist.id}
                   onClick={() => setSelected(selected === artist.id ? null : artist.id)}
-                  className={`group cursor-pointer bg-white rounded-3xl border overflow-hidden transition-all duration-300 shadow-md ${
+                  className={`group cursor-pointer bg-white rounded-3xl border overflow-hidden transition-all duration-300 shadow-md block ${
                     selected === artist.id
                       ? 'border-primary shadow-xl shadow-primary/15 scale-[1.02]'
                       : 'border-black/5 hover:border-primary/40 hover:shadow-xl hover:-translate-y-1'
@@ -229,7 +231,7 @@ const Artist = () => {
                       </button>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}
