@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import Navbar from '../../components/layout/Navbar'
+import { Link } from 'react-router-dom'
 
 const genres = [
   {

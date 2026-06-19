@@ -1,13 +1,15 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useArtistModal } from '../../context/ArtistModalContext'
 import CartButton from '../cards/CartButton'
 import SavedListButton from '../cards/SavedListButton'
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { openModal } = useArtistModal()
 
   const navItems = [
-    { to: '/', label: 'Dashboard' },
+    { to: '/', label: 'Home' },
     { to: '/genres', label: 'Genre' },
     { to: '/artists', label: 'Artists' },
     { to: '/aboutus', label: 'Who are we' },
@@ -34,9 +36,6 @@ const Navbar = () => {
           ))}
         </nav>
         <div className="flex items-center gap-2 sm:gap-4 shrink-0">
-          {/* Cart & Saved List */}
-          <SavedListButton />
-          <CartButton />
 
           <button
             type="button"
@@ -56,7 +55,7 @@ const Navbar = () => {
             )}
           </button>
           <Link to="/login" className="hidden sm:block text-xs font-black uppercase underline decoration-4 underline-offset-4 decoration-lime text-navy hover:text-primary transition-colors">Sign In</Link>
-          <Link to="/signup" className="flex items-center justify-center whitespace-nowrap bg-linear-to-r from-primary to-lime text-white px-3 sm:px-6 py-2 text-xs sm:text-sm font-black uppercase tracking-wide transition-all shadow-[3px_3px_0px_#00BCD4] rounded hover:shadow-lg hover:scale-105">Join Now</Link>
+          <button onClick={openModal} className="flex items-center justify-center whitespace-nowrap bg-linear-to-r from-primary to-lime text-white px-3 sm:px-6 py-2 text-xs sm:text-sm font-black uppercase tracking-wide transition-all shadow-[3px_3px_0px_#00BCD4] rounded hover:shadow-lg hover:scale-105">Join Now</button>
         </div>
       </div>
 

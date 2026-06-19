@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import SplashScreen from './components/SplashScreen'
 import { CartProvider } from './context/CartContext'
+import { ArtistModalProvider } from './context/ArtistModalContext'
+import JoinArtistModal from './components/modals/JoinArtistModal'
 
 // Public
 import Landing from './pages/Landing/Landing'
@@ -43,7 +45,9 @@ const App = () => {
   return (
     <>
       {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
-      <CartProvider>
+      <ArtistModalProvider>
+        <CartProvider>
+          <JoinArtistModal />
         <BrowserRouter>
           <Routes>
           {/* ── Public / Landing ── */}
@@ -77,9 +81,10 @@ const App = () => {
           {/* ── Admin Dashboard (AdminLayout) ── */}
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/*" element={<AdminDashboard />} />
-        </Routes>
-        </BrowserRouter>
-      </CartProvider>
+          </Routes>
+          </BrowserRouter>
+        </CartProvider>
+      </ArtistModalProvider>
     </>
   )
 }

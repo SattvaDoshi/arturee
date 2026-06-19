@@ -17,7 +17,7 @@ const subscriptionPlans = [
     period: '3 months',
     tag: 'Save 16%',
     description: 'Commit a season to art. Your heART will thank you.',
-    features: ['Everything in Monthly', 'Priority new content', 'Offline downloads', 'HD quality'],
+    features: ['Everything in Monthly', 'Priority new content', 'HD quality'],
   },
   {
     label: '6 Months',
@@ -68,7 +68,7 @@ const termsItems = [
   {
     title: 'Subscription Access',
     content:
-      'Active subscribers can stream all available content without per-view restrictions for the duration of their active plan. Downloads are available on the 3-month plan and above, and expire when the subscription ends.',
+      'Active subscribers can stream all available content without per-view restrictions for the duration of their active plan.',
   },
   {
     title: 'Refund Policy',

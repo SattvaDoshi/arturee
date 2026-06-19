@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Navbar from '../../components/layout/Navbar'
+import { useArtistModal } from '../../context/ArtistModalContext'
 
 const artists = [
   {
@@ -115,6 +116,7 @@ const Artist = () => {
   const [activeFilter, setActiveFilter] = useState('All')
   const [search, setSearch] = useState('')
   const [selected, setSelected] = useState(null)
+  const { openModal } = useArtistModal()
 
   const filtered = artists.filter((a) => {
     const matchesFilter = activeFilter === 'All' || a.specialty.toLowerCase().includes(activeFilter.toLowerCase())
@@ -286,7 +288,7 @@ const Artist = () => {
               <p className="text-white/55 text-sm leading-relaxed">
                 Arturee is your sky. Spread your wings, share your art, and earn from what you love.
               </p>
-              <button className="px-8 py-3 rounded-2xl bg-lime text-navy font-bold text-sm hover:bg-yellow hover:shadow-lg transition-all duration-200">
+              <button onClick={openModal} className="px-8 py-3 rounded-2xl bg-lime text-navy font-bold text-sm hover:bg-yellow hover:shadow-lg transition-all duration-200">
                 Join Us as an Artist
               </button>
             </div>

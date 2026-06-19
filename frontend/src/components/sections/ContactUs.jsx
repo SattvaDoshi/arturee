@@ -59,31 +59,37 @@ const ContactUs = () => {
                 label: 'Email Us',
                 value: 'hello@arturee.in',
                 sub: 'We reply within 24 hours',
+                href: 'mailto:hello@arturee.in',
               },
               {
                 icon: '📸',
                 label: 'Instagram',
-                value: '@arturee.official',
+                value: '@arturee.art',
                 sub: 'Follow our journey',
+                href: 'https://www.instagram.com/arturee.art',
               },
               {
                 icon: '🎨',
                 label: 'For Artists',
                 value: 'artists@arturee.in',
                 sub: 'Join us as a creator',
+                href: 'mailto:artists@arturee.in',
               },
             ].map((item) => (
-              <div
+              <a
                 key={item.label}
-                className="flex items-start gap-4 bg-white rounded-2xl border border-primary/15 p-5 shadow-sm hover:border-primary/40 hover:shadow-md transition-all duration-200"
+                href={item.href}
+                target={item.label === 'Instagram' ? '_blank' : '_self'}
+                rel={item.label === 'Instagram' ? 'noopener noreferrer' : undefined}
+                className="flex items-start gap-4 bg-white rounded-2xl border border-primary/15 p-5 shadow-sm hover:border-primary/40 hover:shadow-md transition-all duration-200 cursor-pointer block"
               >
                 <span className="text-2xl mt-0.5">{item.icon}</span>
                 <div>
                   <p className="font-semibold text-navy text-sm">{item.label}</p>
-                  <p className="text-primary text-sm font-medium">{item.value}</p>
+                  <p className="text-primary text-sm font-medium hover:underline">{item.value}</p>
                   <p className="text-navy/40 text-xs mt-0.5">{item.sub}</p>
                 </div>
-              </div>
+              </a>
             ))}
 
             <div className="bg-navy rounded-2xl p-6 space-y-3 relative overflow-hidden">
