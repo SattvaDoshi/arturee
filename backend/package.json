@@ -13,13 +13,23 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@aws-sdk/client-cloudwatch": "^3.840.0",
+    "@aws-sdk/client-mediaconvert": "^3.840.0",
+    "@aws-sdk/client-s3": "^3.840.0",
+    "@aws-sdk/cloudfront-signer": "^3.840.0",
+    "@aws-sdk/s3-request-presigner": "^3.840.0",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.1",
     "express": "^5.2.1",
+    "express-rate-limit": "^7.5.0",
+    "express-validator": "^7.2.1",
     "google-auth-library": "^10.6.2",
+    "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.4.1",
-    "nodemailer": "^8.0.5"
+    "nodemailer": "^9.0.1",
+    "razorpay": "^2.9.6",
+    "ua-parser-js": "^2.0.3"
   }
 }
