@@ -4,7 +4,8 @@ import {
   User, Mail, Lock, Bell, Camera, Star, Clock, Play,
   LogOut, CreditCard, CheckCircle, Eye, EyeOff,
 } from 'lucide-react'
-import UserLayout from '../components/layout/UserLayout'
+import UserLayout from '../../components/layout/UserLayout'
+import { useAuth } from '../../context/AuthContext'
 
 /* ── tiny toggle ── */
 const Toggle = ({ on, onToggle }) => (
@@ -94,6 +95,7 @@ const NOTIF_PREFS = [
 ]
 
 export default function Account() {
+  const { user, logout } = useAuth()
   const [activeTab, setActiveTab] = useState('Profile')
   const [notifs, setNotifs] = useState(NOTIF_PREFS.map(n => n.defaultOn))
   
@@ -112,12 +114,12 @@ export default function Account() {
             <h1 className="text-3xl font-black text-[#051d2e] tracking-tight">My Account</h1>
             <p className="text-sm text-[#051d2e]/55 mt-1">Manage your profile and preferences</p>
           </div>
-          <Link
-            to="/"
+          <button
+            onClick={logout}
             className="flex items-center gap-2 px-4 py-2 rounded-xl border border-red-200 text-red-500 hover:bg-red-50 transition text-sm font-semibold"
           >
             <LogOut className="w-4 h-4" /> Sign Out
-          </Link>
+          </button>
         </div>
 
         {/* ── Profile hero card ── */}
@@ -128,7 +130,7 @@ export default function Account() {
           <div className="relative shrink-0">
             <div className="w-24 h-24 rounded-full ring-4 ring-[#4DD0E1]/40 ring-offset-2 ring-offset-transparent overflow-hidden">
               <img
-                src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop"
+                src={user?.avatarUrl || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop"}
                 alt="avatar"
                 className="w-full h-full object-cover"
               />
@@ -142,8 +144,8 @@ export default function Account() {
           </div>
 
           <div className="flex-1 text-center sm:text-left">
-            <h2 className="text-2xl font-black text-[#051d2e] tracking-tight">Alex Johnson</h2>
-            <p className="text-sm text-[#051d2e]/55 mb-4">alex.johnson@email.com</p>
+            <h2 className="text-2xl font-black text-[#051d2e] tracking-tight">{user?.name || 'User'}</h2>
+            <p className="text-sm text-[#051d2e]/55 mb-4">{user?.email || ''}</p>
             <div className="flex flex-wrap justify-center sm:justify-start gap-2">
               <span
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black text-[#051d2e]"
@@ -183,8 +185,8 @@ export default function Account() {
           <Card>
             <CardTitle>Personal Information</CardTitle>
             <div className="grid sm:grid-cols-2 gap-5">
-              <Field label="Full Name" icon={User} defaultValue="Alex Johnson" />
-              <Field label="Email Address" icon={Mail} defaultValue="alex.johnson@email.com" />
+              <Field label="Full Name" icon={User} defaultValue={user?.name || ''} />
+              <Field label="Email Address" icon={Mail} defaultValue={user?.email || ''} />
             </div>
             <div>
               <label className="block text-xs font-bold text-[#051d2e]/55 mb-1.5 uppercase tracking-wider">Bio</label>

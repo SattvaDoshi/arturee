@@ -3,9 +3,8 @@ import {
   LayoutDashboard,
   Users,
   Film,
-  BarChart2,
-  DollarSign,
-  FileText,
+  Upload,
+  UserCheck,
   Settings,
   ChevronLeft,
   ChevronRight,
@@ -13,12 +12,11 @@ import {
 } from "lucide-react";
 
 const navItems = [
-  { label: "Overview", icon: LayoutDashboard, to: "/admin" },
-  { label: "Users", icon: Users, to: "/admin/users" },
-  { label: "Content", icon: Film, to: "/admin/content" },
-  { label: "Analytics", icon: BarChart2, to: "/admin/analytics" },
-  { label: "Revenue", icon: DollarSign, to: "/admin/revenue" },
-  { label: "Reports", icon: FileText, to: "/admin/reports" },
+  { label: "Overview",  icon: LayoutDashboard, to: "/admin" },
+  { label: "Videos",    icon: Film,            to: "/admin/videos" },
+  { label: "Upload",    icon: Upload,           to: "/admin/upload" },
+  { label: "Users",     icon: Users,            to: "/admin/users" },
+  { label: "Artists",   icon: UserCheck,        to: "/admin/artists" },
 ];
 
 const AdminSidebar = ({ collapsed, onToggle }) => {

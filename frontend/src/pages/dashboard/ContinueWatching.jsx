@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Play, ChevronLeft, Clock, RotateCcw } from 'lucide-react'
-import UserLayout from '../components/layout/UserLayout'
+import UserLayout from '../../components/layout/UserLayout'
 
 const ITEMS = [
   { img: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&h=450&fit=crop',  title: 'Sarah Chen: Raw',          genre: 'Stand-up Comedy', progress: 35, remaining: '35 min', total: '1h 15m', price: '$9.99' },

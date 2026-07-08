@@ -87,6 +87,15 @@ const videoSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    artistId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Artist',
+      default: null,
+    },
+    featured: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
@@ -97,6 +106,7 @@ videoSchema.index({ creatorId: 1 })
 videoSchema.index({ status: 1 })
 videoSchema.index({ isPublished: 1 })
 videoSchema.index({ tags: 1 })
+videoSchema.index({ featured: 1 })
 
 const Video = mongoose.model('Video', videoSchema)
 export default Video

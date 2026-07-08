@@ -126,28 +126,26 @@ export const completeUpload = asyncHandler(async (req, res) => {
   // Build output prefix for MediaConvert
   const outputPrefix = buildProcessedPrefix(videoId)
 
+  // Try to trigger transcoding — skip if MediaConvert is not configured
   try {
     const { jobId } = await createTranscodeJob(s3Key, outputPrefix, videoId)
-
-    video.status = 'processing'
     video.mediaConvertJobId = jobId
-    await video.save()
-
-    res.status(200).json({
-      success: true,
-      data: {
-        videoId,
-        mediaConvertJobId: jobId,
-        status: 'processing',
-        message: 'Video uploaded and transcoding job created.',
-      },
-    })
-  } catch (err) {
-    video.status = 'failed'
-    await video.save()
-    logUploadError(videoId, err)
-    throw err
+    video.status = 'processing'
+  } catch (transcodeErr) {
+    console.warn('[MediaConvert] Skipped transcoding (not configured or error):', transcodeErr.message)
+    // Leave status as 'uploading' — admin can manually publish
   }
+  await video.save()
+
+  res.status(200).json({
+    success: true,
+    data: {
+      videoId,
+      mediaConvertJobId: video.mediaConvertJobId ?? null,
+      status: video.status,
+      message: 'Video uploaded. Transcoding job created if MediaConvert is configured.',
+    },
+  })
 })
 
 // ── Admin: Abort multipart upload ─────────────────────────────────────────────
@@ -257,11 +255,18 @@ export const listVideos = asyncHandler(async (req, res) => {
   const filter = { isPublished: true, status: 'ready' }
   if (req.query.category) filter.category = req.query.category
   if (req.query.tags) filter.tags = { $in: req.query.tags.split(',') }
+  if (req.query.featured === 'true') filter.featured = true
+  if (req.query.search) filter.title = { $regex: req.query.search, $options: 'i' }
+
+  const sortBy = req.query.sort === 'popular'
+    ? { viewCount: -1 }
+    : { createdAt: -1 }
 
   const [videos, total] = await Promise.all([
     Video.find(filter)
-      .select('title description thumbnailUrl price currency durationSeconds tags category viewCount createdAt')
-      .sort({ createdAt: -1 })
+      .select('title description thumbnailUrl price currency durationSeconds tags category viewCount createdAt featured artistId')
+      .populate('artistId', 'name avatarUrl')
+      .sort(sortBy)
       .skip(skip)
       .limit(limit),
     Video.countDocuments(filter),
@@ -292,3 +297,25 @@ export const deleteVideo = asyncHandler(async (req, res) => {
 
   res.status(200).json({ success: true, message: 'Video archived successfully.' })
 })
+
+// ── Admin: Manually publish a video (bypass MediaConvert) ─────────────────────
+/**
+ * PATCH /api/videos/:videoId/publish
+ * Body: { thumbnailUrl? }
+ * Marks video as ready + published (for when MediaConvert is not configured)
+ */
+export const manuallyPublishVideo = asyncHandler(async (req, res) => {
+  const { videoId } = req.params
+  const video = await Video.findById(videoId)
+  if (!video) throw new ApiError(404, 'Video not found.')
+
+  video.status = 'ready'
+  video.isPublished = true
+  if (req.body.thumbnailUrl) video.thumbnailUrl = req.body.thumbnailUrl
+  if (req.body.featured !== undefined) video.featured = req.body.featured
+  if (req.body.artistId !== undefined) video.artistId = req.body.artistId
+
+  await video.save()
+  res.status(200).json({ success: true, data: video })
+})
+

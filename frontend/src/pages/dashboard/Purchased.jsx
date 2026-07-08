@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Play, ChevronLeft, CheckCircle, ShoppingBag, AlertCircle, Loader2 } from 'lucide-react'
-import UserLayout from '../components/layout/UserLayout'
-import { purchaseApi } from '../api/index.js'
+import UserLayout from '../../components/layout/UserLayout'
+import { purchaseApi } from '../../api/index.js'
 
 const SORT_OPTIONS = ['Recently Purchased', 'Title A – Z', 'Highest Price']
 

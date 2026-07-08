@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+﻿import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Navbar from '../../components/layout/Navbar'
 import { useArtistModal } from '../../context/ArtistModalContext'
@@ -8,8 +8,8 @@ const artists = [
     id: 1,
     name: 'Suchi Bansal',
     role: 'Poetess & Storyteller',
-    specialty: 'Poetry · Storytelling',
-    bio: 'A Financial Analyst by day, poetess by soul. Suchi weaves words into worlds — one verse, one journey at a time.',
+    specialty: 'Poetry ┬╖ Storytelling',
+    bio: 'A Financial Analyst by day, poetess by soul. Suchi weaves words into worlds ΓÇö one verse, one journey at a time.',
     videos: 8,
     followers: '2.4k',
     gradient: 'from-[#B2EBF2] to-[#4DD0E1]',
@@ -21,7 +21,7 @@ const artists = [
     id: 2,
     name: 'Anjali Jain',
     role: 'Author & Performer',
-    specialty: 'Spoken Word · Writing',
+    specialty: 'Spoken Word ┬╖ Writing',
     bio: 'World record holder. Award-winning artist. Author of Inking Emotions. For Anjali, writing is worship.',
     videos: 12,
     followers: '5.1k',
@@ -34,7 +34,7 @@ const artists = [
     id: 3,
     name: 'Rohan Mehta',
     role: 'Filmmaker',
-    specialty: 'Short Films · Cinematography',
+    specialty: 'Short Films ┬╖ Cinematography',
     bio: 'Every frame Rohan shoots carries the weight of silence and the urgency of truth. Cinema is his mother tongue.',
     videos: 6,
     followers: '3.7k',
@@ -47,7 +47,7 @@ const artists = [
     id: 4,
     name: 'Priya Das',
     role: 'Bharatanatyam Dancer',
-    specialty: 'Classical Dance · Fusion',
+    specialty: 'Classical Dance ┬╖ Fusion',
     bio: 'Priya\'s feet speak before her lips do. A classical dancer bridging ancient rhythms with contemporary emotion.',
     videos: 9,
     followers: '4.2k',
@@ -60,7 +60,7 @@ const artists = [
     id: 5,
     name: 'Kabir Nair',
     role: 'Musician & Composer',
-    specialty: 'Music · Sound Design',
+    specialty: 'Music ┬╖ Sound Design',
     bio: 'Kabir builds sonic landscapes from silence. His compositions live in the space between breath and beat.',
     videos: 14,
     followers: '6.8k',
@@ -73,7 +73,7 @@ const artists = [
     id: 6,
     name: 'Aisha Qureshi',
     role: 'Visual Artist & Storyteller',
-    specialty: 'Visual Art · Documentary',
+    specialty: 'Visual Art ┬╖ Documentary',
     bio: 'Aisha turns canvas and camera into confessionals. Her art makes the invisible impossible to ignore.',
     videos: 7,
     followers: '2.9k',
@@ -86,7 +86,7 @@ const artists = [
     id: 7,
     name: 'Ishaan Desai',
     role: 'Classical Musician',
-    specialty: 'Hindustani · Fusion',
+    specialty: 'Hindustani ┬╖ Fusion',
     bio: 'Trained in Hindustani classical music, Ishaan blends ragas with modern textures to create timeless soundscapes.',
     videos: 5,
     followers: '1.6k',
@@ -99,8 +99,8 @@ const artists = [
     id: 8,
     name: 'Sneha Pillai',
     role: 'Theatre Artist',
-    specialty: 'Theatre · Monologue',
-    bio: 'A stage is Sneha\'s home. Whether it\'s a packed auditorium or a corner of a café, she commands every space.',
+    specialty: 'Theatre ┬╖ Monologue',
+    bio: 'A stage is Sneha\'s home. Whether it\'s a packed auditorium or a corner of a caf├⌐, she commands every space.',
     videos: 4,
     followers: '1.3k',
     gradient: 'from-[#CFD8DC] to-[#607D8B]',
@@ -149,12 +149,12 @@ const Artist = () => {
           <div className="relative max-w-sm mx-auto mt-2">
             <input
               type="text"
-              placeholder="Search artists or art forms…"
+              placeholder="Search artists or art formsΓÇª"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full bg-white border border-primary/20 rounded-2xl px-5 py-3 pr-10 text-sm text-navy placeholder:text-navy/30 focus:outline-none focus:border-primary/60 shadow-sm"
             />
-            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-navy/30 text-sm">🔍</span>
+            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-navy/30 text-sm">≡ƒöì</span>
           </div>
         </div>
       </div>
@@ -205,7 +205,7 @@ const Artist = () => {
                     )}
                     {selected === artist.id && (
                       <div className="absolute inset-0 bg-navy/20 flex items-center justify-center">
-                        <span className="text-white text-xl">✓</span>
+                        <span className="text-white text-xl">Γ£ô</span>
                       </div>
                     )}
                   </div>

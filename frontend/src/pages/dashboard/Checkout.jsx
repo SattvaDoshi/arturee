@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, CreditCard, ShieldCheck, CheckCircle2, Lock } from 'lucide-react'
-import UserLayout from '../components/layout/UserLayout'
+import UserLayout from '../../components/layout/UserLayout'
 
 const C = {
   navy: '#051d2e',

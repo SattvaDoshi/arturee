@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Play, ChevronLeft, BookmarkCheck, Trash2, Loader2 } from 'lucide-react'
-import UserLayout from '../components/layout/UserLayout'
-import { wishlistApi } from '../api/index.js'
+import UserLayout from '../../components/layout/UserLayout'
+import { wishlistApi } from '../../api/index.js'
 
 const GENRES = ['All', 'Music', 'Comedy', 'Doc', 'Podcast']
 

@@ -65,8 +65,9 @@ export const purchaseApi = {
 // ── Progress ──────────────────────────────────────────────────────────────
 export const progressApi = {
   get: (videoId) => api.get(`/progress/${videoId}`),
-  update: (data) => api.post('/progress', data),
-  getAll: () => api.get('/progress'),
+  update: (data) => api.post('/progress/save', data),
+  complete: (data) => api.post('/progress/complete', data),
+  getAll: () => api.get('/progress/history'),
 }
 
 // ── Wishlist ──────────────────────────────────────────────────────────────

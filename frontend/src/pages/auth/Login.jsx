@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react'
-import { authApi } from '../api/index.js'
-import { useAuth } from '../context/AuthContext'
+import { authApi } from '../../api/index.js'
+import { useAuth } from '../../context/AuthContext'
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false)

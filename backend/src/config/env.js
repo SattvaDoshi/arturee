@@ -25,7 +25,7 @@ const env = {
   s3BucketName: process.env.S3_BUCKET_NAME || '',
 
   // ── MediaConvert ────────────────────────────────────────────────────────
-  mediaConvertEndpoint: process.env.MEDIACONVERT_ENDPOINT || '',
+  mediaConvertEndpoint: process.env.MEDIACONVERT_ENDPOINT || null,
   mediaConvertRole: process.env.MEDIACONVERT_ROLE_ARN || '',
   mediaConvertQueue: process.env.MEDIACONVERT_QUEUE_ARN || '',
 

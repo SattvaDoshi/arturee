@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Search, Bell, Menu } from 'lucide-react'
+import { Search, Bell, Menu, LogIn, UserPlus } from 'lucide-react'
 import CartButton from '../../cards/CartButton'
 import SavedListButton from '../../cards/SavedListButton'
+import { useAuth } from '../../../context/AuthContext'
 
 const UserTopbar = ({ onMobileMenuToggle }) => {
   const [searchFocused, setSearchFocused] = useState(false)
+  const { isAuthenticated, user } = useAuth()
 
   return (
     <header className="sticky top-0 z-20 h-16 px-4 md:px-6 flex items-center justify-between border-b border-[#4DD0E1]/20 backdrop-blur-sm"
@@ -53,14 +55,21 @@ const UserTopbar = ({ onMobileMenuToggle }) => {
           Upgrade
         </Link>
 
-        {/* Avatar */}
-        <div className="w-9 h-9 rounded-full ring-2 ring-[#C0E863]/70 ring-offset-1 overflow-hidden cursor-pointer shrink-0">
-          <img
-            src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop"
-            alt="User"
-            className="w-full h-full object-cover"
-          />
-        </div>
+        {isAuthenticated ? (
+          /* Avatar */
+          <Link to="/account" className="w-9 h-9 rounded-full ring-2 ring-[#C0E863]/70 ring-offset-1 overflow-hidden cursor-pointer shrink-0">
+            <img
+              src={user?.avatarUrl || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop"}
+              alt={user?.name || "User"}
+              className="w-full h-full object-cover"
+            />
+          </Link>
+        ) : (
+          <div className="flex items-center gap-2 ml-2">
+            <Link to="/login" className="text-xs font-bold text-[#051d2e]/80 hover:text-[#051d2e] px-2 py-1">Log In</Link>
+            <Link to="/signup" className="hidden sm:flex text-xs font-bold text-[#051d2e] px-3 py-1.5 rounded-full bg-[#4DD0E1] hover:bg-[#00BCD4] transition">Sign Up</Link>
+          </div>
+        )}
       </div>
     </header>
   )

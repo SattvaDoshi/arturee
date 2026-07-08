@@ -1,4 +1,4 @@
-import React from 'react'
+﻿import React from 'react'
 import CreatorProfileSection from '../../components/sections/CreatorProfileSection'
 import Navbar from '../../components/layout/Navbar'
 

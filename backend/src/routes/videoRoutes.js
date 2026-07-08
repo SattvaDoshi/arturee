@@ -11,6 +11,7 @@ import {
   listVideos,
   updateVideo,
   deleteVideo,
+  manuallyPublishVideo,
 } from '../controllers/videoController.js'
 
 const router = Router()
@@ -26,6 +27,7 @@ router.post('/upload/abort', authMiddleware, adminMiddleware, abortUpload)
 
 router.get('/:videoId/job-status', authMiddleware, adminMiddleware, getMediaConvertStatus)
 
+router.patch('/:videoId/publish', authMiddleware, adminMiddleware, manuallyPublishVideo)
 router.patch('/:videoId', authMiddleware, adminMiddleware, updateVideo)
 router.delete('/:videoId', authMiddleware, adminMiddleware, deleteVideo)
 

@@ -2,8 +2,9 @@ import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import {
   Home, Play, BookmarkCheck, ShoppingBag, User,
-  LogIn, UserPlus, X,
+  LogIn, UserPlus, X, Shield,
 } from 'lucide-react'
+import { useAuth } from '../../../context/AuthContext'
 
 const navItems = [
   { label: 'Home',              icon: Home,          to: '/dashboard' },
@@ -35,8 +36,7 @@ const Tip = ({ label, show, children }) => (
 const UserSidebar = ({ mobile = false, onMobileClose }) => {
   const location = useLocation()
   const [hovered, setHovered] = useState(false)
-  // Swap to `true` once you wire up real auth
-  const [isLoggedIn] = useState(false)
+  const { isAuthenticated: isLoggedIn, user, isAdmin } = useAuth()
 
   // On desktop: collapsed unless hovered. On mobile drawer: always expanded.
   const expanded = mobile || hovered
@@ -128,6 +128,26 @@ const UserSidebar = ({ mobile = false, onMobileClose }) => {
 
       {/* ── Auth section ── */}
       <div className="shrink-0 px-2 pb-5 pt-3 border-t border-[#4DD0E1]/15 overflow-hidden">
+        {isAdmin && (
+          <Tip label="Admin Panel" show={collapsed}>
+            <Link
+              to="/admin"
+              className={[
+                'flex items-center rounded-xl transition-all duration-200 w-full overflow-hidden mb-2',
+                collapsed ? 'justify-center p-3' : 'gap-3.5 px-4 py-2.5',
+                'text-red-500 hover:text-red-600 hover:bg-white/50 font-bold',
+              ].join(' ')}
+            >
+              <Shield className="shrink-0 w-[18px] h-[18px]" />
+              <span
+                className="text-sm leading-none tracking-normal whitespace-nowrap overflow-hidden transition-all duration-300"
+                style={{ width: collapsed ? 0 : 'auto', opacity: collapsed ? 0 : 1 }}
+              >
+                Admin Panel
+              </span>
+            </Link>
+          </Tip>
+        )}
         {isLoggedIn ? (
           <Tip label="My Account" show={collapsed}>
             <Link
@@ -139,7 +159,7 @@ const UserSidebar = ({ mobile = false, onMobileClose }) => {
             >
               <div className="w-8 h-8 rounded-full ring-2 ring-[#4DD0E1]/50 overflow-hidden shrink-0">
                 <img
-                  src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&h=80&fit=crop"
+                  src={user?.avatarUrl || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&h=80&fit=crop"}
                   alt="avatar"
                   className="w-full h-full object-cover"
                 />
@@ -148,7 +168,7 @@ const UserSidebar = ({ mobile = false, onMobileClose }) => {
                 className="overflow-hidden transition-all duration-300"
                 style={{ width: collapsed ? 0 : 'auto', opacity: collapsed ? 0 : 1 }}
               >
-                <p className="text-xs font-bold text-[#051d2e] truncate whitespace-nowrap">My Account</p>
+                <p className="text-xs font-bold text-[#051d2e] truncate whitespace-nowrap">{user?.name || 'My Account'}</p>
                 <p className="text-[10px] text-[#051d2e]/50 truncate whitespace-nowrap">View profile</p>
               </div>
             </Link>

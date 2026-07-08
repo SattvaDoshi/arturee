@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+﻿import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../../components/layout/Navbar'
 
@@ -32,7 +32,7 @@ const subscriptionPlans = [
     label: 'Yearly',
     price: 1499,
     period: 'year',
-    tag: 'Best Value · Save 37%',
+    tag: 'Best Value ┬╖ Save 37%',
     description: 'Full immersion. A full year of art, yours.',
     features: ['Everything in 6 Months', 'Exclusive member badge', 'Artist Q&A sessions', '4K + Dolby quality'],
   },
@@ -42,7 +42,7 @@ const videoPrices = { single: 49, double: 89, triple: 129 }
 
 const sampleVideos = [
   { id: 1, title: 'Petals in the Rain', artist: 'Suchi Bansal', genre: 'Poetry', thumb: 'poetry' },
-  { id: 2, title: 'Inking Emotions — Live', artist: 'Anjali Jain', genre: 'Spoken Word', thumb: 'spoken' },
+  { id: 2, title: 'Inking Emotions ΓÇö Live', artist: 'Anjali Jain', genre: 'Spoken Word', thumb: 'spoken' },
   { id: 3, title: 'The Last Canvas', artist: 'Rohan Mehta', genre: 'Short Film', thumb: 'film' },
   { id: 4, title: 'Mitti ki Khushboo', artist: 'Priya Das', genre: 'Dance', thumb: 'dance' },
   { id: 5, title: 'Silence Speaks', artist: 'Kabir Nair', genre: 'Music', thumb: 'music' },
@@ -78,7 +78,7 @@ const termsItems = [
   {
     title: 'Cancellation Policy',
     content:
-      'You may cancel your subscription at any time from your Account Settings. Cancellation takes effect at the end of the current billing period — you will not be charged again, but access continues until the period expires. No partial refunds are issued for unused days.',
+      'You may cancel your subscription at any time from your Account Settings. Cancellation takes effect at the end of the current billing period ΓÇö you will not be charged again, but access continues until the period expires. No partial refunds are issued for unused days.',
   },
   {
     title: 'Content Availability',
@@ -88,7 +88,7 @@ const termsItems = [
   {
     title: 'Account & Sharing',
     content:
-      'Accounts are for individual use only. Sharing login credentials is prohibited. Concurrent streams are limited by plan — monthly allows 1 stream, quarterly 2, and half-yearly/yearly allows 3 simultaneous streams.',
+      'Accounts are for individual use only. Sharing login credentials is prohibited. Concurrent streams are limited by plan ΓÇö monthly allows 1 stream, quarterly 2, and half-yearly/yearly allows 3 simultaneous streams.',
   },
 ]
 
@@ -116,7 +116,7 @@ const Pricing = () => {
             </span>
           </h1>
           <p className="text-lg text-navy/60 max-w-xl mx-auto leading-relaxed">
-            Choose how you want to experience art — a full subscription feast, or hand-pick the pieces that move you.
+            Choose how you want to experience art ΓÇö a full subscription feast, or hand-pick the pieces that move you.
           </p>
           {/* Tab Toggle */}
           <div className="inline-flex bg-white border border-primary/20 rounded-2xl p-1.5 shadow-sm mt-4">
@@ -145,7 +145,7 @@ const Pricing = () => {
       </div>
 
       <div className="px-6 lg:px-20 pb-20">
-        {/* ── SUBSCRIPTION PLANS ── */}
+        {/* ΓöÇΓöÇ SUBSCRIPTION PLANS ΓöÇΓöÇ */}
         {tab === 'subscribe' && (
           <div className="max-w-[1200px] mx-auto">
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
@@ -175,7 +175,7 @@ const Pricing = () => {
                     </p>
                     <div className="flex items-end gap-1">
                       <span className={`text-4xl font-black ${plan.highlight ? 'text-white' : 'text-navy'}`}>
-                        ₹{plan.price.toLocaleString('en-IN')}
+                        Γé╣{plan.price.toLocaleString('en-IN')}
                       </span>
                       <span className={`text-sm mb-1.5 ${plan.highlight ? 'text-white/60' : 'text-navy/40'}`}>
                         / {plan.period}
@@ -188,7 +188,7 @@ const Pricing = () => {
                   <ul className="space-y-2.5 mb-8 flex-1">
                     {plan.features.map((f) => (
                       <li key={f} className="flex items-start gap-2.5 text-sm">
-                        <span className={`mt-0.5 text-base ${plan.highlight ? 'text-lime' : 'text-primary'}`}>✓</span>
+                        <span className={`mt-0.5 text-base ${plan.highlight ? 'text-lime' : 'text-primary'}`}>Γ£ô</span>
                         <span className={plan.highlight ? 'text-white/80' : 'text-navy/70'}>{f}</span>
                       </li>
                     ))}
@@ -209,20 +209,20 @@ const Pricing = () => {
 
             {/* Subscription note */}
             <p className="text-center text-navy/40 text-xs mt-6 font-mono">
-              All prices in Indian Rupees (INR) · GST applicable · Auto-renews unless cancelled
+              All prices in Indian Rupees (INR) ┬╖ GST applicable ┬╖ Auto-renews unless cancelled
             </p>
           </div>
         )}
 
-        {/* ── Bundle ── */}
+        {/* ΓöÇΓöÇ Bundle ΓöÇΓöÇ */}
         {tab === 'video' && (
           <div className="max-w-[1200px] mx-auto">
             {/* Bundle pricing info */}
             <div className="flex flex-col sm:flex-row justify-center gap-4 mb-10">
               {[
                 { count: 1, label: 'Single Video', price: videoPrices.single, save: null },
-                { count: 2, label: 'Bundle of 2', price: videoPrices.double, save: `Save ₹${2 * videoPrices.single - videoPrices.double}` },
-                { count: 3, label: 'Bundle of 3', price: videoPrices.triple, save: `Save ₹${3 * videoPrices.single - videoPrices.triple}` },
+                { count: 2, label: 'Bundle of 2', price: videoPrices.double, save: `Save Γé╣${2 * videoPrices.single - videoPrices.double}` },
+                { count: 3, label: 'Bundle of 3', price: videoPrices.triple, save: `Save Γé╣${3 * videoPrices.single - videoPrices.triple}` },
               ].map((tier) => (
                 <div
                   key={tier.count}
@@ -230,7 +230,7 @@ const Pricing = () => {
                   className="flex-1 max-w-xs bg-white border border-primary/20 rounded-2xl p-5 text-center shadow-sm cursor-pointer transition-transform hover:-translate-y-2 hover:shadow-lg"
                 >
                   <p className="text-navy/40 font-mono text-[10px] uppercase tracking-widest mb-1">{tier.label}</p>
-                  <p className="text-3xl font-black text-navy">₹{tier.price}</p>
+                  <p className="text-3xl font-black text-navy">Γé╣{tier.price}</p>
                   {tier.save && (
                     <span className="inline-block mt-2 px-3 py-0.5 bg-lime/30 text-navy text-xs font-semibold rounded-full">
                       {tier.save}
@@ -241,12 +241,12 @@ const Pricing = () => {
             </div>
 
             <p className="text-center text-navy/40 text-xs mt-6 font-mono">
-              All prices in Indian Rupees (INR) · GST applicable · Per-purchase 2-view limit applies
+              All prices in Indian Rupees (INR) ┬╖ GST applicable ┬╖ Per-purchase 2-view limit applies
             </p>
           </div>
         )}
 
-        {/* ── TERMS & CONDITIONS ── */}
+        {/* ΓöÇΓöÇ TERMS & CONDITIONS ΓöÇΓöÇ */}
         <div className="max-w-[900px] mx-auto mt-24">
           <div className="text-center mb-10 space-y-4">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-navy">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+﻿import React, { useState } from 'react'
 import Navbar from '../../components/layout/Navbar'
 import { Link } from 'react-router-dom'
 
@@ -6,7 +6,7 @@ const genres = [
   {
     id: 1,
     name: 'Poetry',
-    icon: '✍️',
+    icon: 'Γ£ì∩╕Å',
     description: 'Words that breathe, verses that ache.',
     videoCount: 24,
     gradient: 'from-[#B2EBF2] to-[#4DD0E1]',
@@ -16,7 +16,7 @@ const genres = [
   {
     id: 2,
     name: 'Spoken Word',
-    icon: '🎙️',
+    icon: '≡ƒÄÖ∩╕Å',
     description: 'Raw voice. Real stories.',
     videoCount: 18,
     gradient: 'from-[#F8BBD0] to-[#ce6a6b]',
@@ -26,7 +26,7 @@ const genres = [
   {
     id: 3,
     name: 'Short Films',
-    icon: '🎬',
+    icon: '≡ƒÄ¼',
     description: 'Cinema stripped to its soul.',
     videoCount: 31,
     gradient: 'from-[#D1C4E9] to-[#7E57C2]',
@@ -36,7 +36,7 @@ const genres = [
   {
     id: 4,
     name: 'Dance',
-    icon: '💃',
+    icon: '≡ƒÆâ',
     description: 'Movement as a mother tongue.',
     videoCount: 22,
     gradient: 'from-[#DCEDC8] to-[#C0E863]',
@@ -46,7 +46,7 @@ const genres = [
   {
     id: 5,
     name: 'Music',
-    icon: '🎵',
+    icon: '≡ƒÄ╡',
     description: 'Melodies that outlive their moment.',
     videoCount: 40,
     gradient: 'from-[#FFE0B2] to-[#FF9800]',
@@ -56,7 +56,7 @@ const genres = [
   {
     id: 6,
     name: 'Storytelling',
-    icon: '📖',
+    icon: '≡ƒôû',
     description: 'Once upon a now.',
     videoCount: 15,
     gradient: 'from-[#FFF9C4] to-[#F9A825]',
@@ -66,7 +66,7 @@ const genres = [
   {
     id: 7,
     name: 'Visual Art',
-    icon: '🎨',
+    icon: '≡ƒÄ¿',
     description: 'Colour as conversation.',
     videoCount: 19,
     gradient: 'from-[#FCE4EC] to-[#E91E63]',
@@ -76,7 +76,7 @@ const genres = [
   {
     id: 8,
     name: 'Theatre',
-    icon: '🎭',
+    icon: '≡ƒÄ¡',
     description: 'Live magic, captured forever.',
     videoCount: 12,
     gradient: 'from-[#CFD8DC] to-[#455A64]',
@@ -88,7 +88,7 @@ const genres = [
 const allVideos = [
   { id: 1, genreId: 1, title: 'Petals in the Rain', artist: 'Suchi Bansal', duration: '4:12', views: '2.1k', gradient: 'from-[#B2EBF2] to-[#4DD0E1]' },
   { id: 2, genreId: 1, title: 'Letters to Yesterday', artist: 'Ritika Sharma', duration: '3:45', views: '1.8k', gradient: 'from-[#B2EBF2] to-[#26C6DA]' },
-  { id: 3, genreId: 2, title: 'Inking Emotions — Live', artist: 'Anjali Jain', duration: '9:30', views: '5.4k', gradient: 'from-[#F8BBD0] to-[#ce6a6b]' },
+  { id: 3, genreId: 2, title: 'Inking Emotions ΓÇö Live', artist: 'Anjali Jain', duration: '9:30', views: '5.4k', gradient: 'from-[#F8BBD0] to-[#ce6a6b]' },
   { id: 4, genreId: 2, title: 'The Weight of Words', artist: 'Karan Verma', duration: '7:15', views: '3.2k', gradient: 'from-[#FFCCBC] to-[#FF7043]' },
   { id: 5, genreId: 3, title: 'The Last Canvas', artist: 'Rohan Mehta', duration: '18:40', views: '4.7k', gradient: 'from-[#D1C4E9] to-[#7E57C2]' },
   { id: 6, genreId: 3, title: 'One Frame at a Time', artist: 'Sneha Pillai', duration: '22:10', views: '3.9k', gradient: 'from-[#C5CAE9] to-[#3F51B5]' },
@@ -135,12 +135,12 @@ const Genre = () => {
           <div className="relative max-w-sm mx-auto mt-2">
             <input
               type="text"
-              placeholder="Search genres…"
+              placeholder="Search genresΓÇª"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full bg-white border border-primary/20 rounded-2xl px-5 py-3 pr-10 text-sm text-navy placeholder:text-navy/30 focus:outline-none focus:border-primary/60 shadow-sm"
             />
-            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-navy/30 text-sm">🔍</span>
+            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-navy/30 text-sm">≡ƒöì</span>
           </div>
         </div>
       </div>
@@ -220,7 +220,7 @@ const Genre = () => {
                   onClick={() => setSelected(null)}
                   className="text-sm text-navy/40 hover:text-navy flex items-center gap-1 transition-colors"
                 >
-                  ← All genres
+                  ΓåÉ All genres
                 </button>
               )}
             </div>
@@ -235,7 +235,7 @@ const Genre = () => {
                   <Link to="/video" key={video.id} className="group cursor-pointer block">
                     <div className="relative rounded-2xl overflow-hidden mb-3 shadow-md" style={{ aspectRatio: '16/9' }}>
                       <div className={`w-full h-full bg-linear-to-br ${video.gradient} flex items-center justify-center`}>
-                        <span className="text-white/50 text-4xl group-hover:scale-110 transition-transform duration-300">▶</span>
+                        <span className="text-white/50 text-4xl group-hover:scale-110 transition-transform duration-300">Γû╢</span>
                       </div>
                       <div className="absolute bottom-2 right-2 px-2 py-0.5 bg-black/60 rounded text-xs text-white font-mono">
                         {video.duration}
@@ -243,7 +243,7 @@ const Genre = () => {
                       <div className="absolute inset-0 bg-navy/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl" />
                     </div>
                     <h4 className="font-semibold text-navy text-sm truncate">{video.title}</h4>
-                    <p className="text-navy/40 text-xs mt-0.5">{video.artist} · {video.views} views</p>
+                    <p className="text-navy/40 text-xs mt-0.5">{video.artist} ┬╖ {video.views} views</p>
                   </Link>
                 ))}
               </div>
