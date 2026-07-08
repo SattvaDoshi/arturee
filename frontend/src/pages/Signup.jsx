@@ -1,15 +1,35 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { User, Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import { User, Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react'
+import { authApi } from '../api/index.js'
 
 export default function Signup() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirm, setConfirm] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
   const navigate = useNavigate()
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    navigate('/verify-otp')
+    setError('')
+    if (password !== confirm) {
+      setError('Passwords do not match.')
+      return
+    }
+    setLoading(true)
+    try {
+      await authApi.signup({ name, email, password })
+      navigate('/verify-otp', { state: { email } })
+    } catch (err) {
+      setError(err.response?.data?.message || 'Signup failed. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -42,6 +62,13 @@ export default function Signup() {
           className="rounded-2xl p-8 border border-[#4DD0E1]/25 shadow-2xl backdrop-blur-sm"
           style={{ background: 'rgba(255,255,255,0.88)' }}
         >
+          {error && (
+            <div className="flex items-center gap-2 p-3 mb-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{error}</span>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Full Name */}
             <div>
@@ -55,6 +82,8 @@ export default function Signup() {
                   required
                   autoComplete="name"
                   placeholder="Your full name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   className="w-full bg-white border border-[#4DD0E1]/30 rounded-xl py-3 pl-11 pr-4 text-sm text-[#051d2e] focus:outline-none focus:ring-2 focus:ring-[#4DD0E1]/50 focus:border-[#4DD0E1] transition placeholder:text-[#051d2e]/30"
                 />
               </div>
@@ -72,6 +101,8 @@ export default function Signup() {
                   required
                   autoComplete="email"
                   placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="w-full bg-white border border-[#4DD0E1]/30 rounded-xl py-3 pl-11 pr-4 text-sm text-[#051d2e] focus:outline-none focus:ring-2 focus:ring-[#4DD0E1]/50 focus:border-[#4DD0E1] transition placeholder:text-[#051d2e]/30"
                 />
               </div>
@@ -89,6 +120,8 @@ export default function Signup() {
                   required
                   autoComplete="new-password"
                   placeholder="Min. 8 characters"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="w-full bg-white border border-[#4DD0E1]/30 rounded-xl py-3 pl-11 pr-11 text-sm text-[#051d2e] focus:outline-none focus:ring-2 focus:ring-[#4DD0E1]/50 focus:border-[#4DD0E1] transition placeholder:text-[#051d2e]/30"
                 />
                 <button
@@ -113,6 +146,8 @@ export default function Signup() {
                   required
                   autoComplete="new-password"
                   placeholder="Repeat your password"
+                  value={confirm}
+                  onChange={(e) => setConfirm(e.target.value)}
                   className="w-full bg-white border border-[#4DD0E1]/30 rounded-xl py-3 pl-11 pr-11 text-sm text-[#051d2e] focus:outline-none focus:ring-2 focus:ring-[#4DD0E1]/50 focus:border-[#4DD0E1] transition placeholder:text-[#051d2e]/30"
                 />
                 <button
@@ -136,10 +171,11 @@ export default function Signup() {
             {/* Submit */}
             <button
               type="submit"
-              className="w-full py-3.5 rounded-xl font-black text-[#051d2e] hover:opacity-90 active:scale-[0.98] transition text-sm shadow-lg"
+              disabled={loading}
+              className="w-full py-3.5 rounded-xl font-black text-[#051d2e] hover:opacity-90 active:scale-[0.98] transition text-sm shadow-lg disabled:opacity-60"
               style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
             >
-              Create Free Account
+              {loading ? 'Creating account...' : 'Create Free Account'}
             </button>
           </form>
 

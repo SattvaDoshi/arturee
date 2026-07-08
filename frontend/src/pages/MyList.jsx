@@ -1,34 +1,48 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Play, ChevronLeft, BookmarkCheck, Trash2 } from 'lucide-react'
+import { Play, ChevronLeft, BookmarkCheck, Trash2, Loader2 } from 'lucide-react'
 import UserLayout from '../components/layout/UserLayout'
-
-const ALL_ITEMS = [
-  { img: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400&h=600&fit=crop',  title: 'Jazz Night Sessions',        sub: 'Marcus Cole',    price: '$4.99', genre: 'Music' },
-  { img: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=600&fit=crop',  title: 'Midnight Sessions',          sub: 'Alex Rivera',    price: '$4.99', genre: 'Music' },
-  { img: 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800&h=450&fit=crop',  title: "The Artist's Mind Podcast",  sub: 'Creative Minds', free: true,     genre: 'Podcast' },
-  { img: 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=800&h=450&fit=crop',  title: 'Sound & Vision: Music Prod', sub: 'Creative Minds', free: true,     genre: 'Podcast' },
-  { img: 'https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=400&h=600&fit=crop',  title: 'Street Art Chronicles',      sub: 'Documentary',    price: '$5.99', genre: 'Doc' },
-  { img: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=600&fit=crop',  title: 'Behind the Lens',            sub: 'Sam Torres',     price: '$4.99', genre: 'Doc' },
-  { img: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=600&fit=crop',     title: 'Mike Torres: Honest',        sub: 'Stand-up Comedy', price: '$7.99', genre: 'Comedy' },
-  { img: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=400&h=600&fit=crop',  title: 'Alex Rivera: Unfiltered',    sub: 'Stand-up Comedy', price: '$8.99', genre: 'Comedy' },
-  { img: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&h=600&fit=crop',  title: 'Lisa Kim: Breakthrough',     sub: 'Stand-up Comedy', price: '$6.99', genre: 'Comedy' },
-  { img: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&h=600&fit=crop',  title: 'Sound & Vision Film',        sub: 'Jordan Blake',   price: '$5.99', genre: 'Music' },
-]
+import { wishlistApi } from '../api/index.js'
 
 const GENRES = ['All', 'Music', 'Comedy', 'Doc', 'Podcast']
 
 export default function MyList() {
   const [activeGenre, setActiveGenre] = useState('All')
-  const [saved, setSaved] = useState(() => ALL_ITEMS.map((_, i) => i))
+  const [items, setItems] = useState([])
+  const [loading, setLoading] = useState(true)
 
-  const filtered = ALL_ITEMS.filter(
-    (item, i) => saved.includes(i) && (activeGenre === 'All' || item.genre === activeGenre)
+  useEffect(() => {
+    wishlistApi.get()
+      .then(res => setItems(res.data.data))
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [])
+
+  const remove = async (videoId) => {
+    try {
+      await wishlistApi.remove(videoId)
+      setItems(prev => prev.filter(v => v._id !== videoId))
+    } catch {}
+  }
+
+  // Derive a rough genre from category field, defaulting to 'Other'
+  const getGenre = (item) => {
+    if (!item.category) return 'Other'
+    const cat = item.category.toLowerCase()
+    if (cat.includes('music')) return 'Music'
+    if (cat.includes('comedy')) return 'Comedy'
+    if (cat.includes('doc')) return 'Doc'
+    if (cat.includes('podcast')) return 'Podcast'
+    return 'Other'
+  }
+
+  const filtered = items.filter(item =>
+    activeGenre === 'All' || getGenre(item) === activeGenre
   )
 
-  const remove = (title) => {
-    const idx = ALL_ITEMS.findIndex(i => i.title === title)
-    setSaved(prev => prev.filter(i => i !== idx))
+  const formatPrice = (price, currency) => {
+    if (!price) return 'Free'
+    return `${currency === 'INR' ? '₹' : '$'}${price.toFixed(2)}`
   }
 
   return (
@@ -45,7 +59,7 @@ export default function MyList() {
           </Link>
           <div>
             <h1 className="text-3xl font-black text-[#051d2e] tracking-tight">My List</h1>
-            <p className="text-sm text-[#051d2e]/50 mt-0.5">{saved.length} saved titles</p>
+            <p className="text-sm text-[#051d2e]/50 mt-0.5">{items.length} saved titles</p>
           </div>
         </div>
 
@@ -67,8 +81,15 @@ export default function MyList() {
           ))}
         </div>
 
+        {/* Loading */}
+        {loading && (
+          <div className="flex justify-center py-20">
+            <Loader2 className="w-8 h-8 animate-spin text-[#4DD0E1]" />
+          </div>
+        )}
+
         {/* ── Empty state ── */}
-        {filtered.length === 0 && (
+        {!loading && filtered.length === 0 && (
           <div className="flex flex-col items-center justify-center py-24 text-center">
             <div
               className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4"
@@ -89,14 +110,14 @@ export default function MyList() {
         )}
 
         {/* ── Poster grid ── */}
-        {filtered.length > 0 && (
+        {!loading && filtered.length > 0 && (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {filtered.map((item) => (
-              <div key={item.title} className="group relative">
-                <Link to="/video" className="block">
+              <div key={item._id} className="group relative">
+                <Link to={`/video/${item._id}`} className="block">
                   <div className="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-md border border-[#4DD0E1]/20">
                     <img
-                      src={item.img}
+                      src={item.thumbnailUrl || 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400&h=600&fit=crop'}
                       alt={item.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                     />
@@ -110,22 +131,21 @@ export default function MyList() {
                       </div>
                     </div>
                     {/* Badges */}
-                    {item.free
-                      ? <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: '#C0E863' }}>Free</div>
-                      : <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>{item.price}</div>
-                    }
-                    <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold border border-white/30 text-white/80" style={{ background: 'rgba(5,29,46,0.55)' }}>{item.genre}</div>
+                    <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>
+                      {formatPrice(item.price, item.currency)}
+                    </div>
+                    <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold border border-white/30 text-white/80" style={{ background: 'rgba(5,29,46,0.55)' }}>{item.category || 'Video'}</div>
                     {/* Bookmark saved indicator */}
                     <div className="absolute bottom-2 right-2 p-1.5 rounded-full" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>
                       <BookmarkCheck className="w-3.5 h-3.5 text-[#051d2e]" fill="#051d2e" />
                     </div>
                   </div>
                   <h3 className="font-black text-xs text-[#051d2e] truncate mb-0.5">{item.title}</h3>
-                  <p className="text-[10px] text-[#051d2e]/55">{item.sub}</p>
+                  <p className="text-[10px] text-[#051d2e]/55">{item.category || 'Video'}</p>
                 </Link>
                 {/* Remove button — appears on hover */}
                 <button
-                  onClick={() => remove(item.title)}
+                  onClick={() => remove(item._id)}
                   title="Remove from My List"
                   className="absolute top-2 left-2 p-1.5 rounded-full bg-red-500 text-white opacity-0 group-hover:opacity-100 transition shadow-md hover:bg-red-600"
                   style={{ zIndex: 10 }}

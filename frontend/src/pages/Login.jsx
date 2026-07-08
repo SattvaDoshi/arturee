@@ -1,14 +1,35 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react'
+import { authApi } from '../api/index.js'
+import { useAuth } from '../context/AuthContext'
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
   const navigate = useNavigate()
+  const location = useLocation()
+  const { login } = useAuth()
 
-  const handleSubmit = (e) => {
+  const from = location.state?.from?.pathname || '/dashboard'
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    navigate('/dashboard')
+    setError('')
+    setLoading(true)
+    try {
+      const res = await authApi.login({ email, password })
+      const { token, user } = res.data
+      login(token, user)
+      navigate(from, { replace: true })
+    } catch (err) {
+      setError(err.response?.data?.message || 'Login failed. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -41,6 +62,13 @@ export default function Login() {
           className="rounded-2xl p-8 border border-[#4DD0E1]/25 shadow-2xl backdrop-blur-sm"
           style={{ background: 'rgba(255,255,255,0.88)' }}
         >
+          {error && (
+            <div className="flex items-center gap-2 p-3 mb-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{error}</span>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email */}
             <div>
@@ -54,6 +82,8 @@ export default function Login() {
                   required
                   autoComplete="email"
                   placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="w-full bg-white border border-[#4DD0E1]/30 rounded-xl py-3 pl-11 pr-4 text-sm text-[#051d2e] focus:outline-none focus:ring-2 focus:ring-[#4DD0E1]/50 focus:border-[#4DD0E1] transition placeholder:text-[#051d2e]/30"
                 />
               </div>
@@ -74,6 +104,8 @@ export default function Login() {
                   required
                   autoComplete="current-password"
                   placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="w-full bg-white border border-[#4DD0E1]/30 rounded-xl py-3 pl-11 pr-11 text-sm text-[#051d2e] focus:outline-none focus:ring-2 focus:ring-[#4DD0E1]/50 focus:border-[#4DD0E1] transition placeholder:text-[#051d2e]/30"
                 />
                 <button
@@ -89,10 +121,11 @@ export default function Login() {
             {/* Submit */}
             <button
               type="submit"
-              className="w-full py-3.5 rounded-xl font-black text-[#051d2e] hover:opacity-90 active:scale-[0.98] transition text-sm mt-1 shadow-lg"
+              disabled={loading}
+              className="w-full py-3.5 rounded-xl font-black text-[#051d2e] hover:opacity-90 active:scale-[0.98] transition text-sm mt-1 shadow-lg disabled:opacity-60"
               style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
             >
-              Sign In
+              {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
 
@@ -103,7 +136,7 @@ export default function Login() {
             <div className="flex-1 h-px bg-[#4DD0E1]/20" />
           </div>
 
-          {/* Social placeholder */}
+          {/* Google */}
           <button className="w-full py-3 rounded-xl border border-[#4DD0E1]/30 text-sm font-semibold text-[#051d2e]/65 hover:border-[#4DD0E1] hover:text-[#051d2e] hover:bg-white/60 transition flex items-center justify-center gap-2">
             <svg className="w-4 h-4" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />

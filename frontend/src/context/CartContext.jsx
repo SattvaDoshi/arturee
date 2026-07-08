@@ -2,9 +2,36 @@ import React, { createContext, useContext, useState } from 'react'
 
 const CartContext = createContext()
 
+const load = (key, fallback) => {
+  try {
+    const s = localStorage.getItem(key)
+    return s ? JSON.parse(s) : fallback
+  } catch { return fallback }
+}
+
+const save = (key, value) => {
+  try { localStorage.setItem(key, JSON.stringify(value)) } catch {}
+}
+
 export const CartProvider = ({ children }) => {
-  const [cart, setCart] = useState([])
-  const [savedList, setSavedList] = useState([])
+  const [cart, setCartState] = useState(() => load('art_cart', []))
+  const [savedList, setSavedListState] = useState(() => load('art_savedlist', []))
+
+  const setCart = (updater) => {
+    setCartState(prev => {
+      const next = typeof updater === 'function' ? updater(prev) : updater
+      save('art_cart', next)
+      return next
+    })
+  }
+
+  const setSavedList = (updater) => {
+    setSavedListState(prev => {
+      const next = typeof updater === 'function' ? updater(prev) : updater
+      save('art_savedlist', next)
+      return next
+    })
+  }
 
   // Add or remove from cart
   const toggleCart = (video) => {

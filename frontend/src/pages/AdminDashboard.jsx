@@ -1,5 +1,7 @@
-import { Users, Film, DollarSign, Radio, TrendingUp, TrendingDown, Eye, Star, MoreHorizontal, ArrowUpRight } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Users, Film, DollarSign, Radio, TrendingUp, TrendingDown, Eye, Star, MoreHorizontal, ArrowUpRight, Loader2 } from 'lucide-react'
 import AdminLayout from '../components/layout/AdminLayout'
+import { adminApi } from '../api/index.js'
 
 /* ─── helpers ─────────────────────────────────────── */
 const StatCard = ({ icon: Icon, label, value, change, up, accent }) => (
@@ -62,6 +64,18 @@ const statusStyles = {
 
 /* ═══════════════════════════════════════════════════════ */
 export default function AdminDashboard() {
+  const [stats, setStats] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    adminApi.getStats()
+      .then(res => setStats(res.data.data))
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [])
+
+  const fmt = (n) => n >= 1000 ? `${(n / 1000).toFixed(1)}K` : String(n)
+  const fmtRev = (n) => n >= 100000 ? `₹${(n / 100000).toFixed(1)}L` : `₹${n?.toFixed(0) || 0}`
   return (
     <AdminLayout>
       <div className="p-5 md:p-8 space-y-8">
@@ -79,10 +93,10 @@ export default function AdminDashboard() {
 
         {/* ── Stat cards ── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard icon={Users}      label="Total Users"      value="48,291"  change="+12.4%" up accent="#4DD0E1" />
-          <StatCard icon={Film}       label="Total Content"    value="3,842"   change="+8.1%"  up accent="#C0E863" />
-          <StatCard icon={DollarSign} label="Monthly Revenue"  value="$124.5K" change="+18.7%" up accent="#34d399" />
-          <StatCard icon={Radio}      label="Active Streams"   value="14"      change="-2"     up={false} accent="#f87171" />
+          <StatCard icon={Users}      label="Total Users"     value={loading ? '...' : fmt(stats?.totalUsers || 0)}     change="+Users"  up accent="#4DD0E1" />
+          <StatCard icon={Film}       label="Total Content"   value={loading ? '...' : fmt(stats?.totalVideos || 0)}    change="+Videos" up accent="#C0E863" />
+          <StatCard icon={DollarSign} label="Total Revenue"   value={loading ? '...' : fmtRev(stats?.totalRevenueInr)} change="+Revenue" up accent="#34d399" />
+          <StatCard icon={Radio}      label="Published"       value={loading ? '...' : fmt(stats?.publishedVideos || 0)} change="Live"   up accent="#f87171" />
         </div>
 
         {/* ── Middle row: Activity + Top Content ── */}

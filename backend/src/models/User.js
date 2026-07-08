@@ -51,7 +51,9 @@ const userSchema = new mongoose.Schema(
     resetPasswordExpiresAt: {
       type: Date,
       default: null
-    }
+    },
+    wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Video', default: [] }],
+    avatarUrl: { type: String, default: null }
   },
   {
     timestamps: true

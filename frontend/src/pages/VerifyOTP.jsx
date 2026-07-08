@@ -1,11 +1,18 @@
 import { useState, useRef, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { Mail, CheckCircle, ArrowRight } from 'lucide-react'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { Mail, ArrowRight, AlertCircle } from 'lucide-react'
+import { authApi } from '../api/index.js'
+import { useAuth } from '../context/AuthContext'
 
 export default function VerifyOTP() {
   const [otp, setOtp] = useState(['', '', '', '', '', ''])
   const inputRefs = useRef([])
   const navigate = useNavigate()
+  const location = useLocation()
+  const { login } = useAuth()
+  const email = location.state?.email || ''
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   useEffect(() => {
     if (inputRefs.current[0]) {
@@ -25,7 +32,6 @@ export default function VerifyOTP() {
         if (index + i < 6) newOtp[index + i] = char
       })
       setOtp(newOtp)
-      // focus the last filled input
       const nextIndex = Math.min(index + pasted.length, 5)
       inputRefs.current[nextIndex]?.focus()
       return
@@ -45,10 +51,30 @@ export default function VerifyOTP() {
     }
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // Simulate successful OTP
-    navigate('/dashboard')
+    setError('')
+    setLoading(true)
+    const otpCode = otp.join('')
+    try {
+      const res = await authApi.verifyOTP({ email, otp: otpCode })
+      const { token, user } = res.data
+      login(token, user)
+      navigate('/dashboard', { replace: true })
+    } catch (err) {
+      setError(err.response?.data?.message || 'Invalid or expired OTP. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleResend = async () => {
+    try {
+      await authApi.resendOTP({ email })
+      setError('')
+    } catch (err) {
+      setError('Failed to resend OTP.')
+    }
   }
 
   return (
@@ -72,7 +98,7 @@ export default function VerifyOTP() {
           <h1 className="text-3xl font-black text-[#051d2e] tracking-tight">Verify Your Email</h1>
           <p className="text-sm text-[#051d2e]/60 mt-2 px-4 leading-relaxed">
             We've sent a 6-digit verification code to <br className="hidden sm:block" />
-            <span className="font-bold text-[#00BCD4]">you@example.com</span>
+            <span className="font-bold text-[#00BCD4]">{email || 'your email'}</span>
           </p>
         </div>
 
@@ -83,6 +109,13 @@ export default function VerifyOTP() {
         >
           <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/40 to-transparent pointer-events-none" />
           
+          {error && (
+            <div className="flex items-center gap-2 p-3 mb-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{error}</span>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="relative z-10 space-y-8">
             <div className="flex justify-between gap-2">
               {otp.map((digit, index) => (
@@ -104,17 +137,17 @@ export default function VerifyOTP() {
             <div className="space-y-4">
               <button
                 type="submit"
-                disabled={otp.some(d => d === '')}
+                disabled={otp.some(d => d === '') || loading}
                 className="w-full py-4 rounded-xl font-black text-[#051d2e] hover:opacity-90 active:scale-[0.98] transition-all text-sm shadow-lg flex items-center justify-center gap-2 group disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed disabled:scale-100"
                 style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
               >
-                Verify & Continue
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                {loading ? 'Verifying...' : 'Verify & Continue'}
+                {!loading && <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
               </button>
               
               <p className="text-center text-sm font-semibold text-[#051d2e]/55">
                 Didn't receive the code?{' '}
-                <button type="button" className="text-[#00BCD4] hover:text-[#051d2e] underline underline-offset-2 transition-colors">
+                <button type="button" onClick={handleResend} className="text-[#00BCD4] hover:text-[#051d2e] underline underline-offset-2 transition-colors">
                   Resend OTP
                 </button>
               </p>

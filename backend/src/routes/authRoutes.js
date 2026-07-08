@@ -7,7 +7,8 @@ import {
   googleAuthController,
   forgotPasswordController,
   resetPasswordController,
-  updatePasswordController
+  updatePasswordController,
+  getMeController
 } from '../controllers/authController.js'
 import authMiddleware from '../middlewares/authMiddleware.js'
 
@@ -21,5 +22,6 @@ authRouter.post('/google', googleAuthController)
 authRouter.post('/forgot-password', forgotPasswordController)
 authRouter.post('/reset-password', resetPasswordController)
 authRouter.post('/update-password', authMiddleware, updatePasswordController)
+authRouter.get('/me', authMiddleware, getMeController)
 
 export default authRouter

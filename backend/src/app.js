@@ -7,6 +7,9 @@ import playbackRouter from './routes/playbackRoutes.js'
 import purchaseRouter from './routes/purchaseRoutes.js'
 import progressRouter from './routes/progressRoutes.js'
 import drmRouter from './routes/drmRoutes.js'
+import adminRouter from './routes/adminRoutes.js'
+import artistRouter from './routes/artistRoutes.js'
+import wishlistRouter from './routes/wishlistRoutes.js'
 import { errorHandler, notFound } from './middlewares/errorHandler.js'
 import { generalLimiter } from './middlewares/rateLimiter.js'
 import { mediaConvertWebhookHandler } from './workers/mediaConvertWebhook.js'
@@ -20,7 +23,21 @@ app.use(helmet({
 }))
 
 // ── CORS ──────────────────────────────────────────────────────────────
-app.use(cors())
+const allowedOrigins = [
+  process.env.CLIENT_URL || 'http://localhost:5173',
+  'http://localhost:5173',
+  'http://localhost:4173',
+]
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true)
+    } else {
+      callback(new Error(`CORS: origin ${origin} not allowed`))
+    }
+  },
+  credentials: true,
+}))
 
 // ── Body parsers ──────────────────────────────────────────────────────────
 app.use(express.json())
@@ -43,6 +60,10 @@ app.use('/api/playback', playbackRouter)
 app.use('/api/purchase', purchaseRouter)
 app.use('/api/progress', progressRouter)
 app.use('/api/drm', drmRouter)
+
+app.use('/api/admin', adminRouter)
+app.use('/api/artists', artistRouter)
+app.use('/api/wishlist', wishlistRouter)
 
 // ── Error handlers ──────────────────────────────────────────────────────────
 app.use(notFound)

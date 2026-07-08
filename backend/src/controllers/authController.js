@@ -52,3 +52,21 @@ export const updatePasswordController = asyncHandler(async (req, res) => {
   })
   res.status(200).json({ success: true, ...result })
 })
+
+export const getMeController = asyncHandler(async (req, res) => {
+  const user = req.user
+  res.status(200).json({
+    success: true,
+    data: {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      avatarUrl: user.avatarUrl || null,
+      isEmailVerified: user.isEmailVerified,
+      authProvider: user.authProvider,
+      createdAt: user.createdAt,
+    },
+  })
+})
+
