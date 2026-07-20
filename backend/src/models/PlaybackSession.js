@@ -62,7 +62,7 @@ const playbackSessionSchema = new mongoose.Schema(
 // TTL index — MongoDB auto-deletes expired sessions
 playbackSessionSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 })
 playbackSessionSchema.index({ userId: 1, videoId: 1 })
-playbackSessionSchema.index({ sessionToken: 1 })
+// NOTE: sessionToken index is created automatically by unique:true above
 
 const PlaybackSession = mongoose.model('PlaybackSession', playbackSessionSchema)
 export default PlaybackSession

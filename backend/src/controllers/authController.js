@@ -7,7 +7,8 @@ import {
   googleAuth,
   forgotPassword,
   resetPassword,
-  updatePassword
+  updatePassword,
+  updateProfile
 } from '../services/authService.js'
 
 export const signupController = asyncHandler(async (req, res) => {
@@ -70,3 +71,19 @@ export const getMeController = asyncHandler(async (req, res) => {
   })
 })
 
+export const updateProfileController = asyncHandler(async (req, res) => {
+  const { name } = req.body;
+  let avatarUrl = undefined;
+  
+  if (req.file && req.file.path) {
+    avatarUrl = req.file.path; // Cloudinary URL
+  }
+
+  const result = await updateProfile({
+    userId: req.user._id,
+    name,
+    avatarUrl
+  });
+
+  res.status(200).json({ success: true, ...result });
+})

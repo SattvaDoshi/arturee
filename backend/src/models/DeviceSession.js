@@ -65,7 +65,7 @@ const deviceSessionSchema = new mongoose.Schema(
 )
 
 deviceSessionSchema.index({ sessionToken: 1 })
-deviceSessionSchema.index({ userId: 1 })
+// NOTE: userId index is created automatically by unique:true above
 
 const DeviceSession = mongoose.model('DeviceSession', deviceSessionSchema)
 export default DeviceSession

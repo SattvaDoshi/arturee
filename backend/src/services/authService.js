@@ -17,6 +17,7 @@ const sanitizeUser = (user) => ({
   id: user._id,
   name: user.name,
   email: user.email,
+  role: user.role,
   isEmailVerified: user.isEmailVerified,
   authProvider: user.authProvider
 })
@@ -284,4 +285,22 @@ export const updatePassword = async ({ userId, currentPassword, newPassword }) =
   await user.save()
 
   return { message: 'Password updated successfully' }
+}
+
+export const updateProfile = async ({ userId, name, avatarUrl }) => {
+  const user = await User.findById(userId)
+  if (!user) {
+    throw new ApiError(404, 'User not found')
+  }
+
+  if (name) {
+    user.name = name.trim()
+  }
+  if (avatarUrl) {
+    user.avatarUrl = avatarUrl
+  }
+
+  await user.save()
+
+  return { message: 'Profile updated successfully', user: sanitizeUser(user) }
 }

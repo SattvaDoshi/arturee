@@ -6,6 +6,8 @@ import {
 } from 'lucide-react'
 import UserLayout from '../../components/layout/UserLayout'
 import { useAuth } from '../../context/AuthContext'
+import { authApi } from '../../api/index.js'
+import { useRef } from 'react'
 
 /* ── tiny toggle ── */
 const Toggle = ({ on, onToggle }) => (
@@ -22,7 +24,7 @@ const Toggle = ({ on, onToggle }) => (
 )
 
 /* ── field ── */
-const Field = ({ label, icon: Icon, type = 'text', defaultValue, placeholder }) => {
+const Field = ({ label, icon: Icon, type = 'text', defaultValue, placeholder, value, onChange, disabled }) => {
   const [show, setShow] = useState(false)
   const isPassword = type === 'password'
   return (
@@ -31,10 +33,13 @@ const Field = ({ label, icon: Icon, type = 'text', defaultValue, placeholder }) 
       <div className="relative">
         <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#4DD0E1]" />
         <input
-          type={isPassword && !show ? 'password' : 'text'}
+          type={isPassword && !show ? 'password' : type}
           defaultValue={defaultValue}
+          value={value}
+          onChange={onChange}
+          disabled={disabled}
           placeholder={placeholder}
-          className="w-full max-w-sm bg-white/80 border border-[#4DD0E1]/30 rounded-xl py-2.5 pl-10 pr-10 text-sm text-[#051d2e] focus:outline-none focus:ring-2 focus:ring-[#4DD0E1]/50 focus:border-[#4DD0E1] transition placeholder:text-[#051d2e]/30"
+          className="w-full max-w-sm bg-white/80 border border-[#4DD0E1]/30 rounded-xl py-2.5 pl-10 pr-10 text-sm text-[#051d2e] focus:outline-none focus:ring-2 focus:ring-[#4DD0E1]/50 focus:border-[#4DD0E1] transition placeholder:text-[#051d2e]/30 disabled:opacity-50"
         />
         {isPassword && (
           <button
@@ -49,6 +54,7 @@ const Field = ({ label, icon: Icon, type = 'text', defaultValue, placeholder }) 
     </div>
   )
 }
+
 
 const GradBtn = ({ children, className = '', ...props }) => (
   <button
@@ -84,7 +90,7 @@ const CardTitle = ({ children }) => (
   </h3>
 )
 
-const TABS = ['Profile', 'Subscription', 'Security']
+const TABS = ['Profile', 'Security']
 
 const NOTIF_PREFS = [
   { label: 'New releases from followed creators', desc: 'Notified when your favourite artists drop new content', defaultOn: true },
@@ -95,10 +101,46 @@ const NOTIF_PREFS = [
 ]
 
 export default function Account() {
-  const { user, logout } = useAuth()
+  const { user, logout, updateUser } = useAuth()
   const [activeTab, setActiveTab] = useState('Profile')
   const [notifs, setNotifs] = useState(NOTIF_PREFS.map(n => n.defaultOn))
   
+  // Profile Update State
+  const [name, setName] = useState(user?.name || '')
+  const [avatarFile, setAvatarFile] = useState(null)
+  const [avatarPreview, setAvatarPreview] = useState(null)
+  const [isUpdating, setIsUpdating] = useState(false)
+  const fileInputRef = useRef(null)
+
+  const handleAvatarChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setAvatarFile(e.target.files[0])
+      setAvatarPreview(URL.createObjectURL(e.target.files[0]))
+    }
+  }
+
+  const handleProfileUpdate = async (e) => {
+    e.preventDefault()
+    setIsUpdating(true)
+    try {
+      const formData = new FormData()
+      formData.append('name', name)
+      if (avatarFile) {
+        formData.append('avatar', avatarFile)
+      }
+      const res = await authApi.updateProfile(formData)
+      if (res.data.success) {
+        updateUser(res.data.user)
+        setAvatarFile(null)
+      }
+    } catch (error) {
+      console.error('Failed to update profile', error)
+      alert('Failed to update profile')
+    } finally {
+      setIsUpdating(false)
+    }
+  }
+
   // Delete Modal state
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [selectedReason, setSelectedReason] = useState('')
@@ -128,34 +170,33 @@ export default function Account() {
           style={{ background: 'linear-gradient(135deg,rgba(224,247,250,0.9),rgba(232,245,233,0.9))' }}
         >
           <div className="relative shrink-0">
-            <div className="w-24 h-24 rounded-full ring-4 ring-[#4DD0E1]/40 ring-offset-2 ring-offset-transparent overflow-hidden">
+            <div className="w-24 h-24 rounded-full ring-4 ring-[#4DD0E1]/40 ring-offset-2 ring-offset-transparent overflow-hidden bg-gray-200">
               <img
-                src={user?.avatarUrl || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop"}
+                src={avatarPreview || user?.avatarUrl || "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"}
                 alt="avatar"
                 className="w-full h-full object-cover"
               />
             </div>
             <button
-              className="absolute bottom-0 right-0 w-7 h-7 rounded-full flex items-center justify-center shadow-md hover:scale-110 transition"
+              onClick={() => fileInputRef.current?.click()}
+              className="absolute bottom-0 right-0 w-7 h-7 rounded-full flex items-center justify-center shadow-md hover:scale-110 transition cursor-pointer"
               style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
             >
               <Camera className="w-3 h-3 text-[#051d2e]" />
             </button>
+            <input 
+              type="file" 
+              accept="image/*" 
+              ref={fileInputRef} 
+              onChange={handleAvatarChange} 
+              className="hidden" 
+            />
           </div>
 
           <div className="flex-1 text-center sm:text-left">
             <h2 className="text-2xl font-black text-[#051d2e] tracking-tight">{user?.name || 'User'}</h2>
             <p className="text-sm text-[#051d2e]/55 mb-4">{user?.email || ''}</p>
             <div className="flex flex-wrap justify-center sm:justify-start gap-2">
-              <span
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black text-[#051d2e]"
-                style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
-              >
-                <Star className="w-3 h-3" fill="currentColor" /> Pro Member
-              </span>
-              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border border-[#4DD0E1]/30 text-[#051d2e]/65 bg-white/50">
-                <Clock className="w-3 h-3 text-[#4DD0E1]" /> Member since Jan 2025
-              </span>
               <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border border-[#4DD0E1]/30 text-[#051d2e]/65 bg-white/50">
                 <Play className="w-3 h-3 text-[#4DD0E1]" /> 42 videos watched
               </span>
@@ -183,75 +224,29 @@ export default function Account() {
         {/* ══ Profile tab ══ */}
         {activeTab === 'Profile' && (
           <Card>
-            <CardTitle>Personal Information</CardTitle>
-            <div className="grid sm:grid-cols-2 gap-5">
-              <Field label="Full Name" icon={User} defaultValue={user?.name || ''} />
-              <Field label="Email Address" icon={Mail} defaultValue={user?.email || ''} />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-[#051d2e]/55 mb-1.5 uppercase tracking-wider">Bio</label>
-              <textarea
-                rows={3}
-                defaultValue="Art & music enthusiast. Lover of live performances and independent creators."
-                className="w-full bg-white/80 border border-[#4DD0E1]/30 rounded-xl px-4 py-2.5 text-sm text-[#051d2e] focus:outline-none focus:ring-2 focus:ring-[#4DD0E1]/50 focus:border-[#4DD0E1] transition resize-none placeholder:text-[#051d2e]/30"
-              />
-            </div>
-            <GradBtn>Save Changes</GradBtn>
+            <form onSubmit={handleProfileUpdate} className="space-y-5">
+              <CardTitle>Personal Information</CardTitle>
+              <div className="grid sm:grid-cols-2 gap-5">
+                <Field 
+                  label="Full Name" 
+                  icon={User} 
+                  value={name} 
+                  onChange={(e) => setName(e.target.value)} 
+                />
+                <Field 
+                  label="Email Address" 
+                  icon={Mail} 
+                  value={user?.email || ''} 
+                  disabled 
+                />
+              </div>
+              <GradBtn type="submit" disabled={isUpdating}>
+                {isUpdating ? 'Saving...' : 'Save Changes'}
+              </GradBtn>
+            </form>
           </Card>
         )}
 
-        {/* ══ Subscription tab ══ */}
-        {activeTab === 'Subscription' && (
-          <div className="space-y-5">
-            <Card>
-              <CardTitle>Current Plan</CardTitle>
-              <div
-                className="rounded-xl p-5 border-2 border-[#4DD0E1]/40"
-                style={{ background: 'linear-gradient(135deg,rgba(77,208,225,0.06),rgba(192,232,99,0.06))' }}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-black text-[#051d2e] text-lg">Pro Plan</span>
-                  <span
-                    className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-black text-[#051d2e]"
-                    style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
-                  >
-                    <CheckCircle className="w-3 h-3" /> Active
-                  </span>
-                </div>
-                <p className="text-sm text-[#051d2e]/60 mb-4">$14.99/month · Renews 18 April 2026</p>
-                <ul className="space-y-2">
-                  {['Unlimited video access', 'HD & 4K streaming', 'Download for offline viewing', 'Priority customer support'].map(f => (
-                    <li key={f} className="flex items-center gap-2 text-sm text-[#051d2e]/75">
-                      <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: '#4DD0E1' }} />{f}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="flex flex-wrap gap-3">
-                <GradBtn>Upgrade Plan</GradBtn>
-                <OutlineBtn>Cancel Subscription</OutlineBtn>
-              </div>
-            </Card>
-
-            <Card>
-              <CardTitle>Payment Method</CardTitle>
-              <div className="flex items-center gap-4 p-4 rounded-xl border border-[#4DD0E1]/20 bg-white/60">
-                <div
-                  className="w-12 h-8 rounded-lg flex items-center justify-center shrink-0"
-                  style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
-                >
-                  <CreditCard className="w-5 h-5 text-[#051d2e]" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-[#051d2e]">Visa ending in 4242</p>
-                  <p className="text-xs text-[#051d2e]/50">Expires 12 / 2027</p>
-                </div>
-                <OutlineBtn className="!px-3 !py-1.5 !text-xs">Edit</OutlineBtn>
-              </div>
-              <OutlineBtn className="w-fit">Add Payment Method</OutlineBtn>
-            </Card>
-          </div>
-        )}
 
         {/* ══ Security tab ══ */}
         {activeTab === 'Security' && (

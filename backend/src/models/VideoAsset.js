@@ -59,7 +59,7 @@ const videoAssetSchema = new mongoose.Schema(
   }
 )
 
-videoAssetSchema.index({ videoId: 1 })
+// NOTE: videoId index is created automatically by unique:true above
 
 const VideoAsset = mongoose.model('VideoAsset', videoAssetSchema)
 export default VideoAsset

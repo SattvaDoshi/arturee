@@ -24,7 +24,12 @@ export default function Login() {
       const res = await authApi.login({ email, password })
       const { token, user } = res.data
       login(token, user)
-      navigate(from, { replace: true })
+      
+      if (user.role === 'admin' && from === '/dashboard') {
+        navigate('/admin/dashboard', { replace: true })
+      } else {
+        navigate(from, { replace: true })
+      }
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed. Please try again.')
     } finally {

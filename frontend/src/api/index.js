@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+const BASE_URL = import.meta.env.VITE_API_URL || '/api'
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -18,7 +18,13 @@ api.interceptors.request.use((config) => {
 
 // On 401, clear token
 api.interceptors.response.use(
-  (res) => res,
+  (res) => {
+    // If the proxy fails or isn't running, Vite might serve index.html instead of a 404
+    if (typeof res.data === 'string' && res.data.trim().startsWith('<')) {
+      return Promise.reject(new Error('API connection failed. Received HTML response.'))
+    }
+    return res
+  },
   (err) => {
     if (err.response?.status === 401) {
       localStorage.removeItem('art_token')
@@ -39,6 +45,9 @@ export const authApi = {
   resetPassword: (data) => api.post('/auth/reset-password', data),
   updatePassword: (data) => api.post('/auth/update-password', data),
   getMe: () => api.get('/auth/me'),
+  updateProfile: (data) => api.put('/auth/update-profile', data, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
 }
 
 // ── Videos ────────────────────────────────────────────────────────────────
