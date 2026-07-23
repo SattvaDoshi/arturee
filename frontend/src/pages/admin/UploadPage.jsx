@@ -128,60 +128,33 @@ export default function UploadPage() {
     setProgress(0)
 
     try {
-      /* 1. Initiate upload */
-      const tags = meta.tags.split(',').map(t => t.trim()).filter(Boolean)
-      const initRes = await videoApi.initiateUpload({
-        title:       meta.title,
-        description: meta.description,
-        price:       meta.price,
-        currency:    'INR',
-        totalParts:  1,
-        contentType: file.type,
-        tags,
-        category:    meta.category,
-        thumbnailUrl: meta.thumbnailUrl || undefined,
-        artistId:    meta.artistId || undefined,
-      })
+      /* Build FormData — file + all metadata */
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('title', meta.title)
+      formData.append('description', meta.description)
+      formData.append('price', String(meta.price))
+      formData.append('currency', 'INR')
+      formData.append('category', meta.category)
+      formData.append('tags', JSON.stringify(
+        meta.tags.split(',').map(t => t.trim()).filter(Boolean)
+      ))
+      if (meta.thumbnailUrl) formData.append('thumbnailUrl', meta.thumbnailUrl)
+      if (meta.artistId)     formData.append('artistId', meta.artistId)
 
-      const { videoId: vid, uploadId, s3Key, presignedUrls } = initRes.data.data || initRes.data
-
-      setProgress(10)
-
-      /* 2. Upload directly to S3 presigned URL */
-      const partUrl = Array.isArray(presignedUrls) ? presignedUrls[0] : presignedUrls
-
-      await new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest()
-        xhr.open('PUT', partUrl)
-        xhr.setRequestHeader('Content-Type', file.type)
-        xhr.upload.onprogress = (e) => {
-          if (e.lengthComputable) {
-            setProgress(10 + Math.round((e.loaded / e.total) * 80))
-          }
+      /* POST to backend proxy — no CORS issues */
+      const res = await videoApi.proxyUpload(formData, (e) => {
+        if (e.total) {
+          setProgress(Math.round((e.loaded / e.total) * 95))
         }
-        xhr.onload  = () => (xhr.status >= 200 && xhr.status < 300) ? resolve() : reject(new Error(`S3 error: ${xhr.status}`))
-        xhr.onerror = () => reject(new Error('Network error during upload.'))
-        xhr.send(file)
       })
 
-      setProgress(90)
-
-      /* 3. Get the ETag from the response for multipart completion */
-      const eTag = `"${Math.random().toString(36).slice(2)}"` // S3 returns this in xhr headers; simplified here
-
-      /* 4. Complete upload */
-      await videoApi.completeUpload({
-        videoId:  vid,
-        uploadId,
-        s3Key,
-        parts: [{ PartNumber: 1, ETag: eTag }],
-      })
-
+      const { videoId: vid } = res.data.data
       setProgress(100)
       setVideoId(vid)
       setTimeout(() => setStep(3), 500)
     } catch (err) {
-      setUploadError(err.message || 'Upload failed. Please try again.')
+      setUploadError(err.response?.data?.message || err.message || 'Upload failed. Please try again.')
     } finally {
       setUploading(false)
     }
@@ -294,6 +267,15 @@ export default function UploadPage() {
             <Panel>
               <h2 className="text-sm font-black uppercase tracking-widest text-white/70">Step 2 — Upload File</h2>
 
+              {/* Info banner */}
+              <div
+                className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-[#4DD0E1]/80"
+                style={{ background: 'rgba(77,208,225,0.06)', border: '1px solid rgba(77,208,225,0.15)' }}
+              >
+                <Upload className="w-3.5 h-3.5 shrink-0" />
+                File uploads securely through the server — no browser CORS issues.
+              </div>
+
               {/* Drop zone */}
               <div
                 onDragOver={(e) => { e.preventDefault(); setDragging(true) }}
@@ -334,7 +316,7 @@ export default function UploadPage() {
                       <p className="text-white/70 font-semibold text-sm">Drag & drop your video here</p>
                       <p className="text-white/30 text-xs mt-1">or click to browse files</p>
                     </div>
-                    <p className="text-white/20 text-xs">MP4, MOV, AVI, MKV supported</p>
+                    <p className="text-white/20 text-xs">MP4, MOV, AVI, MKV supported · up to 2 GB</p>
                   </>
                 )}
               </div>
@@ -343,7 +325,7 @@ export default function UploadPage() {
               {uploading && (
                 <div className="space-y-2">
                   <div className="flex justify-between text-xs text-white/40">
-                    <span>Uploading…</span>
+                    <span>Uploading to server…</span>
                     <span>{progress}%</span>
                   </div>
                   <div className="h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
@@ -352,6 +334,9 @@ export default function UploadPage() {
                       style={{ width: `${progress}%`, background: 'linear-gradient(90deg,#4DD0E1,#C0E863)' }}
                     />
                   </div>
+                  <p className="text-[10px] text-white/25 text-center">
+                    Large files may take a moment — please keep this tab open
+                  </p>
                 </div>
               )}
 

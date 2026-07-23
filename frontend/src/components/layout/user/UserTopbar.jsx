@@ -59,7 +59,7 @@ const UserTopbar = ({ onMobileMenuToggle }) => {
           /* Avatar */
           <Link to="/account" className="w-9 h-9 rounded-full ring-2 ring-[#C0E863]/70 ring-offset-1 overflow-hidden cursor-pointer shrink-0">
             <img
-              src={user?.avatarUrl || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop"}
+              src={user?.avatarUrl || undefined}
               alt={user?.name || "User"}
               className="w-full h-full object-cover"
             />

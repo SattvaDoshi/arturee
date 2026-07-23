@@ -179,8 +179,15 @@ Write-Log "EventBridge rule wired"
 
 # 5. CloudFront signing key pair + key group
 Write-Log "Generating RSA key pair for CloudFront signed URLs"
-openssl genrsa -out "$WORKDIR\cf_private_key.pem" 2048 2>$null
-openssl rsa -pubout -in "$WORKDIR\cf_private_key.pem" -out "$WORKDIR\cf_public_key.pem" 2>$null
+
+$oldErrorAction = $ErrorActionPreference
+$ErrorActionPreference = "Continue"
+try {
+    openssl genrsa -out "$WORKDIR\cf_private_key.pem" 2048 2>$null
+    openssl rsa -pubout -in "$WORKDIR\cf_private_key.pem" -out "$WORKDIR\cf_public_key.pem" 2>$null
+} finally {
+    $ErrorActionPreference = $oldErrorAction
+}
 
 Write-Log "Uploading public key to CloudFront"
 $cfPubKey = (Get-Content -Raw -Path "$WORKDIR\cf_public_key.pem").TrimEnd()
@@ -196,7 +203,7 @@ $PUBKEY_ID = (aws cloudfront create-public-key --public-key-config file://$PUBKE
 Assert-Success "create-public-key"
 
 Write-Log "Creating CloudFront key group"
-$KEYGROUP_CONFIG_OBJ = @{ CallerReference = $epoch.ToString(); Name = $CLOUDFRONT_KEYGROUP_NAME; Items = @($PUBKEY_ID) }
+$KEYGROUP_CONFIG_OBJ = @{ Name = $CLOUDFRONT_KEYGROUP_NAME; Items = @($PUBKEY_ID); Comment = "Signing key group" }
 $KEYGROUP_CONFIG_JSON = $KEYGROUP_CONFIG_OBJ | ConvertTo-Json -Depth 5 -Compress
 $KEYGROUP_CONFIG_FILE = "$WORKDIR\keygroup-config.json"
 Set-Content -Path $KEYGROUP_CONFIG_FILE -Value $KEYGROUP_CONFIG_JSON

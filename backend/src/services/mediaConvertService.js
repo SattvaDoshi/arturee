@@ -48,8 +48,6 @@ const buildJobSpec = (inputS3Key, outputPrefix, videoId) => {
         ConnectionRetryInterval: 1,
       },
     },
-    // Prevent browsers from caching manifests
-    AdditionalManifests: [],
     ...(encryptionBlock ? { Encryption: encryptionBlock } : {}),
   })
 

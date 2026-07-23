@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, Trash2, Eye, EyeOff, Edit3, Loader2, CheckCircle, ChevronLeft, ChevronRight, Film } from 'lucide-react'
+import { Plus, Trash2, Eye, EyeOff, Edit3, Loader2, CheckCircle, ChevronLeft, ChevronRight, Film, Archive } from 'lucide-react'
 import AdminLayout from '../../components/layout/AdminLayout'
 import { adminApi, videoApi } from '../../api/index.js'
 
@@ -31,14 +31,24 @@ const EditForm = ({ video, onSave, onCancel }) => {
     description: video.description || '',
     price:       video.price ?? 0,
     category:    video.category || '',
+    thumbnailUrl: video.thumbnailUrl || '',
+    artistId:     video.artistId || '',
+    tags:         (video.tags || []).join(', '),
+    featured:     video.featured || false,
+    status:       video.status || 'draft',
+    durationSeconds: video.durationSeconds || 0,
   })
   const [saving, setSaving] = useState(false)
 
   const handleSave = async () => {
     setSaving(true)
     try {
-      await videoApi.update(video._id, form)
-      onSave({ ...video, ...form })
+      const submitData = {
+        ...form,
+        tags: form.tags.split(',').map(t => t.trim()).filter(Boolean)
+      }
+      await videoApi.update(video._id, submitData)
+      onSave({ ...video, ...submitData })
     } catch { /* silent */ } finally { setSaving(false) }
   }
 
@@ -54,6 +64,18 @@ const EditForm = ({ video, onSave, onCancel }) => {
     </div>
   )
 
+  const checkboxField = (key, label) => (
+    <div className="flex items-center gap-2 mt-4">
+      <input
+        type="checkbox"
+        checked={form[key]}
+        onChange={e => setForm(f => ({ ...f, [key]: e.target.checked }))}
+        className="w-4 h-4 rounded border-white/10 bg-white/5 accent-[#4DD0E1]"
+      />
+      <label className="text-sm text-white/70 font-semibold">{label}</label>
+    </div>
+  )
+
   return (
     <tr style={{ background: 'rgba(77,208,225,0.04)' }}>
       <td colSpan={7} className="px-5 py-4">
@@ -61,7 +83,13 @@ const EditForm = ({ video, onSave, onCancel }) => {
           {field('title', 'Title')}
           {field('price', 'Price (₹)', 'number')}
           {field('category', 'Category')}
-          <div className="flex flex-col gap-1">
+          {field('status', 'Status')}
+          {field('thumbnailUrl', 'Thumbnail URL')}
+          {field('artistId', 'Artist ID')}
+          {field('tags', 'Tags (comma-separated)')}
+          {field('durationSeconds', 'Duration (seconds)', 'number')}
+          
+          <div className="flex flex-col gap-1 md:col-span-2">
             <label className="text-[10px] text-white/35 font-semibold uppercase tracking-widest">Description</label>
             <textarea
               value={form.description}
@@ -69,6 +97,9 @@ const EditForm = ({ video, onSave, onCancel }) => {
               rows={2}
               className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white outline-none focus:border-[#4DD0E1]/50 transition resize-none"
             />
+          </div>
+          <div className="flex flex-col gap-1 md:col-span-2 justify-center">
+            {checkboxField('featured', 'Featured Video')}
           </div>
         </div>
         <div className="flex gap-2">
@@ -157,6 +188,16 @@ export default function VideosPage() {
     try {
       await videoApi.update(video._id, { isPublished: !video.isPublished })
       setVideos(prev => prev.map(v => v._id === video._id ? { ...v, isPublished: !v.isPublished } : v))
+    } catch { /* silent */ } finally { setActionId(null) }
+  }
+
+  /* ── archive ── */
+  const archiveVideo = async (video) => {
+    const newStatus = video.status === 'archived' ? 'ready' : 'archived'
+    setActionId(video._id)
+    try {
+      await videoApi.update(video._id, { status: newStatus })
+      setVideos(prev => prev.map(v => v._id === video._id ? { ...v, status: newStatus } : v))
     } catch { /* silent */ } finally { setActionId(null) }
   }
 
@@ -297,6 +338,15 @@ export default function VideosPage() {
                             style={{ color: editingId === video._id ? '#4DD0E1' : 'rgba(255,255,255,0.4)' }}
                           >
                             <Edit3 className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => archiveVideo(video)}
+                            disabled={actionId === video._id}
+                            title={video.status === 'archived' ? "Unarchive" : "Archive"}
+                            className="p-1.5 rounded-lg transition disabled:opacity-40 hover:bg-yellow-500/15"
+                            style={{ color: video.status === 'archived' ? 'rgba(251,191,36,0.9)' : 'rgba(251,191,36,0.65)' }}
+                          >
+                            <Archive className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => deleteVideo(video)}

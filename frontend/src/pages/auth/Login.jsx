@@ -25,11 +25,13 @@ export default function Login() {
       const { token, user } = res.data
       login(token, user)
       
-      if (user.role === 'admin' && from === '/dashboard') {
-        navigate('/admin/dashboard', { replace: true })
-      } else {
-        navigate(from, { replace: true })
-      }
+      setTimeout(() => {
+        if (user.role === 'admin' && from === '/dashboard') {
+          navigate('/admin', { replace: true })
+        } else {
+          navigate(from, { replace: true })
+        }
+      }, 0)
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed. Please try again.')
     } finally {

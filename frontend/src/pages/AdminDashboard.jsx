@@ -29,15 +29,7 @@ const StatCard = ({ icon: Icon, label, value, change, up, accent }) => (
   </div>
 )
 
-const recentActivities = [
-  { action: 'New user registered', detail: 'emma.watson@example.com', time: '2 min ago', type: 'user' },
-  { action: 'Content uploaded', detail: '"Midnight Sessions Vol. 3" by Alex Rivera', time: '14 min ago', type: 'content' },
-  { action: 'Payment received', detail: '$9.99 — Premium plan', time: '22 min ago', type: 'payment' },
-  { action: 'Live stream started', detail: 'Jazz Night Sessions — Marcus Cole', time: '45 min ago', type: 'live' },
-  { action: 'Content flagged', detail: '"Unknown Upload" needs review', time: '1 hr ago', type: 'alert' },
-  { action: 'New user registered', detail: 'james.park@example.com', time: '1.5 hr ago', type: 'user' },
-  { action: 'Subscription cancelled', detail: 'user12345@example.com — Annual plan', time: '2 hr ago', type: 'cancel' },
-]
+const recentActivities = []
 
 const typeStyles = {
   user:    { dot: '#4DD0E1',  bg: 'rgba(77,208,225,0.12)'  },
@@ -48,13 +40,7 @@ const typeStyles = {
   cancel:  { dot: '#94a3b8',  bg: 'rgba(148,163,184,0.12)' },
 }
 
-const topContent = [
-  { title: 'Jazz Night Sessions', creator: 'Marcus Cole', views: '2.4K live', revenue: '$1,248', rating: 4.9, status: 'Live' },
-  { title: 'Midnight Sessions Vol. 2', creator: 'Alex Rivera', views: '1.2M', revenue: '$8,340', rating: 4.8, status: 'Published' },
-  { title: 'Sarah Chen: Raw', creator: 'Sarah Chen', views: '890K', revenue: '$6,120', rating: 4.7, status: 'Published' },
-  { title: "The Artist's Mind Podcast", creator: 'Creative Minds', views: '750K', revenue: '$0', rating: 4.6, status: 'Free' },
-  { title: 'Urban Stories Ep. 3', creator: 'Maya Chen', views: '620K', revenue: '$4,890', rating: 4.5, status: 'Published' },
-]
+const topContent = []
 
 const statusStyles = {
   Live:      { color: '#f87171', bg: 'rgba(248,113,113,0.15)' },

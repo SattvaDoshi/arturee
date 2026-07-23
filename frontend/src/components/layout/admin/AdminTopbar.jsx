@@ -1,8 +1,17 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Search, Bell, Menu, Shield } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Search, Bell, Menu, Shield, LogOut } from "lucide-react";
+import { useAuth } from "../../../context/AuthContext";
 
 const AdminTopbar = ({ onMobileMenuToggle }) => {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   return (
     <header
       className="sticky top-0 z-20 h-16 px-4 md:px-6 flex items-center justify-between border-b"
@@ -58,7 +67,7 @@ const AdminTopbar = ({ onMobileMenuToggle }) => {
         <div className="flex items-center gap-2 pl-2 border-l border-white/10 ml-1">
           <div className="w-8 h-8 rounded-lg overflow-hidden ring-2 ring-[#4DD0E1]/40">
             <img
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop"
+              src={undefined}
               alt="Admin"
               className="w-full h-full object-cover"
             />
@@ -70,6 +79,15 @@ const AdminTopbar = ({ onMobileMenuToggle }) => {
             <p className="text-[10px] text-white/40">Super Admin</p>
           </div>
         </div>
+
+        {/* Logout Button */}
+        <button 
+          onClick={handleLogout}
+          className="relative p-2 ml-2 hover:bg-red-500/10 rounded-full transition text-red-400 hover:text-red-300"
+          title="Logout"
+        >
+          <LogOut className="w-4 h-4" />
+        </button>
       </div>
     </header>
   );

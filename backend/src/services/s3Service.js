@@ -6,6 +6,7 @@ import {
   DeleteObjectCommand,
   HeadObjectCommand,
   GetObjectCommand,
+  PutObjectCommand,
 } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import s3Client from '../aws/s3Client.js'
@@ -157,4 +158,26 @@ export const objectExists = async (s3Key) => {
   } catch {
     return false
   }
+}
+
+/**
+ * Upload a file buffer directly to S3 from the backend.
+ * Used by the proxy upload endpoint to bypass CORS.
+ *
+ * @param {string} s3Key
+ * @param {Buffer} buffer
+ * @param {string} contentType
+ */
+export const uploadFileBuffer = async (s3Key, buffer, contentType = 'video/mp4') => {
+  const cmd = new PutObjectCommand({
+    Bucket: BUCKET,
+    Key: s3Key,
+    Body: buffer,
+    ContentType: contentType,
+    ServerSideEncryption: 'AES256',
+    CacheControl: 'no-cache, no-store',
+    ContentDisposition: 'attachment',
+  })
+  const response = await s3Client.send(cmd)
+  return response
 }

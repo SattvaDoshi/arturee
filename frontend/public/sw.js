@@ -48,7 +48,13 @@ self.addEventListener('fetch', (event) => {
     caches.match(request).then((cached) => {
       if (cached) return cached
       return fetch(request).then((response) => {
-        if (response.ok && request.url.startsWith(self.location.origin)) {
+        // DO NOT cache API responses or non-GET requests
+        if (
+          response.ok &&
+          request.method === 'GET' &&
+          request.url.startsWith(self.location.origin) &&
+          !request.url.includes('/api/')
+        ) {
           const clone = response.clone()
           caches.open(CACHE_NAME).then((cache) => cache.put(request, clone))
         }

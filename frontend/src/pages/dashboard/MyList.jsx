@@ -117,7 +117,7 @@ export default function MyList() {
                 <Link to={`/video/${item._id}`} className="block">
                   <div className="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-md border border-[#4DD0E1]/20">
                     <img
-                      src={item.thumbnailUrl || 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400&h=600&fit=crop'}
+                      src={item.thumbnailUrl || undefined}
                       alt={item.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                     />

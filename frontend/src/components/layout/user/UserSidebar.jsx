@@ -159,7 +159,7 @@ const UserSidebar = ({ mobile = false, onMobileClose }) => {
             >
               <div className="w-8 h-8 rounded-full ring-2 ring-[#4DD0E1]/50 overflow-hidden shrink-0">
                 <img
-                  src={user?.avatarUrl || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&h=80&fit=crop"}
+                  src={user?.avatarUrl || undefined}
                   alt="avatar"
                   className="w-full h-full object-cover"
                 />

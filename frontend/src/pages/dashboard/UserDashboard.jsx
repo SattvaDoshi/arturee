@@ -10,7 +10,7 @@ import { useCart } from '../../context/CartContext'
 import { videoApi, wishlistApi, purchaseApi, progressApi } from '../../api/index.js'
 
 /* ─── Fallback thumbnail ─────────────────────────────────── */
-const FALLBACK_IMG = 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=800&h=450&fit=crop'
+const FALLBACK_IMG = undefined
 
 /* ─── Format helpers ─────────────────────────────────────── */
 const fmtDuration = (secs) => {

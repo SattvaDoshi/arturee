@@ -1,248 +1,349 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { ArrowLeft, CreditCard, ShieldCheck, CheckCircle2, Lock } from 'lucide-react'
+import { ArrowLeft, ShieldCheck, CheckCircle2, Lock, Loader2, AlertCircle } from 'lucide-react'
 import UserLayout from '../../components/layout/UserLayout'
+import { purchaseApi } from '../../api/index.js'
 
 const C = {
-  navy: '#051d2e',
+  navy:    '#051d2e',
   primary: '#4DD0E1',
-  teal: '#00BCD4',
-  lime: '#C0E863',
-  muted: '#4a7080',
+  teal:    '#00BCD4',
+  lime:    '#C0E863',
+  muted:   '#4a7080',
 }
 
-const Checkout = () => {
-  const navigate = useNavigate()
-  const location = useLocation()
-  
-  // Example state passed from navigate: { state: { type: 'subscription', plan: 'Pro', price: 14.99 } }
-  // or { state: { type: 'video', title: 'Jazz Night', price: 4.99, thumbnail: '...' } }
-  const checkoutData = location.state || {
-    type: 'video',
-    title: 'Unknown Item',
-    price: 0.00
-  }
+/* ─── Load Razorpay checkout script once ─────────────── */
+function loadRazorpayScript() {
+  return new Promise((resolve) => {
+    if (document.getElementById('razorpay-sdk')) {
+      resolve(true)
+      return
+    }
+    const script = document.createElement('script')
+    script.id  = 'razorpay-sdk'
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+    script.onload  = () => resolve(true)
+    script.onerror = () => resolve(false)
+    document.body.appendChild(script)
+  })
+}
 
-  const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
+/* ─── Format helpers ─────────────────────────────────── */
+const fmtINR = (paise) => `₹${(paise / 100).toFixed(2)}`
+const fmtPrice = (price) => {
+  if (!price) return 'Free'
+  // price may already be in rupees from the video object
+  return `₹${Number(price).toFixed(2)}`
+}
 
-  const handlePayment = (e) => {
-    e.preventDefault()
-    setLoading(true)
-    
-    // Simulate payment processing
-    setTimeout(() => {
-      setLoading(false)
-      setSuccess(true)
-      
-      // Redirect after success
-      setTimeout(() => {
-        if (checkoutData.type === 'subscription') {
-          navigate('/dashboard')
-        } else {
-          navigate('/dashboard/purchased')
-        }
-      }, 3000)
-    }, 2000)
-  }
+/* ══════════════════════════════════════════════════════ */
+export default function Checkout() {
+  const navigate  = useNavigate()
+  const location  = useLocation()
 
-  if (success) {
+  /**
+   * Expected state from navigate:
+   *   { videoId, title, price, thumbnail }  — for a video purchase
+   * Fallback to demo if nothing is passed.
+   */
+  const checkoutData = location.state || null
+
+  const [status, setStatus] = useState('idle') // idle | loading | success | error
+  const [errorMsg, setErrorMsg] = useState('')
+
+  // Redirect to dashboard if no checkout data
+  useEffect(() => {
+    if (!checkoutData?.videoId) {
+      navigate('/dashboard', { replace: true })
+    }
+  }, [checkoutData, navigate])
+
+  /* ── Initiate Razorpay payment ── */
+  const handlePay = useCallback(async () => {
+    setStatus('loading')
+    setErrorMsg('')
+
+    try {
+      // 1. Load Razorpay SDK
+      const loaded = await loadRazorpayScript()
+      if (!loaded) throw new Error('Razorpay SDK could not be loaded. Check your internet connection.')
+
+      // 2. Create order on backend
+      const orderRes = await purchaseApi.createOrder({ videoId: checkoutData.videoId })
+      const { orderId, amount, currency, purchaseId, videoTitle } = orderRes.data.data
+
+      // 3. Open Razorpay checkout modal
+      await new Promise((resolve, reject) => {
+        const rzp = new window.Razorpay({
+          key:         import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_RmCmc4bECn3PRU',
+          amount,
+          currency:    currency || 'INR',
+          order_id:    orderId,
+          name:        'Arturee',
+          description: videoTitle || checkoutData.title || 'Video Purchase',
+          image:       '/logo.png', // optional — uses fallback if not found
+          theme: {
+            color: '#4DD0E1',
+          },
+          prefill: {
+            // Razorpay can prefill from user profile; we leave it optional
+          },
+          handler: async (response) => {
+            try {
+              // 4. Verify on backend
+              await purchaseApi.verify({
+                razorpayOrderId:   response.razorpay_order_id,
+                razorpayPaymentId: response.razorpay_payment_id,
+                razorpaySignature: response.razorpay_signature,
+                purchaseId,
+              })
+              resolve()
+            } catch (verifyErr) {
+              reject(new Error(verifyErr.response?.data?.message || 'Payment verification failed.'))
+            }
+          },
+          modal: {
+            ondismiss: () => reject(new Error('DISMISSED')),
+          },
+        })
+        rzp.on('payment.failed', (failResp) => {
+          reject(new Error(failResp.error?.description || 'Payment failed.'))
+        })
+        rzp.open()
+      })
+
+      setStatus('success')
+      // Redirect to purchased library after 2.5 seconds
+      setTimeout(() => navigate('/dashboard/purchased', { replace: true }), 2500)
+
+    } catch (err) {
+      if (err.message === 'DISMISSED') {
+        setStatus('idle')
+      } else {
+        setErrorMsg(err.response?.data?.message || err.message || 'Something went wrong.')
+        setStatus('error')
+      }
+    }
+  }, [checkoutData, navigate])
+
+  /* ── Success screen ── */
+  if (status === 'success') {
     return (
       <UserLayout>
         <div className="min-h-[80vh] flex flex-col items-center justify-center p-6 text-center">
-          <div className="w-20 h-20 rounded-full flex items-center justify-center mb-6 animate-bounce"
-            style={{ background: 'linear-gradient(135deg,rgba(77,208,225,0.2),rgba(192,232,99,0.3))' }}>
-            <CheckCircle2 className="w-10 h-10" style={{ color: C.teal }} />
+          <div
+            className="w-24 h-24 rounded-full flex items-center justify-center mb-6"
+            style={{ background: 'linear-gradient(135deg,rgba(77,208,225,0.2),rgba(192,232,99,0.3))' }}
+          >
+            <CheckCircle2 className="w-12 h-12" style={{ color: C.teal }} />
           </div>
-          <h2 className="text-3xl md:text-4xl font-black mb-3" style={{ color: C.navy }}>Payment Successful!</h2>
-          <p className="text-lg mb-8" style={{ color: C.muted }}>
-            You now have access to {checkoutData.title || checkoutData.plan}.
+          <h2 className="text-3xl md:text-4xl font-black mb-3" style={{ color: C.navy }}>
+            Payment Successful!
+          </h2>
+          <p className="text-lg mb-2" style={{ color: C.muted }}>
+            You now own <strong>{checkoutData?.title}</strong>.
+          </p>
+          <p className="text-sm mb-8" style={{ color: C.muted }}>
+            Redirecting to your library…
           </p>
           <button
-            onClick={() => navigate('/dashboard')}
+            onClick={() => navigate('/dashboard/purchased')}
             className="px-8 py-3 rounded-full font-bold text-lg shadow-lg"
             style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)', color: C.navy }}
           >
-            Go to Dashboard
+            Go to Library
           </button>
         </div>
       </UserLayout>
     )
   }
 
+  /* ── Guard: no data ── */
+  if (!checkoutData?.videoId) return null
+
+  const priceDisplay = fmtPrice(checkoutData.price)
+  const amountPaise  = Math.round(Number(checkoutData.price) * 100)
+
   return (
     <UserLayout>
-      <div className="min-h-screen px-4 py-8 md:py-12" style={{ background: '#f8fafc' }}>
-        <div className="max-w-4xl mx-auto">
-          
+      <div className="min-h-screen px-4 py-8 md:py-14" style={{ background: '#f8fafc' }}>
+        <div className="max-w-3xl mx-auto">
+
+          {/* Back */}
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl font-semibold text-sm transition hover:bg-gray-200 mb-6"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl font-semibold text-sm transition hover:bg-gray-200 mb-8"
             style={{ color: C.navy }}
           >
             <ArrowLeft className="w-4 h-4" /> Back
           </button>
 
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-            
-            {/* Order Summary */}
-            <div className="lg:col-span-2 space-y-6">
-              <div className="rounded-3xl p-6 bg-white border shadow-sm" style={{ borderColor: 'rgba(77,208,225,0.2)' }}>
-                <h3 className="text-xl font-black mb-6 uppercase tracking-tight" style={{ color: C.navy }}>Order Summary</h3>
-                
-                {checkoutData.type === 'video' ? (
-                  <div className="flex gap-4 items-start mb-6">
-                    <img 
-                      src={checkoutData.thumbnail || 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400&h=225&fit=crop'} 
-                      alt="Thumbnail" 
-                      className="w-24 h-16 object-cover rounded-lg shadow-sm"
-                    />
-                    <div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 mb-1 inline-block">
-                        Lifetime Access
-                      </span>
-                      <h4 className="font-bold text-gray-900 line-clamp-2 leading-tight">{checkoutData.title}</h4>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex gap-4 items-center mb-6 p-4 rounded-2xl bg-gray-50 border border-gray-100">
-                    <div className="w-12 h-12 rounded-full flex items-center justify-center bg-white shadow-sm">
-                      <ShieldCheck className="w-6 h-6" style={{ color: C.teal }} />
-                    </div>
-                    <div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-green-50 text-green-600 mb-1 inline-block">
-                        Subscription
-                      </span>
-                      <h4 className="font-bold text-gray-900">{checkoutData.plan || checkoutData.title} Plan</h4>
-                      <p className="text-xs text-gray-500">Billed monthly</p>
-                    </div>
-                  </div>
-                )}
 
-                <div className="space-y-3 pt-5 border-t border-gray-100 text-sm">
+            {/* ── Order Summary ── */}
+            <div className="lg:col-span-2 space-y-6">
+              <div
+                className="rounded-3xl p-6 bg-white border shadow-sm"
+                style={{ borderColor: 'rgba(77,208,225,0.2)' }}
+              >
+                <h3
+                  className="text-xl font-black mb-6 uppercase tracking-tight"
+                  style={{ color: C.navy }}
+                >
+                  Order Summary
+                </h3>
+
+                {/* Video thumbnail + title */}
+                <div className="flex gap-4 items-start mb-6">
+                  {checkoutData.thumbnail && (
+                    <img
+                      src={checkoutData.thumbnail}
+                      alt={checkoutData.title}
+                      className="w-24 h-16 object-cover rounded-xl shadow-sm shrink-0"
+                    />
+                  )}
+                  <div className="min-w-0">
+                    <span
+                      className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full inline-block mb-1"
+                      style={{ background: 'rgba(77,208,225,0.12)', color: C.teal }}
+                    >
+                      Lifetime Access
+                    </span>
+                    <h4 className="font-bold text-sm leading-snug line-clamp-3" style={{ color: C.navy }}>
+                      {checkoutData.title}
+                    </h4>
+                  </div>
+                </div>
+
+                {/* Pricing breakdown */}
+                <div
+                  className="space-y-3 pt-4 text-sm"
+                  style={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}
+                >
                   <div className="flex justify-between text-gray-600">
                     <span>Subtotal</span>
-                    <span>${checkoutData.price?.toFixed(2) || '0.00'}</span>
+                    <span>{priceDisplay}</span>
                   </div>
                   <div className="flex justify-between text-gray-600">
-                    <span>Tax</span>
-                    <span>$0.00</span>
+                    <span>Taxes &amp; fees</span>
+                    <span>Included</span>
                   </div>
-                  <div className="flex justify-between font-black text-lg pt-3 border-t border-gray-100" style={{ color: C.navy }}>
+                  <div
+                    className="flex justify-between font-black text-lg pt-3"
+                    style={{ borderTop: '1px solid rgba(0,0,0,0.06)', color: C.navy }}
+                  >
                     <span>Total</span>
-                    <span>${checkoutData.price?.toFixed(2) || '0.00'}</span>
+                    <span>{priceDisplay}</span>
                   </div>
                 </div>
               </div>
-              
-              <div className="flex items-center justify-center gap-2 text-xs text-gray-400 font-medium">
-                <Lock className="w-3 h-3" /> Secure AES-256 Encrypted Payment
-              </div>
-            </div>
 
-            {/* Payment Form */}
-            <div className="lg:col-span-3">
-              <div className="rounded-3xl p-6 md:p-8 bg-white border shadow-sm" style={{ borderColor: 'rgba(77,208,225,0.2)' }}>
-                <h3 className="text-2xl font-black mb-8" style={{ color: C.navy }}>Payment Details</h3>
-                
-                <form onSubmit={handlePayment} className="space-y-6">
-                  
-                  {/* Payment Method Selector */}
-                  <div className="grid grid-cols-3 gap-3">
-                    <label className="cursor-pointer">
-                      <input type="radio" name="payment_method" className="peer sr-only" defaultChecked />
-                      <div className="rounded-xl border-2 p-3 text-center transition-all peer-checked:border-[#4DD0E1] peer-checked:bg-[#eafcff]">
-                        <CreditCard className="w-6 h-6 mx-auto mb-2 text-gray-700" />
-                        <span className="text-xs font-bold text-gray-800">Card</span>
-                      </div>
-                    </label>
-                    <label className="cursor-pointer">
-                      <input type="radio" name="payment_method" className="peer sr-only" />
-                      <div className="rounded-xl border-2 p-3 flex flex-col items-center justify-center transition-all peer-checked:border-[#4DD0E1] peer-checked:bg-[#eafcff]">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" className="h-4 object-contain mb-2 opacity-80" />
-                        <span className="text-xs font-bold text-gray-800">PayPal</span>
-                      </div>
-                    </label>
-                    <label className="cursor-pointer">
-                      <input type="radio" name="payment_method" className="peer sr-only" />
-                      <div className="rounded-xl border-2 p-3 text-center transition-all peer-checked:border-[#4DD0E1] peer-checked:bg-[#eafcff]">
-                        <span className="text-lg font-black block mb-1">GPay</span>
-                        <span className="text-xs font-bold text-gray-800">Google Pay</span>
-                      </div>
-                    </label>
-                  </div>
-
-                  <div className="space-y-4 pt-4 border-t border-gray-100">
-                    <div>
-                      <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">Cardholder Name</label>
-                      <input 
-                        type="text" 
-                        required
-                        placeholder="John Doe" 
-                        className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:border-[#4DD0E1] transition"
-                      />
-                    </div>
-                    
-                    <div>
-                      <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">Card Number</label>
-                      <div className="relative">
-                        <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                        <input 
-                          type="text" 
-                          required
-                          placeholder="0000 0000 0000 0000" 
-                          maxLength="19"
-                          className="w-full pl-12 pr-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:border-[#4DD0E1] transition font-mono"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">Expiry Date</label>
-                        <input 
-                          type="text" 
-                          required
-                          placeholder="MM/YY" 
-                          maxLength="5"
-                          className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:border-[#4DD0E1] transition font-mono"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">CVC</label>
-                        <input 
-                          type="password" 
-                          required
-                          placeholder="•••" 
-                          maxLength="4"
-                          className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:border-[#4DD0E1] transition font-mono"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full py-4 mt-8 rounded-xl font-black text-lg shadow-lg flex items-center justify-center gap-2 transform active:scale-95 transition"
-                    style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)', color: C.navy, opacity: loading ? 0.7 : 1 }}
+              {/* Trust badges */}
+              <div className="flex flex-col gap-2">
+                {[
+                  { icon: Lock, text: 'AES-256 Encrypted Payment' },
+                  { icon: ShieldCheck, text: 'Powered by Razorpay — PCI-DSS Compliant' },
+                  { icon: CheckCircle2, text: 'Instant Access After Payment' },
+                ].map(({ icon: Icon, text }) => (
+                  <div
+                    key={text}
+                    className="flex items-center gap-2 text-xs text-gray-400 font-medium"
                   >
-                    {loading ? (
-                      <span className="animate-pulse">Processing...</span>
-                    ) : (
-                      <>Pay ${checkoutData.price?.toFixed(2) || '0.00'}</>
-                    )}
-                  </button>
-                  
-                </form>
+                    <Icon className="w-3.5 h-3.5 shrink-0 text-[#4DD0E1]" />
+                    {text}
+                  </div>
+                ))}
               </div>
             </div>
-            
+
+            {/* ── Payment Panel ── */}
+            <div className="lg:col-span-3">
+              <div
+                className="rounded-3xl p-6 md:p-10 bg-white border shadow-sm"
+                style={{ borderColor: 'rgba(77,208,225,0.2)' }}
+              >
+                <h3 className="text-2xl font-black mb-2" style={{ color: C.navy }}>
+                  Complete Purchase
+                </h3>
+                <p className="text-sm mb-8" style={{ color: C.muted }}>
+                  Securely pay via Razorpay — supports UPI, Cards, Net Banking, Wallets &amp; more.
+                </p>
+
+                {/* Razorpay method icons */}
+                <div
+                  className="grid grid-cols-4 gap-3 mb-8 p-4 rounded-2xl"
+                  style={{ background: 'rgba(77,208,225,0.05)', border: '1px solid rgba(77,208,225,0.12)' }}
+                >
+                  {[
+                    { label: 'UPI', emoji: '📲' },
+                    { label: 'Cards', emoji: '💳' },
+                    { label: 'Net Banking', emoji: '🏦' },
+                    { label: 'Wallets', emoji: '👛' },
+                  ].map(({ label, emoji }) => (
+                    <div key={label} className="flex flex-col items-center gap-1">
+                      <span className="text-2xl">{emoji}</span>
+                      <span className="text-[10px] font-semibold text-gray-500">{label}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Error */}
+                {status === 'error' && (
+                  <div
+                    className="flex items-start gap-3 p-4 rounded-2xl mb-6"
+                    style={{ background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.2)' }}
+                  >
+                    <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                    <p className="text-sm text-red-500 font-medium">{errorMsg}</p>
+                  </div>
+                )}
+
+                {/* Pay button */}
+                <button
+                  id="pay-now-btn"
+                  onClick={handlePay}
+                  disabled={status === 'loading'}
+                  className="w-full py-4 rounded-2xl font-black text-lg shadow-lg flex items-center justify-center gap-3 transition hover:opacity-90 active:scale-98 disabled:opacity-60"
+                  style={{
+                    background: 'linear-gradient(135deg,#4DD0E1,#C0E863)',
+                    color: C.navy,
+                  }}
+                >
+                  {status === 'loading' ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Opening Razorpay…
+                    </>
+                  ) : (
+                    <>
+                      <Lock className="w-5 h-5" />
+                      Pay {priceDisplay} Securely
+                    </>
+                  )}
+                </button>
+
+                <p className="text-center text-xs text-gray-400 mt-4">
+                  By paying, you agree to our Terms of Service. All purchases are final.
+                </p>
+
+                {/* Test card hint (only in development) */}
+                {import.meta.env.DEV && (
+                  <div
+                    className="mt-6 p-4 rounded-2xl text-xs space-y-1"
+                    style={{ background: 'rgba(192,232,99,0.08)', border: '1px solid rgba(192,232,99,0.2)' }}
+                  >
+                    <p className="font-black text-[#051d2e]/60 uppercase tracking-widest">🧪 Test Mode</p>
+                    <p className="text-gray-500">Card: <code className="font-mono">4111 1111 1111 1111</code></p>
+                    <p className="text-gray-500">Expiry: any future date &nbsp; CVV: any 3 digits</p>
+                    <p className="text-gray-500">UPI: <code className="font-mono">success@razorpay</code></p>
+                  </div>
+                )}
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
     </UserLayout>
   )
 }
-
-export default Checkout

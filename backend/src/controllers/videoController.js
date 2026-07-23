@@ -6,6 +6,7 @@ import {
   abortMultipartUpload,
   buildOriginalKey,
   buildProcessedPrefix,
+  uploadFileBuffer,
 } from '../services/s3Service.js'
 import { createTranscodeJob, getJobStatus, deriveHlsKeys } from '../services/mediaConvertService.js'
 import { logUploadError, logMediaConvertError } from '../services/cloudWatchService.js'
@@ -210,7 +211,7 @@ export const updateVideo = asyncHandler(async (req, res) => {
   const video = await Video.findById(videoId)
   if (!video) throw new ApiError(404, 'Video not found.')
 
-  const allowedFields = ['title', 'description', 'price', 'isPublished', 'tags', 'category', 'thumbnailUrl']
+  const allowedFields = ['title', 'description', 'price', 'isPublished', 'tags', 'category', 'thumbnailUrl', 'artistId', 'featured', 'status', 'durationSeconds']
   allowedFields.forEach((field) => {
     if (req.body[field] !== undefined) {
       video[field] = req.body[field]
@@ -311,11 +312,100 @@ export const manuallyPublishVideo = asyncHandler(async (req, res) => {
 
   video.status = 'ready'
   video.isPublished = true
-  if (req.body.thumbnailUrl) video.thumbnailUrl = req.body.thumbnailUrl
-  if (req.body.featured !== undefined) video.featured = req.body.featured
-  if (req.body.artistId !== undefined) video.artistId = req.body.artistId
+  if (req.body?.thumbnailUrl) video.thumbnailUrl = req.body.thumbnailUrl
+  if (req.body?.featured !== undefined) video.featured = req.body.featured
+  if (req.body?.artistId !== undefined) video.artistId = req.body.artistId
 
   await video.save()
   res.status(200).json({ success: true, data: video })
 })
 
+// ── Admin: Proxy upload — receive file from frontend, push to S3 ───────────────
+/**
+ * POST /api/videos/upload/proxy
+ * multipart/form-data: { file, title, description, price, currency, category, tags, thumbnailUrl, artistId }
+ *
+ * Receives the video file directly (no presigned URLs / no client-side S3 calls),
+ * streams it to S3 via the AWS SDK, then triggers MediaConvert.
+ * This bypasses any S3 CORS restriction on the bucket.
+ */
+export const proxyUpload = asyncHandler(async (req, res) => {
+  if (!req.file) throw new ApiError(400, 'No video file provided.')
+
+  const {
+    title,
+    description = '',
+    price = 0,
+    currency = 'INR',
+    tags = '[]',
+    category = null,
+    thumbnailUrl,
+    artistId,
+  } = req.body
+
+  if (!title) throw new ApiError(400, 'title is required.')
+
+  const creatorId = req.user._id
+
+  // Parse tags — accept JSON array or comma-separated string
+  let parsedTags = []
+  try {
+    parsedTags = Array.isArray(tags) ? tags : JSON.parse(tags)
+  } catch {
+    parsedTags = String(tags).split(',').map(t => t.trim()).filter(Boolean)
+  }
+
+  // Create video record
+  const video = await Video.create({
+    title,
+    description,
+    price: Number(price),
+    currency,
+    creatorId,
+    tags: parsedTags,
+    category: category || null,
+    thumbnailUrl: thumbnailUrl || undefined,
+    artistId: artistId || undefined,
+    status: 'uploading',
+  })
+
+  const videoId = video._id.toString()
+  const s3Key = buildOriginalKey(creatorId.toString(), videoId)
+
+  try {
+    // Upload file buffer directly to S3 (server-side — no CORS issue)
+    await uploadFileBuffer(s3Key, req.file.buffer, req.file.mimetype)
+
+    // Record the asset
+    await VideoAsset.create({
+      videoId: video._id,
+      originalS3Key: s3Key,
+    })
+
+    // Try to trigger transcoding
+    const outputPrefix = buildProcessedPrefix(videoId)
+    try {
+      const { jobId } = await createTranscodeJob(s3Key, outputPrefix, videoId)
+      video.mediaConvertJobId = jobId
+      video.status = 'processing'
+    } catch (transcodeErr) {
+      console.warn('[MediaConvert] Skipped:', transcodeErr.message)
+    }
+
+    await video.save()
+
+    res.status(200).json({
+      success: true,
+      data: {
+        videoId,
+        mediaConvertJobId: video.mediaConvertJobId ?? null,
+        status: video.status,
+        message: 'Video uploaded successfully via proxy.',
+      },
+    })
+  } catch (err) {
+    await Video.deleteOne({ _id: video._id })
+    logUploadError(videoId, err)
+    throw err
+  }
+})

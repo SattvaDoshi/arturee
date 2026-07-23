@@ -56,11 +56,17 @@ export const videoApi = {
   get: (videoId) => api.get(`/videos/${videoId}`),
   update: (videoId, data) => api.patch(`/videos/${videoId}`, data),
   delete: (videoId) => api.delete(`/videos/${videoId}`),
-  // Admin upload
+  // Admin upload (presigned multipart — requires S3 CORS to be configured)
   initiateUpload: (data) => api.post('/videos/upload/initiate', data),
   completeUpload: (data) => api.post('/videos/upload/complete', data),
   abortUpload: (data) => api.post('/videos/upload/abort', data),
   getJobStatus: (videoId) => api.get(`/videos/${videoId}/job-status`),
+  // Proxy upload — no S3 CORS needed, file goes through the backend
+  proxyUpload: (formData, onProgress) => api.post('/videos/upload/proxy', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+    timeout: 0, // disable timeout for large files
+    onUploadProgress: onProgress,
+  }),
 }
 
 // ── Purchases ─────────────────────────────────────────────────────────────
@@ -104,6 +110,13 @@ export const adminApi = {
   updateUserRole: (userId, role) => api.patch(`/admin/users/${userId}/role`, { role }),
   deleteUser: (userId) => api.delete(`/admin/users/${userId}`),
   listAllVideos: (params) => api.get('/admin/videos', { params }),
+}
+
+// ── Playback ──────────────────────────────────────────────────────────────
+export const playbackApi = {
+  registerDevice: (data) => api.post('/playback/register-device', data),
+  requestPlayback: (data) => api.post('/playback/request', data),
+  logoutDevice: () => api.post('/playback/logout-device'),
 }
 
 export default api

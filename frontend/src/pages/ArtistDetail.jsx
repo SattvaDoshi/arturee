@@ -10,82 +10,9 @@ const C = {
   muted: '#4a7080',
 }
 
-const ARTIST_VIDEOS = [
-  {
-    title: 'Jazz Night Sessions',
-    thumbnail: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=1200&h=675&fit=crop',
-    duration: '1:24:35',
-    views: '2.4M views',
-    date: 'Dec 15, 2024',
-    price: 'Free',
-    free: true,
-  },
-  {
-    title: 'Acoustic Sessions Vol. 2',
-    thumbnail: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=1200&h=675&fit=crop',
-    duration: '52:18',
-    views: '1.2M views',
-    date: 'Nov 30, 2024',
-    price: '$6.99',
-  },
-  {
-    title: 'Behind the Music: My Journey',
-    thumbnail: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1200&h=675&fit=crop',
-    duration: '38:45',
-    views: '890K views',
-    date: 'Oct 22, 2024',
-    price: '$4.99',
-  },
-  {
-    title: 'Summer Jazz Festival 2024',
-    thumbnail: 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=1200&h=675&fit=crop',
-    duration: '1:15:22',
-    views: '2.1M views',
-    date: 'Aug 14, 2024',
-    price: 'Free',
-    free: true,
-  },
-  {
-    title: 'Midnight Reflections EP',
-    thumbnail: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=1200&h=675&fit=crop',
-    duration: '44:30',
-    views: '650K views',
-    date: 'Sep 01, 2024',
-    price: '$5.99',
-  },
-  {
-    title: 'Live in Brooklyn: Session One',
-    thumbnail: 'https://images.unsplash.com/photo-1465847899084-d164df4dedc6?w=1200&h=675&fit=crop',
-    duration: '47:12',
-    views: '730K views',
-    date: 'Jul 12, 2024',
-    price: '$3.99',
-  },
-  {
-    title: 'Blue Hour Improvisations',
-    thumbnail: 'https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?w=1200&h=675&fit=crop',
-    duration: '35:06',
-    views: '540K views',
-    date: 'Jun 25, 2024',
-    price: '$2.99',
-  },
-  {
-    title: 'Night Train: Studio Cut',
-    thumbnail: 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=1200&h=675&fit=crop',
-    duration: '29:58',
-    views: '420K views',
-    date: 'May 18, 2024',
-    price: '$2.49',
-  },
-]
+const ARTIST_VIDEOS = []
 
-const ARTIST_REACTIONS = [
-  { id: 'heart', emoji: '❤️', label: 'Love', count: 1264 },
-  { id: 'party', emoji: '🎉', label: 'Party', count: 842 },
-  { id: 'fire', emoji: '👏', label: 'Clap', count: 663 },
-  { id: 'wow', emoji: '😍', label: 'Wow', count: 579 },
-  { id: 'star', emoji: '⭐', label: 'Star', count: 932 },
-]
+const ARTIST_REACTIONS = []
 
 const ArtistDetail = () => {
   const navigate = useNavigate()
@@ -106,7 +33,7 @@ const ArtistDetail = () => {
           <section className="rounded-3xl border overflow-hidden relative" style={{ borderColor: 'rgba(77,208,225,0.22)', boxShadow: '0 18px 40px rgba(5,29,46,0.1)' }}>
             <div className="absolute inset-0">
               <img
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1800&h=700&fit=crop"
+                src={undefined}
                 alt="Marcus Cole background"
                 className="w-full h-full object-cover"
               />
@@ -116,7 +43,7 @@ const ArtistDetail = () => {
             <div className="relative pt-32 sm:pt-48 pb-6 md:pb-8 px-5 md:px-8 flex flex-col lg:flex-row lg:items-end gap-6 md:gap-8">
               <div className="flex flex-col md:flex-row items-start md:items-end gap-5 md:gap-6 flex-1">
                 <img
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=220&h=220&fit=crop"
+                  src={undefined}
                   alt="Marcus Cole profile"
                   className="w-24 h-24 md:w-32 md:h-32 rounded-2xl object-cover shrink-0 shadow-2xl"
                   style={{ border: '3px solid rgba(255,255,255,0.15)' }}

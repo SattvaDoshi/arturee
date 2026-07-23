@@ -44,7 +44,7 @@ export default function Purchased() {
     _id: p._id,
     videoId: p.videoId?._id,
     title: p.videoId?.title || 'Untitled',
-    thumbnailUrl: p.videoId?.thumbnailUrl || 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=800&h=450&fit=crop',
+    thumbnailUrl: p.videoId?.thumbnailUrl || undefined,
     price: p.amountPaise ? p.amountPaise / 100 : 0,
     duration: formatDuration(p.videoId?.durationSeconds),
     date: formatDate(p.completedAt),

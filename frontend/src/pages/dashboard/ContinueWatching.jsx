@@ -2,16 +2,7 @@ import { Link } from 'react-router-dom'
 import { Play, ChevronLeft, Clock, RotateCcw } from 'lucide-react'
 import UserLayout from '../../components/layout/UserLayout'
 
-const ITEMS = [
-  { img: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&h=450&fit=crop',  title: 'Sarah Chen: Raw',          genre: 'Stand-up Comedy', progress: 35, remaining: '35 min', total: '1h 15m', price: '$9.99' },
-  { img: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&h=450&fit=crop',  title: 'Urban Stories Ep. 3',       genre: 'Series',          progress: 68, remaining: '12 min', total: '38 min',  price: '$3.99' },
-  { img: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800&h=450&fit=crop',  title: 'Sound & Vision Podcast',    genre: 'Podcast',         progress: 22, remaining: '42 min', total: '54 min',  free: true },
-  { img: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=450&fit=crop',  title: 'Behind the Lens',           genre: 'Documentary',     progress: 89, remaining: '5 min',  total: '38 min',  price: '$4.99' },
-  { img: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=450&fit=crop',  title: 'Midnight Sessions',         genre: 'Music',           progress: 52, remaining: '22 min', total: '45 min',  price: '$4.99' },
-  { img: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=800&h=450&fit=crop',  title: 'Acoustic Sessions Vol. 2',  genre: 'Music',           progress: 14, remaining: '50 min', total: '58 min',  price: '$6.99' },
-  { img: 'https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=800&h=450&fit=crop',  title: 'Street Art Chronicles',     genre: 'Documentary',     progress: 73, remaining: '18 min', total: '1h 5m',   price: '$5.99' },
-  { img: 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800&h=450&fit=crop',  title: "The Artist's Mind Ep. 42",  genre: 'Podcast',         progress: 60, remaining: '18 min', total: '45 min',  free: true },
-]
+const ITEMS = []
 
 const progressColour = (p) => {
   if (p >= 75) return 'linear-gradient(90deg,#C0E863,#4DD0E1)'

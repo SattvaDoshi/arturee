@@ -20,8 +20,16 @@ export const getArtist = asyncHandler(async (req, res) => {
 })
 
 export const createArtist = asyncHandler(async (req, res) => {
-  const { name, bio, avatarUrl, genre, socialLinks, isVerified } = req.body
+  const { name, bio, avatarUrl, genre, isVerified, instagram, twitter, website, socialLinks: sl } = req.body
   if (!name) throw new ApiError(400, 'name is required.')
+
+  // Accept either nested socialLinks OR flat fields from the admin form
+  const socialLinks = {
+    instagram: instagram || sl?.instagram || null,
+    twitter:   twitter   || sl?.twitter   || null,
+    website:   website   || sl?.website   || null,
+  }
+
   const artist = await Artist.create({ name, bio, avatarUrl, genre, socialLinks, isVerified })
   res.status(201).json({ success: true, data: artist })
 })
@@ -29,8 +37,21 @@ export const createArtist = asyncHandler(async (req, res) => {
 export const updateArtist = asyncHandler(async (req, res) => {
   const artist = await Artist.findById(req.params.artistId)
   if (!artist) throw new ApiError(404, 'Artist not found.')
-  const allowed = ['name', 'bio', 'avatarUrl', 'genre', 'socialLinks', 'isVerified', 'isActive']
-  allowed.forEach(f => { if (req.body[f] !== undefined) artist[f] = req.body[f] })
+
+  const { instagram, twitter, website, socialLinks: sl, ...rest } = req.body
+  const allowed = ['name', 'bio', 'avatarUrl', 'genre', 'isVerified', 'isActive']
+  allowed.forEach(f => { if (rest[f] !== undefined) artist[f] = rest[f] })
+
+  // Merge flat fields OR nested socialLinks into the existing sub-object
+  const hasFlatSocials = instagram !== undefined || twitter !== undefined || website !== undefined
+  if (hasFlatSocials || sl) {
+    artist.socialLinks = {
+      instagram: instagram ?? sl?.instagram ?? artist.socialLinks?.instagram ?? null,
+      twitter:   twitter   ?? sl?.twitter   ?? artist.socialLinks?.twitter   ?? null,
+      website:   website   ?? sl?.website   ?? artist.socialLinks?.website   ?? null,
+    }
+  }
+
   await artist.save()
   res.status(200).json({ success: true, data: artist })
 })
