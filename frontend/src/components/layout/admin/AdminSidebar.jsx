@@ -9,15 +9,22 @@ import {
   ChevronLeft,
   ChevronRight,
   Shield,
+  MonitorPlay,
+  IndianRupee,
+  Briefcase,
 } from "lucide-react";
 
 const navItems = [
   { label: "Overview",  icon: LayoutDashboard, to: "/admin" },
+  { label: "Slider",    icon: MonitorPlay,     to: "/admin/slider" },
+  { label: "Revenue",   icon: IndianRupee,     to: "/admin/revenue" },
   { label: "Videos",    icon: Film,            to: "/admin/videos" },
   { label: "Upload",    icon: Upload,           to: "/admin/upload" },
   { label: "Users",     icon: Users,            to: "/admin/users" },
   { label: "Artists",   icon: UserCheck,        to: "/admin/artists" },
+  { label: "Applications", icon: Briefcase,     to: "/admin/applications" },
 ];
+
 
 const AdminSidebar = ({ collapsed, onToggle }) => {
   const location = useLocation();

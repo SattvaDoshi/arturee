@@ -1,5 +1,8 @@
 import React, { useState } from 'react'
+import { Loader2 } from 'lucide-react'
+import { toast } from '../../context/ToastContext'
 import { useArtistModal } from '../../context/ArtistModalContext'
+import { artistApi } from '../../api/index.js'
 
 const JoinArtistModal = () => {
   const { isModalOpen, closeModal } = useArtistModal()
@@ -25,10 +28,20 @@ const JoinArtistModal = () => {
     }))
   }
 
-  const handleSubmit = (e) => {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!formData.agreeTerms) return
-    setIsSubmitted(true)
+    setIsSubmitting(true)
+    try {
+      await artistApi.apply(formData)
+      setIsSubmitted(true)
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Something went wrong. Please try again.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleClose = () => {
@@ -168,10 +181,10 @@ const JoinArtistModal = () => {
               
               <button 
                 type="submit" 
-                disabled={!formData.agreeTerms}
-                className="w-full mt-6 py-3.5 bg-linear-to-r from-primary to-lime text-white font-black uppercase tracking-wider text-sm rounded shadow-[4px_4px_0px_rgba(77,208,225,0.4)] hover:shadow-none hover:translate-y-1 hover:translate-x-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-[4px_4px_0px_rgba(77,208,225,0.4)] disabled:hover:translate-y-0 disabled:hover:translate-x-0"
+                disabled={!formData.agreeTerms || isSubmitting}
+                className="w-full mt-6 flex justify-center py-3.5 bg-linear-to-r from-primary to-lime text-white font-black uppercase tracking-wider text-sm rounded shadow-[4px_4px_0px_rgba(77,208,225,0.4)] hover:shadow-none hover:translate-y-1 hover:translate-x-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-[4px_4px_0px_rgba(77,208,225,0.4)] disabled:hover:translate-y-0 disabled:hover:translate-x-0"
               >
-                Submit Application
+                {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Submit Application'}
               </button>
             </form>
           </div>

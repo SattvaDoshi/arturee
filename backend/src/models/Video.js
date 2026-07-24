@@ -96,6 +96,10 @@ const videoSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    featuredOrder: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,

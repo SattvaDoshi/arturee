@@ -34,9 +34,10 @@ const HeroSection = () => {
           
           {/* Main polaroid image */}
           <div className="absolute top-0 right-0 sm:right-4 md:right-8 lg:right-0 w-[75%] sm:w-[70%] md:w-[65%] bg-white p-3 pb-12 md:p-4 md:pb-16 rough-border polaroid-shadow transform rotate-3 z-10">
-            <img className="w-full aspect-[4/5] object-cover grayscale hover:grayscale-0 transition-all duration-500" alt="Featured Artist" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnsgMc-9vWB2jVZnNY9OxoK8_BaZASds2u3vuoZZc4O7X0MDZWge7YPEJtPFWKGKcOK9n8fdj7q_tvvKjH2PIbS8sG1Rh3vDSk1TVEbhDVGK7u0LzC1JQLs6sPuTfmhUgDFENXG_haHS5GFKfnpXrpGLQOsFhHBaMxfIYhahDCScBhiD6VnLxXG9vvOAKh0kEvytrJhTXy5GHTF1QV8jVz5F5UQrBHINz-gtU7ujs1LMASn9d9VGc0bA9oKxl_LQt3M84YGgbN--4" />
-            <div className="absolute bottom-3 left-4 md:bottom-4 md:left-6 font-black uppercase italic text-base sm:text-lg md:text-2xl tracking-tighter text-navy">
-              VIVID_001
+            <img className="w-full aspect-[4/5] object-cover grayscale hover:grayscale-0 transition-all duration-500" alt="Featured Artist" 
+            src="./ArtureeLogo1.png" />
+            <div className="absolute bottom-3 left-4 md:bottom-4 md:left-16 font-black uppercase italic text-base sm:text-lg md:text-2xl tracking-tighter text-navy">
+              arturee_art
             </div>
           </div>
           

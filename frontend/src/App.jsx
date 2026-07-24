@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import SplashScreen from './components/SplashScreen'
 import { CartProvider } from './context/CartContext'
 import { AuthProvider } from './context/AuthContext'
+import { ToastProvider, GlobalToastListener } from './context/ToastContext'
 import { ArtistModalProvider } from './context/ArtistModalContext'
 import { ProtectedRoute, AdminRoute } from './components/ProtectedRoute'
 import JoinArtistModal from './components/modals/JoinArtistModal'
@@ -36,6 +37,9 @@ import AdminVideos    from './pages/admin/VideosPage'
 import AdminUsers     from './pages/admin/UsersPage'
 import AdminArtists   from './pages/admin/ArtistsPage'
 import AdminUpload    from './pages/admin/UploadPage'
+import AdminSlider    from './pages/admin/SliderPage'
+import AdminRevenue   from './pages/admin/RevenuePage'
+import AdminApps      from './pages/admin/ApplicationsPage'
 
 // ── Shared ────────────────────────────────────────────────
 import VideoDetail  from './pages/VideoDetail'
@@ -57,8 +61,10 @@ const App = () => {
   return (
     <>
       {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
-      <AuthProvider>
-        <ArtistModalProvider>
+      <ToastProvider>
+        <GlobalToastListener />
+        <AuthProvider>
+          <ArtistModalProvider>
           <CartProvider>
             <JoinArtistModal />
             <BrowserRouter>
@@ -93,14 +99,18 @@ const App = () => {
                 {/* ── Admin (admin-only) ── */}
                 <Route path="/admin"           element={<AdminRoute><AdminDashboard /></AdminRoute>} />
                 <Route path="/admin/videos"    element={<AdminRoute><AdminVideos /></AdminRoute>} />
+                <Route path="/admin/slider"    element={<AdminRoute><AdminSlider /></AdminRoute>} />
+                <Route path="/admin/revenue"   element={<AdminRoute><AdminRevenue /></AdminRoute>} />
                 <Route path="/admin/users"     element={<AdminRoute><AdminUsers /></AdminRoute>} />
                 <Route path="/admin/artists"   element={<AdminRoute><AdminArtists /></AdminRoute>} />
                 <Route path="/admin/upload"    element={<AdminRoute><AdminUpload /></AdminRoute>} />
+                <Route path="/admin/applications" element={<AdminRoute><AdminApps /></AdminRoute>} />
               </Routes>
             </BrowserRouter>
           </CartProvider>
         </ArtistModalProvider>
       </AuthProvider>
+      </ToastProvider>
     </>
   )
 }

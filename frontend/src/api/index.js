@@ -95,11 +95,11 @@ export const wishlistApi = {
 // ── Artists ───────────────────────────────────────────────────────────────
 export const artistApi = {
   list: (params) => api.get('/artists', { params }),
-  get: (artistId) => api.get(`/artists/${artistId}`),
-  // Admin
+  getById: (id) => api.get(`/artists/${id}`),
   create: (data) => api.post('/artists', data),
-  update: (artistId, data) => api.patch(`/artists/${artistId}`, data),
-  delete: (artistId) => api.delete(`/artists/${artistId}`),
+  update: (id, data) => api.patch(`/artists/${id}`, data),
+  delete: (id) => api.delete(`/artists/${id}`),
+  apply: (data) => api.post('/artists/apply', data),
 }
 
 // ── Admin ─────────────────────────────────────────────────────────────────
@@ -110,6 +110,14 @@ export const adminApi = {
   updateUserRole: (userId, role) => api.patch(`/admin/users/${userId}/role`, { role }),
   deleteUser: (userId) => api.delete(`/admin/users/${userId}`),
   listAllVideos: (params) => api.get('/admin/videos', { params }),
+  updateFeaturedVideos: (data) => api.put('/admin/videos/featured', data),
+  getRevenue: () => api.get('/admin/revenue'),
+  uploadImage: (formData) => api.post('/admin/upload-image', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  getApplications: (params) => api.get('/admin/applications', { params }),
+  updateApplicationStatus: (id, data) => api.patch(`/admin/applications/${id}/status`, data),
+  deleteApplication: (id) => api.delete(`/admin/applications/${id}`),
 }
 
 // ── Playback ──────────────────────────────────────────────────────────────

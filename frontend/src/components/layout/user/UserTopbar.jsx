@@ -48,18 +48,18 @@ const UserTopbar = ({ onMobileMenuToggle }) => {
         </button>
 
         {/* Upgrade badge */}
-        <Link
+        {/* <Link
           to="/pricing"
           className="hidden sm:block text-[10px] font-black uppercase px-3 py-1.5 rounded-full border border-[#4DD0E1] text-[#00BCD4] hover:bg-[#4DD0E1] hover:text-[#051d2e] transition"
         >
           Upgrade
-        </Link>
+        </Link> */}
 
         {isAuthenticated ? (
           /* Avatar */
           <Link to="/account" className="w-9 h-9 rounded-full ring-2 ring-[#C0E863]/70 ring-offset-1 overflow-hidden cursor-pointer shrink-0">
             <img
-              src={user?.avatarUrl || undefined}
+              src={user?.avatarUrl || "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"}
               alt={user?.name || "User"}
               className="w-full h-full object-cover"
             />

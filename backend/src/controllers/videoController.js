@@ -259,9 +259,13 @@ export const listVideos = asyncHandler(async (req, res) => {
   if (req.query.featured === 'true') filter.featured = true
   if (req.query.search) filter.title = { $regex: req.query.search, $options: 'i' }
 
-  const sortBy = req.query.sort === 'popular'
+  let sortBy = req.query.sort === 'popular'
     ? { viewCount: -1 }
     : { createdAt: -1 }
+
+  if (req.query.featured === 'true') {
+    sortBy = { featuredOrder: 1, createdAt: -1 }
+  }
 
   const [videos, total] = await Promise.all([
     Video.find(filter)
@@ -292,11 +296,10 @@ export const deleteVideo = asyncHandler(async (req, res) => {
   const video = await Video.findById(videoId)
   if (!video) throw new ApiError(404, 'Video not found.')
 
-  video.status = 'archived'
-  video.isPublished = false
-  await video.save()
+  await Video.findByIdAndDelete(videoId)
+  await VideoAsset.deleteOne({ videoId })
 
-  res.status(200).json({ success: true, message: 'Video archived successfully.' })
+  res.status(200).json({ success: true, message: 'Video deleted successfully.' })
 })
 
 // ── Admin: Manually publish a video (bypass MediaConvert) ─────────────────────

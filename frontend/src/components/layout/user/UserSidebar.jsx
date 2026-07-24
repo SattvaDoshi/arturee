@@ -7,11 +7,10 @@ import {
 import { useAuth } from '../../../context/AuthContext'
 
 const navItems = [
-  { label: 'Home',              icon: Home,          to: '/dashboard' },
-  { label: 'Continue Watching', icon: Play,          to: '/dashboard/continue' },
-  { label: 'My List',           icon: BookmarkCheck, to: '/dashboard/mylist' },
-  { label: 'Purchased',         icon: ShoppingBag,   to: '/dashboard/purchased' },
-  { label: 'Account',           icon: User,          to: '/account' },
+  { label: 'Home', icon: Home, to: '/dashboard' },
+  { label: 'Continue Watching', icon: Play, to: '/dashboard/continue' },
+  { label: 'My List', icon: BookmarkCheck, to: '/dashboard/mylist' },
+  { label: 'Purchased', icon: ShoppingBag, to: '/dashboard/purchased' },
 ]
 
 /* Tooltip — shown only when sidebar is collapsed */
@@ -94,15 +93,14 @@ const UserSidebar = ({ mobile = false, onMobileClose }) => {
         {/* Monogram — always visible */}
         <Link
           to="/"
-          className="flex items-center justify-center shrink-0 w-8 h-8 rounded-lg hover:scale-105 transition-transform"
-          style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
+          className="flex items-center justify-center shrink-0 w-12 h-12 rounded-lg hover:scale-105 transition-transform"
         >
-          <span className="text-[#051d2e] font-black text-sm leading-none select-none">A</span>
+            <img src="./Logomark.png" alt="" />
         </Link>
 
         {/* Wordmark — fades in when expanded */}
         <span
-          className="ml-2.5 text-[#051d2e] font-black text-lg tracking-tight leading-none whitespace-nowrap overflow-hidden transition-all duration-300 flex-1"
+          className="text-2xl font-black tracking-tighter lowercase bg-linear-to-r from-primary to-lime bg-clip-text text-transparent"
           style={{ width: collapsed ? 0 : 'auto', opacity: collapsed ? 0 : 1 }}
         >
           arturee
@@ -159,7 +157,7 @@ const UserSidebar = ({ mobile = false, onMobileClose }) => {
             >
               <div className="w-8 h-8 rounded-full ring-2 ring-[#4DD0E1]/50 overflow-hidden shrink-0">
                 <img
-                  src={user?.avatarUrl || undefined}
+                  src={user?.avatarUrl || "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"}
                   alt="avatar"
                   className="w-full h-full object-cover"
                 />

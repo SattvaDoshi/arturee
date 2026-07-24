@@ -2,7 +2,7 @@ import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Upload, CheckCircle, ArrowRight, ArrowLeft, Film, Loader2 } from 'lucide-react'
 import AdminLayout from '../../components/layout/AdminLayout'
-import { videoApi } from '../../api/index.js'
+import { videoApi, adminApi } from '../../api/index.js'
 import api from '../../api/index.js'
 
 /* ─── Step indicator ─────────────────────────────────── */
@@ -92,6 +92,46 @@ export default function UploadPage() {
 
   const setM = (key) => (e) =>
     setMeta(m => ({ ...m, [key]: e.target.type === 'number' ? Number(e.target.value) : e.target.value }))
+
+  const [uploadingImage, setUploadingImage] = useState(false)
+
+  const handleImageUpload = async (e, key) => {
+    const file = e.target.files[0]
+    if (!file) return
+
+    setUploadingImage(true)
+    try {
+      const formData = new FormData()
+      formData.append('image', file)
+      const res = await adminApi.uploadImage(formData)
+      if (res.data?.data?.url) {
+        setMeta(f => ({ ...f, [key]: res.data.data.url }))
+      }
+    } catch (err) {
+      alert('Failed to upload image')
+      console.error(err)
+    } finally {
+      setUploadingImage(false)
+    }
+  }
+
+  const imageUploadField = (key, label) => (
+    <div>
+      <Label>{label}</Label>
+      <div className="flex items-center gap-2">
+        <input
+          value={meta[key]}
+          onChange={setM(key)}
+          placeholder="https://…"
+          className={`${inputCls} flex-1 min-w-0`}
+        />
+        <label className={`shrink-0 cursor-pointer px-3 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center ${uploadingImage ? 'opacity-50 pointer-events-none' : 'hover:bg-white/10'}`} style={{ background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.8)' }}>
+          {uploadingImage ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Upload'}
+          <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, key)} />
+        </label>
+      </div>
+    </div>
+  )
 
   const handleNextStep1 = () => {
     if (!meta.title.trim()) { setMetaError('Title is required.'); return }
@@ -236,10 +276,7 @@ export default function UploadPage() {
 
                 {/* Thumbnail + Artist row */}
                 <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label>Thumbnail URL</Label>
-                    <input value={meta.thumbnailUrl} onChange={setM('thumbnailUrl')} placeholder="https://…" className={inputCls} />
-                  </div>
+                  {imageUploadField('thumbnailUrl', 'Thumbnail URL')}
                   <div>
                     <Label>Artist ID</Label>
                     <input value={meta.artistId} onChange={setM('artistId')} placeholder="Artist ID…" className={inputCls} />

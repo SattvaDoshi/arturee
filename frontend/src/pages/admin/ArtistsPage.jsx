@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Plus, Edit3, Trash2, X, CheckCircle, Loader2 } from 'lucide-react'
+import { toast } from '../../context/ToastContext'
 import AdminLayout from '../../components/layout/AdminLayout'
-import { artistApi } from '../../api/index.js'
+import ConfirmModal from '../../components/ui/ConfirmModal'
+import { adminApi, artistApi } from '../../api/index.js'
 
 /* ─── Default empty form ─────────────────────────────── */
 const EMPTY_FORM = {
@@ -20,6 +22,28 @@ const ArtistFormModal = ({ initial, onClose, onSaved }) => {
   const [saving, setSaving] = useState(false)
   const [error, setError]   = useState('')
   const isEdit = Boolean(initial?._id)
+
+  const [uploadingImage, setUploadingImage] = useState(false)
+
+  const handleImageUpload = async (e, key) => {
+    const file = e.target.files[0]
+    if (!file) return
+
+    setUploadingImage(true)
+    try {
+      const formData = new FormData()
+      formData.append('image', file)
+      const res = await adminApi.uploadImage(formData)
+      if (res.data?.data?.url) {
+        setForm(f => ({ ...f, [key]: res.data.data.url }))
+      }
+    } catch (err) {
+      alert('Failed to upload image')
+      console.error(err)
+    } finally {
+      setUploadingImage(false)
+    }
+  }
 
   const set = (key) => (e) => setForm(f => ({ ...f, [key]: e.target.value }))
 
@@ -40,6 +64,25 @@ const ArtistFormModal = ({ initial, onClose, onSaved }) => {
   }
 
   const inputCls = "w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white outline-none focus:border-[#4DD0E1]/50 placeholder-white/25 transition"
+
+  const imageUploadField = (key, label) => (
+    <div>
+      <label className="block text-[10px] text-white/35 font-semibold uppercase tracking-widest mb-1">{label}</label>
+      <div className="flex items-center gap-2">
+        <input
+          type="text"
+          value={form[key]}
+          onChange={set(key)}
+          placeholder="https://…"
+          className={inputCls}
+        />
+        <label className={`shrink-0 cursor-pointer px-3 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center ${uploadingImage ? 'opacity-50 pointer-events-none' : 'hover:bg-white/10'}`} style={{ background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.8)' }}>
+          {uploadingImage ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Upload'}
+          <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, key)} />
+        </label>
+      </div>
+    </div>
+  )
 
   return (
     /* Backdrop */
@@ -78,10 +121,7 @@ const ArtistFormModal = ({ initial, onClose, onSaved }) => {
               <label className="block text-[10px] text-white/35 font-semibold uppercase tracking-widest mb-1">Genre</label>
               <input value={form.genre} onChange={set('genre')} placeholder="e.g. Jazz" className={inputCls} />
             </div>
-            <div>
-              <label className="block text-[10px] text-white/35 font-semibold uppercase tracking-widest mb-1">Avatar URL</label>
-              <input value={form.avatarUrl} onChange={set('avatarUrl')} placeholder="https://…" className={inputCls} />
-            </div>
+            {imageUploadField('avatarUrl', 'Avatar URL')}
           </div>
 
           {/* Bio */}
@@ -239,12 +279,24 @@ export default function ArtistsPage() {
   }
 
   /* ── delete ── */
-  const handleDelete = async (artist) => {
-    if (!window.confirm(`Delete artist "${artist.name}"? This cannot be undone.`)) return
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, artist: null })
+
+  const confirmDelete = (artist) => {
+    setDeleteModal({ isOpen: true, artist })
+  }
+
+  const handleConfirmDelete = async () => {
+    const artist = deleteModal.artist
+    if (!artist) return
+
+    setDeleteModal({ isOpen: false, artist: null })
     try {
       await artistApi.delete(artist._id)
       setArtists(prev => prev.filter(a => a._id !== artist._id))
-    } catch { /* silent */ }
+      toast.success('Artist deleted permanently')
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to delete artist')
+    }
   }
 
   return (
@@ -296,7 +348,7 @@ export default function ArtistsPage() {
                 key={artist._id}
                 artist={artist}
                 onEdit={openEdit}
-                onDelete={handleDelete}
+                onDelete={confirmDelete}
               />
             ))}
           </div>
@@ -312,6 +364,15 @@ export default function ArtistsPage() {
           onSaved={handleSaved}
         />
       )}
+
+      <ConfirmModal
+        isOpen={deleteModal.isOpen}
+        title="Delete Artist"
+        message={`Are you sure you want to permanently delete "${deleteModal.artist?.name}"?`}
+        confirmText="Delete Artist"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setDeleteModal({ isOpen: false, artist: null })}
+      />
     </AdminLayout>
   )
 }

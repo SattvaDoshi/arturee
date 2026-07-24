@@ -9,10 +9,8 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
           <div className="col-span-1 md:col-span-2 space-y-6">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-linear-to-br from-primary to-lime rounded-lg flex items-center justify-center shadow-md">
-                <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M18 3v2h-2V3H8v2H6V3H4v18h2v-2h2v2h8v-2h2v2h2V3h-2zM8 17H6v-2h2v2zm0-4H6v-2h2v2zm0-4H6V7h2v2zm10 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2z" />
-                </svg>
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center shadow-md">
+                <img src="./Logomark.png" alt="" />
               </div>
               <span className="text-2xl font-black tracking-tighter lowercase bg-linear-to-r from-primary to-lime bg-clip-text text-transparent">arturee</span>
             </div>

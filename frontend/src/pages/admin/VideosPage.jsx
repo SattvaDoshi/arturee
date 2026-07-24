@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Plus, Trash2, Eye, EyeOff, Edit3, Loader2, CheckCircle, ChevronLeft, ChevronRight, Film, Archive } from 'lucide-react'
+import { toast } from '../../context/ToastContext'
 import AdminLayout from '../../components/layout/AdminLayout'
+import ConfirmModal from '../../components/ui/ConfirmModal'
 import { adminApi, videoApi } from '../../api/index.js'
 
 /* ─── Status badge ───────────────────────────────────── */
@@ -39,6 +41,27 @@ const EditForm = ({ video, onSave, onCancel }) => {
     durationSeconds: video.durationSeconds || 0,
   })
   const [saving, setSaving] = useState(false)
+  const [uploadingImage, setUploadingImage] = useState(false)
+
+  const handleImageUpload = async (e, key) => {
+    const file = e.target.files[0]
+    if (!file) return
+
+    setUploadingImage(true)
+    try {
+      const formData = new FormData()
+      formData.append('image', file)
+      const res = await adminApi.uploadImage(formData)
+      if (res.data?.data?.url) {
+        setForm(f => ({ ...f, [key]: res.data.data.url }))
+      }
+    } catch (err) {
+      alert('Failed to upload image')
+      console.error(err)
+    } finally {
+      setUploadingImage(false)
+    }
+  }
 
   const handleSave = async () => {
     setSaving(true)
@@ -64,6 +87,24 @@ const EditForm = ({ video, onSave, onCancel }) => {
     </div>
   )
 
+  const imageUploadField = (key, label) => (
+    <div className="flex flex-col gap-1">
+      <label className="text-[10px] text-white/35 font-semibold uppercase tracking-widest">{label}</label>
+      <div className="flex items-center gap-2">
+        <input
+          type="text"
+          value={form[key]}
+          onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
+          className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white outline-none focus:border-[#4DD0E1]/50 transition flex-1 min-w-0"
+        />
+        <label className={`shrink-0 cursor-pointer px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center justify-center ${uploadingImage ? 'opacity-50 pointer-events-none' : 'hover:bg-white/10'}`} style={{ background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.8)' }}>
+          {uploadingImage ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Upload'}
+          <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, key)} />
+        </label>
+      </div>
+    </div>
+  )
+
   const checkboxField = (key, label) => (
     <div className="flex items-center gap-2 mt-4">
       <input
@@ -84,7 +125,7 @@ const EditForm = ({ video, onSave, onCancel }) => {
           {field('price', 'Price (₹)', 'number')}
           {field('category', 'Category')}
           {field('status', 'Status')}
-          {field('thumbnailUrl', 'Thumbnail URL')}
+          {imageUploadField('thumbnailUrl', 'Thumbnail URL')}
           {field('artistId', 'Artist ID')}
           {field('tags', 'Tags (comma-separated)')}
           {field('durationSeconds', 'Duration (seconds)', 'number')}
@@ -202,13 +243,27 @@ export default function VideosPage() {
   }
 
   /* ── delete ── */
-  const deleteVideo = async (video) => {
-    if (!window.confirm(`Archive/delete "${video.title}"? This cannot be undone.`)) return
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, video: null })
+  
+  const confirmDelete = (video) => {
+    setDeleteModal({ isOpen: true, video })
+  }
+
+  const handleConfirmDelete = async () => {
+    const video = deleteModal.video
+    if (!video) return
+
+    setDeleteModal({ isOpen: false, video: null })
     setActionId(video._id)
     try {
       await videoApi.delete(video._id)
       setVideos(prev => prev.filter(v => v._id !== video._id))
-    } catch { /* silent */ } finally { setActionId(null) }
+      toast.success('Video deleted permanently')
+    } catch (err) { 
+      toast.error(err.response?.data?.message || 'Failed to delete video')
+    } finally { 
+      setActionId(null) 
+    }
   }
 
   /* ── inline edit save ── */
@@ -349,7 +404,7 @@ export default function VideosPage() {
                             <Archive className="w-4 h-4" />
                           </button>
                           <button
-                            onClick={() => deleteVideo(video)}
+                            onClick={() => confirmDelete(video)}
                             disabled={actionId === video._id}
                             title="Delete video"
                             className="p-1.5 rounded-lg transition disabled:opacity-40 hover:bg-red-500/15"
@@ -383,6 +438,15 @@ export default function VideosPage() {
         </div>
 
       </div>
+
+      <ConfirmModal
+        isOpen={deleteModal.isOpen}
+        title="Delete Video"
+        message={`Are you sure you want to permanently delete "${deleteModal.video?.title}"? This action cannot be undone and will remove the video and all its assets from the database.`}
+        confirmText="Delete Video"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setDeleteModal({ isOpen: false, video: null })}
+      />
     </AdminLayout>
   )
 }
