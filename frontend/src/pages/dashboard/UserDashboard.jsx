@@ -7,7 +7,7 @@ import {
 } from 'lucide-react'
 import UserLayout from '../../components/layout/UserLayout'
 import { useCart } from '../../context/CartContext'
-import { videoApi, wishlistApi, purchaseApi, progressApi } from '../../api/index.js'
+import { videoApi, wishlistApi, purchaseApi, progressApi, genreApi } from '../../api/index.js'
 
 /* ─── Fallback thumbnail ─────────────────────────────────── */
 const FALLBACK_IMG = undefined
@@ -165,7 +165,7 @@ const WideRow = ({ videos, widthClass = 'w-64 sm:w-72 md:w-80' }) => (
           }
         </div>
         <h3 className="font-black text-sm text-[#051d2e] mb-0.5 truncate">{v.title}</h3>
-        <p className="text-xs text-[#051d2e]/60">{v.artistId?.name || v.category || ''}{v.durationSeconds ? ` • ${fmtDuration(v.durationSeconds)}` : ''}</p>
+        <p className="text-xs text-[#051d2e]/60">{v.artistId?.name || v.genre?.name || ''}{v.durationSeconds ? ` • ${fmtDuration(v.durationSeconds)}` : ''}</p>
       </Link>
     ))}
   </div>
@@ -192,7 +192,7 @@ const TallRow = ({ videos, showRank = false }) => (
           }
         </div>
         <h3 className="font-black text-sm text-[#051d2e] mb-0.5 truncate">{v.title}</h3>
-        <p className="text-xs text-[#051d2e]/60">{v.artistId?.name || v.category || ''}</p>
+        <p className="text-xs text-[#051d2e]/60">{v.artistId?.name || v.genre?.name || ''}</p>
       </Link>
     ))}
   </div>
@@ -220,8 +220,8 @@ export default function UserDashboard() {
   const [direction, setDirection] = useState('next')
 
   // ── Content rows ──────────────────────────────────────
+  const [genresWithVideos, setGenresWithVideos] = useState([])
   const [latestVideos, setLatestVideos] = useState([])
-  const [popularVideos, setPopularVideos] = useState([])
   const [continueWatching, setContinueWatching] = useState([])
   const [wishlist, setWishlist] = useState([])
   const [purchases, setPurchases] = useState([])
@@ -241,16 +241,23 @@ export default function UserDashboard() {
       })
       .catch(() => setLoadingHero(false))
 
-    // Latest 12 videos for "New Releases"
-    videoApi.list({ limit: 12, sort: 'new' })
-      .then(res => setLatestVideos(res.data.data.videos))
-      .catch(() => {})
+    // Fetch genres and all videos to group them
+    Promise.all([
+      genreApi.list(),
+      videoApi.list({ limit: 100, sort: 'new' })
+    ]).then(([genreRes, videoRes]) => {
+      const allGenres = genreRes.data?.data || []
+      const allVideos = videoRes.data?.data?.videos || []
+      
+      setLatestVideos(allVideos.slice(0, 8))
 
-    // Popular 12 for "Trending Now"
-    videoApi.list({ limit: 12, sort: 'popular' })
-      .then(res => setPopularVideos(res.data.data.videos))
-      .catch(() => {})
-      .finally(() => setLoadingContent(false))
+      const grouped = allGenres.map(g => {
+        const vids = allVideos.filter(v => v.genre?._id === g._id || v.genre === g._id)
+        return { ...g, videos: vids }
+      }).filter(g => g.videos.length > 0)
+      
+      setGenresWithVideos(grouped)
+    }).catch(() => {}).finally(() => setLoadingContent(false))
 
     // User-specific: wishlist, purchases, watch progress
     wishlistApi.get().then(res => setWishlist(res.data.data)).catch(() => {})
@@ -335,7 +342,7 @@ export default function UserDashboard() {
               {/* Badges */}
               <div className="flex flex-wrap items-center gap-2">
                 <span className="section-pill">
-                  <Star className="w-3 h-3" fill="currentColor" /> {slide.category || 'Featured'}
+                  <Star className="w-3 h-3" fill="currentColor" /> {slide.genre?.name || 'Featured'}
                 </span>
                 {slide.featured && (
                   <span className="flex items-center gap-1.5 px-3 py-1 bg-[#4DD0E1] rounded-full text-xs font-bold text-[#051d2e] shadow-lg">
@@ -453,45 +460,42 @@ export default function UserDashboard() {
           </div>
         )}
 
-        {/* Trending Now — sorted by views */}
-        <div id="shows">
-          <SectionHeader title="Trending Now" />
-          {loadingContent ? <RowSkeleton /> : popularVideos.length > 0 ? (
-            <TallRow videos={popularVideos.slice(0, 8)} showRank />
-          ) : (
-            <p className="text-[#051d2e]/40 text-sm py-6 text-center">No videos yet — check back soon!</p>
-          )}
-        </div>
-
-        {/* New Releases — newest */}
-        <div>
-          <SectionHeader title="New Releases" />
-          {loadingContent ? <RowSkeleton /> : latestVideos.length > 0 ? (
-            <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
-              {latestVideos.slice(0, 8).map((v) => (
-                <Link to={`/video/${v._id}`} key={v._id} className="flex-shrink-0 w-56 sm:w-64 md:w-72 group cursor-pointer block">
-                  <div className="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg border border-[#4DD0E1]/20">
-                    <img src={v.thumbnailUrl || FALLBACK_IMG} alt={v.title} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
-                    <HoverOverlayWide />
-                    <VideoActionButtons videoId={v._id} videoData={{ id: v._id, image: v.thumbnailUrl, title: v.title, price: fmtPrice(v.price, v.currency) }} />
-                    <div className="absolute top-2 left-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>New</div>
-                    {v.price
-                      ? <PriceBadge price={v.price} currency={v.currency} />
-                      : <div className="absolute top-2 right-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: '#C0E863' }}>Free</div>
-                    }
-                  </div>
-                  <h3 className="font-black text-sm text-[#051d2e] mb-0.5 truncate">{v.title}</h3>
-                  <p className="text-xs text-[#051d2e]/60 mb-1">{v.artistId?.name || v.category || ''}</p>
-                  <div className="flex items-center gap-1">
-                    {[1,2,3,4,5].map(i => i <= 4 ? <StarFilled key={i} /> : <StarEmpty key={i} />)}
-                  </div>
-                </Link>
-              ))}
+        {/* Genres sections */}
+        {loadingContent ? (
+          <>
+            <div className="mb-8"><SectionHeader title="Loading Genres..." /><RowSkeleton /></div>
+            <div><SectionHeader title="" /><RowSkeleton /></div>
+          </>
+        ) : genresWithVideos.length > 0 ? (
+          genresWithVideos.map((genre) => (
+            <div key={genre._id}>
+              <SectionHeader title={genre.name} sub={genre.description || "DISCOVER"} />
+              <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
+                {genre.videos.map((v) => (
+                  <Link to={`/video/${v._id}`} key={v._id} className="flex-shrink-0 w-56 sm:w-64 md:w-72 group cursor-pointer block">
+                    <div className="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg border border-[#4DD0E1]/20">
+                      <img src={v.thumbnailUrl || FALLBACK_IMG} alt={v.title} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
+                      <HoverOverlayWide />
+                      <VideoActionButtons videoId={v._id} videoData={{ id: v._id, image: v.thumbnailUrl, title: v.title, price: fmtPrice(v.price, v.currency) }} />
+                      <div className="absolute top-2 left-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>{genre.name}</div>
+                      {v.price
+                        ? <PriceBadge price={v.price} currency={v.currency} />
+                        : <div className="absolute top-2 right-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: '#C0E863' }}>Free</div>
+                      }
+                    </div>
+                    <h3 className="font-black text-sm text-[#051d2e] mb-0.5 truncate">{v.title}</h3>
+                    <p className="text-xs text-[#051d2e]/60 mb-1">{v.artistId?.name || v.genre?.name || ''}</p>
+                    <div className="flex items-center gap-1">
+                      {[1,2,3,4,5].map(i => i <= 4 ? <StarFilled key={i} /> : <StarEmpty key={i} />)}
+                    </div>
+                  </Link>
+                ))}
+              </div>
             </div>
-          ) : (
-            <p className="text-[#051d2e]/40 text-sm py-6 text-center">No videos yet — check back soon!</p>
-          )}
-        </div>
+          ))
+        ) : (
+          <p className="text-[#051d2e]/40 text-sm py-6 text-center">No videos yet — check back soon!</p>
+        )}
 
         {/* My List — from wishlist API */}
         {wishlist.length > 0 && (
@@ -510,14 +514,14 @@ export default function UserDashboard() {
                       : <div className="absolute top-2 right-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: '#C0E863' }}>Free</div>
                     }
                     <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold text-[#051d2e]/80 border border-[#4DD0E1]/30" style={{ background: 'rgba(255,255,255,0.85)' }}>
-                      {v.category || 'Video'}
+                      {v.genre?.name || 'Video'}
                     </div>
                     <div className="absolute bottom-2 right-2 p-1.5 rounded-full" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>
                       <BookmarkCheck className="w-3.5 h-3.5 text-[#051d2e]" fill="#051d2e" />
                     </div>
                   </div>
                   <h3 className="font-black text-xs text-[#051d2e] mb-0.5 truncate">{v.title}</h3>
-                  <p className="text-[10px] text-[#051d2e]/60">{v.artistId?.name || v.category || ''}</p>
+                  <p className="text-[10px] text-[#051d2e]/60">{v.artistId?.name || v.genre?.name || ''}</p>
                 </Link>
               ))}
             </div>
@@ -550,7 +554,7 @@ export default function UserDashboard() {
         )}
 
         {/* All Videos fallback when DB has content but no specific category */}
-        {!loadingContent && latestVideos.length === 0 && popularVideos.length === 0 && (
+        {!loadingContent && genresWithVideos.length === 0 && (
           <div className="flex flex-col items-center justify-center py-24 text-center">
             <div className="w-20 h-20 rounded-3xl flex items-center justify-center mb-6" style={{ background: 'linear-gradient(135deg,rgba(77,208,225,0.15),rgba(192,232,99,0.15))' }}>
               <ShoppingBag className="w-10 h-10 text-[#4DD0E1]" />

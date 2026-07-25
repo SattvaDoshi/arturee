@@ -12,6 +12,7 @@ import drmRouter from './routes/drmRoutes.js'
 import adminRouter from './routes/adminRoutes.js'
 import artistRouter from './routes/artistRoutes.js'
 import wishlistRouter from './routes/wishlistRoutes.js'
+import genreRouter from './routes/genreRoutes.js'
 
 import { errorHandler, notFound } from './middlewares/errorHandler.js'
 import { generalLimiter } from './middlewares/rateLimiter.js'
@@ -71,6 +72,7 @@ app.use('/api/drm', drmRouter)
 app.use('/api/admin', adminRouter)
 app.use('/api/artists', artistRouter)
 app.use('/api/wishlist', wishlistRouter)
+app.use('/api/genres', genreRouter)
 
 // ── 404 + Error handlers (MUST be last) ──────────────────────────────────
 app.use(notFound)

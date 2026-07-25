@@ -12,6 +12,7 @@ import {
   MonitorPlay,
   IndianRupee,
   Briefcase,
+  Bookmark,
 } from "lucide-react";
 
 const navItems = [
@@ -22,6 +23,7 @@ const navItems = [
   { label: "Upload",    icon: Upload,           to: "/admin/upload" },
   { label: "Users",     icon: Users,            to: "/admin/users" },
   { label: "Artists",   icon: UserCheck,        to: "/admin/artists" },
+  { label: "Genres",    icon: Bookmark,         to: "/admin/genres" },
   { label: "Applications", icon: Briefcase,     to: "/admin/applications" },
 ];
 

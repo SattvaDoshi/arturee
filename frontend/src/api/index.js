@@ -54,6 +54,7 @@ export const authApi = {
 export const videoApi = {
   list: (params) => api.get('/videos', { params }),
   get: (videoId) => api.get(`/videos/${videoId}`),
+  react: (videoId, type) => api.post(`/videos/${videoId}/react`, { type }),
   update: (videoId, data) => api.patch(`/videos/${videoId}`, data),
   delete: (videoId) => api.delete(`/videos/${videoId}`),
   // Admin upload (presigned multipart — requires S3 CORS to be configured)
@@ -125,6 +126,14 @@ export const playbackApi = {
   registerDevice: (data) => api.post('/playback/register-device', data),
   requestPlayback: (data) => api.post('/playback/request', data),
   logoutDevice: () => api.post('/playback/logout-device'),
+}
+
+// ── Genres ────────────────────────────────────────────────────────────────
+export const genreApi = {
+  list: () => api.get('/genres'),
+  create: (data) => api.post('/genres', data),
+  update: (id, data) => api.patch(`/genres/${id}`, data),
+  delete: (id) => api.delete(`/genres/${id}`),
 }
 
 export default api

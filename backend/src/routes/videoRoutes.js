@@ -14,6 +14,7 @@ import {
   deleteVideo,
   manuallyPublishVideo,
   proxyUpload,
+  reactToVideo,
 } from '../controllers/videoController.js'
 
 // Multer: keep the file in memory (buffer), limit 2 GB
@@ -31,6 +32,7 @@ const router = Router()
 // ── Public routes ──────────────────────────────────────────────────────────
 router.get('/', generalLimiter, listVideos)
 router.get('/:videoId', generalLimiter, getVideo)
+router.post('/:videoId/react', authMiddleware, generalLimiter, reactToVideo)
 
 // ── Admin-only routes ──────────────────────────────────────────────────────
 router.post('/upload/initiate', authMiddleware, adminMiddleware, uploadLimiter, initiateUpload)

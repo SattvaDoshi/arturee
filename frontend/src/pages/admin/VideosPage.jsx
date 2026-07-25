@@ -4,7 +4,7 @@ import { Plus, Trash2, Eye, EyeOff, Edit3, Loader2, CheckCircle, ChevronLeft, Ch
 import { toast } from '../../context/ToastContext'
 import AdminLayout from '../../components/layout/AdminLayout'
 import ConfirmModal from '../../components/ui/ConfirmModal'
-import { adminApi, videoApi } from '../../api/index.js'
+import { adminApi, videoApi, artistApi, genreApi } from '../../api/index.js'
 
 /* ─── Status badge ───────────────────────────────────── */
 const STATUS_STYLES = {
@@ -27,14 +27,14 @@ const StatusBadge = ({ status }) => {
 }
 
 /* ─── Inline edit form ───────────────────────────────── */
-const EditForm = ({ video, onSave, onCancel }) => {
+const EditForm = ({ video, artists, genres, onSave, onCancel }) => {
   const [form, setForm] = useState({
     title:       video.title || '',
     description: video.description || '',
     price:       video.price ?? 0,
-    category:    video.category || '',
+    genre:       video.genre?._id || video.genre || '',
     thumbnailUrl: video.thumbnailUrl || '',
-    artistId:     video.artistId || '',
+    artistId:     video.artistId?._id || video.artistId || '',
     tags:         (video.tags || []).join(', '),
     featured:     video.featured || false,
     status:       video.status || 'draft',
@@ -123,10 +123,34 @@ const EditForm = ({ video, onSave, onCancel }) => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
           {field('title', 'Title')}
           {field('price', 'Price (₹)', 'number')}
-          {field('category', 'Category')}
+          <div className="flex flex-col gap-1">
+            <label className="text-[10px] text-white/35 font-semibold uppercase tracking-widest">Genre</label>
+            <select
+              value={form.genre}
+              onChange={e => setForm(f => ({ ...f, genre: e.target.value }))}
+              className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white outline-none focus:border-[#4DD0E1]/50 transition"
+            >
+              <option value="" className="bg-[#051d2e] text-white">Select a genre...</option>
+              {genres.map(g => (
+                <option key={g._id} value={g._id} className="bg-[#051d2e] text-white">{g.name}</option>
+              ))}
+            </select>
+          </div>
           {field('status', 'Status')}
           {imageUploadField('thumbnailUrl', 'Thumbnail URL')}
-          {field('artistId', 'Artist ID')}
+          <div className="flex flex-col gap-1">
+            <label className="text-[10px] text-white/35 font-semibold uppercase tracking-widest">Artist</label>
+            <select
+              value={form.artistId}
+              onChange={e => setForm(f => ({ ...f, artistId: e.target.value }))}
+              className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white outline-none focus:border-[#4DD0E1]/50 transition"
+            >
+              <option value="" className="bg-[#051d2e] text-white">Select an artist...</option>
+              {artists.map(a => (
+                <option key={a._id} value={a._id} className="bg-[#051d2e] text-white">{a.name}</option>
+              ))}
+            </select>
+          </div>
           {field('tags', 'Tags (comma-separated)')}
           {field('durationSeconds', 'Duration (seconds)', 'number')}
           
@@ -205,6 +229,14 @@ export default function VideosPage() {
   const [totalPages, setTotalPages] = useState(1)
   const [editingId, setEditingId]   = useState(null)
   const [actionId, setActionId]     = useState(null)
+
+  const [artists, setArtists] = useState([])
+  const [genres, setGenres] = useState([])
+
+  useEffect(() => {
+    artistApi.list().then(res => setArtists(res.data?.data?.artists || res.data?.data || []))
+    genreApi.list().then(res => setGenres(res.data?.data || []))
+  }, [])
 
   const LIMIT = 10
 
@@ -347,7 +379,7 @@ export default function VideosPage() {
                       {/* Title */}
                       <td className="px-5 py-3">
                         <p className="text-white/85 font-semibold truncate max-w-[160px]">{video.title}</p>
-                        <p className="text-white/30 text-xs truncate max-w-[160px]">{video.category || '—'}</p>
+                        <p className="text-white/30 text-xs truncate max-w-[160px]">{video.genre?.name || '—'}</p>
                       </td>
 
                       {/* Status */}
@@ -422,6 +454,8 @@ export default function VideosPage() {
                       <EditForm
                         key={`edit-${video._id}`}
                         video={video}
+                        artists={artists}
+                        genres={genres}
                         onSave={handleEditSave}
                         onCancel={() => setEditingId(null)}
                       />

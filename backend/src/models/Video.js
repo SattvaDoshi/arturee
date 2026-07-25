@@ -44,9 +44,9 @@ const videoSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
-    category: {
-      type: String,
-      trim: true,
+    genre: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Genre',
       default: null,
     },
     status: {
@@ -100,6 +100,19 @@ const videoSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    reactions: {
+      party: { type: Number, default: 0 },
+      clap:  { type: Number, default: 0 },
+      fire:  { type: Number, default: 0 },
+      star:  { type: Number, default: 0 },
+      heart: { type: Number, default: 0 },
+    },
+    userReactions: [
+      {
+        userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        type: { type: String, enum: ['party', 'clap', 'fire', 'star', 'heart'] }
+      }
+    ]
   },
   {
     timestamps: true,

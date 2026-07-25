@@ -40,6 +40,7 @@ import AdminUpload    from './pages/admin/UploadPage'
 import AdminSlider    from './pages/admin/SliderPage'
 import AdminRevenue   from './pages/admin/RevenuePage'
 import AdminApps      from './pages/admin/ApplicationsPage'
+import AdminGenres    from './pages/admin/GenresPage'
 
 // ── Shared ────────────────────────────────────────────────
 import VideoDetail  from './pages/VideoDetail'
@@ -105,6 +106,7 @@ const App = () => {
                 <Route path="/admin/artists"   element={<AdminRoute><AdminArtists /></AdminRoute>} />
                 <Route path="/admin/upload"    element={<AdminRoute><AdminUpload /></AdminRoute>} />
                 <Route path="/admin/applications" element={<AdminRoute><AdminApps /></AdminRoute>} />
+                <Route path="/admin/genres"    element={<AdminRoute><AdminGenres /></AdminRoute>} />
               </Routes>
             </BrowserRouter>
           </CartProvider>

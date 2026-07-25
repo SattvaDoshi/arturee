@@ -1,8 +1,8 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Upload, CheckCircle, ArrowRight, ArrowLeft, Film, Loader2 } from 'lucide-react'
 import AdminLayout from '../../components/layout/AdminLayout'
-import { videoApi, adminApi } from '../../api/index.js'
+import { videoApi, adminApi, artistApi, genreApi } from '../../api/index.js'
 import api from '../../api/index.js'
 
 /* ─── Step indicator ─────────────────────────────────── */
@@ -83,12 +83,20 @@ export default function UploadPage() {
     title:        '',
     description:  '',
     price:        0,
-    category:     'Music',
+    genre:        '',
     tags:         '',
     thumbnailUrl: '',
     artistId:     '',
   })
   const [metaError, setMetaError] = useState('')
+
+  const [artists, setArtists] = useState([])
+  const [genres, setGenres] = useState([])
+
+  useEffect(() => {
+    artistApi.list().then(res => setArtists(res.data?.data?.artists || res.data?.data || []))
+    genreApi.list().then(res => setGenres(res.data?.data || []))
+  }, [])
 
   const setM = (key) => (e) =>
     setMeta(m => ({ ...m, [key]: e.target.type === 'number' ? Number(e.target.value) : e.target.value }))
@@ -175,7 +183,7 @@ export default function UploadPage() {
       formData.append('description', meta.description)
       formData.append('price', String(meta.price))
       formData.append('currency', 'INR')
-      formData.append('category', meta.category)
+      if (meta.genre) formData.append('genre', meta.genre)
       formData.append('tags', JSON.stringify(
         meta.tags.split(',').map(t => t.trim()).filter(Boolean)
       ))
@@ -259,10 +267,11 @@ export default function UploadPage() {
                     <input type="number" min="0" value={meta.price} onChange={setM('price')} className={inputCls} />
                   </div>
                   <div>
-                    <Label>Category</Label>
-                    <select value={meta.category} onChange={setM('category')} className={inputCls}>
-                      {['Music', 'Comedy', 'Documentary', 'Podcast', 'Other'].map(c => (
-                        <option key={c} value={c}>{c}</option>
+                    <Label>Genre</Label>
+                    <select value={meta.genre} onChange={setM('genre')} className={inputCls}>
+                      <option value="" className="bg-[#051d2e] text-white">Select a genre...</option>
+                      {genres.map(g => (
+                        <option key={g._id} value={g._id} className="bg-[#051d2e] text-white">{g.name}</option>
                       ))}
                     </select>
                   </div>
@@ -278,8 +287,13 @@ export default function UploadPage() {
                 <div className="grid grid-cols-2 gap-4">
                   {imageUploadField('thumbnailUrl', 'Thumbnail URL')}
                   <div>
-                    <Label>Artist ID</Label>
-                    <input value={meta.artistId} onChange={setM('artistId')} placeholder="Artist ID…" className={inputCls} />
+                    <Label>Artist</Label>
+                    <select value={meta.artistId} onChange={setM('artistId')} className={inputCls}>
+                      <option value="" className="bg-[#051d2e] text-white">Select an artist...</option>
+                      {artists.map(a => (
+                        <option key={a._id} value={a._id} className="bg-[#051d2e] text-white">{a.name}</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
 

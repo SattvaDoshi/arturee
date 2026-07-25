@@ -36,7 +36,7 @@ export const initiateUpload = asyncHandler(async (req, res) => {
     totalParts,
     contentType = 'video/mp4',
     tags = [],
-    category = null,
+    genre = null,
   } = req.body
 
   if (!title || price === undefined || !totalParts) {
@@ -57,7 +57,7 @@ export const initiateUpload = asyncHandler(async (req, res) => {
     currency,
     creatorId,
     tags,
-    category,
+    genre,
     status: 'uploading',
   })
 
@@ -204,14 +204,14 @@ export const getMediaConvertStatus = asyncHandler(async (req, res) => {
 
 /**
  * PATCH /api/videos/:videoId
- * Body: { title, description, price, isPublished, tags, category, thumbnailUrl }
+ * Body: { title, description, price, isPublished, tags, genre, thumbnailUrl }
  */
 export const updateVideo = asyncHandler(async (req, res) => {
   const { videoId } = req.params
   const video = await Video.findById(videoId)
   if (!video) throw new ApiError(404, 'Video not found.')
 
-  const allowedFields = ['title', 'description', 'price', 'isPublished', 'tags', 'category', 'thumbnailUrl', 'artistId', 'featured', 'status', 'durationSeconds']
+  const allowedFields = ['title', 'description', 'price', 'isPublished', 'tags', 'genre', 'thumbnailUrl', 'artistId', 'featured', 'status', 'durationSeconds']
   allowedFields.forEach((field) => {
     if (req.body[field] !== undefined) {
       video[field] = req.body[field]
@@ -234,6 +234,8 @@ export const getVideo = asyncHandler(async (req, res) => {
   const video = await Video.findById(videoId)
     .select('-mediaConvertJobId -mediaConvertJobStatus -asset')
     .populate('creatorId', 'name email')
+    .populate('artistId', 'name avatarUrl bio email isVerified')
+    .populate('genre', 'name description')
 
   if (!video || !video.isPublished) {
     throw new ApiError(404, 'Video not found.')
@@ -242,11 +244,55 @@ export const getVideo = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, data: video })
 })
 
+// ── Public: React to a video ──────────────────────────────────────────────────
+
+/**
+ * POST /api/videos/:videoId/react
+ * Body: { type: 'party' | 'clap' | 'fire' | 'star' | 'heart' }
+ */
+export const reactToVideo = asyncHandler(async (req, res) => {
+  const { videoId } = req.params
+  const { type } = req.body
+
+  const validTypes = ['party', 'clap', 'fire', 'star', 'heart']
+  if (!validTypes.includes(type)) {
+    throw new ApiError(400, 'Invalid reaction type.')
+  }
+
+  const video = await Video.findById(videoId)
+  if (!video) throw new ApiError(404, 'Video not found.')
+
+  if (!video.reactions) {
+    video.reactions = { party: 0, clap: 0, fire: 0, star: 0, heart: 0 }
+  }
+  
+  // Find if user already reacted with this specific type
+  const existingReactionIndex = video.userReactions.findIndex(ur => ur.userId.toString() === req.user._id.toString() && ur.type === type)
+  
+  if (existingReactionIndex !== -1) {
+    // If they clicked the same reaction, they are removing it
+    video.reactions[type] = Math.max(0, video.reactions[type] - 1)
+    video.userReactions.splice(existingReactionIndex, 1)
+  } else {
+    // New reaction for this type
+    video.reactions[type] += 1
+    video.userReactions.push({ userId: req.user._id, type })
+  }
+  
+  await video.save()
+
+  const userActiveReactions = video.userReactions
+    .filter(ur => ur.userId.toString() === req.user._id.toString())
+    .map(ur => ur.type)
+
+  res.status(200).json({ success: true, data: video.reactions, userReactions: userActiveReactions })
+})
+
 // ── Public: List all published videos ────────────────────────────────────────
 
 /**
  * GET /api/videos
- * Query: page, limit, category, tags
+ * Query: page, limit, genre, tags
  */
 export const listVideos = asyncHandler(async (req, res) => {
   const page = Math.max(1, parseInt(req.query.page) || 1)
@@ -254,7 +300,8 @@ export const listVideos = asyncHandler(async (req, res) => {
   const skip = (page - 1) * limit
 
   const filter = { isPublished: true, status: 'ready' }
-  if (req.query.category) filter.category = req.query.category
+  if (req.query.genre) filter.genre = req.query.genre
+  if (req.query.artistId) filter.artistId = req.query.artistId
   if (req.query.tags) filter.tags = { $in: req.query.tags.split(',') }
   if (req.query.featured === 'true') filter.featured = true
   if (req.query.search) filter.title = { $regex: req.query.search, $options: 'i' }
@@ -269,8 +316,9 @@ export const listVideos = asyncHandler(async (req, res) => {
 
   const [videos, total] = await Promise.all([
     Video.find(filter)
-      .select('title description thumbnailUrl price currency durationSeconds tags category viewCount createdAt featured artistId')
+      .select('title description thumbnailUrl price currency durationSeconds tags genre viewCount createdAt featured artistId reactions')
       .populate('artistId', 'name avatarUrl')
+      .populate('genre', 'name')
       .sort(sortBy)
       .skip(skip)
       .limit(limit),
@@ -326,7 +374,7 @@ export const manuallyPublishVideo = asyncHandler(async (req, res) => {
 // ── Admin: Proxy upload — receive file from frontend, push to S3 ───────────────
 /**
  * POST /api/videos/upload/proxy
- * multipart/form-data: { file, title, description, price, currency, category, tags, thumbnailUrl, artistId }
+ * multipart/form-data: { file, title, description, price, currency, genre, tags, thumbnailUrl, artistId }
  *
  * Receives the video file directly (no presigned URLs / no client-side S3 calls),
  * streams it to S3 via the AWS SDK, then triggers MediaConvert.
@@ -341,7 +389,7 @@ export const proxyUpload = asyncHandler(async (req, res) => {
     price = 0,
     currency = 'INR',
     tags = '[]',
-    category = null,
+    genre = null,
     thumbnailUrl,
     artistId,
   } = req.body
@@ -366,7 +414,7 @@ export const proxyUpload = asyncHandler(async (req, res) => {
     currency,
     creatorId,
     tags: parsedTags,
-    category: category || null,
+    genre: genre || null,
     thumbnailUrl: thumbnailUrl || undefined,
     artistId: artistId || undefined,
     status: 'uploading',

@@ -141,6 +141,18 @@ export default function VideoDetail() {
 
   const [recommended, setRecommended] = useState([])
 
+  const [reactions, setReactions] = useState({ party: 0, clap: 0, fire: 0, star: 0, heart: 0 })
+  const [reacting, setReacting] = useState(false)
+  const [activeReactions, setActiveReactions] = useState([])
+
+  const REACTION_TYPES = [
+    { id: 'party', emoji: '🎉' },
+    { id: 'clap', emoji: '👏' },
+    { id: 'fire', emoji: '🔥' },
+    { id: 'star', emoji: '⭐' },
+    { id: 'heart', emoji: '❤️' },
+  ]
+
   /* ── Fetch video ── */
   useEffect(() => {
     if (!videoId) {
@@ -154,6 +166,13 @@ export default function VideoDetail() {
     videoApi.get(videoId)
       .then(res => {
         setVideo(res.data.data)
+        if (res.data.data.reactions) {
+          setReactions(res.data.data.reactions)
+        }
+        if (user && res.data.data.userReactions) {
+          const urList = res.data.data.userReactions.filter(u => u.userId === user._id || u.userId?._id === user._id)
+          setActiveReactions(urList.map(ur => ur.type))
+        }
       })
       .catch(err => {
         setError(err.response?.data?.message || 'Video not found or unavailable.')
@@ -208,6 +227,42 @@ export default function VideoDetail() {
         thumbnail: video.thumbnailUrl,
       },
     })
+  }
+
+  /* ── React ── */
+  const handleReact = async (type) => {
+    if (!isAuthenticated) { navigate('/login'); return }
+    if (reacting) return
+    setReacting(true)
+    
+    const isCurrentlyActive = activeReactions.includes(type)
+    
+    // Optimistic update
+    setReactions(prev => ({
+      ...prev,
+      [type]: Math.max(0, prev[type] + (isCurrentlyActive ? -1 : 1))
+    }))
+    
+    setActiveReactions(prev => 
+      isCurrentlyActive ? prev.filter(r => r !== type) : [...prev, type]
+    )
+    
+    try {
+      const res = await videoApi.react(videoId, type)
+      setReactions(res.data.data)
+      setActiveReactions(res.data.userReactions || [])
+    } catch (err) {
+      // Revert on error
+      setReactions(prev => ({
+        ...prev,
+        [type]: Math.max(0, prev[type] + (isCurrentlyActive ? 1 : -1))
+      }))
+      setActiveReactions(prev => 
+        isCurrentlyActive ? [...prev, type] : prev.filter(r => r !== type)
+      )
+    } finally {
+      setReacting(false)
+    }
   }
 
   /* ── Error state ── */
@@ -394,20 +449,12 @@ export default function VideoDetail() {
                     style={{ borderTop: '1px solid rgba(77,208,225,0.15)' }}
                   >
                     <div className="flex items-center gap-2 flex-wrap">
-                      {/* Watch / Buy button */}
-                      {video?.price === 0 ? (
-                        <GradBtn className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm text-[#051d2e]">
-                          <Play className="w-4 h-4" fill={C.navy} /> Watch Free
-                        </GradBtn>
-                      ) : purchased ? (
-                        <GradBtn className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm text-[#051d2e]">
-                          <Play className="w-4 h-4" fill={C.navy} /> Watch Now
-                        </GradBtn>
-                      ) : (
+                      {/* Buy button (if not purchased and not free) */}
+                      {video?.price > 0 && !purchased && (
                         <GradBtn
                           onClick={handleBuy}
                           disabled={checkingPurchase}
-                          className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm text-[#051d2e]"
+                          className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm text-[#051d2e] mr-2"
                         >
                           {checkingPurchase
                             ? <><Loader2 className="w-4 h-4 animate-spin" /> Checking…</>
@@ -415,6 +462,29 @@ export default function VideoDetail() {
                           }
                         </GradBtn>
                       )}
+                      
+                      {/* ── Reactions Bar (Replaced Watch Now) ── */}
+                      <div className="flex flex-wrap items-center gap-2">
+                        {REACTION_TYPES.map(r => {
+                          const isActive = activeReactions.includes(r.id)
+                          return (
+                            <button
+                              key={r.id}
+                              onClick={() => handleReact(r.id)}
+                              disabled={reacting}
+                              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all hover:-translate-y-0.5 hover:shadow-md disabled:opacity-70 disabled:hover:translate-y-0 ${isActive ? 'ring-2 ring-[#4DD0E1] ring-offset-1' : ''}`}
+                              style={{ 
+                                background: isActive ? 'rgba(77,208,225,0.15)' : 'rgba(255,255,255,0.9)', 
+                                border: '1px solid rgba(77,208,225,0.3)', 
+                                color: C.navy 
+                              }}
+                            >
+                              <span className="text-lg leading-none">{r.emoji}</span>
+                              <span className="font-bold text-sm">{reactions[r.id]?.toLocaleString() || 0}</span>
+                            </button>
+                          )
+                        })}
+                      </div>
                     </div>
 
                     {/* Save button */}
