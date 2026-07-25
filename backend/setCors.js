@@ -19,7 +19,7 @@ const run = async () => {
           {
             AllowedHeaders: ["*"],
             AllowedMethods: ["PUT", "POST", "GET", "HEAD", "DELETE"],
-            AllowedOrigins: ["http://localhost:5173", "http://localhost:4173"],
+            AllowedOrigins: ["http://localhost:5173", "http://localhost:4173", "https://arturee.com", "https://www.arturee.com"],
             ExposeHeaders: ["ETag"]
           }
         ]
