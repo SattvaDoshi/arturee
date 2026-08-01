@@ -13,10 +13,12 @@ import {
   IndianRupee,
   Briefcase,
   Bookmark,
+  Layout,
 } from "lucide-react";
 
 const navItems = [
   { label: "Overview",  icon: LayoutDashboard, to: "/admin" },
+  { label: "Landing Page", icon: Layout,       to: "/admin/landing" },
   { label: "Slider",    icon: MonitorPlay,     to: "/admin/slider" },
   { label: "Revenue",   icon: IndianRupee,     to: "/admin/revenue" },
   { label: "Videos",    icon: Film,            to: "/admin/videos" },

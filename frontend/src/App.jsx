@@ -41,6 +41,7 @@ import AdminSlider    from './pages/admin/SliderPage'
 import AdminRevenue   from './pages/admin/RevenuePage'
 import AdminApps      from './pages/admin/ApplicationsPage'
 import AdminGenres    from './pages/admin/GenresPage'
+import AdminLandingConfig from './pages/admin/LandingPageConfig'
 
 // ── Shared ────────────────────────────────────────────────
 import VideoDetail  from './pages/VideoDetail'
@@ -99,6 +100,7 @@ const App = () => {
 
                 {/* ── Admin (admin-only) ── */}
                 <Route path="/admin"           element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+                <Route path="/admin/landing"   element={<AdminRoute><AdminLandingConfig /></AdminRoute>} />
                 <Route path="/admin/videos"    element={<AdminRoute><AdminVideos /></AdminRoute>} />
                 <Route path="/admin/slider"    element={<AdminRoute><AdminSlider /></AdminRoute>} />
                 <Route path="/admin/revenue"   element={<AdminRoute><AdminRevenue /></AdminRoute>} />

@@ -11,6 +11,7 @@ const EMPTY_FORM = {
   bio:        '',
   genre:      '',
   avatarUrl:  '',
+  emoticonCount: 0,
   instagram:  '',
   twitter:    '',
   website:    '',
@@ -122,6 +123,13 @@ const ArtistFormModal = ({ initial, onClose, onSaved }) => {
               <input value={form.genre} onChange={set('genre')} placeholder="e.g. Jazz" className={inputCls} />
             </div>
             {imageUploadField('avatarUrl', 'Avatar URL')}
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-[10px] text-white/35 font-semibold uppercase tracking-widest mb-1">Emoticons ❤️ Count</label>
+              <input type="number" value={form.emoticonCount || 0} onChange={set('emoticonCount')} placeholder="0" className={inputCls} />
+            </div>
           </div>
 
           {/* Bio */}

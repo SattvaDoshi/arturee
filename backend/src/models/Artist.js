@@ -13,6 +13,7 @@ const artistSchema = new mongoose.Schema(
     },
     videoCount: { type: Number, default: 0 },
     followerCount: { type: Number, default: 0 },
+    emoticonCount: { type: Number, default: 0 },
     isVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
   },

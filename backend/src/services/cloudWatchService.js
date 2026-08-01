@@ -14,6 +14,8 @@ const NAMESPACE = awsConfig.cloudWatch.namespace
  * @param {number} value       default 1
  * @param {Record<string,string>} dimensions  e.g. { VideoId: '...' }
  */
+let warnedCloudWatchIAM = false
+
 export const emitMetric = async (metricName, value = 1, dimensions = {}) => {
   try {
     const dimensionList = Object.entries(dimensions).map(([Name, Value]) => ({
@@ -37,7 +39,21 @@ export const emitMetric = async (metricName, value = 1, dimensions = {}) => {
     )
   } catch (err) {
     // Non-fatal: log locally but never throw
-    console.error('[CloudWatch] Failed to emit metric', metricName, err.message)
+    const isIAMError =
+      err.name === 'AccessDenied' ||
+      err.name === 'AccessDeniedException' ||
+      err.message?.includes('not authorized') ||
+      err.message?.includes('AccessDenied')
+
+    if (isIAMError && !warnedCloudWatchIAM) {
+      warnedCloudWatchIAM = true
+      console.warn(
+        '[CloudWatch] IAM permission missing for PutMetricData (suppressing further CloudWatch metric warnings):',
+        err.message
+      )
+    } else if (!isIAMError) {
+      console.error('[CloudWatch] Failed to emit metric', metricName, err.message)
+    }
   }
 }
 

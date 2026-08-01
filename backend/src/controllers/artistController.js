@@ -39,7 +39,7 @@ export const updateArtist = asyncHandler(async (req, res) => {
   if (!artist) throw new ApiError(404, 'Artist not found.')
 
   const { instagram, twitter, website, socialLinks: sl, ...rest } = req.body
-  const allowed = ['name', 'bio', 'avatarUrl', 'genre', 'isVerified', 'isActive']
+  const allowed = ['name', 'bio', 'avatarUrl', 'genre', 'isVerified', 'isActive', 'emoticonCount', 'followerCount']
   allowed.forEach(f => { if (rest[f] !== undefined) artist[f] = rest[f] })
 
   // Merge flat fields OR nested socialLinks into the existing sub-object

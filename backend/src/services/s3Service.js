@@ -9,6 +9,7 @@ import {
   PutObjectCommand,
 } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+import { Upload } from '@aws-sdk/lib-storage'
 import s3Client from '../aws/s3Client.js'
 import awsConfig from '../config/awsConfig.js'
 import { logUploadError } from './cloudWatchService.js'
@@ -169,15 +170,22 @@ export const objectExists = async (s3Key) => {
  * @param {string} contentType
  */
 export const uploadFileBuffer = async (s3Key, buffer, contentType = 'video/mp4') => {
-  const cmd = new PutObjectCommand({
-    Bucket: BUCKET,
-    Key: s3Key,
-    Body: buffer,
-    ContentType: contentType,
-    ServerSideEncryption: 'AES256',
-    CacheControl: 'no-cache, no-store',
-    ContentDisposition: 'attachment',
+  const upload = new Upload({
+    client: s3Client,
+    params: {
+      Bucket: BUCKET,
+      Key: s3Key,
+      Body: buffer,
+      ContentType: contentType,
+      ServerSideEncryption: 'AES256',
+      CacheControl: 'no-cache, no-store',
+      ContentDisposition: 'attachment',
+    },
+    queueSize: 4, // Concurrent upload streams
+    partSize: 5 * 1024 * 1024, // 5 MB chunk size to prevent ENOBUFS socket overflow
+    leavePartsOnError: false,
   })
-  const response = await s3Client.send(cmd)
+
+  const response = await upload.done()
   return response
 }

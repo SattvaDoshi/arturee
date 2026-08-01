@@ -136,4 +136,10 @@ export const genreApi = {
   delete: (id) => api.delete(`/genres/${id}`),
 }
 
+// ── Landing Page Config ───────────────────────────────────────────────────
+export const landingConfigApi = {
+  get: () => api.get('/landing-config'),
+  update: (data) => api.put('/landing-config', data),
+}
+
 export default api
