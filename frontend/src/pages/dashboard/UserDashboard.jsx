@@ -24,7 +24,7 @@ const fmtViews = (n) => {
 }
 const fmtPrice = (price, currency) => {
   if (!price) return 'Free'
-  return `${currency === 'INR' ? '₹' : '$'}${price}`
+  return `${currency === 'INR' ? 'Rs. ' : '$'}${price}`
 }
 
 /* ─── tiny helpers ─────────────────────────────────────── */
@@ -300,7 +300,7 @@ export default function UserDashboard() {
   return (
     <UserLayout>
       {/* ══════════════ HERO CAROUSEL ══════════════ */}
-      <section className="relative w-full flex items-center overflow-hidden" style={{ minHeight: '92vh' }}>
+      <section className="relative w-full flex items-center overflow-hidden" style={{ minHeight: 'calc(100vh - 73px)' }}>
 
         {/* Loading state */}
         {loadingHero && (
@@ -329,7 +329,7 @@ export default function UserDashboard() {
         {/* Content */}
         {slide && (
           <div
-            className="relative z-10 w-full max-w-screen-2xl mx-auto px-5 sm:px-8 lg:px-14 pt-10 pb-16 md:pb-24"
+            className="relative z-10 w-full max-w-screen-2xl mx-auto px-5 sm:px-8 lg:px-14 pt-8 pb-16 md:pb-20"
             style={{
               opacity: animating ? 0 : 1,
               transform: animating
@@ -338,7 +338,7 @@ export default function UserDashboard() {
               transition: 'opacity 0.45s ease, transform 0.45s ease',
             }}
           >
-            <div className="max-w-2xl space-y-6">
+            <div className="max-w-2xl space-y-4 sm:space-y-5">
               {/* Badges */}
               <div className="flex flex-wrap items-center gap-2">
                 <span className="section-pill">
@@ -352,37 +352,37 @@ export default function UserDashboard() {
               </div>
 
               {/* Title */}
-              <h1 className="text-5xl sm:text-7xl md:text-8xl font-bold leading-[0.88] tracking-tighter text-[#f0fdfa]">
-                {slide.title.split(' ').slice(0, -1).join(' ')}<br />
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.08] tracking-tight text-[#f0fdfa] max-w-3xl line-clamp-2">
+                {slide.title.split(' ').slice(0, -1).join(' ')}{' '}
                 <GradText className="italic">{slide.title.split(' ').slice(-1)[0]}</GradText>
               </h1>
 
               {/* Description */}
-              <div className="bg-white/80 backdrop-blur-md rounded-2xl p-5 max-w-lg border border-[#4DD0E1]/20 shadow-lg">
-                <p className="text-sm md:text-base text-[#051d2e] leading-relaxed font-medium">
+              <div className="bg-white/80 backdrop-blur-md rounded-xl p-4 max-w-lg border border-[#4DD0E1]/20 shadow-lg">
+                <p className="text-xs md:text-sm text-[#051d2e] leading-relaxed font-medium line-clamp-3">
                   {slide.description || 'Watch this exclusive content on arturee.'}
                 </p>
               </div>
 
               {/* CTA */}
-              <div className="flex flex-wrap gap-3 pt-1">
+              <div className="flex flex-wrap items-center gap-3 pt-1">
                 <Link
                   to={`/video/${slide._id}`}
-                  className="flex items-center gap-2 px-7 py-3.5 md:px-9 md:py-4 rounded-xl font-bold text-[#051d2e] hover:scale-105 transition-all cyan-glow text-sm md:text-base"
+                  className="flex items-center gap-2 px-6 py-2.5 md:px-7 md:py-3 rounded-xl font-bold text-[#051d2e] hover:scale-105 transition-all cyan-glow text-sm md:text-base"
                   style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
                 >
                   <Play className="w-5 h-5" fill="#051d2e" /> Watch Now
                 </Link>
-                <button className="flex items-center gap-2 px-7 py-3.5 md:px-9 md:py-4 bg-white/80 text-[#051d2e] rounded-xl font-bold hover:bg-white transition border border-[#4DD0E1]/25 text-sm md:text-base backdrop-blur-sm">
+                <button className="flex items-center gap-2 px-6 py-2.5 md:px-7 md:py-3 bg-white/80 text-[#051d2e] rounded-xl font-bold hover:bg-white transition border border-[#4DD0E1]/25 text-sm md:text-base backdrop-blur-sm">
                   More Info
                 </button>
-                <button className="p-3.5 md:p-4 bg-white/80 text-[#051d2e] rounded-xl hover:bg-white transition border border-[#4DD0E1]/25 backdrop-blur-sm">
+                <button className="p-2.5 md:p-3 bg-white/80 text-[#051d2e] rounded-xl hover:bg-white transition border border-[#4DD0E1]/25 backdrop-blur-sm">
                   <Plus className="w-5 h-5" />
                 </button>
               </div>
 
               {/* Meta */}
-              <div className="flex flex-wrap items-center gap-5 text-xs md:text-sm text-[#f0fdfa]/80 font-medium">
+              <div className="flex flex-wrap items-center gap-5 text-xs text-[#f0fdfa]/80 font-medium">
                 <div className="flex items-center gap-1.5"><Users className="w-4 h-4 text-[#4DD0E1]" /><span>{fmtViews(slide.viewCount)}</span></div>
                 {slide.durationSeconds && (
                   <div className="flex items-center gap-1.5"><Clock className="w-4 h-4 text-[#4DD0E1]" /><span>{fmtDuration(slide.durationSeconds)} runtime</span></div>
@@ -394,7 +394,7 @@ export default function UserDashboard() {
 
         {/* Carousel controls */}
         {heroVideos.length > 1 && (
-          <div className="absolute bottom-6 left-0 right-0 z-20 flex items-center justify-center gap-4">
+          <div className="absolute bottom-4 left-0 right-0 z-20 flex items-center justify-center gap-4">
             <button onClick={prev} className="p-2 rounded-full bg-white/20 hover:bg-white/40 backdrop-blur-sm border border-white/20 text-white transition hover:scale-110" aria-label="Previous">
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -545,7 +545,7 @@ export default function UserDashboard() {
                       </div>
                     </div>
                     <h3 className="font-black text-sm text-[#051d2e] mb-0.5 truncate">{v.title || 'Untitled'}</h3>
-                    <p className="text-xs text-[#051d2e]/60">₹{(p.amountPaise / 100).toFixed(2)} • {new Date(p.completedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</p>
+                    <p className="text-xs text-[#051d2e]/60">Rs. {(p.amountPaise / 100).toFixed(2)} • {new Date(p.completedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</p>
                   </Link>
                 )
               })}

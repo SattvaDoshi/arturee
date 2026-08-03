@@ -14,9 +14,37 @@ import {
   Loader2,
   Compass,
   Upload,
+  Tag,
 } from 'lucide-react'
 import AdminLayout from '../../components/layout/AdminLayout'
 import { landingConfigApi, artistApi, genreApi, adminApi } from '../../api/index.js'
+
+const DEFAULT_PRICING_PLANS = [
+  {
+    label: 'Single Video',
+    price: 49,
+    save: '',
+    desc: 'Watch any single video on the platform with 2 streams included.',
+    highlight: false,
+    points: ['2 streams per video', 'HD quality streaming', 'Standard Rate', 'Instant access'],
+  },
+  {
+    label: 'Bundle of 2',
+    price: 89,
+    save: 'Save Rs. 9',
+    desc: 'Hand-pick 2 videos of your choice at a discounted bundle price.',
+    highlight: false,
+    points: ['Everything in Single', '2 videos of your choice', 'Discounted bundle price', 'HD quality streaming'],
+  },
+  {
+    label: 'Bundle of 3',
+    price: 129,
+    save: 'Save Rs. 18',
+    desc: 'Best value! Choose 3 videos and enjoy immersive storytelling.',
+    highlight: true,
+    points: ['Best Value bundle', '3 videos of your choice', 'Maximum savings', '4K + Dolby quality'],
+  },
+]
 
 const DEFAULT_DISCOVER_CARDS = [
   {
@@ -189,6 +217,16 @@ export default function LandingPageConfig() {
             ctaLink: fetchedConfig.discoverSection?.ctaLink || '/pricing',
             cards: normalizedDiscoverCards,
           },
+          pricingSection: {
+            headline: fetchedConfig.pricingSection?.headline || 'Plans & Pricing',
+            subheadline:
+              fetchedConfig.pricingSection?.subheadline ||
+              'Choose how you want to experience art — pay per video or bundle the pieces that move you.',
+            plans:
+              fetchedConfig.pricingSection?.plans && fetchedConfig.pricingSection.plans.length > 0
+                ? fetchedConfig.pricingSection.plans
+                : DEFAULT_PRICING_PLANS,
+          },
         })
       } catch (err) {
         console.error('Failed to load landing config:', err)
@@ -312,6 +350,90 @@ export default function LandingPageConfig() {
     })
   }
 
+  const updatePricingSection = (field, value) => {
+    setConfig((prev) => ({
+      ...prev,
+      pricingSection: {
+        ...prev.pricingSection,
+        [field]: value,
+      },
+    }))
+  }
+
+  const updatePricingCard = (index, field, value) => {
+    setConfig((prev) => {
+      const updatedPlans = [...(prev.pricingSection?.plans || DEFAULT_PRICING_PLANS)]
+      updatedPlans[index] = {
+        ...updatedPlans[index],
+        [field]: value,
+      }
+      return {
+        ...prev,
+        pricingSection: {
+          ...prev.pricingSection,
+          plans: updatedPlans,
+        },
+      }
+    })
+  }
+
+  const addPricingPoint = (planIndex) => {
+    setConfig((prev) => {
+      const updatedPlans = [...(prev.pricingSection?.plans || DEFAULT_PRICING_PLANS)]
+      const currentPoints = [...(updatedPlans[planIndex].points || [])]
+      currentPoints.push('New Feature Point')
+      updatedPlans[planIndex] = {
+        ...updatedPlans[planIndex],
+        points: currentPoints,
+      }
+      return {
+        ...prev,
+        pricingSection: {
+          ...prev.pricingSection,
+          plans: updatedPlans,
+        },
+      }
+    })
+  }
+
+  const updatePricingPoint = (planIndex, pointIndex, value) => {
+    setConfig((prev) => {
+      const updatedPlans = [...(prev.pricingSection?.plans || DEFAULT_PRICING_PLANS)]
+      const currentPoints = [...(updatedPlans[planIndex].points || [])]
+      currentPoints[pointIndex] = value
+      updatedPlans[planIndex] = {
+        ...updatedPlans[planIndex],
+        points: currentPoints,
+      }
+      return {
+        ...prev,
+        pricingSection: {
+          ...prev.pricingSection,
+          plans: updatedPlans,
+        },
+      }
+    })
+  }
+
+  const removePricingPoint = (planIndex, pointIndex) => {
+    setConfig((prev) => {
+      const updatedPlans = [...(prev.pricingSection?.plans || DEFAULT_PRICING_PLANS)]
+      const currentPoints = [...(updatedPlans[planIndex].points || [])]
+      currentPoints.splice(pointIndex, 1)
+      updatedPlans[planIndex] = {
+        ...updatedPlans[planIndex],
+        points: currentPoints,
+      }
+      return {
+        ...prev,
+        pricingSection: {
+          ...prev.pricingSection,
+          plans: updatedPlans,
+        },
+      }
+    })
+  }
+
   const handleSave = async () => {
     setSaving(true)
     setMessage(null)
@@ -330,6 +452,7 @@ export default function LandingPageConfig() {
         genrePage: config.genrePage,
         heroSection: config.heroSection,
         discoverSection: config.discoverSection,
+        pricingSection: config.pricingSection,
       }
 
       await landingConfigApi.update(payload)
@@ -433,7 +556,17 @@ export default function LandingPageConfig() {
             <Compass className="w-4 h-4" />
             <span>Exclusive Art (Discover Section)</span>
           </button>
-          
+          <button
+            onClick={() => setActiveTab('pricing')}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition ${
+              activeTab === 'pricing'
+                ? 'bg-linear-to-r from-[#4DD0E1] to-[#C0E863] text-[#051d2e] shadow-md'
+                : 'bg-white/5 text-white/70 hover:bg-white/10 hover:text-white'
+            }`}
+          >
+            <Tag className="w-4 h-4" />
+            <span>Pricing & Bundles Config</span>
+          </button>
         </div>
 
         {/* Loading Spinner */}
@@ -1069,6 +1202,187 @@ export default function LandingPageConfig() {
                         </div>
                       )
                     })}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ── TAB: PRICING & BUNDLES CONFIG ── */}
+            {activeTab === 'pricing' && (
+              <div className="space-y-8">
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-6 md:p-8 space-y-6">
+                  <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                    <div>
+                      <h2 className="text-xl font-bold text-white">Pricing & Bundles Section</h2>
+                      <p className="text-sm text-white/60">
+                        Edit price, text, badge, and feature points for Pay-Per-Video and Bundle plans.
+                      </p>
+                    </div>
+                    <button
+                      onClick={handleSave}
+                      disabled={saving}
+                      className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm bg-linear-to-r from-[#4DD0E1] to-[#C0E863] text-[#051d2e] shadow-lg hover:opacity-90 disabled:opacity-50 transition cursor-pointer"
+                    >
+                      {saving ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Save className="w-4 h-4" />
+                      )}
+                      <span>Save Changes</span>
+                    </button>
+                  </div>
+
+                  {/* Headline & Subheadline */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-xs font-mono uppercase text-white/70 mb-2">
+                        Section Headline
+                      </label>
+                      <input
+                        type="text"
+                        value={config.pricingSection?.headline || 'Plans & Pricing'}
+                        onChange={(e) => updatePricingSection('headline', e.target.value)}
+                        className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#4DD0E1]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-mono uppercase text-white/70 mb-2">
+                        Section Subheadline
+                      </label>
+                      <input
+                        type="text"
+                        value={config.pricingSection?.subheadline || ''}
+                        onChange={(e) => updatePricingSection('subheadline', e.target.value)}
+                        className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#4DD0E1]"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Pricing Cards */}
+                  <div className="space-y-6 mt-8">
+                    <h3 className="text-lg font-bold text-white border-t border-white/10 pt-6">
+                      Bundle & Pricing Plans (3 Cards)
+                    </h3>
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                      {(config.pricingSection?.plans || DEFAULT_PRICING_PLANS).map((plan, index) => (
+                        <div
+                          key={index}
+                          className="bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col justify-between space-y-4"
+                        >
+                          <div className="space-y-4">
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs font-mono font-bold uppercase tracking-widest text-[#C0E863]">
+                                Plan #{index + 1}
+                              </span>
+                              <label className="flex items-center gap-2 text-xs text-white/70 cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  checked={!!plan.highlight}
+                                  onChange={(e) => updatePricingCard(index, 'highlight', e.target.checked)}
+                                  className="rounded border-white/20 bg-white/5 text-[#4DD0E1] focus:ring-0 cursor-pointer"
+                                />
+                                Highlight as Best Value
+                              </label>
+                            </div>
+
+                            <div>
+                              <label className="block text-xs text-white/60 mb-1 font-mono">
+                                Label / Title
+                              </label>
+                              <input
+                                type="text"
+                                value={plan.label || ''}
+                                onChange={(e) => updatePricingCard(index, 'label', e.target.value)}
+                                placeholder="e.g. Single Video"
+                                className="w-full bg-white/5 border border-white/15 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-[#4DD0E1]"
+                              />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3">
+                              <div>
+                                <label className="block text-xs text-white/60 mb-1 font-mono">
+                                  Price (Rs.)
+                                </label>
+                                <input
+                                  type="number"
+                                  value={plan.price ?? 0}
+                                  onChange={(e) => updatePricingCard(index, 'price', Number(e.target.value))}
+                                  className="w-full bg-white/5 border border-white/15 rounded-xl px-3 py-2 text-white text-sm font-bold focus:outline-none focus:border-[#4DD0E1]"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-xs text-white/60 mb-1 font-mono">
+                                  Savings Badge text
+                                </label>
+                                <input
+                                  type="text"
+                                  value={plan.save || ''}
+                                  onChange={(e) => updatePricingCard(index, 'save', e.target.value)}
+                                  placeholder="e.g. Save Rs. 9"
+                                  className="w-full bg-white/5 border border-white/15 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-[#4DD0E1]"
+                                />
+                              </div>
+                            </div>
+
+                            <div>
+                              <label className="block text-xs text-white/60 mb-1 font-mono">
+                                Description Text
+                              </label>
+                              <textarea
+                                rows={2}
+                                value={plan.desc || ''}
+                                onChange={(e) => updatePricingCard(index, 'desc', e.target.value)}
+                                placeholder="Describe what this plan includes..."
+                                className="w-full bg-white/5 border border-white/15 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-[#4DD0E1] resize-none"
+                              />
+                            </div>
+
+                            {/* Editable Feature Points */}
+                            <div className="space-y-2 pt-2 border-t border-white/10">
+                              <div className="flex items-center justify-between">
+                                <label className="block text-xs font-mono uppercase text-white/70">
+                                  Feature Points
+                                </label>
+                                <button
+                                  type="button"
+                                  onClick={() => addPricingPoint(index)}
+                                  className="flex items-center gap-1 text-xs text-[#C0E863] hover:underline cursor-pointer"
+                                >
+                                  <Plus className="w-3.5 h-3.5" />
+                                  <span>Add Point</span>
+                                </button>
+                              </div>
+
+                              <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                                {(plan.points || []).map((point, pointIdx) => (
+                                  <div key={pointIdx} className="flex items-center gap-2">
+                                    <input
+                                      type="text"
+                                      value={point}
+                                      onChange={(e) =>
+                                        updatePricingPoint(index, pointIdx, e.target.value)
+                                      }
+                                      placeholder="Feature point text..."
+                                      className="flex-1 bg-white/5 border border-white/15 rounded-lg px-2.5 py-1.5 text-white text-xs focus:outline-none focus:border-[#4DD0E1]"
+                                    />
+                                    <button
+                                      type="button"
+                                      onClick={() => removePricingPoint(index, pointIdx)}
+                                      className="p-1.5 rounded-lg text-white/40 hover:text-red-400 hover:bg-white/5 transition cursor-pointer"
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                    </button>
+                                  </div>
+                                ))}
+                                {(plan.points || []).length === 0 && (
+                                  <p className="text-xs text-white/40 italic">No feature points added.</p>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>

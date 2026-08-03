@@ -1,6 +1,7 @@
-﻿import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../../components/layout/Navbar'
+import { landingConfigApi } from '../../api/index.js'
 
 const subscriptionPlans = [
   {
@@ -32,7 +33,7 @@ const subscriptionPlans = [
     label: 'Yearly',
     price: 1499,
     period: 'year',
-    tag: 'Best Value ┬╖ Save 37%',
+    tag: 'Best Value · Save 37%',
     description: 'Full immersion. A full year of art, yours.',
     features: ['Everything in 6 Months', 'Exclusive member badge', 'Artist Q&A sessions', '4K + Dolby quality'],
   },
@@ -42,7 +43,7 @@ const videoPrices = { single: 49, double: 89, triple: 129 }
 
 const sampleVideos = [
   { id: 1, title: 'Petals in the Rain', artist: 'Suchi Bansal', genre: 'Poetry', thumb: 'poetry' },
-  { id: 2, title: 'Inking Emotions ΓÇö Live', artist: 'Anjali Jain', genre: 'Spoken Word', thumb: 'spoken' },
+  { id: 2, title: 'Inking Emotions — Live', artist: 'Anjali Jain', genre: 'Spoken Word', thumb: 'spoken' },
   { id: 3, title: 'The Last Canvas', artist: 'Rohan Mehta', genre: 'Short Film', thumb: 'film' },
   { id: 4, title: 'Mitti ki Khushboo', artist: 'Priya Das', genre: 'Dance', thumb: 'dance' },
   { id: 5, title: 'Silence Speaks', artist: 'Kabir Nair', genre: 'Music', thumb: 'music' },
@@ -78,7 +79,7 @@ const termsItems = [
   {
     title: 'Cancellation Policy',
     content:
-      'You may cancel your subscription at any time from your Account Settings. Cancellation takes effect at the end of the current billing period ΓÇö you will not be charged again, but access continues until the period expires. No partial refunds are issued for unused days.',
+      'You may cancel your subscription at any time from your Account Settings. Cancellation takes effect at the end of the current billing period — you will not be charged again, but access continues until the period expires. No partial refunds are issued for unused days.',
   },
   {
     title: 'Content Availability',
@@ -88,14 +89,56 @@ const termsItems = [
   {
     title: 'Account & Sharing',
     content:
-      'Accounts are for individual use only. Sharing login credentials is prohibited. Concurrent streams are limited by plan ΓÇö monthly allows 1 stream, quarterly 2, and half-yearly/yearly allows 3 simultaneous streams.',
+      'Accounts are for individual use only. Sharing login credentials is prohibited. Concurrent streams are limited by plan — monthly allows 1 stream, quarterly 2, and half-yearly/yearly allows 3 simultaneous streams.',
   },
 ]
 
 const Pricing = () => {
   const navigate = useNavigate()
-  const [tab, setTab] = useState('subscribe')
+  const [tab, setTab] = useState('video')
   const [openTerm, setOpenTerm] = useState(null)
+  const [landingConfig, setLandingConfig] = useState(null)
+
+  useEffect(() => {
+    landingConfigApi
+      .get()
+      .then((res) => setLandingConfig(res.data?.data || null))
+      .catch(() => null)
+  }, [])
+
+  const pricingHeadline = landingConfig?.pricingSection?.headline || 'Plans & Pricing'
+  const pricingSubheadline =
+    landingConfig?.pricingSection?.subheadline ||
+    'Choose how you want to experience art — pay per video or bundle the pieces that move you.'
+  const activePlans =
+    landingConfig?.pricingSection?.plans && landingConfig.pricingSection.plans.length > 0
+      ? landingConfig.pricingSection.plans
+      : [
+          {
+            label: 'Single Video',
+            price: videoPrices.single,
+            save: null,
+            desc: 'Watch any single video on the platform with 2 streams included.',
+            highlight: false,
+            points: ['2 streams per video', 'HD quality streaming', 'Standard Rate', 'Instant access'],
+          },
+          {
+            label: 'Bundle of 2',
+            price: videoPrices.double,
+            save: `Save Rs. ${2 * videoPrices.single - videoPrices.double}`,
+            desc: 'Hand-pick 2 videos of your choice at a discounted bundle price.',
+            highlight: false,
+            points: ['Everything in Single', '2 videos of your choice', 'Discounted bundle price', 'HD quality streaming'],
+          },
+          {
+            label: 'Bundle of 3',
+            price: videoPrices.triple,
+            save: `Save Rs. ${3 * videoPrices.single - videoPrices.triple}`,
+            desc: 'Best value! Choose 3 videos and enjoy immersive storytelling.',
+            highlight: true,
+            points: ['Best Value bundle', '3 videos of your choice', 'Maximum savings', '4K + Dolby quality'],
+          },
+        ]
 
   return (
     <div>
@@ -107,7 +150,7 @@ const Pricing = () => {
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-lime/20 rounded-full blur-[120px] pointer-events-none" />
         <div className="relative z-10 max-w-3xl mx-auto space-y-5">
           <span className="inline-block font-mono text-[10px] uppercase tracking-[0.5em] text-navy/40">
-            Plans & Pricing
+            {pricingHeadline}
           </span>
           <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-navy leading-tight">
             Nourish Your{' '}
@@ -116,9 +159,10 @@ const Pricing = () => {
             </span>
           </h1>
           <p className="text-lg text-navy/60 max-w-xl mx-auto leading-relaxed">
-            Choose how you want to experience art ΓÇö a full subscription feast, or hand-pick the pieces that move you.
+            {pricingSubheadline}
           </p>
-          {/* Tab Toggle */}
+          {/* TAB TOGGLE: Subscription commented out for now, keep pay per video active */}
+          {/*
           <div className="inline-flex bg-white border border-primary/20 rounded-2xl p-1.5 shadow-sm mt-4">
             <button
               onClick={() => setTab('subscribe')}
@@ -141,11 +185,13 @@ const Pricing = () => {
               Bundle
             </button>
           </div>
+          */}
         </div>
       </div>
 
       <div className="px-6 lg:px-20 pb-20">
-        {/* ΓöÇΓöÇ SUBSCRIPTION PLANS ΓöÇΓöÇ */}
+        {/* SUBSCRIPTION PLANS (commented out for future use) */}
+        {/*
         {tab === 'subscribe' && (
           <div className="max-w-[1200px] mx-auto">
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
@@ -175,7 +221,7 @@ const Pricing = () => {
                     </p>
                     <div className="flex items-end gap-1">
                       <span className={`text-4xl font-black ${plan.highlight ? 'text-white' : 'text-navy'}`}>
-                        Γé╣{plan.price.toLocaleString('en-IN')}
+                        Rs. {plan.price.toLocaleString('en-IN')}
                       </span>
                       <span className={`text-sm mb-1.5 ${plan.highlight ? 'text-white/60' : 'text-navy/40'}`}>
                         / {plan.period}
@@ -188,7 +234,7 @@ const Pricing = () => {
                   <ul className="space-y-2.5 mb-8 flex-1">
                     {plan.features.map((f) => (
                       <li key={f} className="flex items-start gap-2.5 text-sm">
-                        <span className={`mt-0.5 text-base ${plan.highlight ? 'text-lime' : 'text-primary'}`}>Γ£ô</span>
+                        <span className={`mt-0.5 text-base ${plan.highlight ? 'text-lime' : 'text-primary'}`}>✓</span>
                         <span className={plan.highlight ? 'text-white/80' : 'text-navy/70'}>{f}</span>
                       </li>
                     ))}
@@ -207,46 +253,77 @@ const Pricing = () => {
               ))}
             </div>
 
-            {/* Subscription note */}
             <p className="text-center text-navy/40 text-xs mt-6 font-mono">
-              All prices in Indian Rupees (INR) ┬╖ GST applicable ┬╖ Auto-renews unless cancelled
+              All prices in Indian Rupees (INR) · GST applicable · Auto-renews unless cancelled
             </p>
           </div>
         )}
+        */}
 
-        {/* ΓöÇΓöÇ Bundle ΓöÇΓöÇ */}
+        {/* PAY PER VIDEO & BUNDLES */}
         {tab === 'video' && (
-          <div className="max-w-[1200px] mx-auto">
-            {/* Bundle pricing info */}
-            <div className="flex flex-col sm:flex-row justify-center gap-4 mb-10">
-              {[
-                { count: 1, label: 'Single Video', price: videoPrices.single, save: null },
-                { count: 2, label: 'Bundle of 2', price: videoPrices.double, save: `Save Γé╣${2 * videoPrices.single - videoPrices.double}` },
-                { count: 3, label: 'Bundle of 3', price: videoPrices.triple, save: `Save Γé╣${3 * videoPrices.single - videoPrices.triple}` },
-              ].map((tier) => (
+          <div className="max-w-[1100px] mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+              {activePlans.map((tier, idx) => (
                 <div
-                  key={tier.count}
+                  key={idx}
                   onClick={() => navigate('/checkout', { state: { type: 'video', plan: tier.label, price: tier.price } })}
-                  className="flex-1 max-w-xs bg-white border border-primary/20 rounded-2xl p-5 text-center shadow-sm cursor-pointer transition-transform hover:-translate-y-2 hover:shadow-lg"
+                  className={`relative flex flex-col rounded-3xl border p-8 text-center cursor-pointer transition-all duration-300 ${
+                    tier.highlight
+                      ? 'bg-navy text-white border-navy shadow-2xl scale-105'
+                      : 'bg-white border-primary/20 shadow-md hover:shadow-xl hover:border-primary/50 hover:-translate-y-2'
+                  }`}
                 >
-                  <p className="text-navy/40 font-mono text-[10px] uppercase tracking-widest mb-1">{tier.label}</p>
-                  <p className="text-3xl font-black text-navy">Γé╣{tier.price}</p>
                   {tier.save && (
-                    <span className="inline-block mt-2 px-3 py-0.5 bg-lime/30 text-navy text-xs font-semibold rounded-full">
+                    <span
+                      className={`absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold whitespace-nowrap ${
+                        tier.highlight ? 'bg-lime text-navy' : 'bg-primary/15 text-primary border border-primary/30'
+                      }`}
+                    >
                       {tier.save}
                     </span>
                   )}
+                  <p className={`font-mono text-xs uppercase tracking-widest mb-2 font-bold ${tier.highlight ? 'text-lime' : 'text-primary'}`}>
+                    {tier.label}
+                  </p>
+                  <div className="my-4 flex items-end justify-center gap-1">
+                    <span className={`text-4xl font-black ${tier.highlight ? 'text-white' : 'text-navy'}`}>
+                      Rs. {tier.price}
+                    </span>
+                  </div>
+                  <p className={`text-sm mt-3 leading-relaxed ${tier.highlight ? 'text-white/70' : 'text-navy/60'}`}>
+                    {tier.desc}
+                  </p>
+                  {tier.points && tier.points.length > 0 && (
+                    <ul className="space-y-2.5 my-6 text-left flex-1">
+                      {tier.points.map((pt, pIdx) => (
+                        <li key={pIdx} className="flex items-start gap-2.5 text-sm">
+                          <span className={`mt-0.5 text-base font-bold ${tier.highlight ? 'text-lime' : 'text-primary'}`}>✓</span>
+                          <span className={tier.highlight ? 'text-white/80' : 'text-navy/70'}>{pt}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  <button
+                    className={`w-full mt-6 py-3.5 rounded-2xl font-bold text-sm transition-all duration-200 ${
+                      tier.highlight
+                        ? 'bg-lime text-navy hover:bg-[#a8d356]'
+                        : 'bg-linear-to-r from-primary to-teal text-white hover:shadow-lg hover:shadow-primary/30'
+                    }`}
+                  >
+                    Get Started
+                  </button>
                 </div>
               ))}
             </div>
 
             <p className="text-center text-navy/40 text-xs mt-6 font-mono">
-              All prices in Indian Rupees (INR) ┬╖ GST applicable ┬╖ Per-purchase 2-view limit applies
+              All prices in Indian Rupees (INR) · GST applicable · Per-purchase 2-view limit applies
             </p>
           </div>
         )}
 
-        {/* ΓöÇΓöÇ TERMS & CONDITIONS ΓöÇΓöÇ */}
+        {/* TERMS & CONDITIONS */}
         <div className="max-w-[900px] mx-auto mt-24">
           <div className="text-center mb-10 space-y-4">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-navy">
