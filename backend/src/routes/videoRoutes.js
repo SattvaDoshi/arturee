@@ -17,10 +17,10 @@ import {
   reactToVideo,
 } from '../controllers/videoController.js'
 
-// Multer: keep the file in memory (buffer), limit 2 GB
+// Multer: keep the file in memory (buffer), unlimited file size
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 2 * 1024 * 1024 * 1024 }, // 2 GB
+  limits: { fileSize: Infinity }, // Unlimited file size
   fileFilter: (req, file, cb) => {
     if (file.mimetype.startsWith('video/')) cb(null, true)
     else cb(new Error('Only video files are allowed'))
