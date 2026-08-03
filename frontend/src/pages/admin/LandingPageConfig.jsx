@@ -12,16 +12,62 @@ import {
   Check,
   AlertCircle,
   Loader2,
+  Compass,
+  Upload,
 } from 'lucide-react'
 import AdminLayout from '../../components/layout/AdminLayout'
-import { landingConfigApi, artistApi, genreApi } from '../../api/index.js'
+import { landingConfigApi, artistApi, genreApi, adminApi } from '../../api/index.js'
+
+const DEFAULT_DISCOVER_CARDS = [
+  {
+    title: 'Visual Symphony',
+    subtitle: '',
+    imageUrl:
+      'https://lh3.googleusercontent.com/aida-public/AB6AXuBnsgMc-9vWB2jVZnNY9OxoK8_BaZASds2u3vuoZZc4O7X0MDZWge7YPEJtPFWKGKcOK9n8fdj7q_tvvKjH2PIbS8sG1Rh3vDSk1TVEbhDVGK7u0LzC1JQLs6sPuTfmhUgDFENXG_haHS5GFKfnpXrpGLQOsFhHBaMxfIYhahDCScBhiD6VnLxXG9vvOAKh0kEvytrJhTXy5GHTF1QV8jVz5F5UQrBHINz-gtU7ujs1LMASn9d9VGc0bA9oKxl_LQt3M84YGgbN--4',
+    tag: 'Featured Premiere',
+    link: '/pricing',
+  },
+  {
+    title: 'Digital Renaissance',
+    subtitle: 'Original Series • 8 Episodes',
+    imageUrl:
+      'https://lh3.googleusercontent.com/aida-public/AB6AXuCt-jEXc91uTeJMaVK6zjnOMFJKCGus_B1r6AYlGDj7_wlxzJJBj_lRGPAWkyiE4Qr7cD4sfnnIdlZ3bSfgEuHe89crQEMsg3-ReTjP-VsU7nFrMufroLvl2bb7Hz5wWv1HzpQ_PZVZ_NebgzWxa_pBZpZLxR2Gpg8fOVsTWb9266HoYO5I924k2u04SvPfegjaO3GWO6B8EPlCUe2h44GXeTJD8Xeer3p1eV5E31cIXxxzHmgt5I0Sx4Ny_RKL1i8NICHTI6242mQ',
+    tag: 'Trending',
+    link: '/pricing',
+  },
+  {
+    title: 'The Beat Lab',
+    subtitle: 'Documentary • Feature Film',
+    imageUrl:
+      'https://lh3.googleusercontent.com/aida-public/AB6AXuDORGisarDYAqiHhwqXhYY4WJNNlgj2-xTq1FnVgjAhSlFDLWIHSnN0BTssUzt-B3SegXY1P0OTnOLyOPsxsBP3HcUPad0uxdr7a3D5jEV2kEvyNbdgDyE4z8D4lnNshop8mrxEwEmvktNDOZq_7VYRiuDS-LNg9xnqAABIzCrNeTEPaFezdoe_QKqILe1LWPMYt8AXrdeSvSsbottdWIGtzjVO4KmsTHdxx8rB-u3hnWjRXN0FnFfTts5w-JYkpsSh_Q1C6LSR3Yg',
+    tag: '',
+    link: '/pricing',
+  },
+  {
+    title: 'Vivid Sessions',
+    subtitle: 'Live Sessions • Weekly',
+    imageUrl:
+      'https://lh3.googleusercontent.com/aida-public/AB6AXuBSlu6MXincC_nuFxgb0-Qvvi98L2ihaUkswQOo-vb-lFvwESZwA-LdRVspW60Iny8RYTUaL4Ja1TMJ5JeFLL8V3SoUsgPHbo_goFB2AYNXyH1LExdnnkRSudA47pH8kPDDUHrFsLZDQ4AzPU98TYnGaWvPk4vRPLXdiyLiz15XJoDcjwmTc0hdzANZI83gpdb0XODPeJxofCLh9C_EenN5SJJsfR56_URLhCtCsiEWzYSKMLbTr3vs_cU9hGtU8mPKrldjwSdeMRo',
+    tag: '',
+    link: '/pricing',
+  },
+  {
+    title: 'Neon Pulse',
+    subtitle: '',
+    imageUrl:
+      'https://lh3.googleusercontent.com/aida-public/AB6AXuCsy8ybTozKR1HiRFdBhwUpfnIGozYNMfABlXdQSgfAjiMjlUC3_inSVNVMv0vf3VQy0tt5e39uzqccD28xR9aQjOTVCj1NBgt-KYcyYBysCMcUCR7RGxqHpPugUXfq18gRtF8JPVi6-lR_Fd7jsZlWfWVtAeB2YDeWTObwihEy4BFEbO5hckAKWe7z4Eo36D2eg2oIiitpulF8UxpA6mzZg9djheSNosdv_VdsKLChme6M28deuo6FmJKD7T5k3fPmH9h7PHjz_e8',
+    tag: '',
+    link: '/pricing',
+  },
+]
 
 export default function LandingPageConfig() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState(null)
 
-  const [activeTab, setActiveTab] = useState('artists') // 'artists' | 'genres' | 'hero'
+  const [activeTab, setActiveTab] = useState('artists') // 'artists' | 'genres' | 'discover' | 'hero'
+  const [uploadingDiscoverIndex, setUploadingDiscoverIndex] = useState(null)
 
   const [allArtists, setAllArtists] = useState([])
   const [allGenres, setAllGenres] = useState([])
@@ -47,6 +93,13 @@ export default function LandingPageConfig() {
         'Discover premium spoken word, poetry, and storytelling performances.',
       ctaButtonText: 'Explore Artists',
       ctaButtonLink: '/artists',
+    },
+    discoverSection: {
+      headline: 'Exclusive Art',
+      subheadline: 'Art : Anywhere and Everywhere',
+      ctaText: 'View All',
+      ctaLink: '/pricing',
+      cards: DEFAULT_DISCOVER_CARDS,
     },
   })
 
@@ -89,6 +142,11 @@ export default function LandingPageConfig() {
           (g) => g._id || g
         )
 
+        const normalizedDiscoverCards =
+          fetchedConfig.discoverSection?.cards?.length > 0
+            ? fetchedConfig.discoverSection.cards
+            : DEFAULT_DISCOVER_CARDS
+
         setConfig({
           artistPage: {
             headline: fetchedConfig.artistPage?.headline || 'The Artists',
@@ -121,6 +179,15 @@ export default function LandingPageConfig() {
               fetchedConfig.heroSection?.ctaButtonText || 'Explore Artists',
             ctaButtonLink:
               fetchedConfig.heroSection?.ctaButtonLink || '/artists',
+          },
+          discoverSection: {
+            headline: fetchedConfig.discoverSection?.headline || 'Exclusive Art',
+            subheadline:
+              fetchedConfig.discoverSection?.subheadline ||
+              'Art : Anywhere and Everywhere',
+            ctaText: fetchedConfig.discoverSection?.ctaText || 'View All',
+            ctaLink: fetchedConfig.discoverSection?.ctaLink || '/pricing',
+            cards: normalizedDiscoverCards,
           },
         })
       } catch (err) {
@@ -211,6 +278,40 @@ export default function LandingPageConfig() {
     })
   }
 
+  // Discover Section operations
+  const handleDiscoverImageUpload = async (index, file) => {
+    if (!file) return
+    setUploadingDiscoverIndex(index)
+    try {
+      const formData = new FormData()
+      formData.append('image', file)
+      const res = await adminApi.uploadImage(formData)
+      if (res.data?.data?.url) {
+        updateDiscoverCard(index, 'imageUrl', res.data.data.url)
+      }
+    } catch (err) {
+      alert('Failed to upload image')
+      console.error(err)
+    } finally {
+      setUploadingDiscoverIndex(null)
+    }
+  }
+
+  const updateDiscoverCard = (index, field, value) => {
+    setConfig((prev) => {
+      const updated = (prev.discoverSection?.cards || DEFAULT_DISCOVER_CARDS).map((c, idx) =>
+        idx === index ? { ...c, [field]: value } : c
+      )
+      return {
+        ...prev,
+        discoverSection: {
+          ...prev.discoverSection,
+          cards: updated,
+        },
+      }
+    })
+  }
+
   const handleSave = async () => {
     setSaving(true)
     setMessage(null)
@@ -228,6 +329,7 @@ export default function LandingPageConfig() {
         },
         genrePage: config.genrePage,
         heroSection: config.heroSection,
+        discoverSection: config.discoverSection,
       }
 
       await landingConfigApi.update(payload)
@@ -319,6 +421,17 @@ export default function LandingPageConfig() {
           >
             <Bookmark className="w-4 h-4" />
             <span>Genres Page Config</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('discover')}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition ${
+              activeTab === 'discover'
+                ? 'bg-linear-to-r from-[#4DD0E1] to-[#C0E863] text-[#051d2e] shadow-md'
+                : 'bg-white/5 text-white/70 hover:bg-white/10 hover:text-white'
+            }`}
+          >
+            <Compass className="w-4 h-4" />
+            <span>Exclusive Art (Discover Section)</span>
           </button>
           <button
             onClick={() => setActiveTab('hero')}
@@ -693,6 +806,277 @@ export default function LandingPageConfig() {
                           </div>
                           <span className="text-sm truncate">{genre.name}</span>
                         </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ── TAB: EXCLUSIVE ART (DISCOVER SECTION) ── */}
+            {activeTab === 'discover' && (
+              <div className="space-y-8 animate-in fade-in duration-300">
+                {/* Headline / Subheadline / CTA Button Text / CTA Link */}
+                <div className="bg-white/5 rounded-3xl p-6 border border-white/10 space-y-6">
+                  <div>
+                    <h2 className="text-xl font-black text-white">
+                      1. Exclusive Art Section Header & CTA Link
+                    </h2>
+                    <p className="text-white/60 text-xs mt-1">
+                      Customize the section title, subtitle, and the top-right "View All" button link on the homepage.
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-xs font-mono uppercase text-white/60 mb-2">
+                        Section Headline
+                      </label>
+                      <input
+                        type="text"
+                        value={config.discoverSection?.headline || ''}
+                        onChange={(e) =>
+                          setConfig((prev) => ({
+                            ...prev,
+                            discoverSection: {
+                              ...prev.discoverSection,
+                              headline: e.target.value,
+                            },
+                          }))
+                        }
+                        className="w-full bg-[#071523] border border-white/20 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#4DD0E1]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-mono uppercase text-white/60 mb-2">
+                        Section Subtitle
+                      </label>
+                      <input
+                        type="text"
+                        value={config.discoverSection?.subheadline || ''}
+                        onChange={(e) =>
+                          setConfig((prev) => ({
+                            ...prev,
+                            discoverSection: {
+                              ...prev.discoverSection,
+                              subheadline: e.target.value,
+                            },
+                          }))
+                        }
+                        className="w-full bg-[#071523] border border-white/20 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#4DD0E1]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-mono uppercase text-white/60 mb-2">
+                        CTA Button Text
+                      </label>
+                      <input
+                        type="text"
+                        value={config.discoverSection?.ctaText || ''}
+                        onChange={(e) =>
+                          setConfig((prev) => ({
+                            ...prev,
+                            discoverSection: {
+                              ...prev.discoverSection,
+                              ctaText: e.target.value,
+                            },
+                          }))
+                        }
+                        className="w-full bg-[#071523] border border-white/20 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#4DD0E1]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-mono uppercase text-white/60 mb-2">
+                        CTA Button Link (Redirect URL)
+                      </label>
+                      <input
+                        type="text"
+                        value={config.discoverSection?.ctaLink || ''}
+                        onChange={(e) =>
+                          setConfig((prev) => ({
+                            ...prev,
+                            discoverSection: {
+                              ...prev.discoverSection,
+                              ctaLink: e.target.value,
+                            },
+                          }))
+                        }
+                        className="w-full bg-[#071523] border border-white/20 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#4DD0E1]"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 5 Exclusive Art Cards Editor */}
+                <div className="bg-white/5 rounded-3xl p-6 border border-white/10 space-y-6">
+                  <div>
+                    <h2 className="text-xl font-black text-white">
+                      2. Exclusive Art Grid Cards (5 Cards)
+                    </h2>
+                    <p className="text-white/60 text-xs mt-1">
+                      Customize the image, title, badge tag, optional subtitle, and redirection link for each of the 5 cards.
+                    </p>
+                  </div>
+
+                  <div className="space-y-6">
+                    {(config.discoverSection?.cards || DEFAULT_DISCOVER_CARDS).map((card, idx) => {
+                      const labels = [
+                        'Card #1 — Large Featured Hero Card (2x2 Grid Size - Left)',
+                        'Card #2 — Tall Center Card (1x3 Grid Size - Center)',
+                        'Card #3 — Top-Right Card (1x2 Grid Size)',
+                        'Card #4 — Middle-Right Card (1x2 Grid Size)',
+                        'Card #5 — Bottom-Right Small Card (1x1 Grid Size)',
+                      ]
+                      const label = labels[idx] || `Card #${idx + 1}`
+
+                      return (
+                        <div
+                          key={idx}
+                          className="bg-white/5 rounded-2xl p-5 border border-white/10 space-y-4"
+                        >
+                          <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                            <h3 className="font-bold text-sm text-[#4DD0E1]">
+                              {label}
+                            </h3>
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {/* Inputs */}
+                            <div className="md:col-span-2 space-y-4">
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                  <label className="block text-xs font-mono uppercase text-white/60 mb-1">
+                                    Card Title
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={card.title || ''}
+                                    onChange={(e) =>
+                                      updateDiscoverCard(idx, 'title', e.target.value)
+                                    }
+                                    placeholder="e.g. Visual Symphony"
+                                    className="w-full bg-[#071523] border border-white/20 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-[#4DD0E1]"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-xs font-mono uppercase text-white/60 mb-1">
+                                    Badge / Tag Text
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={card.tag || ''}
+                                    onChange={(e) =>
+                                      updateDiscoverCard(idx, 'tag', e.target.value)
+                                    }
+                                    placeholder="e.g. FEATURED PREMIERE"
+                                    className="w-full bg-[#071523] border border-white/20 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-[#4DD0E1]"
+                                  />
+                                </div>
+                              </div>
+
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                  <label className="block text-xs font-mono uppercase text-white/60 mb-1">
+                                    Subtitle (Optional)
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={card.subtitle || ''}
+                                    onChange={(e) =>
+                                      updateDiscoverCard(idx, 'subtitle', e.target.value)
+                                    }
+                                    placeholder="e.g. Original Series • 8 Episodes"
+                                    className="w-full bg-[#071523] border border-white/20 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-[#4DD0E1]"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-xs font-mono uppercase text-white/60 mb-1">
+                                    Redirect Link URL
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={card.link || ''}
+                                    onChange={(e) =>
+                                      updateDiscoverCard(idx, 'link', e.target.value)
+                                    }
+                                    placeholder="e.g. /pricing or /artists"
+                                    className="w-full bg-[#071523] border border-white/20 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-[#4DD0E1]"
+                                  />
+                                </div>
+                              </div>
+
+                              <div>
+                                <label className="block text-xs font-mono uppercase text-white/60 mb-1">
+                                  Image URL (Or Upload Image)
+                                </label>
+                                <div className="flex items-center gap-2">
+                                  <input
+                                    type="text"
+                                    value={card.imageUrl || ''}
+                                    onChange={(e) =>
+                                      updateDiscoverCard(idx, 'imageUrl', e.target.value)
+                                    }
+                                    placeholder="https://..."
+                                    className="w-full bg-[#071523] border border-white/20 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-[#4DD0E1]"
+                                  />
+                                  <label
+                                    className={`shrink-0 cursor-pointer px-4 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 ${
+                                      uploadingDiscoverIndex === idx
+                                        ? 'opacity-50 pointer-events-none bg-white/10'
+                                        : 'bg-[#4DD0E1]/20 text-[#4DD0E1] hover:bg-[#4DD0E1] hover:text-[#051d2e]'
+                                    }`}
+                                  >
+                                    {uploadingDiscoverIndex === idx ? (
+                                      <Loader2 className="w-4 h-4 animate-spin" />
+                                    ) : (
+                                      <Upload className="w-4 h-4" />
+                                    )}
+                                    <span>
+                                      {uploadingDiscoverIndex === idx
+                                        ? 'Uploading...'
+                                        : 'Upload'}
+                                    </span>
+                                    <input
+                                      type="file"
+                                      accept="image/*"
+                                      className="hidden"
+                                      onChange={(e) =>
+                                        handleDiscoverImageUpload(
+                                          idx,
+                                          e.target.files[0]
+                                        )
+                                      }
+                                    />
+                                  </label>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Preview Thumbnail */}
+                            <div className="flex flex-col items-center justify-center bg-black/30 rounded-xl p-3 border border-white/10">
+                              <span className="text-[10px] text-white/40 uppercase font-mono mb-2">
+                                Preview
+                              </span>
+                              {card.imageUrl ? (
+                                <div className="relative w-full h-32 rounded-lg overflow-hidden border border-white/20 shadow-md">
+                                  <img
+                                    src={card.imageUrl}
+                                    alt={card.title}
+                                    className="w-full h-full object-cover"
+                                  />
+                                  {card.tag && (
+                                    <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full text-[9px] font-bold bg-primary text-white shadow">
+                                      {card.tag}
+                                    </span>
+                                  )}
+                                </div>
+                              ) : (
+                                <div className="w-full h-32 rounded-lg bg-white/5 flex items-center justify-center text-white/30 text-xs">
+                                  No image set
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
                       )
                     })}
                   </div>

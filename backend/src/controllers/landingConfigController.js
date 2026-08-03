@@ -63,7 +63,7 @@ export const getLandingConfig = asyncHandler(async (req, res) => {
 })
 
 export const updateLandingConfig = asyncHandler(async (req, res) => {
-  const { artistPage, genrePage, heroSection } = req.body
+  const { artistPage, genrePage, heroSection, discoverSection } = req.body
 
   if (artistPage && Array.isArray(artistPage.artistCards)) {
     if (artistPage.artistCards.length > 8) {
@@ -75,6 +75,7 @@ export const updateLandingConfig = asyncHandler(async (req, res) => {
   if (artistPage) updateFields.artistPage = artistPage
   if (genrePage) updateFields.genrePage = genrePage
   if (heroSection) updateFields.heroSection = heroSection
+  if (discoverSection) updateFields.discoverSection = discoverSection
 
   let config = await LandingConfig.findOneAndUpdate(
     { key: 'default' },
