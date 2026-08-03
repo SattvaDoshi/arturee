@@ -17,6 +17,7 @@ const JoinArtistModal = () => {
   })
   
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   if (!isModalOpen) return null
 
@@ -27,8 +28,6 @@ const JoinArtistModal = () => {
       [name]: type === 'checkbox' ? checked : value,
     }))
   }
-
-  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -50,6 +49,7 @@ const JoinArtistModal = () => {
     // or just reset immediately
     setTimeout(() => {
       setIsSubmitted(false)
+      setIsSubmitting(false)
       setFormData({
         name: '',
         phone: '',

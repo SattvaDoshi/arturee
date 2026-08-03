@@ -433,17 +433,7 @@ export default function LandingPageConfig() {
             <Compass className="w-4 h-4" />
             <span>Exclusive Art (Discover Section)</span>
           </button>
-          <button
-            onClick={() => setActiveTab('hero')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition ${
-              activeTab === 'hero'
-                ? 'bg-linear-to-r from-[#4DD0E1] to-[#C0E863] text-[#051d2e] shadow-md'
-                : 'bg-white/5 text-white/70 hover:bg-white/10 hover:text-white'
-            }`}
-          >
-            <Sparkles className="w-4 h-4" />
-            <span>Hero & General Config</span>
-          </button>
+          
         </div>
 
         {/* Loading Spinner */}
@@ -1084,99 +1074,6 @@ export default function LandingPageConfig() {
               </div>
             )}
 
-            {/* ── TAB 3: HERO & GENERAL CONFIG ── */}
-            {activeTab === 'hero' && (
-              <div className="space-y-8 animate-in fade-in duration-300">
-                <div className="bg-white/5 rounded-3xl p-6 border border-white/10 space-y-6">
-                  <div>
-                    <h2 className="text-xl font-black text-white">
-                      1. Main Landing Hero Banner
-                    </h2>
-                    <p className="text-white/60 text-xs mt-1">
-                      Customize the primary headline and call to action on your main website landing page.
-                    </p>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-xs font-mono uppercase text-white/60 mb-2">
-                        Hero Title
-                      </label>
-                      <input
-                        type="text"
-                        value={config.heroSection.title || ''}
-                        onChange={(e) =>
-                          setConfig((prev) => ({
-                            ...prev,
-                            heroSection: {
-                              ...prev.heroSection,
-                              title: e.target.value,
-                            },
-                          }))
-                        }
-                        className="w-full bg-[#071523] border border-white/20 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#4DD0E1]"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-mono uppercase text-white/60 mb-2">
-                        Hero Subtitle
-                      </label>
-                      <input
-                        type="text"
-                        value={config.heroSection.subtitle || ''}
-                        onChange={(e) =>
-                          setConfig((prev) => ({
-                            ...prev,
-                            heroSection: {
-                              ...prev.heroSection,
-                              subtitle: e.target.value,
-                            },
-                          }))
-                        }
-                        className="w-full bg-[#071523] border border-white/20 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#4DD0E1]"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-mono uppercase text-white/60 mb-2">
-                        CTA Button Text
-                      </label>
-                      <input
-                        type="text"
-                        value={config.heroSection.ctaButtonText || ''}
-                        onChange={(e) =>
-                          setConfig((prev) => ({
-                            ...prev,
-                            heroSection: {
-                              ...prev.heroSection,
-                              ctaButtonText: e.target.value,
-                            },
-                          }))
-                        }
-                        className="w-full bg-[#071523] border border-white/20 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#4DD0E1]"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-mono uppercase text-white/60 mb-2">
-                        CTA Button Link
-                      </label>
-                      <input
-                        type="text"
-                        value={config.heroSection.ctaButtonLink || ''}
-                        onChange={(e) =>
-                          setConfig((prev) => ({
-                            ...prev,
-                            heroSection: {
-                              ...prev.heroSection,
-                              ctaButtonLink: e.target.value,
-                            },
-                          }))
-                        }
-                        className="w-full bg-[#071523] border border-white/20 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#4DD0E1]"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         )}
       </div>

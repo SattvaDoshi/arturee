@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import Navbar from '../../components/layout/Navbar'
 import { useArtistModal } from '../../context/ArtistModalContext'
 import { artistApi, genreApi, landingConfigApi } from '../../api'
@@ -57,6 +57,7 @@ const getArtistTag = (artist, index, customTag, customColor) => {
 }
 
 const Artist = () => {
+  const navigate = useNavigate()
   const [artists, setArtists] = useState([])
   const [genres, setGenres] = useState([])
   const [landingConfig, setLandingConfig] = useState(null)
@@ -318,9 +319,7 @@ const Artist = () => {
                   return (
                     <div
                       key={artistId}
-                      onClick={() =>
-                        setSelected(isSelected ? null : artistId)
-                      }
+                      onClick={() => navigate(`/artist/${artistId}`)}
                       className={`group cursor-pointer bg-white rounded-3xl border overflow-hidden transition-all duration-300 shadow-md block ${
                         isSelected
                           ? 'border-primary shadow-xl shadow-primary/15 scale-[1.02]'

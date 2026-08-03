@@ -21,6 +21,9 @@ import { mediaConvertWebhookHandler } from './workers/mediaConvertWebhook.js'
 
 const app = express()
 
+// Trust reverse proxy (Nginx / ALB) so express-rate-limit correctly resolves client IPs from X-Forwarded-For
+app.set('trust proxy', 1)
+
 // ── Request Logger (MUST be first) ───────────────────────────────────────
 app.use(morgan('dev'))
 

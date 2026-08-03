@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useArtistModal } from '../../context/ArtistModalContext'
 
 const Field = ({ id, label, error, children }) => (
   <div className="space-y-2">
@@ -11,6 +12,7 @@ const Field = ({ id, label, error, children }) => (
 )
 
 const ContactUs = () => {
+  const { openModal } = useArtistModal()
   const [form, setForm] = useState({ name: '', email: '', message: '' })
   const [submitted, setSubmitted] = useState(false)
   const [errors, setErrors] = useState({})
@@ -98,7 +100,11 @@ const ContactUs = () => {
               <p className="text-white/55 text-xs leading-relaxed relative z-10">
                 Arturee is your sky. Share your art with the world and earn from what you love.
               </p>
-              <button className="relative z-10 mt-2 px-5 py-2 rounded-xl bg-lime text-navy font-bold text-xs hover:bg-yellow transition-all duration-200">
+              <button
+                type="button"
+                onClick={openModal}
+                className="relative z-10 mt-2 px-5 py-2 rounded-xl bg-lime text-navy font-bold text-xs hover:bg-yellow transition-all duration-200 cursor-pointer"
+              >
                 Join Us →
               </button>
             </div>
