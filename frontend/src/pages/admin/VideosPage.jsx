@@ -56,7 +56,7 @@ const EditForm = ({ video, artists, genres, onSave, onCancel }) => {
         setForm(f => ({ ...f, [key]: res.data.data.url }))
       }
     } catch (err) {
-      alert('Failed to upload image')
+      toast.error('Failed to upload image')
       console.error(err)
     } finally {
       setUploadingImage(false)

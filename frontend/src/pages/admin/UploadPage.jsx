@@ -4,6 +4,7 @@ import { Upload, CheckCircle, ArrowRight, ArrowLeft, Film, Loader2 } from 'lucid
 import AdminLayout from '../../components/layout/AdminLayout'
 import { videoApi, adminApi, artistApi, genreApi } from '../../api/index.js'
 import api from '../../api/index.js'
+import { toast } from '../../context/ToastContext.jsx'
 
 /* ─── Step indicator ─────────────────────────────────── */
 const StepIndicator = ({ current }) => {
@@ -116,7 +117,7 @@ export default function UploadPage() {
         setMeta(f => ({ ...f, [key]: res.data.data.url }))
       }
     } catch (err) {
-      alert('Failed to upload image')
+      toast.error('Failed to upload image')
       console.error(err)
     } finally {
       setUploadingImage(false)

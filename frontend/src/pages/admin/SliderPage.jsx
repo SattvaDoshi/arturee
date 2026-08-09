@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Save, GripVertical, CheckSquare, Square, Loader2, MonitorPlay } from 'lucide-react'
 import AdminLayout from '../../components/layout/AdminLayout'
 import { adminApi, videoApi } from '../../api/index.js'
+import { toast } from '../../context/ToastContext.jsx'
 
 export default function SliderPage() {
   const [loading, setLoading] = useState(true)
@@ -71,9 +72,9 @@ export default function SliderPage() {
         featuredVideos: featuredOrder.map((id, idx) => ({ videoId: id, featuredOrder: idx + 1 }))
       }
       await adminApi.updateFeaturedVideos(payload)
-      alert('Slider configuration saved successfully!')
+      toast.success('Slider configuration saved successfully!')
     } catch (err) {
-      alert('Failed to save configuration.')
+      toast.error('Failed to save configuration.')
       console.error(err)
     } finally {
       setSaving(false)

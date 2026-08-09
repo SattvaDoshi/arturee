@@ -18,6 +18,7 @@ import {
 } from 'lucide-react'
 import AdminLayout from '../../components/layout/AdminLayout'
 import { landingConfigApi, artistApi, genreApi, adminApi } from '../../api/index.js'
+import { toast } from '../../context/ToastContext.jsx'
 
 const DEFAULT_PRICING_PLANS = [
   {
@@ -328,7 +329,7 @@ export default function LandingPageConfig() {
         updateDiscoverCard(index, 'imageUrl', res.data.data.url)
       }
     } catch (err) {
-      alert('Failed to upload image')
+      toast.error('Failed to upload image')
       console.error(err)
     } finally {
       setUploadingDiscoverIndex(null)

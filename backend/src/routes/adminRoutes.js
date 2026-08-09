@@ -17,7 +17,7 @@ import {
   updateApplicationStatus,
   deleteApplication,
 } from '../controllers/artistApplicationController.js'
-import upload from '../middlewares/uploadMiddleware.js'
+import upload, { processImage } from '../middlewares/uploadMiddleware.js'
 
 const router = Router()
 router.use(authMiddleware, adminMiddleware)
@@ -36,6 +36,6 @@ router.get('/applications', getApplications)
 router.patch('/applications/:applicationId/status', updateApplicationStatus)
 router.delete('/applications/:applicationId', deleteApplication)
 
-router.post('/upload-image', upload.single('image'), uploadImage)
+router.post('/upload-image', upload.single('image'), processImage, uploadImage)
 
 export default router

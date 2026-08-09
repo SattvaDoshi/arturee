@@ -39,7 +39,7 @@ const ArtistFormModal = ({ initial, onClose, onSaved }) => {
         setForm(f => ({ ...f, [key]: res.data.data.url }))
       }
     } catch (err) {
-      alert('Failed to upload image')
+      toast.error('Failed to upload image')
       console.error(err)
     } finally {
       setUploadingImage(false)
