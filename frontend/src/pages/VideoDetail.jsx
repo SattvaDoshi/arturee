@@ -8,6 +8,7 @@ import {
 import UserLayout from '../components/layout/UserLayout'
 import { videoApi, purchaseApi, wishlistApi } from '../api/index.js'
 import { useAuth } from '../context/AuthContext'
+import VideoPlayer from '../components/video/VideoPlayer'
 
 /* ─── colour tokens ──────────────────────────────────── */
 const C = {
@@ -138,6 +139,7 @@ export default function VideoDetail() {
 
   const [saved,       setSaved]       = useState(false)
   const [descExpanded, setDescExpanded] = useState(false)
+  const [isPlaying,   setIsPlaying]   = useState(false)
 
   const [recommended, setRecommended] = useState([])
 
@@ -162,6 +164,7 @@ export default function VideoDetail() {
     }
     setLoading(true)
     setError('')
+    setIsPlaying(false)
 
     videoApi.get(videoId)
       .then(res => {
@@ -309,6 +312,9 @@ export default function VideoDetail() {
               <div className="xl:col-span-2 space-y-6">
 
                 {/* ── Video player / preview ── */}
+                {isPlaying ? (
+                  <VideoPlayer videoId={videoId} poster={video?.thumbnailUrl || FALLBACK_IMG} />
+                ) : (
                 <div
                   className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl border"
                   style={{ borderColor: 'rgba(77,208,225,0.25)' }}
@@ -347,6 +353,7 @@ export default function VideoDetail() {
                   {(video?.price === 0 || purchased) && (
                     <div className="absolute inset-0 flex items-center justify-center">
                       <button
+                        onClick={() => setIsPlaying(true)}
                         className="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center transition hover:scale-110 shadow-2xl"
                         style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)', boxShadow: '0 0 32px rgba(77,208,225,0.6)' }}
                       >
@@ -384,6 +391,7 @@ export default function VideoDetail() {
                     </div>
                   )}
                 </div>
+                )}
 
                 {/* ── Title card ── */}
                 <GlassCard className="p-5 md:p-6">

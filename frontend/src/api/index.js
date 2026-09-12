@@ -1,18 +1,35 @@
 import axios from 'axios'
+import { v4 as uuidv4 } from 'uuid'
 
-const BASE_URL = import.meta.env.VITE_API_URL || '/api'
+export const getDeviceId = () => {
+  let deviceId = localStorage.getItem('art_device_id')
+  if (!deviceId) {
+    deviceId = uuidv4()
+    localStorage.setItem('art_device_id', deviceId)
+  }
+  return deviceId
+}
+
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:6001/api'
 
 const api = axios.create({
   baseURL: BASE_URL,
   timeout: 30000,
 })
 
-// Attach token to every request
+// Attach token and device headers to every request
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('art_token')
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
+  
+  config.headers['X-Device-Id'] = getDeviceId()
+  const sessionToken = localStorage.getItem('art_session_token') || token
+  if (sessionToken) {
+    config.headers['X-Session-Token'] = sessionToken
+  }
+  
   return config
 })
 

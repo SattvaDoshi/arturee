@@ -21,6 +21,23 @@ if (-not (Test-Path -Path $WORKDIR)) {
 $ENV_OUT = "$WORKDIR\generated.env"
 Set-Content -Path $ENV_OUT -Value ""
 
+$OPENSSL_COMMAND = Get-Command openssl -ErrorAction SilentlyContinue
+if ($null -eq $OPENSSL_COMMAND) {
+    $OPENSSL_CANDIDATES = @(
+        "$env:ProgramFiles\Git\usr\bin\openssl.exe",
+        "$env:ProgramFiles\OpenSSL-Win64\bin\openssl.exe",
+        "$env:ProgramFiles\OpenSSL-Win32\bin\openssl.exe",
+        "${env:ProgramFiles(x86)}\Git\usr\bin\openssl.exe",
+        "${env:ProgramFiles(x86)}\OpenSSL-Win32\bin\openssl.exe"
+    )
+    $OPENSSL_PATH = $OPENSSL_CANDIDATES | Where-Object { Test-Path -Path $_ } | Select-Object -First 1
+    if ($null -ne $OPENSSL_PATH) {
+        $OPENSSL_COMMAND = @{ Source = $OPENSSL_PATH }
+    } else {
+        throw "OpenSSL is required to generate the CloudFront signing key. Install Git for Windows (https://git-scm.com/download/win) or OpenSSL, then rerun this script."
+    }
+}
+
 function Write-Log {
     param([string]$Message)
     Write-Host "==> $Message" -ForegroundColor Cyan
@@ -177,45 +194,123 @@ aws events put-targets --rule $EVENTBRIDGE_RULE_NAME --region $AWS_REGION --targ
 Assert-Success "put-targets"
 Write-Log "EventBridge rule wired"
 
-# 5. CloudFront signing key pair + key group
-Write-Log "Generating RSA key pair for CloudFront signed URLs"
+# 5. CloudFront signing key + key group
+$PRIVATE_KEY_FILE = "$WORKDIR\cf_private_key.pem"
+$PUBLIC_KEY_FILE = "$WORKDIR\cf_public_key.pem"
 
-$oldErrorAction = $ErrorActionPreference
-$ErrorActionPreference = "Continue"
-try {
-    openssl genrsa -out "$WORKDIR\cf_private_key.pem" 2048 2>$null
-    openssl rsa -pubout -in "$WORKDIR\cf_private_key.pem" -out "$WORKDIR\cf_public_key.pem" 2>$null
-} finally {
-    $ErrorActionPreference = $oldErrorAction
+Write-Log "Checking for existing CloudFront key group"
+# Filter in PowerShell to avoid JMESPath quoting issues across PS versions
+$ALL_KEYGROUPS_JSON = aws cloudfront list-key-groups --output json 2>&1
+Assert-Success "list-key-groups"
+$ALL_KEYGROUPS = $ALL_KEYGROUPS_JSON | ConvertFrom-Json
+$EXISTING_KEYGROUP = $null
+if ($null -ne $ALL_KEYGROUPS -and $null -ne $ALL_KEYGROUPS.KeyGroupList -and $null -ne $ALL_KEYGROUPS.KeyGroupList.Items) {
+    $EXISTING_KEYGROUP = $ALL_KEYGROUPS.KeyGroupList.Items | Where-Object { $_.KeyGroup.KeyGroupConfig.Name -eq $CLOUDFRONT_KEYGROUP_NAME } | Select-Object -First 1
+    if ($null -eq $EXISTING_KEYGROUP) {
+        # Older AWS CLI versions may flatten the structure differently
+        $EXISTING_KEYGROUP = $ALL_KEYGROUPS.KeyGroupList.Items | Where-Object { $_.Name -eq $CLOUDFRONT_KEYGROUP_NAME } | Select-Object -First 1
+    }
 }
 
-Write-Log "Uploading public key to CloudFront"
-$cfPubKey = (Get-Content -Raw -Path "$WORKDIR\cf_public_key.pem").TrimEnd()
+if ($null -ne $EXISTING_KEYGROUP) {
+    Write-Log "CloudFront key group already exists - reusing it"
+    # Id can live at .Id or .KeyGroup.Id depending on CLI version
+    $KEYGROUP_ID = if ($EXISTING_KEYGROUP.KeyGroup.Id) { $EXISTING_KEYGROUP.KeyGroup.Id } else { $EXISTING_KEYGROUP.Id }
 
-# FIX 1: reuse the single, guarded $epoch value instead of recomputing / using
-# the unguarded Get-Date -UFormat %s call
-$PUBKEY_CONFIG_OBJ = @{ CallerReference = $epoch.ToString(); Name = $CLOUDFRONT_PUBKEY_NAME; EncodedKey = $cfPubKey; Comment = "Signing key" }
-$PUBKEY_CONFIG_JSON = $PUBKEY_CONFIG_OBJ | ConvertTo-Json -Depth 5 -Compress
-$PUBKEY_CONFIG_FILE = "$WORKDIR\pubkey-config.json"
-Set-Content -Path $PUBKEY_CONFIG_FILE -Value $PUBKEY_CONFIG_JSON
+    $KEYGROUP_DETAILS = aws cloudfront get-key-group `
+        --id $KEYGROUP_ID `
+        --query "KeyGroup" `
+        --output json | ConvertFrom-Json
+    Assert-Success "get-key-group $KEYGROUP_ID"
 
-$PUBKEY_ID = (aws cloudfront create-public-key --public-key-config file://$PUBKEY_CONFIG_FILE --query "PublicKey.Id" --output text).Trim()
-Assert-Success "create-public-key"
+    $PUBKEY_ID = $KEYGROUP_DETAILS.KeyGroupConfig.Items[0]
+    if ([string]::IsNullOrWhiteSpace($PUBKEY_ID)) {
+        throw "Existing CloudFront key group has no public key associated with it."
+    }
+    if (-not (Test-Path -Path $PRIVATE_KEY_FILE)) {
+        throw "The existing CloudFront key group uses public key $PUBKEY_ID, but $PRIVATE_KEY_FILE is missing. Restore the matching private key before rerunning."
+    }
 
-Write-Log "Creating CloudFront key group"
-$KEYGROUP_CONFIG_OBJ = @{ Name = $CLOUDFRONT_KEYGROUP_NAME; Items = @($PUBKEY_ID); Comment = "Signing key group" }
-$KEYGROUP_CONFIG_JSON = $KEYGROUP_CONFIG_OBJ | ConvertTo-Json -Depth 5 -Compress
-$KEYGROUP_CONFIG_FILE = "$WORKDIR\keygroup-config.json"
-Set-Content -Path $KEYGROUP_CONFIG_FILE -Value $KEYGROUP_CONFIG_JSON
+    Write-Log "Using existing CloudFront public key: $PUBKEY_ID"
+} else {
+    Write-Log "Generating RSA key pair for CloudFront signed URLs"
+    $oldErrorAction = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    try {
+        & $OPENSSL_COMMAND.Source genrsa -out $PRIVATE_KEY_FILE 2048 2>$null
+        Assert-Success "generate-private-key"
+        & $OPENSSL_COMMAND.Source rsa -in $PRIVATE_KEY_FILE -pubout -out $PUBLIC_KEY_FILE 2>$null
+        Assert-Success "generate-public-key"
+    } finally {
+        $ErrorActionPreference = $oldErrorAction
+    }
 
-$KEYGROUP_OUTPUT = aws cloudfront create-key-group --key-group-config file://$KEYGROUP_CONFIG_FILE | ConvertFrom-Json
-Assert-Success "create-key-group"
-$KEYGROUP_ID = $KEYGROUP_OUTPUT.KeyGroup.Id
+    $PUBLIC_KEY_CONTENT = [System.IO.File]::ReadAllText($PUBLIC_KEY_FILE).Trim()
+    if ([string]::IsNullOrWhiteSpace($PUBLIC_KEY_CONTENT) -or $PUBLIC_KEY_CONTENT -notmatch "-----BEGIN PUBLIC KEY-----") {
+        throw "Generated CloudFront public key is empty or invalid: $PUBLIC_KEY_FILE"
+    }
+    $PUBKEY_CONFIG_OBJ = @{
+        CallerReference = $epoch.ToString()
+        Name = $CLOUDFRONT_PUBKEY_NAME
+        EncodedKey = $PUBLIC_KEY_CONTENT
+        Comment = "CloudFront signing public key"
+    }
+    $PUBKEY_CONFIG_FILE = "$WORKDIR\pubkey-config.json"
+    $PUBKEY_CONFIG_OBJ | ConvertTo-Json -Depth 5 -Compress | Set-Content -Path $PUBKEY_CONFIG_FILE
+
+    $PUBKEY_OUTPUT = aws cloudfront create-public-key `
+        --public-key-config file://$PUBKEY_CONFIG_FILE `
+        --query "PublicKey.Id" `
+        --output text 2>&1
+    $PUBKEY_EXIT_CODE = $LASTEXITCODE
+    if ($PUBKEY_EXIT_CODE -ne 0) {
+        throw "FAILED: create-public-key (aws exited with code $PUBKEY_EXIT_CODE): $($PUBKEY_OUTPUT -join ' ')"
+    }
+    $PUBKEY_ID = ($PUBKEY_OUTPUT -join '').Trim()
+    if ([string]::IsNullOrWhiteSpace($PUBKEY_ID) -or $PUBKEY_ID -eq "None") {
+        throw "FAILED: create-public-key returned no public key ID. AWS output: $($PUBKEY_OUTPUT -join ' ')"
+    }
+    Write-Log "CloudFront public key created: $PUBKEY_ID"
+
+    $KEYGROUP_CONFIG_OBJ = @{ Name = $CLOUDFRONT_KEYGROUP_NAME; Items = @($PUBKEY_ID); Comment = "Signing key group" }
+    $KEYGROUP_CONFIG_FILE = "$WORKDIR\keygroup-config.json"
+    $KEYGROUP_CONFIG_OBJ | ConvertTo-Json -Depth 5 -Compress | Set-Content -Path $KEYGROUP_CONFIG_FILE
+
+    # create-key-group is idempotent: if it already exists (e.g. script re-run after partial failure)
+    # look it up instead of failing hard.
+    $KEYGROUP_RAW = aws cloudfront create-key-group `
+        --key-group-config file://$KEYGROUP_CONFIG_FILE 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        $KEYGROUP_ERR = ($KEYGROUP_RAW -join ' ')
+        if ($KEYGROUP_ERR -match 'KeyGroupAlreadyExists') {
+            Write-Log "Key group already exists - looking it up by name"
+            $ALL_KG2 = aws cloudfront list-key-groups --output json | ConvertFrom-Json
+            $FOUND_KG = $null
+            if ($null -ne $ALL_KG2 -and $null -ne $ALL_KG2.KeyGroupList -and $null -ne $ALL_KG2.KeyGroupList.Items) {
+                $FOUND_KG = $ALL_KG2.KeyGroupList.Items | Where-Object {
+                    ($_.KeyGroup.KeyGroupConfig.Name -eq $CLOUDFRONT_KEYGROUP_NAME) -or ($_.Name -eq $CLOUDFRONT_KEYGROUP_NAME)
+                } | Select-Object -First 1
+            }
+            if ($null -eq $FOUND_KG) {
+                throw "KeyGroupAlreadyExists but could not find it by name '$CLOUDFRONT_KEYGROUP_NAME'. Look it up manually in the AWS Console."
+            }
+            $KEYGROUP_ID = if ($FOUND_KG.KeyGroup.Id) { $FOUND_KG.KeyGroup.Id } else { $FOUND_KG.Id }
+            Write-Log "Reusing existing CloudFront key group: $KEYGROUP_ID"
+        } else {
+            throw "FAILED: create-key-group (aws exited with code $LASTEXITCODE): $KEYGROUP_ERR"
+        }
+    } else {
+        $KEYGROUP_OUTPUT = $KEYGROUP_RAW | ConvertFrom-Json
+        $KEYGROUP_ID = $KEYGROUP_OUTPUT.KeyGroup.Id
+        Write-Log "CloudFront key group created: $KEYGROUP_ID"
+    }
+}
 
 Add-Content -Path $ENV_OUT -Value "CLOUDFRONT_KEY_PAIR_ID=$PUBKEY_ID"
-$PRIVATE_KEY_ONE_LINE = (Get-Content "$WORKDIR\cf_private_key.pem") -join "\n"
+$PRIVATE_KEY_ONE_LINE = (Get-Content $PRIVATE_KEY_FILE) -join "\n"
 Add-Content -Path $ENV_OUT -Value ('CLOUDFRONT_PRIVATE_KEY="' + $PRIVATE_KEY_ONE_LINE + '"')
-Write-Log "CloudFront key group created: $KEYGROUP_ID"
+Add-Content -Path $ENV_OUT -Value "CLOUDFRONT_KEY_GROUP_ID=$KEYGROUP_ID"
+Write-Log "CloudFront key group ready: $KEYGROUP_ID"
 
 # 6. Scoped IAM user
 Write-Log "Creating scoped IAM user for the app: $APP_IAM_USER_NAME"

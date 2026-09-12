@@ -1,6 +1,7 @@
 import dotenv from 'dotenv'
 
-dotenv.config()
+dotenv.config({ override: true }) // trigger restart
+
 
 const env = {
   port: Number(process.env.PORT) || 5000,

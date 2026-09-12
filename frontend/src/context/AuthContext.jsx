@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
-import { authApi } from '../api/index.js'
+import { authApi, playbackApi, getDeviceId } from '../api/index.js'
 
 const AuthContext = createContext(null)
 
@@ -19,9 +19,20 @@ export const AuthProvider = ({ children }) => {
       try {
         const res = await authApi.getMe()
         setUser(res.data.data)
+        
+        // Register device for playback session
+        try {
+          const pbRes = await playbackApi.registerDevice({ deviceId: getDeviceId() })
+          if (pbRes.data?.data?.sessionToken) {
+            localStorage.setItem('art_session_token', pbRes.data.data.sessionToken)
+          }
+        } catch (err) {
+          console.warn('Playback device registration failed', err)
+        }
       } catch {
         localStorage.removeItem('art_token')
         localStorage.removeItem('art_user')
+        localStorage.removeItem('art_session_token')
         setToken(null)
       } finally {
         setLoading(false)
@@ -30,16 +41,32 @@ export const AuthProvider = ({ children }) => {
     restoreSession()
   }, [])
 
-  const login = useCallback((newToken, userData) => {
+  const login = useCallback(async (newToken, userData) => {
     localStorage.setItem('art_token', newToken)
     localStorage.setItem('art_user', JSON.stringify(userData))
     setToken(newToken)
     setUser(userData)
+    
+    // Register device for playback session
+    try {
+      const pbRes = await playbackApi.registerDevice({ deviceId: getDeviceId() })
+      if (pbRes.data?.data?.sessionToken) {
+        localStorage.setItem('art_session_token', pbRes.data.data.sessionToken)
+      }
+    } catch (err) {
+      console.warn('Playback device registration failed on login', err)
+    }
   }, [])
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
+    try {
+      await playbackApi.logoutDevice()
+    } catch (err) {
+      console.warn('Failed to logout device', err)
+    }
     localStorage.removeItem('art_token')
     localStorage.removeItem('art_user')
+    localStorage.removeItem('art_session_token')
     setToken(null)
     setUser(null)
   }, [])

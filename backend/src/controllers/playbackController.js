@@ -82,6 +82,9 @@ export const requestPlayback = asyncHandler(async (req, res) => {
       ipAddress,
     })
 
+    console.log(`[Playback] Authorized playback for video ${videoId} (User: ${userId})`)
+    console.log(`[Playback] Generated Stream URL: ${result.streamUrl}`)
+
     // Get resume position
     const progress = await getProgress(userId, videoId)
     const resumeAt = progress?.currentTimestamp || 0
