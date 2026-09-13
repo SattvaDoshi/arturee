@@ -21,7 +21,7 @@ export default function VideoPlayer({ videoId, poster }) {
       try {
         setLoading(true)
         const res = await playbackApi.requestPlayback({ videoId })
-        const { streamUrl, resumeAt } = res.data.data
+        const { streamUrl, signingParams, resumeAt } = res.data.data
         
         if (!mounted) return
         
@@ -41,6 +41,25 @@ export default function VideoPlayer({ videoId, poster }) {
           const hls = new Hls({
             maxBufferLength: 30,
             maxMaxBufferLength: 60,
+
+            /**
+             * xhrSetup — called before every XHR hls.js makes (manifest + segments).
+             *
+             * CloudFront signed URLs use a custom wildcard policy. The signing params
+             * (Policy, Signature, Key-Pair-Id) embedded in the manifest URL are ALSO
+             * valid for every .ts segment under the same path prefix (because the policy
+             * resource is /processed/{videoId}/{quality}/*).
+             *
+             * We extract those params from streamUrl and append them to every request
+             * so CloudFront can validate each segment without needing separate signed URLs.
+             */
+            xhrSetup: (xhr, url) => {
+              if (signingParams) {
+                const separator = url.includes('?') ? '&' : '?'
+                // Re-open with the signing params appended
+                xhr.open('GET', `${url}${separator}${signingParams}`)
+              }
+            },
           })
           hlsRef.current = hls
           hls.loadSource(streamUrl)
@@ -70,8 +89,11 @@ export default function VideoPlayer({ videoId, poster }) {
             }
           })
         } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-          // Safari native HLS
-          video.src = streamUrl
+          // Safari native HLS — append signing params to the manifest URL
+          const safariUrl = signingParams
+            ? `${streamUrl}${streamUrl.includes('?') ? '&' : '?'}${signingParams}`
+            : streamUrl
+          video.src = safariUrl
           video.addEventListener('loadedmetadata', () => {
             if (mounted) {
               setLoading(false)
@@ -116,7 +138,7 @@ export default function VideoPlayer({ videoId, poster }) {
       progressApi.update({
         videoId,
         currentTimestamp: Math.floor(video.currentTime),
-        totalDuration: Math.floor(video.duration || 0),
+        videoDurationSeconds: Math.floor(video.duration || 0),
         isCompleted
       }).catch(err => {
          console.warn('Progress update failed', err)

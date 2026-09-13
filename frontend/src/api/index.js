@@ -15,6 +15,7 @@ const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:6001/api'
 const api = axios.create({
   baseURL: BASE_URL,
   timeout: 30000,
+  withCredentials: true, // needed to send/receive cookies (CloudFront signed cookies)
 })
 
 // Attach token and device headers to every request

@@ -36,18 +36,8 @@ export const authorizePlayback = async ({
   deviceId,
   ipAddress,
 }) => {
-  // ── 1. Check purchase ───────────────────────────────────────────────────
-  const purchase = await Purchase.findOne({
-    userId,
-    videoId,
-    status: 'completed',
-  })
-
-  if (!purchase) {
-    throw new ApiError(403, 'Access denied: purchase required to watch this video.')
-  }
-
-  // ── 2. Fetch video + asset ──────────────────────────────────────────────
+  // ── 1. Check purchase (skip for free videos) ────────────────────────────
+  // Fetch the video first to check if it's free
   const video = await Video.findById(videoId)
   if (!video || !video.isPublished) {
     throw new ApiError(404, 'Video not found or not available.')
@@ -57,6 +47,19 @@ export const authorizePlayback = async ({
     throw new ApiError(409, 'Video is still being processed. Please try again shortly.')
   }
 
+  // For paid videos, verify purchase
+  if (video.price > 0) {
+    const purchase = await Purchase.findOne({
+      userId,
+      videoId,
+      status: 'completed',
+    })
+    if (!purchase) {
+      throw new ApiError(403, 'Access denied: purchase required to watch this video.')
+    }
+  }
+
+  // ── 2. Fetch video asset (HLS paths) ───────────────────────────────────
   const asset = await VideoAsset.findOne({ videoId })
   if (!asset) {
     throw new ApiError(500, 'Video asset configuration not found.')
@@ -75,8 +78,11 @@ export const authorizePlayback = async ({
     throw new ApiError(500, `${quality} stream not available for this video.`)
   }
 
-  // ── 4. Generate CloudFront signed URL ───────────────────────────────────
-  const { signedUrl, expiresAt } = generateSignedUrl(cloudFrontPath)
+  // ── 4. Generate CloudFront Signed URL (wildcard custom policy) ───────────
+  // streamUrl  = plain manifest URL (no query params)
+  // signingParams = "Policy=…&Signature=…&Key-Pair-Id=…" — appended to every
+  //                 hls.js request (manifest + segments) by the frontend xhrSetup.
+  const { streamUrl, signingParams, expiresAt } = generateSignedUrl(cloudFrontPath)
 
   // ── 5. Create playback session ──────────────────────────────────────────
   const playbackSession = await createPlaybackSession({
@@ -85,7 +91,7 @@ export const authorizePlayback = async ({
     deviceId,
     ipAddress,
     quality,
-    signedUrl,
+    signedUrl: streamUrl,
     expiresAt,
   })
 
@@ -93,7 +99,8 @@ export const authorizePlayback = async ({
   const drmLicenseUrl = buildLicenseProxyUrl(videoId, 'widevine')
 
   return {
-    streamUrl: signedUrl,
+    streamUrl,       // signed manifest URL (includes Policy/Signature/Key-Pair-Id params)
+    signingParams,   // raw query string — frontend appends to every segment URL
     quality,
     sessionToken: playbackSession.sessionToken,
     drmLicenseUrl,

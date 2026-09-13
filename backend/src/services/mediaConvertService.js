@@ -200,9 +200,11 @@ export const getJobStatus = async (jobId) => {
 export const deriveHlsKeys = (videoId) => {
   const prefix = `processed/${videoId}`
   return {
-    hls720pS3Key: `${prefix}/720p/original.m3u8`,
-    hls1080pS3Key: `${prefix}/1080p/original.m3u8`,
-    hls720pCloudFrontPath: `/processed/${videoId}/720p/original.m3u8`,
-    hls1080pCloudFrontPath: `/processed/${videoId}/1080p/original.m3u8`,
+    // MediaConvert appends NameModifier ('-720p' / '-1080p') to the source filename.
+    // Source key is uploads/.../original.mp4 so MediaConvert outputs: original-720p.m3u8
+    hls720pS3Key: `${prefix}/720p/original-720p.m3u8`,
+    hls1080pS3Key: `${prefix}/1080p/original-1080p.m3u8`,
+    hls720pCloudFrontPath: `/processed/${videoId}/720p/original-720p.m3u8`,
+    hls1080pCloudFrontPath: `/processed/${videoId}/1080p/original-1080p.m3u8`,
   }
 }

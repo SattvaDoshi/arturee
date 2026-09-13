@@ -51,6 +51,7 @@ app.use(cors({
     }
   },
   credentials: true,
+  exposedHeaders: ['Set-Cookie'],
 }))
 
 // ── Body parsers ──────────────────────────────────────────────────────────

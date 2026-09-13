@@ -19,7 +19,7 @@ const router = Router()
 router.post('/register-device', authMiddleware, registerDevice)
 
 // ── Playback URL request — requires active session ─────────────────────────
-router.post('/request', authMiddleware, sessionMiddleware, playbackLimiter, requestPlayback)
+router.post('/request', authMiddleware, playbackLimiter, requestPlayback)
 
 // ── Session management ─────────────────────────────────────────────────────
 router.post('/logout-device', authMiddleware, logoutDevice)

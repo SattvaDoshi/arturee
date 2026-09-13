@@ -83,7 +83,8 @@ export const requestPlayback = asyncHandler(async (req, res) => {
     })
 
     console.log(`[Playback] Authorized playback for video ${videoId} (User: ${userId})`)
-    console.log(`[Playback] Generated Stream URL: ${result.streamUrl}`)
+    console.log(`[Playback] Stream URL: ${result.streamUrl}`)
+    console.log(`[Playback] Signing params present: ${!!result.signingParams} (${result.signingParams?.substring(0, 30)}...)`)
 
     // Get resume position
     const progress = await getProgress(userId, videoId)
@@ -93,6 +94,7 @@ export const requestPlayback = asyncHandler(async (req, res) => {
       success: true,
       data: {
         streamUrl: result.streamUrl,
+        signingParams: result.signingParams, // "Policy=…&Signature=…&Key-Pair-Id=…"
         quality: result.quality,
         sessionToken: result.sessionToken,
         drmLicenseUrl: result.drmLicenseUrl,
