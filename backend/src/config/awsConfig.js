@@ -23,7 +23,7 @@ const awsConfig = {
     domain: env.cloudFrontDomain,
     keyPairId: env.cloudFrontKeyPairId,
     privateKey: env.cloudFrontPrivateKey,
-    signedUrlTtlSeconds: 14400, // 4 hours — must cover the full playback session
+    signedUrlTtlSeconds: 3600, // 1 hour — short window limits usefulness of any leaked signed URL
   },
 
   cloudWatch: {

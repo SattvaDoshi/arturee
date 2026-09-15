@@ -313,7 +313,7 @@ export default function VideoDetail() {
 
                 {/* ── Video player / preview ── */}
                 {isPlaying ? (
-                  <VideoPlayer videoId={videoId} poster={video?.thumbnailUrl || FALLBACK_IMG} />
+                  <VideoPlayer videoId={videoId} poster={video?.thumbnailUrl || FALLBACK_IMG} user={user} />
                 ) : (
                 <div
                   className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl border"
