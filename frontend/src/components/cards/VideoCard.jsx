@@ -11,12 +11,15 @@ const VideoCard = ({
   time, 
   duration, 
   price, 
+  costPrice,
+  discountedPrice,
   variant = 'default',
   onPlay = () => {} 
 }) => {
   const { toggleCart, toggleSavedList, isInCart, isInSavedList } = useCart()
 
-  const video = { id, image, title, creator, price }
+  const effectivePrice = discountedPrice ?? price ?? 0
+  const video = { id, image, title, creator, price: effectivePrice }
 
   const handleAddToCart = (e) => {
     e.preventDefault()
@@ -42,8 +45,29 @@ const VideoCard = ({
           <div className="absolute bottom-1 right-1 px-2 py-1 bg-deepbrown/90 rounded text-xs font-semibold text-cream">
             {duration}
           </div>
-          <div className="absolute top-1 right-1 px-2 py-1 bg-sand rounded text-xs font-semibold text-white">
-            {price}
+          <div className="absolute top-1 right-1 flex flex-col items-end gap-0.5">
+            {price > 0 ? (
+              discountedPrice ? (
+                <>
+                  <div className="px-2 py-0.5 bg-sand rounded text-xs font-semibold text-white shadow-sm">
+                    ₹{discountedPrice}
+                  </div>
+                  {costPrice && (
+                    <div className="px-1.5 py-px bg-black/60 rounded text-[9px] font-medium text-white/70 line-through">
+                      ₹{costPrice}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="px-2 py-0.5 bg-sand rounded text-xs font-semibold text-white shadow-sm">
+                  ₹{price}
+                </div>
+              )
+            ) : (
+              <div className="px-2 py-0.5 bg-[#C0E863] text-[#051d2e] rounded text-xs font-bold shadow-sm">
+                Free
+              </div>
+            )}
           </div>
         </div>
         <div className="flex-1">
@@ -86,8 +110,29 @@ const VideoCard = ({
         <div className="absolute bottom-2 right-2 px-2 py-1 bg-deepbrown/90 rounded text-xs font-semibold text-cream">
           {duration}
         </div>
-        <div className="absolute top-2 right-2 px-2 py-1 bg-sand rounded text-xs font-semibold text-white">
-          {price}
+        <div className="absolute top-2 right-2 flex flex-col items-end gap-1">
+          {price > 0 ? (
+            discountedPrice ? (
+              <>
+                <div className="px-2 py-1 bg-sand rounded text-xs font-semibold text-white shadow-sm">
+                  ₹{discountedPrice}
+                </div>
+                {costPrice && (
+                  <div className="px-2 py-0.5 bg-black/60 rounded text-[10px] font-medium text-white/70 line-through">
+                    ₹{costPrice}
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="px-2 py-1 bg-sand rounded text-xs font-semibold text-white shadow-sm">
+                ₹{price}
+              </div>
+            )
+          ) : (
+            <div className="px-2 py-1 bg-[#C0E863] text-[#051d2e] rounded text-xs font-bold shadow-sm">
+              Free
+            </div>
+          )}
         </div>
         
         {/* Action buttons on hover */}

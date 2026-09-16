@@ -81,13 +81,17 @@ export default function UploadPage() {
 
   /* ── Step 1: Metadata form ── */
   const [meta, setMeta] = useState({
-    title:        '',
-    description:  '',
-    price:        0,
-    genre:        '',
-    tags:         '',
-    thumbnailUrl: '',
-    artistId:     '',
+    title:           '',
+    description:     '',
+    price:           0,
+    costPrice:       '',
+    discountedPrice: '',
+    genre:           '',
+    tags:            '',
+    thumbnailUrl:    '',
+    artistId:        '',
+    videoSource:     'upload',
+    youtubeUrl:      '',
   })
   const [metaError, setMetaError] = useState('')
 
@@ -142,10 +146,38 @@ export default function UploadPage() {
     </div>
   )
 
-  const handleNextStep1 = () => {
+  const handleNextStep1 = async () => {
     if (!meta.title.trim()) { setMetaError('Title is required.'); return }
+    if (meta.videoSource === 'youtube' && !meta.youtubeUrl.trim()) {
+      setMetaError('YouTube URL is required.'); return
+    }
     setMetaError('')
-    setStep(2)
+
+    if (meta.videoSource === 'youtube') {
+      // Create YouTube video directly and skip to step 3
+      try {
+        const payload = {
+          title: meta.title,
+          description: meta.description,
+          price: Number(meta.price) || 0,
+          costPrice: meta.costPrice ? Number(meta.costPrice) : undefined,
+          discountedPrice: meta.discountedPrice ? Number(meta.discountedPrice) : undefined,
+          youtubeUrl: meta.youtubeUrl,
+          genre: meta.genre || undefined,
+          tags: meta.tags,
+          thumbnailUrl: meta.thumbnailUrl || undefined,
+          artistId: meta.artistId || undefined,
+          isPublished: false,
+        }
+        const res = await videoApi.createYoutube(payload)
+        setVideoId(res.data.data.videoId)
+        setStep(3)
+      } catch (err) {
+        setMetaError(err.response?.data?.message || err.message || 'Failed to create YouTube video.')
+      }
+    } else {
+      setStep(2)
+    }
   }
 
   /* ── Step 2: File upload ── */
@@ -183,6 +215,8 @@ export default function UploadPage() {
       formData.append('title', meta.title)
       formData.append('description', meta.description)
       formData.append('price', String(meta.price))
+      if (meta.costPrice) formData.append('costPrice', String(meta.costPrice))
+      if (meta.discountedPrice) formData.append('discountedPrice', String(meta.discountedPrice))
       formData.append('currency', 'INR')
       if (meta.genre) formData.append('genre', meta.genre)
       formData.append('tags', JSON.stringify(
@@ -243,11 +277,34 @@ export default function UploadPage() {
               <h2 className="text-sm font-black uppercase tracking-widest text-white/70">Step 1 — Video Details</h2>
 
               <div className="space-y-4">
+                {/* Source Selection */}
+                <div>
+                  <Label>Video Source</Label>
+                  <div className="flex gap-4 mt-1">
+                    <label className="flex items-center gap-2 text-white/70 text-sm cursor-pointer hover:text-white">
+                      <input type="radio" name="videoSource" value="upload" checked={meta.videoSource === 'upload'} onChange={setM('videoSource')} className="accent-[#4DD0E1]" />
+                      Upload File
+                    </label>
+                    <label className="flex items-center gap-2 text-white/70 text-sm cursor-pointer hover:text-white">
+                      <input type="radio" name="videoSource" value="youtube" checked={meta.videoSource === 'youtube'} onChange={setM('videoSource')} className="accent-[#4DD0E1]" />
+                      YouTube Embed
+                    </label>
+                  </div>
+                </div>
+
                 {/* Title */}
                 <div>
                   <Label required>Title</Label>
                   <input value={meta.title} onChange={setM('title')} placeholder="Enter video title…" className={inputCls} />
                 </div>
+
+                {/* YouTube URL */}
+                {meta.videoSource === 'youtube' && (
+                  <div>
+                    <Label required>YouTube URL</Label>
+                    <input value={meta.youtubeUrl} onChange={setM('youtubeUrl')} placeholder="https://youtube.com/watch?v=..." className={inputCls} />
+                  </div>
+                )}
 
                 {/* Description */}
                 <div>
@@ -261,11 +318,19 @@ export default function UploadPage() {
                   />
                 </div>
 
-                {/* Price + Category */}
-                <div className="grid grid-cols-2 gap-4">
+                {/* Pricing & Category */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div>
-                    <Label>Price (₹)</Label>
+                    <Label>Base Price (₹)</Label>
                     <input type="number" min="0" value={meta.price} onChange={setM('price')} className={inputCls} />
+                  </div>
+                  <div>
+                    <Label>MRP (Cost Price) (₹)</Label>
+                    <input type="number" min="0" value={meta.costPrice} onChange={setM('costPrice')} className={inputCls} placeholder="Optional" />
+                  </div>
+                  <div>
+                    <Label>Discounted Price (₹)</Label>
+                    <input type="number" min="0" value={meta.discountedPrice} onChange={setM('discountedPrice')} className={inputCls} placeholder="Optional" />
                   </div>
                   <div>
                     <Label>Genre</Label>

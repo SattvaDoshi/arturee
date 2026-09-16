@@ -53,6 +53,30 @@ const watchHistorySchema = new mongoose.Schema(
       type: Number,
       default: null,
     },
+
+    // ── View-limit enforcement ────────────────────────────────────────────
+    // Number of times the user has watched >= 80% of the video.
+    // Each distinct playback session that crosses 80% increments this.
+    // When watchCount >= 2, the purchase is auto-expired.
+    watchCount: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
+    // True when 80%+ was reached in the current playback session.
+    // Prevents double-counting within the same session.
+    has80PercentCurrentSession: {
+      type: Boolean,
+      default: false,
+    },
+
+    // Opaque ID set by the frontend at the start of each play session.
+    // When it changes, it signals a new separate watch attempt.
+    currentSessionId: {
+      type: String,
+      default: null,
+    },
   },
   {
     timestamps: true,

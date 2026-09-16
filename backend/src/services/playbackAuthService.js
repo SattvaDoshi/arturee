@@ -36,36 +36,54 @@ export const authorizePlayback = async ({
   deviceId,
   ipAddress,
 }) => {
-  // ── 1. Check purchase (skip for free videos) ────────────────────────────
-  // Fetch the video first to check if it's free
+  // ── 1. Fetch and validate the video ────────────────────────────────────────
   const video = await Video.findById(videoId)
   if (!video || !video.isPublished) {
     throw new ApiError(404, 'Video not found or not available.')
   }
 
+  // ── 2. YouTube-hosted path: no S3/CloudFront needed ───────────────────────
+  if (video.videoSource === 'youtube') {
+    // For paid YouTube videos, still verify purchase
+    if (video.price > 0) {
+      const purchase = await Purchase.findOne({ userId, videoId, status: 'completed' })
+      if (!purchase) {
+        throw new ApiError(403, 'Access denied: purchase required to watch this video.')
+      }
+    }
+    return {
+      videoSource:          'youtube',
+      youtubeUrl:           video.youtubeUrl,
+      streamUrl:            null,
+      signingParams:        null,
+      quality:              null,
+      sessionToken:         null,
+      drmLicenseUrl:        null,
+      expiresAt:            null,
+      videoDurationSeconds: video.durationSeconds,
+    }
+  }
+
+  // ── 3. S3/CloudFront path ──────────────────────────────────────────────────
   if (video.status !== 'ready') {
     throw new ApiError(409, 'Video is still being processed. Please try again shortly.')
   }
 
   // For paid videos, verify purchase
   if (video.price > 0) {
-    const purchase = await Purchase.findOne({
-      userId,
-      videoId,
-      status: 'completed',
-    })
+    const purchase = await Purchase.findOne({ userId, videoId, status: 'completed' })
     if (!purchase) {
       throw new ApiError(403, 'Access denied: purchase required to watch this video.')
     }
   }
 
-  // ── 2. Fetch video asset (HLS paths) ───────────────────────────────────
+  // ── 4. Fetch video asset (HLS paths) ──────────────────────────────────────
   const asset = await VideoAsset.findOne({ videoId })
   if (!asset) {
     throw new ApiError(500, 'Video asset configuration not found.')
   }
 
-  // ── 3. Device type → quality ────────────────────────────────────────────
+  // ── 5. Device type → quality ───────────────────────────────────────────────
   const deviceType = detectDeviceType(userAgent)
   const quality = resolveQuality(deviceType)
 
@@ -78,13 +96,10 @@ export const authorizePlayback = async ({
     throw new ApiError(500, `${quality} stream not available for this video.`)
   }
 
-  // ── 4. Generate CloudFront Signed URL (wildcard custom policy) ───────────
-  // streamUrl  = plain manifest URL (no query params)
-  // signingParams = "Policy=…&Signature=…&Key-Pair-Id=…" — appended to every
-  //                 hls.js request (manifest + segments) by the frontend xhrSetup.
+  // ── 6. Generate CloudFront Signed URL (wildcard custom policy) ────────────
   const { streamUrl, signingParams, expiresAt } = generateSignedUrl(cloudFrontPath)
 
-  // ── 5. Create playback session ──────────────────────────────────────────
+  // ── 7. Create playback session ─────────────────────────────────────────────
   const playbackSession = await createPlaybackSession({
     userId,
     videoId,
@@ -95,14 +110,15 @@ export const authorizePlayback = async ({
     expiresAt,
   })
 
-  // ── 6. DRM license URL (null when DRM_PROVIDER=none) ───────────────────
+  // ── 8. DRM license URL (null when DRM_PROVIDER=none) ──────────────────────
   const drmLicenseUrl = buildLicenseProxyUrl(videoId, 'widevine')
 
   return {
-    streamUrl,       // signed manifest URL (includes Policy/Signature/Key-Pair-Id params)
-    signingParams,   // raw query string — frontend appends to every segment URL
+    streamUrl,
+    signingParams,
     quality,
-    sessionToken: playbackSession.sessionToken,
+    videoSource:          'upload',
+    sessionToken:         playbackSession.sessionToken,
     drmLicenseUrl,
     expiresAt,
     videoDurationSeconds: video.durationSeconds,
@@ -117,7 +133,7 @@ export const hasPurchased = async (userId, videoId) => {
   const purchase = await Purchase.findOne({
     userId,
     videoId,
-    status: 'completed',
+    status: { $in: ['completed', 'expired'] }, // allow expired so final-session progress saves work
   })
   return !!purchase
 }

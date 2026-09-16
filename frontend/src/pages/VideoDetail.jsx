@@ -9,6 +9,7 @@ import UserLayout from '../components/layout/UserLayout'
 import { videoApi, purchaseApi, wishlistApi } from '../api/index.js'
 import { useAuth } from '../context/AuthContext'
 import VideoPlayer from '../components/video/VideoPlayer'
+import YouTubePlayer from '../components/video/YouTubePlayer'
 
 /* ─── colour tokens ──────────────────────────────────── */
 const C = {
@@ -220,13 +221,14 @@ export default function VideoDetail() {
   }, [isAuthenticated, saved, videoId, navigate])
 
   /* ── Buy now ── */
+  const effectivePrice = video?.discountedPrice ?? video?.price ?? 0
   const handleBuy = () => {
     if (!isAuthenticated) { navigate('/login'); return }
     navigate('/checkout', {
       state: {
         videoId:   video._id,
         title:     video.title,
-        price:     video.price,
+        price:     effectivePrice,
         thumbnail: video.thumbnailUrl,
       },
     })
@@ -312,7 +314,34 @@ export default function VideoDetail() {
               <div className="xl:col-span-2 space-y-6">
 
                 {/* ── Video player / preview ── */}
-                {isPlaying ? (
+                {/* YouTube videos: show the iframe directly (no play button needed) */}
+                {video?.videoSource === 'youtube' && (video?.price === 0 || purchased) ? (
+                  <YouTubePlayer youtubeUrl={video.youtubeUrl} />
+                ) : video?.videoSource === 'youtube' && video?.price > 0 && !purchased ? (
+                  // YouTube + paid + not purchased: show thumbnail lock
+                  <div
+                    className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl border"
+                    style={{ borderColor: 'rgba(77,208,225,0.25)' }}
+                  >
+                    <img src={video?.thumbnailUrl || FALLBACK_IMG} alt={video?.title} className="w-full h-full object-cover" />
+                    <div className="absolute inset-0" style={{ background: 'linear-gradient(to top,rgba(5,29,46,0.7),rgba(5,29,46,0.1))' }} />
+                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+                      <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ background: 'rgba(5,29,46,0.7)', backdropFilter: 'blur(4px)', border: '2px solid rgba(77,208,225,0.5)' }}>
+                        <ShoppingCart className="w-7 h-7" style={{ color: C.primary }} />
+                      </div>
+                      <p className="text-white font-bold text-lg drop-shadow">Purchase to watch</p>
+                      <GradBtn onClick={handleBuy} className="flex items-center gap-2 px-6 py-3 rounded-full font-black text-[#051d2e]">
+                        <ShoppingCart className="w-4 h-4" />
+                        {video.costPrice && video.discountedPrice ? (
+                          <span className="flex items-center gap-2">
+                            <span style={{ textDecoration: 'line-through', opacity: 0.6, fontSize: '0.85em' }}>₹{video.costPrice}</span>
+                            Buy for ₹{video.discountedPrice}
+                          </span>
+                        ) : `Buy for ₹${effectivePrice}`}
+                      </GradBtn>
+                    </div>
+                  </div>
+                ) : isPlaying ? (
                   <VideoPlayer videoId={videoId} poster={video?.thumbnailUrl || FALLBACK_IMG} user={user} />
                 ) : (
                 <div
@@ -344,7 +373,12 @@ export default function VideoDetail() {
                         className="flex items-center gap-2 px-6 py-3 rounded-full font-black text-[#051d2e]"
                       >
                         <ShoppingCart className="w-4 h-4" />
-                        Buy for ₹{video.price}
+                        {video.costPrice && video.discountedPrice ? (
+                          <span className="flex items-center gap-2">
+                            <span style={{ textDecoration: 'line-through', opacity: 0.6, fontSize: '0.85em' }}>₹{video.costPrice}</span>
+                            Buy for ₹{video.discountedPrice}
+                          </span>
+                        ) : `Buy for ₹${effectivePrice}`}
                       </GradBtn>
                     </div>
                   )}
@@ -362,20 +396,27 @@ export default function VideoDetail() {
                     </div>
                   )}
 
-                  {/* Price or Free badge */}
+                  {/* Price badge — dual pricing */}
                   <div className="absolute top-4 right-4">
                     {video?.price > 0 ? (
-                      <span
-                        className="px-3 py-1.5 rounded-full text-sm font-black text-white"
-                        style={{ background: 'linear-gradient(135deg,#4DD0E1,#00BCD4)', backdropFilter: 'blur(4px)' }}
-                      >
-                        ₹{video.price}
-                      </span>
+                      video?.discountedPrice ? (
+                        <div className="flex flex-col items-end gap-1">
+                          <span className="px-3 py-1.5 rounded-full text-sm font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>
+                            ₹{video.discountedPrice}
+                          </span>
+                          {video.costPrice && (
+                            <span className="px-2 py-0.5 rounded-full text-xs font-semibold text-white/70" style={{ background: 'rgba(5,29,46,0.6)', textDecoration: 'line-through' }}>
+                              ₹{video.costPrice}
+                            </span>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="px-3 py-1.5 rounded-full text-sm font-black text-white" style={{ background: 'linear-gradient(135deg,#4DD0E1,#00BCD4)', backdropFilter: 'blur(4px)' }}>
+                          ₹{video.price}
+                        </span>
+                      )
                     ) : (
-                      <span
-                        className="px-3 py-1.5 rounded-full text-sm font-black text-[#051d2e]"
-                        style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
-                      >
+                      <span className="px-3 py-1.5 rounded-full text-sm font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>
                         Free
                       </span>
                     )}

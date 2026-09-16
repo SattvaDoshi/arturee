@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react'
+import { v4 as uuidv4 } from 'uuid'
 import Hls from 'hls.js'
 import { playbackApi, progressApi } from '../../api/index.js'
 import { AlertCircle, Loader2, ShieldX, Cast, Monitor, Airplay, Minimize2, Shield } from 'lucide-react'
@@ -247,6 +248,11 @@ export default function VideoPlayer({ videoId, poster, user }) {
   const [loading,        setLoading]        = useState(true)
   const [error,          setError]          = useState('')
   const [sessionActive,  setSessionActive]  = useState(false)
+  const [purchaseExpired, setPurchaseExpired] = useState(false)
+
+  // Unique ID for this play session — sent with progress saves
+  // to deduplicate view counts across resume/seek events.
+  const playSessionIdRef = useRef(uuidv4())
 
   // The active security threat being shown — null = no popup
   const [activeThreat,   setActiveThreat]   = useState(null)
@@ -477,7 +483,21 @@ export default function VideoPlayer({ videoId, poster, user }) {
         currentTimestamp:     Math.floor(video.currentTime),
         videoDurationSeconds: Math.floor(video.duration || 0),
         isCompleted,
-      }).catch(err => console.warn('Progress update failed', err))
+        playSessionId:        playSessionIdRef.current,  // ← sent for view-limit tracking
+      }).then(res => {
+        // Server signals that both views have been used — stop playback
+        if (res?.data?.code === 'PURCHASE_EXPIRED') {
+          video.pause()
+          setPurchaseExpired(true)
+        }
+      }).catch(err => {
+        if (err.response?.status === 402 || err.response?.data?.code === 'PURCHASE_EXPIRED') {
+          video.pause()
+          setPurchaseExpired(true)
+        } else {
+          console.warn('Progress update failed', err)
+        }
+      })
       if (isCompleted) progressApi.complete({ videoId }).catch(() => {})
     }
   }, [videoId])
@@ -522,6 +542,40 @@ export default function VideoPlayer({ videoId, poster, user }) {
           <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/80 p-6 text-center">
             <AlertCircle className="w-12 h-12 text-red-400 mb-4" />
             <p className="text-white font-semibold text-lg">{error}</p>
+          </div>
+        )}
+
+        {/* ── Purchase Expired overlay ─────────────────────────────────────
+             Shown when the user has used both their allowed views (≥80% each).
+             Covers the player and explains access has ended.                 */}
+        {purchaseExpired && (
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/92 p-8 text-center"
+            style={{ backdropFilter: 'blur(8px)' }}>
+            <div style={{
+              width: '64px', height: '64px', borderRadius: '50%',
+              background: 'rgba(239,68,68,0.12)', border: '2px solid rgba(239,68,68,0.4)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px',
+            }}>
+              <AlertCircle size={30} color="#ef4444" strokeWidth={1.5} />
+            </div>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: '6px',
+              background: 'rgba(77,208,225,0.08)', border: '1px solid rgba(77,208,225,0.2)',
+              borderRadius: '100px', padding: '4px 14px', marginBottom: '16px',
+            }}>
+              <span style={{ color: '#4DD0E1', fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                View Limit Reached
+              </span>
+            </div>
+            <h3 style={{ color: '#fff', fontSize: '20px', fontWeight: 700, marginBottom: '10px' }}>
+              Both Views Used
+            </h3>
+            <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '14px', lineHeight: 1.6, maxWidth: '320px', margin: '0 auto 8px' }}>
+              You have watched this video to completion twice. Your access to this video has expired.
+            </p>
+            <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '12px', lineHeight: 1.5 }}>
+              You can re-purchase the video to watch it again.
+            </p>
           </div>
         )}
 

@@ -2,11 +2,12 @@ import { useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import SplashScreen from './components/SplashScreen'
 import { CartProvider } from './context/CartContext'
-import { AuthProvider } from './context/AuthContext'
+import { AuthProvider, useAuth } from './context/AuthContext'
 import { ToastProvider, GlobalToastListener } from './context/ToastContext'
 import { ArtistModalProvider } from './context/ArtistModalContext'
 import { ProtectedRoute, AdminRoute } from './components/ProtectedRoute'
 import JoinArtistModal from './components/modals/JoinArtistModal'
+import KickedModal from './components/KickedModal'
 
 // ── Landing ──────────────────────────────────────────────
 import Landing      from './pages/landing/Landing'
@@ -47,6 +48,12 @@ import AdminLandingConfig from './pages/admin/LandingPageConfig'
 import VideoDetail  from './pages/VideoDetail'
 import ArtistDetail from './pages/ArtistDetail'
 
+/** Reads kickedReason from AuthContext and renders the modal when set. */
+const KickedSessionGate = () => {
+  const { kickedReason, dismissKicked } = useAuth()
+  return <KickedModal reason={kickedReason} onDismiss={dismissKicked} />
+}
+
 /** True when the app is running as an installed PWA */
 const isStandalone = () =>
   window.matchMedia('(display-mode: standalone)').matches ||
@@ -69,6 +76,9 @@ const App = () => {
           <ArtistModalProvider>
           <CartProvider>
             <JoinArtistModal />
+            {/* ── Global kicked-session modal ──────────────────────────────
+                 Sits inside AuthProvider so it can read kickedReason.       */}
+            <KickedSessionGate />
             <BrowserRouter>
               <Routes>
                 {/* ── Landing ── */}

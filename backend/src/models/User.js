@@ -53,7 +53,22 @@ const userSchema = new mongoose.Schema(
       default: null
     },
     wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Video', default: [] }],
-    avatarUrl: { type: String, default: null }
+    avatarUrl: { type: String, default: null },
+
+    // ── Single-device enforcement ──────────────────────────────────────────
+    // Incremented on every new login. Embedded in the JWT so that any
+    // previously-issued JWT fails the version check in authMiddleware,
+    // effectively invalidating all sessions from other devices immediately.
+    sessionVersion: { type: Number, default: 0 },
+    
+    // Explicit tracking of the current active session
+    activeSession: {
+      sessionId:  { type: String },
+      deviceId:   { type: String },
+      createdAt:  { type: Date },
+      lastSeenAt: { type: Date },
+      userAgent:  { type: String }
+    },
   },
   {
     timestamps: true

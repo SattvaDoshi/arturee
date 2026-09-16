@@ -32,6 +32,8 @@ const EditForm = ({ video, artists, genres, onSave, onCancel }) => {
     title:       video.title || '',
     description: video.description || '',
     price:       video.price ?? 0,
+    costPrice:   video.costPrice ?? '',
+    discountedPrice: video.discountedPrice ?? '',
     genre:       video.genre?._id || video.genre || '',
     thumbnailUrl: video.thumbnailUrl || '',
     artistId:     video.artistId?._id || video.artistId || '',
@@ -39,6 +41,8 @@ const EditForm = ({ video, artists, genres, onSave, onCancel }) => {
     featured:     video.featured || false,
     status:       video.status || 'draft',
     durationSeconds: video.durationSeconds || 0,
+    videoSource:  video.videoSource || 'upload',
+    youtubeUrl:   video.youtubeUrl || '',
   })
   const [saving, setSaving] = useState(false)
   const [uploadingImage, setUploadingImage] = useState(false)
@@ -122,7 +126,25 @@ const EditForm = ({ video, artists, genres, onSave, onCancel }) => {
       <td colSpan={7} className="px-5 py-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
           {field('title', 'Title')}
-          {field('price', 'Price (₹)', 'number')}
+          {field('price', 'Base Price (₹)', 'number')}
+          {field('costPrice', 'MRP Cost (₹)', 'number')}
+          {field('discountedPrice', 'Discount Price (₹)', 'number')}
+          
+          <div className="flex flex-col gap-1">
+            <label className="text-[10px] text-white/35 font-semibold uppercase tracking-widest">Video Source</label>
+            <select
+              value={form.videoSource}
+              onChange={e => setForm(f => ({ ...f, videoSource: e.target.value }))}
+              className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white outline-none focus:border-[#4DD0E1]/50 transition"
+              disabled
+            >
+              <option value="upload" className="bg-[#051d2e] text-white">Upload</option>
+              <option value="youtube" className="bg-[#051d2e] text-white">YouTube Embed</option>
+            </select>
+          </div>
+
+          {form.videoSource === 'youtube' && field('youtubeUrl', 'YouTube URL')}
+
           <div className="flex flex-col gap-1">
             <label className="text-[10px] text-white/35 font-semibold uppercase tracking-widest">Genre</label>
             <select
@@ -407,7 +429,18 @@ export default function VideosPage() {
 
                       {/* Price */}
                       <td className="px-5 py-3 hidden lg:table-cell text-white/55 text-xs">
-                        {video.price > 0 ? `₹${video.price}` : <span className="text-[#C0E863]">Free</span>}
+                        {video.price > 0 ? (
+                          video.discountedPrice ? (
+                            <div>
+                              <span className="text-[#C0E863] font-bold">₹{video.discountedPrice}</span>
+                              {video.costPrice && <span className="ml-1 text-white/30 line-through text-[10px]">₹{video.costPrice}</span>}
+                            </div>
+                          ) : (
+                            <span>₹{video.price}</span>
+                          )
+                        ) : (
+                          <span className="text-[#C0E863]">Free</span>
+                        )}
                       </td>
 
                       {/* Created */}

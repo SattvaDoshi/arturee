@@ -68,14 +68,14 @@ export const validateIp = async (userId, currentIp) => {
     return { valid: true, action: 'allow' }
   }
 
-  // Different subnet — for now: warn and allow but log
-  // In production: switch action to 'block' or integrate MaxMind GeoIP for country check
-  console.warn(`[IP Validation] IP changed for user ${userId}: ${storedIp} → ${currentIp}`)
+  // Different subnet — log it for risk detection but do not block.
+  // The user might have just switched from Wi-Fi to 4G.
+  console.warn(`[IP Validation] Network changed for user ${userId}: IP changed from ${storedIp} → ${currentIp}`)
 
   return {
-    valid: true,
+    valid:  true,
     action: 'warn',
-    reason: 'IP address changed significantly. Proceeding but flagged.',
+    reason: 'Network location changed.',
   }
 }
 

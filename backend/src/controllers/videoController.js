@@ -8,12 +8,96 @@ import {
   buildProcessedPrefix,
   uploadFileBuffer,
 } from '../services/s3Service.js'
-import { createTranscodeJob, getJobStatus, deriveHlsKeys } from '../services/mediaConvertService.js'
+import { createTranscodeJob, getJobStatus } from '../services/mediaConvertService.js'
 import { logUploadError, logMediaConvertError } from '../services/cloudWatchService.js'
 import Video from '../models/Video.js'
 import VideoAsset from '../models/VideoAsset.js'
 import ApiError from '../utils/ApiError.js'
 import mongoose from 'mongoose'
+
+// ── Utility: extract YouTube video ID from various URL formats ───────────────
+const extractYoutubeId = (urlOrId) => {
+  if (!urlOrId) return null
+  // Already a plain 11-char ID
+  if (/^[a-zA-Z0-9_-]{11}$/.test(urlOrId)) return urlOrId
+  // Handle youtu.be/ID, youtube.com/watch?v=ID, youtube.com/embed/ID, youtube.com/shorts/ID
+  const match = urlOrId.match(
+    /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([-\w]{11})/
+  )
+  return match ? match[1] : null
+}
+
+// ── Admin: Create YouTube-hosted video record ─────────────────────────────────
+
+/**
+ * POST /api/videos/youtube
+ *
+ * Body: { title, description, price, costPrice, discountedPrice,
+ *         currency, youtubeUrl, tags, genre, thumbnailUrl, artistId, durationSeconds }
+ *
+ * No S3 upload or MediaConvert job — the video is hosted on YouTube.
+ * The record is immediately set to status 'youtube' and isPublished:true (optional).
+ */
+export const createYoutubeVideo = asyncHandler(async (req, res) => {
+  const {
+    title,
+    description = '',
+    price = 0,
+    costPrice,
+    discountedPrice,
+    currency = 'INR',
+    youtubeUrl,
+    tags = [],
+    genre = null,
+    thumbnailUrl,
+    artistId,
+    durationSeconds,
+    isPublished = false,
+  } = req.body
+
+  if (!title)      throw new ApiError(400, 'title is required.')
+  if (!youtubeUrl) throw new ApiError(400, 'youtubeUrl is required.')
+
+  const youtubeId = extractYoutubeId(youtubeUrl)
+  if (!youtubeId) throw new ApiError(400, 'Invalid YouTube URL or video ID.')
+
+  let parsedTags = []
+  try {
+    parsedTags = Array.isArray(tags) ? tags : JSON.parse(tags)
+  } catch {
+    parsedTags = String(tags).split(',').map(t => t.trim()).filter(Boolean)
+  }
+
+  const video = await Video.create({
+    title,
+    description,
+    price:           Number(price),
+    costPrice:       costPrice !== undefined ? Number(costPrice) : null,
+    discountedPrice: discountedPrice !== undefined ? Number(discountedPrice) : null,
+    currency,
+    creatorId:       req.user._id,
+    videoSource:     'youtube',
+    youtubeUrl:      `https://www.youtube.com/watch?v=${youtubeId}`,
+    status:          'youtube',
+    tags:            parsedTags,
+    genre:           genre || null,
+    thumbnailUrl:    thumbnailUrl || null,
+    artistId:        artistId || null,
+    durationSeconds: durationSeconds ? Number(durationSeconds) : null,
+    isPublished:     Boolean(isPublished),
+  })
+
+  res.status(201).json({
+    success: true,
+    data: {
+      videoId:    video._id,
+      youtubeId,
+      youtubeUrl: video.youtubeUrl,
+      status:     video.status,
+      message:    'YouTube video created successfully.',
+    },
+  })
+})
 
 // ── Admin: Create video record + initiate multipart upload ────────────────────
 
@@ -211,7 +295,11 @@ export const updateVideo = asyncHandler(async (req, res) => {
   const video = await Video.findById(videoId)
   if (!video) throw new ApiError(404, 'Video not found.')
 
-  const allowedFields = ['title', 'description', 'price', 'isPublished', 'tags', 'genre', 'thumbnailUrl', 'artistId', 'featured', 'status', 'durationSeconds']
+  const allowedFields = [
+    'title', 'description', 'price', 'costPrice', 'discountedPrice',
+    'isPublished', 'tags', 'genre', 'thumbnailUrl', 'artistId',
+    'featured', 'status', 'durationSeconds', 'youtubeUrl', 'videoSource'
+  ]
   allowedFields.forEach((field) => {
     if (req.body[field] !== undefined) {
       video[field] = req.body[field]
@@ -299,7 +387,8 @@ export const listVideos = asyncHandler(async (req, res) => {
   const limit = Math.min(50, parseInt(req.query.limit) || 12)
   const skip = (page - 1) * limit
 
-  const filter = { isPublished: true, status: 'ready' }
+  // Include both S3-hosted (ready) and YouTube videos
+  const filter = { isPublished: true, status: { $in: ['ready', 'youtube'] } }
   if (req.query.genre) filter.genre = req.query.genre
   if (req.query.artistId) filter.artistId = req.query.artistId
   if (req.query.tags) filter.tags = { $in: req.query.tags.split(',') }
@@ -316,7 +405,7 @@ export const listVideos = asyncHandler(async (req, res) => {
 
   const [videos, total] = await Promise.all([
     Video.find(filter)
-      .select('title description thumbnailUrl price currency durationSeconds tags genre viewCount createdAt featured artistId reactions')
+      .select('title description thumbnailUrl price costPrice discountedPrice currency durationSeconds tags genre viewCount createdAt featured artistId reactions videoSource youtubeUrl')
       .populate('artistId', 'name avatarUrl')
       .populate('genre', 'name')
       .sort(sortBy)

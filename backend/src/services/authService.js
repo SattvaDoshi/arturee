@@ -7,6 +7,8 @@ import { randomToken, sha256 } from '../utils/crypto.js'
 import { sendEmail } from '../utils/mailer.js'
 import { generateOtp, getOtpExpiryDate } from '../utils/otp.js'
 import { createAuthToken } from '../utils/token.js'
+import { upsertDeviceSession } from './deviceService.js'
+import { buildDeviceLabel } from '../utils/deviceDetect.js'
 
 const SALT_ROUNDS = 10
 const RESET_TOKEN_MINUTES = 15
@@ -22,10 +24,36 @@ const sanitizeUser = (user) => ({
   authProvider: user.authProvider
 })
 
-const issueAuthResponse = (user) => ({
-  token: createAuthToken({ userId: user._id }),
-  user: sanitizeUser(user)
-})
+/**
+ * Build the auth response payload.
+ *
+ * @param {object} user           - Mongoose User document
+ * @param {string} [ipAddress]    - Client IP for DeviceSession registration
+ * @param {string} [userAgent]    - Client UA for device label
+ * @param {string} [deviceId]     - Client device fingerprint
+ */
+const issueAuthResponse = async (user, ipAddress, userAgent, deviceId) => {
+  // Issue JWT with the current (just-incremented) sessionVersion and sessionId
+  const token = createAuthToken({ 
+    userId: user._id, 
+    sessionVersion: user.sessionVersion,
+    sessionId: user.activeSession?.sessionId
+  })
+
+  // Register / replace device session so only this device is valid
+  if (ipAddress) {
+    const deviceLabel = buildDeviceLabel(userAgent || '')
+    await upsertDeviceSession({
+      userId:       user._id.toString(),
+      deviceId:     deviceId || 'unknown',
+      deviceLabel,
+      sessionToken: token,
+      ipAddress,
+    })
+  }
+
+  return { token, user: sanitizeUser(user) }
+}
 
 const validateEmail = (email) => /\S+@\S+\.\S+/.test(String(email).toLowerCase())
 
@@ -139,7 +167,7 @@ export const resendSignupOtp = async ({ email }) => {
   return { message: 'New OTP sent to your email' }
 }
 
-export const login = async ({ email, password }) => {
+export const login = async ({ email, password, ipAddress, userAgent, deviceId }) => {
   if (!email || !password) {
     throw new ApiError(400, 'Email and password are required')
   }
@@ -160,10 +188,30 @@ export const login = async ({ email, password }) => {
     throw new ApiError(403, 'Please verify your email first')
   }
 
-  return issueAuthResponse(user)
+  // ── Single-device enforcement ──────────────────────────────────────────
+  // Generate a new sessionId, increment sessionVersion, update activeSession
+  const newSessionId = randomToken(16)
+  const updatedUser = await User.findByIdAndUpdate(
+    user._id,
+    { 
+      $inc: { sessionVersion: 1 },
+      $set: {
+        activeSession: {
+          sessionId: newSessionId,
+          deviceId: deviceId || 'unknown',
+          createdAt: new Date(),
+          lastSeenAt: new Date(),
+          userAgent: userAgent || ''
+        }
+      }
+    },
+    { new: true }
+  )
+
+  return issueAuthResponse(updatedUser, ipAddress, userAgent, deviceId)
 }
 
-export const googleAuth = async ({ idToken }) => {
+export const googleAuth = async ({ idToken, ipAddress, userAgent, deviceId }) => {
   if (!idToken) {
     throw new ApiError(400, 'Google idToken is required')
   }
@@ -203,7 +251,27 @@ export const googleAuth = async ({ idToken }) => {
     await user.save()
   }
 
-  return issueAuthResponse(user)
+  // ── Single-device enforcement ──────────────────────────────────────────
+  // Generate a new sessionId, increment sessionVersion, update activeSession
+  const newSessionId = randomToken(16)
+  const updatedUser = await User.findByIdAndUpdate(
+    user._id,
+    { 
+      $inc: { sessionVersion: 1 },
+      $set: {
+        activeSession: {
+          sessionId: newSessionId,
+          deviceId: deviceId || 'unknown',
+          createdAt: new Date(),
+          lastSeenAt: new Date(),
+          userAgent: userAgent || ''
+        }
+      }
+    },
+    { new: true }
+  )
+
+  return issueAuthResponse(updatedUser, ipAddress, userAgent, deviceId)
 }
 
 export const forgotPassword = async ({ email }) => {

@@ -10,6 +10,7 @@ import {
   updatePassword,
   updateProfile
 } from '../services/authService.js'
+import { extractIp } from '../services/ipService.js'
 
 export const signupController = asyncHandler(async (req, res) => {
   const result = await signup(req.body)
@@ -27,12 +28,18 @@ export const resendSignupOtpController = asyncHandler(async (req, res) => {
 })
 
 export const loginController = asyncHandler(async (req, res) => {
-  const result = await login(req.body)
+  const ipAddress = extractIp(req)
+  const userAgent = req.headers['user-agent'] || ''
+  const deviceId  = req.headers['x-device-id'] || 'unknown'
+  const result = await login({ ...req.body, ipAddress, userAgent, deviceId })
   res.status(200).json({ success: true, ...result })
 })
 
 export const googleAuthController = asyncHandler(async (req, res) => {
-  const result = await googleAuth(req.body)
+  const ipAddress = extractIp(req)
+  const userAgent = req.headers['user-agent'] || ''
+  const deviceId  = req.headers['x-device-id'] || 'unknown'
+  const result = await googleAuth({ ...req.body, ipAddress, userAgent, deviceId })
   res.status(200).json({ success: true, ...result })
 })
 

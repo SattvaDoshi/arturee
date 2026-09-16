@@ -1,8 +1,13 @@
 import jwt from 'jsonwebtoken'
 import env from '../config/env.js'
 
-export const createAuthToken = (payload) => {
-  return jwt.sign(payload, env.jwtSecret, {
+/**
+ * Create a signed JWT embedding the userId, current sessionVersion, and sessionId.
+ *
+ * @param {{ userId: string, sessionVersion: number, sessionId: string }} payload
+ */
+export const createAuthToken = ({ userId, sessionVersion, sessionId }) => {
+  return jwt.sign({ userId, sessionVersion, sessionId }, env.jwtSecret, {
     expiresIn: env.jwtExpiry
   })
 }

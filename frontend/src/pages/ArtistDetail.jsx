@@ -217,12 +217,36 @@ const ArtistDetail = () => {
                         {fmtDuration(video.durationSeconds)}
                       </span>
                     )}
-                    <span className="absolute top-2 right-2 px-2.5 py-1 rounded-full text-[11px] font-bold"
-                      style={video.price === 0
-                        ? { background: 'linear-gradient(135deg,#4DD0E1,#C0E863)', color: C.navy }
-                        : { background: 'linear-gradient(135deg,#4DD0E1,#00BCD4)', color: '#fff' }}>
-                      {video.price === 0 ? 'Free' : `₹${video.price}`}
-                    </span>
+                    
+                    {/* Dual Pricing Badge */}
+                    <div className="absolute top-2 right-2 flex flex-col items-end gap-1">
+                      {video.price > 0 ? (
+                        video.discountedPrice ? (
+                          <>
+                            <span className="px-2.5 py-1 rounded-full text-[11px] font-bold shadow-sm"
+                              style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)', color: C.navy }}>
+                              ₹{video.discountedPrice}
+                            </span>
+                            {video.costPrice && (
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold text-white/80 line-through"
+                                style={{ background: 'rgba(5,29,46,0.6)' }}>
+                                ₹{video.costPrice}
+                              </span>
+                            )}
+                          </>
+                        ) : (
+                          <span className="px-2.5 py-1 rounded-full text-[11px] font-bold shadow-sm"
+                            style={{ background: 'linear-gradient(135deg,#4DD0E1,#00BCD4)', color: '#fff' }}>
+                            ₹{video.price}
+                          </span>
+                        )
+                      ) : (
+                        <span className="px-2.5 py-1 rounded-full text-[11px] font-bold shadow-sm"
+                          style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)', color: C.navy }}>
+                          Free
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   <div className="p-4">

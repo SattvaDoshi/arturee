@@ -14,7 +14,7 @@ import { hasPurchased } from '../services/playbackAuthService.js'
  * Requires a valid purchase.
  */
 export const saveWatchProgress = asyncHandler(async (req, res) => {
-  const { videoId, currentTimestamp, videoDurationSeconds } = req.body
+  const { videoId, currentTimestamp, videoDurationSeconds, playSessionId } = req.body
 
   if (!videoId || currentTimestamp === undefined || !videoDurationSeconds) {
     throw new ApiError(400, 'videoId, currentTimestamp, and videoDurationSeconds are required.')
@@ -22,13 +22,36 @@ export const saveWatchProgress = asyncHandler(async (req, res) => {
 
   const userId = req.user._id.toString()
 
-  // Only allow progress saves for purchased videos
+  // Allow progress saves even on 'expired' purchases so the final save
+  // registers correctly. The purchase gate on /playback/request will block
+  // them from starting a new session.
   const purchased = await hasPurchased(userId, videoId)
   if (!purchased) {
     throw new ApiError(403, 'Access denied: purchase required.')
   }
 
-  const record = await saveProgress(userId, videoId, Number(currentTimestamp), Number(videoDurationSeconds))
+  const { record, purchaseExpired } = await saveProgress(
+    userId,
+    videoId,
+    Number(currentTimestamp),
+    Number(videoDurationSeconds),
+    playSessionId || null,
+  )
+
+  // If the purchase was just expired by this progress save, return 402
+  // so the frontend can show the "views used up" message and stop playback.
+  if (purchaseExpired) {
+    return res.status(402).json({
+      success: false,
+      code: 'PURCHASE_EXPIRED',
+      message: 'You have used both your allowed views for this video. Your access has expired.',
+      data: {
+        currentTimestamp: record.currentTimestamp,
+        completionPercent: record.completionPercent,
+        watchCount: record.watchCount,
+      },
+    })
+  }
 
   res.status(200).json({
     success: true,
@@ -36,6 +59,7 @@ export const saveWatchProgress = asyncHandler(async (req, res) => {
       currentTimestamp: record.currentTimestamp,
       completionPercent: record.completionPercent,
       completed: record.completed,
+      watchCount: record.watchCount,
     },
   })
 })

@@ -32,6 +32,20 @@ const videoSchema = new mongoose.Schema(
       required: true,
       min: 0,
     },
+
+    // ── Dual pricing ─────────────────────────────────────────────────────────
+    // costPrice   = original / MRP price shown with strikethrough
+    // discountedPrice = actual amount charged (null means no discount active)
+    costPrice: {
+      type: Number,
+      default: null,
+      min: 0,
+    },
+    discountedPrice: {
+      type: Number,
+      default: null,
+      min: 0,
+    },
     currency: {
       type: String,
       default: 'INR',
@@ -49,6 +63,19 @@ const videoSchema = new mongoose.Schema(
       ref: 'Genre',
       default: null,
     },
+    // ── Video source ──────────────────────────────────────────────────────────
+    // 'upload'  = hosted on S3/CloudFront (default)
+    // 'youtube' = embedded from YouTube; no S3 asset needed
+    videoSource: {
+      type: String,
+      enum: ['upload', 'youtube'],
+      default: 'upload',
+    },
+    // YouTube video URL or ID — only set when videoSource === 'youtube'
+    youtubeUrl: {
+      type: String,
+      default: null,
+    },
     status: {
       type: String,
       enum: [
@@ -58,6 +85,7 @@ const videoSchema = new mongoose.Schema(
         'ready',         // processing complete, available for playback
         'failed',        // MediaConvert job failed
         'archived',
+        'youtube',       // YouTube-hosted — always ready
       ],
       default: 'draft',
     },

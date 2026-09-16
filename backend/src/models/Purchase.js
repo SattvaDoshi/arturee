@@ -42,13 +42,25 @@ const purchaseSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ['pending', 'completed', 'failed', 'refunded'],
+      enum: ['pending', 'completed', 'failed', 'refunded', 'expired'],
       default: 'pending',
     },
 
     completedAt: {
       type: Date,
       default: null,
+    },
+
+    // Set when the purchase is auto-expired after the view limit is reached
+    expiredAt: {
+      type: Date,
+      default: null,
+    },
+
+    // How many times the video was watched to >= 80% before expiry
+    viewsUsed: {
+      type: Number,
+      default: 0,
     },
   },
   {

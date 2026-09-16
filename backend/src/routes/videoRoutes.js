@@ -15,6 +15,7 @@ import {
   manuallyPublishVideo,
   proxyUpload,
   reactToVideo,
+  createYoutubeVideo,
 } from '../controllers/videoController.js'
 
 // Multer: keep the file in memory (buffer), unlimited file size
@@ -38,6 +39,9 @@ router.post('/:videoId/react', authMiddleware, generalLimiter, reactToVideo)
 router.post('/upload/initiate', authMiddleware, adminMiddleware, uploadLimiter, initiateUpload)
 router.post('/upload/complete', authMiddleware, adminMiddleware, uploadLimiter, completeUpload)
 router.post('/upload/abort', authMiddleware, adminMiddleware, abortUpload)
+
+// YouTube-hosted video creation (no upload, no MediaConvert)
+router.post('/youtube', authMiddleware, adminMiddleware, createYoutubeVideo)
 
 // Proxy upload — file goes through backend to S3 (bypasses CORS)
 router.post('/upload/proxy', authMiddleware, adminMiddleware, upload.single('file'), proxyUpload)

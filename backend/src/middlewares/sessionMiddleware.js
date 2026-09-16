@@ -9,9 +9,11 @@ import ApiError from '../utils/ApiError.js'
  *
  * Validates:
  *   1. Device fingerprint matches the registered active session
- *   2. IP address has not changed significantly
+ *   2. IP address has not changed outside the /24 subnet
  *
- * On failure: terminates the session and returns 401.
+ * On failure: terminates the session, revokes all playback URLs,
+ *             and returns 401 with a structured error code so the
+ *             frontend can show the correct "kicked" modal.
  *
  * The client must send:
  *   - Authorization: Bearer <jwt>                   (handled by authMiddleware)
@@ -20,36 +22,38 @@ import ApiError from '../utils/ApiError.js'
  */
 const sessionMiddleware = async (req, res, next) => {
   try {
-    const userId = req.user._id.toString()
-    const deviceId = req.headers['x-device-id'] || ''
+    const userId      = req.user._id.toString()
+    const deviceId    = req.headers['x-device-id']     || ''
     const sessionToken = req.headers['x-session-token'] || ''
-    const currentIp = extractIp(req)
+    const currentIp   = extractIp(req)
 
-    // ── Device validation ─────────────────────────────────────────────────
+    // ── 1. Device validation ──────────────────────────────────────────────
     const deviceCheck = await validateDevice(userId, deviceId, sessionToken)
 
     if (!deviceCheck.valid) {
-      // Terminate the session and revoke all playback URLs
       await terminateSession(userId)
       await revokeAllPlaybackSessions(userId)
-      return next(new ApiError(401, deviceCheck.reason || 'Session invalidated.'))
+      return res.status(401).json({
+        success: false,
+        code:    'SESSION_INVALIDATED',
+        message: deviceCheck.reason || 'Session invalidated. Your account was accessed from another device.',
+      })
     }
 
-    // ── IP validation ─────────────────────────────────────────────────────
+    // ── 2. IP validation ──────────────────────────────────────────────────
     const ipCheck = await validateIp(userId, currentIp)
 
     if (!ipCheck.valid) {
       await terminateSession(userId)
       await revokeAllPlaybackSessions(userId)
-      return next(new ApiError(401, 'Session invalidated: IP address changed significantly.'))
+      return res.status(401).json({
+        success: false,
+        code:    ipCheck.code || 'SESSION_INVALIDATED_IP',
+        message: ipCheck.reason || 'Session invalidated: your network location changed.',
+      })
     }
 
-    if (ipCheck.action === 'warn') {
-      // Log the warning but allow the request to proceed
-      console.warn(`[Session] IP change warning for user ${userId}: ${ipCheck.reason}`)
-    }
-
-    // Attach context for downstream use
+    // Attach session context for downstream use
     req.sessionContext = {
       deviceId,
       sessionToken,
