@@ -75,11 +75,11 @@ const App = () => {
         <AuthProvider>
           <ArtistModalProvider>
           <CartProvider>
-            <JoinArtistModal />
-            {/* ── Global kicked-session modal ──────────────────────────────
-                 Sits inside AuthProvider so it can read kickedReason.       */}
-            <KickedSessionGate />
             <BrowserRouter>
+              <JoinArtistModal />
+              {/* ── Global kicked-session modal ──────────────────────────────
+                   Sits inside AuthProvider so it can read kickedReason.       */}
+              <KickedSessionGate />
               <Routes>
                 {/* ── Landing ── */}
                 <Route path="/" element={isStandalone() ? <Navigate to="/dashboard" replace /> : <Landing />} />
