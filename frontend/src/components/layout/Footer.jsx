@@ -14,23 +14,14 @@ const Footer = () => {
               </div>
               <span className="text-2xl font-black tracking-tighter lowercase bg-linear-to-r from-primary to-lime bg-clip-text text-transparent">arturee</span>
             </div>
-            <p className="text-navy max-w-sm leading-relaxed">
-              The world's premier cinematic gallery for independent voices and artistic visionaries. Stream, support, and discover.
+            <p className="font-mono text-sm uppercase tracking-[0.2em] text-navy/70 font-semibold mt-4 ml-1">
+              Art Comes Home
             </p>
 
           </div>
           <div>
             <h4 className="font-bold text-navy mb-6">Platform</h4>
             <ul className="space-y-4 text-sm text-navy">
-              <li>
-                <Link
-                  to="/dashboard"
-                  className="hover:text-primary transition-colors font-medium"
-                >
-                  Library
-                </Link>
-              </li>
-
               <li>
                 <Link
                   to="/artists"
@@ -64,7 +55,7 @@ const Footer = () => {
             <div className="flex gap-4">
               <div className='flex justify-between items-center gap-1'>
                 <Instagram className="w-5 h-5 text-primary" />
-                <a href="#" className="ml-2 text-sm text-navy hover:text-primary transition-colors font-medium">Instagram</a>
+                <a href="https://www.instagram.com/arturee_art/" target="_blank" rel="noopener noreferrer" className="ml-2 text-sm text-navy hover:text-primary transition-colors font-medium">Instagram</a>
               </div>
               <div>
               </div>

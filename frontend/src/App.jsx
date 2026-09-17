@@ -1,5 +1,15 @@
-import { useState } from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+
+const ScrollToTop = () => {
+  const { pathname } = useLocation()
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
+
+  return null
+}
 import SplashScreen from './components/SplashScreen'
 import { CartProvider } from './context/CartContext'
 import { AuthProvider, useAuth } from './context/AuthContext'
@@ -76,6 +86,7 @@ const App = () => {
           <ArtistModalProvider>
           <CartProvider>
             <BrowserRouter>
+              <ScrollToTop />
               <JoinArtistModal />
               {/* ── Global kicked-session modal ──────────────────────────────
                    Sits inside AuthProvider so it can read kickedReason.       */}

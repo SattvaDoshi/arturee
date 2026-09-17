@@ -262,59 +262,42 @@ const Pricing = () => {
 
         {/* PAY PER VIDEO & BUNDLES */}
         {tab === 'video' && (
-          <div className="max-w-[1100px] mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-              {activePlans.map((tier, idx) => (
-                <div
-                  key={idx}
-                  onClick={() => navigate('/checkout', { state: { type: 'video', plan: tier.label, price: tier.price } })}
-                  className={`relative flex flex-col rounded-3xl border p-8 text-center cursor-pointer transition-all duration-300 ${
-                    tier.highlight
-                      ? 'bg-navy text-white border-navy shadow-2xl scale-105'
-                      : 'bg-white border-primary/20 shadow-md hover:shadow-xl hover:border-primary/50 hover:-translate-y-2'
-                  }`}
-                >
-                  {tier.save && (
-                    <span
-                      className={`absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold whitespace-nowrap ${
-                        tier.highlight ? 'bg-lime text-navy' : 'bg-primary/15 text-primary border border-primary/30'
-                      }`}
-                    >
-                      {tier.save}
-                    </span>
-                  )}
-                  <p className={`font-mono text-xs uppercase tracking-widest mb-2 font-bold ${tier.highlight ? 'text-lime' : 'text-primary'}`}>
-                    {tier.label}
-                  </p>
-                  <div className="my-4 flex items-end justify-center gap-1">
-                    <span className={`text-4xl font-black ${tier.highlight ? 'text-white' : 'text-navy'}`}>
-                      Rs. {tier.price}
-                    </span>
-                  </div>
-                  <p className={`text-sm mt-3 leading-relaxed ${tier.highlight ? 'text-white/70' : 'text-navy/60'}`}>
-                    {tier.desc}
-                  </p>
-                  {tier.points && tier.points.length > 0 && (
-                    <ul className="space-y-2.5 my-6 text-left flex-1">
-                      {tier.points.map((pt, pIdx) => (
-                        <li key={pIdx} className="flex items-start gap-2.5 text-sm">
-                          <span className={`mt-0.5 text-base font-bold ${tier.highlight ? 'text-lime' : 'text-primary'}`}>✓</span>
-                          <span className={tier.highlight ? 'text-white/80' : 'text-navy/70'}>{pt}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                  <button
-                    className={`w-full mt-6 py-3.5 rounded-2xl font-bold text-sm transition-all duration-200 ${
-                      tier.highlight
-                        ? 'bg-lime text-navy hover:bg-[#a8d356]'
-                        : 'bg-linear-to-r from-primary to-teal text-white hover:shadow-lg hover:shadow-primary/30'
-                    }`}
-                  >
-                    Get Started
-                  </button>
+          <div className="max-w-[800px] mx-auto">
+            <div className="relative flex flex-col items-center justify-center rounded-3xl border bg-navy text-white border-navy shadow-2xl p-12 text-center overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-lime/20 rounded-full blur-[80px] pointer-events-none" />
+              <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/20 rounded-full blur-[80px] pointer-events-none" />
+              
+              <div className="relative z-10">
+                <span className="inline-block px-4 py-1 rounded-full text-xs font-bold whitespace-nowrap bg-lime text-navy mb-6">
+                  Simple & Transparent
+                </span>
+                <p className="font-mono text-sm uppercase tracking-widest mb-2 font-bold text-lime">
+                  Pay for what you watch
+                </p>
+                <div className="my-6 flex flex-col items-center justify-center gap-2">
+                  <span className="text-5xl md:text-6xl font-black text-white">
+                    1 min = 1 Rs.
+                  </span>
                 </div>
-              ))}
+                <p className="text-lg mt-4 leading-relaxed text-white/80 max-w-md mx-auto">
+                  This is our simple pricing for videos. Enjoy high-quality streaming without any complex bundles.
+                </p>
+                
+                <ul className="space-y-3 mt-8 text-left max-w-sm mx-auto flex-1">
+                  <li className="flex items-start gap-3 text-sm">
+                    <span className="mt-0.5 text-base font-bold text-lime">✓</span>
+                    <span className="text-white/90">HD quality streaming</span>
+                  </li>
+                  <li className="flex items-start gap-3 text-sm">
+                    <span className="mt-0.5 text-base font-bold text-lime">✓</span>
+                    <span className="text-white/90">Pay exactly for video duration</span>
+                  </li>
+                  <li className="flex items-start gap-3 text-sm">
+                    <span className="mt-0.5 text-base font-bold text-lime">✓</span>
+                    <span className="text-white/90">Instant access to content</span>
+                  </li>
+                </ul>
+              </div>
             </div>
 
             <p className="text-center text-navy/40 text-xs mt-6 font-mono">

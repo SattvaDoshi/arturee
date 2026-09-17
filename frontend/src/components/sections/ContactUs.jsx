@@ -59,30 +59,30 @@ const ContactUs = () => {
               {
                 icon: '✉️',
                 label: 'Email Us',
-                value: 'hello@arturee.in',
+                value: 'support@arturee.com',
                 sub: 'We reply within 24 hours',
-                href: 'mailto:hello@arturee.in',
+                href: 'mailto:support@arturee.com',
               },
               {
                 icon: '📸',
                 label: 'Instagram',
-                value: '@arturee.art',
+                value: '@arturee_art',
                 sub: 'Follow our journey',
-                href: 'https://www.instagram.com/arturee.art',
+                href: 'https://www.instagram.com/arturee_art/',
               },
               {
-                icon: '🎨',
-                label: 'For Artists',
-                value: 'artists@arturee.in',
-                sub: 'Join us as a creator',
-                href: 'mailto:artists@arturee.in',
+                icon: '▶️',
+                label: 'YouTube',
+                value: '@arturee_art',
+                sub: 'Subscribe to our channel',
+                href: 'https://youtube.com/@arturee_art?si=iKkQXMrpacLWZpjR',
               },
             ].map((item) => (
               <a
                 key={item.label}
                 href={item.href}
-                target={item.label === 'Instagram' ? '_blank' : '_self'}
-                rel={item.label === 'Instagram' ? 'noopener noreferrer' : undefined}
+                target={['Instagram', 'YouTube'].includes(item.label) ? '_blank' : '_self'}
+                rel={['Instagram', 'YouTube'].includes(item.label) ? 'noopener noreferrer' : undefined}
                 className="flex items-start gap-4 bg-white rounded-2xl border border-primary/15 p-5 shadow-sm hover:border-primary/40 hover:shadow-md transition-all duration-200 cursor-pointer block"
               >
                 <span className="text-2xl mt-0.5">{item.icon}</span>
