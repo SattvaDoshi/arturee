@@ -63,24 +63,24 @@ const termsItems = [
   {
     title: 'Per-Video Watch Limit',
     content:
-      'Each purchased video (single, double, or triple bundle) can be streamed a maximum of 2 (two) times. Once both views are consumed, a fresh purchase is required to watch the content again. This limit applies per account and cannot be transferred.',
+      'Each purchased video  can be streamed a maximum of 2 (two) times. Once both views are consumed, a fresh purchase is required to watch the content again. This limit applies per account and cannot be transferred.',
     highlight: true,
   },
-  {
-    title: 'Subscription Access',
-    content:
-      'Active subscribers can stream all available content without per-view restrictions for the duration of their active plan.',
-  },
+  // {
+  //   title: 'Subscription Access',
+  //   content:
+  //     'Active subscribers can stream all available content without per-view restrictions for the duration of their active plan.',
+  // },
   {
     title: 'Refund Policy',
     content:
       'Subscription fees are non-refundable once the billing period begins and at least one piece of content has been accessed. If no content has been accessed within 24 hours of purchase, a full refund may be requested.',
   },
-  {
-    title: 'Cancellation Policy',
-    content:
-      'You may cancel your subscription at any time from your Account Settings. Cancellation takes effect at the end of the current billing period — you will not be charged again, but access continues until the period expires. No partial refunds are issued for unused days.',
-  },
+  // {
+  //   title: 'Cancellation Policy',
+  //   content:
+  //     'You may cancel your subscription at any time from your Account Settings. Cancellation takes effect at the end of the current billing period — you will not be charged again, but access continues until the period expires. No partial refunds are issued for unused days.',
+  // },
   {
     title: 'Content Availability',
     content:
@@ -89,7 +89,7 @@ const termsItems = [
   {
     title: 'Account & Sharing',
     content:
-      'Accounts are for individual use only. Sharing login credentials is prohibited. Concurrent streams are limited by plan — monthly allows 1 stream, quarterly 2, and half-yearly/yearly allows 3 simultaneous streams.',
+      'Accounts are for individual use only. Sharing login credentials is prohibited.',
   },
 ]
 

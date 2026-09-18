@@ -213,12 +213,12 @@ const Artist = () => {
               {pageHeadline.includes(' ') ? (
                 <>
                   {pageHeadline.split(' ').slice(0, -1).join(' ')}{' '}
-                  <span className="bg-linear-to-r from-primary to-lime bg-clip-text text-transparent">
+                  <span className="bg-linear-to-r from-primary to-lime bg-clip-text text-transparent drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">
                     {pageHeadline.split(' ').slice(-1)[0]}
                   </span>
                 </>
               ) : (
-                <span className="bg-linear-to-r from-primary to-lime bg-clip-text text-transparent">
+                <span className="bg-linear-to-r from-primary to-lime bg-clip-text text-transparent drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">
                   {pageHeadline}
                 </span>
               )}
@@ -420,98 +420,7 @@ const Artist = () => {
                 })}
               </div>
             )}
-
-            {/* Selected / Featured Artist Expanded View */}
-            {featuredArtist && (
-              <div className="mt-12 bg-white rounded-3xl border border-primary/20 shadow-xl overflow-hidden animate-in fade-in duration-300">
-                <div
-                  className={`h-48 bg-linear-to-br ${getGradient(
-                    artists.findIndex(
-                      (a) =>
-                        (a._id || a.id) ===
-                        (featuredArtist._id || featuredArtist.id)
-                    )
-                  )} relative flex items-end px-10 pb-8`}
-                >
-                  <div className="absolute inset-0 bg-navy/30" />
-                  <div className="relative z-10">
-                    <span className="inline-block px-3 py-1 rounded-full text-[10px] font-bold mb-3 bg-white/20 text-white backdrop-blur-xs">
-                      {featuredArtist.genre || 'Story Telling'}
-                    </span>
-                    <h2 className="text-4xl font-black text-white tracking-tighter">
-                      {featuredArtist.name}
-                    </h2>
-                    <p className="text-white/80 text-sm mt-1">
-                      {featuredArtist.isVerified ? 'Verified Creator • ' : ''}
-                      {featuredArtist.genre || 'Storytelling & Poetry'}
-                    </p>
-                  </div>
-                </div>
-                <div className="p-10">
-                  <p className="text-navy/70 text-base leading-relaxed max-w-3xl mb-8 whitespace-pre-line">
-                    {featuredArtist.bio ||
-                      'An inspiring creator bringing unique stories and performances to life.'}
-                  </p>
-                  <div className="flex flex-wrap gap-8 mb-8">
-                    <div>
-                      <p className="text-2xl font-black text-navy">
-                        {featuredArtist.videoCount ?? 0}
-                      </p>
-                      <p className="text-navy/40 text-xs font-mono uppercase">
-                        Published Videos
-                      </p>
-                    </div>
-                    <div className="w-px bg-black/10" />
-                    <div>
-                      <p className="text-2xl font-black text-navy">
-                        {(featuredArtist.emoticonCount ||
-                          featuredArtist.followerCount ||
-                          0) +
-                          (reactedIds[
-                            featuredArtist._id || featuredArtist.id
-                          ]
-                            ? 1
-                            : 0)}
-                      </p>
-                      <p className="text-navy/40 text-xs font-mono uppercase">
-                        Emoticons ❤️🔥⭐
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap gap-4">
-                    <Link
-                      to={`/artist/${
-                        featuredArtist._id || featuredArtist.id
-                      }`}
-                      className="px-6 py-2.5 rounded-2xl bg-linear-to-r from-primary to-teal text-white font-bold text-sm hover:shadow-lg hover:shadow-primary/30 transition-all inline-block"
-                    >
-                      View Profile & Videos
-                    </Link>
-                    <button
-                      onClick={() =>
-                        handleEmoticonReact(
-                          featuredArtist._id || featuredArtist.id
-                        )
-                      }
-                      className={`px-6 py-2.5 rounded-2xl border font-bold text-sm transition-all flex items-center gap-2 ${
-                        reactedIds[featuredArtist._id || featuredArtist.id]
-                          ? 'border-red-500 bg-red-500 text-white shadow-md'
-                          : 'border-red-500/30 text-red-500 hover:bg-red-500/10'
-                      }`}
-                    >
-                      <span>❤️🔥⭐</span>
-                      <span>
-                        {reactedIds[
-                          featuredArtist._id || featuredArtist.id
-                        ]
-                          ? 'Supporting with Emoticons!'
-                          : 'Send Love & Emoticons'}
-                      </span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
+           
 
             {/* CTA for artists - dynamic from backend config */}
             <div className="mt-16 text-center bg-navy rounded-3xl px-8 py-14 relative overflow-hidden shadow-2xl">

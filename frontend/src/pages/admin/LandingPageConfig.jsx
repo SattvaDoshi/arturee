@@ -716,43 +716,6 @@ export default function LandingPageConfig() {
                   )}
                 </div>
 
-                {/* Section 2: Featured Artist Expanded Spotlight */}
-                <div className="bg-white/5 rounded-3xl p-6 border border-white/10 space-y-4">
-                  <div>
-                    <h2 className="text-xl font-black text-white">
-                      2. Spotlight / Featured Artist (Below Grid)
-                    </h2>
-                    <p className="text-white/60 text-xs mt-1">
-                      Choose which artist is highlighted in the large expanded showcase section below the artist cards grid.
-                    </p>
-                  </div>
-                  <div className="max-w-md">
-                    <label className="block text-xs font-mono uppercase text-white/60 mb-2">
-                      Select Featured Artist
-                    </label>
-                    <select
-                      value={config.artistPage.featuredArtistId || ''}
-                      onChange={(e) =>
-                        setConfig((prev) => ({
-                          ...prev,
-                          artistPage: {
-                            ...prev.artistPage,
-                            featuredArtistId: e.target.value || null,
-                          },
-                        }))
-                      }
-                      className="w-full bg-[#071523] border border-white/20 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#4DD0E1]"
-                    >
-                      <option value="">-- No Featured Artist --</option>
-                      {allArtists.map((artist) => (
-                        <option key={artist._id} value={artist._id}>
-                          {artist.name} ({artist.genre || 'Story Telling'}) • {artist.emoticonCount || artist.followerCount || 0} Emoticons ❤️
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
                 {/* Section 3: Page Headlines & Bottom CTA */}
                 <div className="bg-white/5 rounded-3xl p-6 border border-white/10 space-y-6">
                   <h2 className="text-xl font-black text-white">

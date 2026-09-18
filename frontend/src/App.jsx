@@ -24,6 +24,7 @@ import Landing      from './pages/landing/Landing'
 import AboutUs      from './pages/landing/AboutUs'
 import ArtistPage   from './pages/landing/Artist'
 import Genre        from './pages/landing/Genre'
+import GenreDetail  from './pages/landing/GenreDetail'
 import Pricing      from './pages/landing/Pricing'
 
 // ── Auth ─────────────────────────────────────────────────
@@ -104,6 +105,7 @@ const App = () => {
                 <Route path="/video/:videoId" element={<VideoDetail />} />
                 <Route path="/artist/:artistId"    element={<ArtistDetail />} />
                 <Route path="/artist/marcus-cole"  element={<ArtistDetail />} />
+                <Route path="/genre/:genreId"      element={<GenreDetail />} />
 
                 {/* ── Auth ── */}
                 <Route path="/login"           element={<Login />} />

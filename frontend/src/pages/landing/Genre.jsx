@@ -100,7 +100,6 @@ const Genre = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  const [selected, setSelected] = useState(null)
   const [search, setSearch] = useState('')
 
   useEffect(() => {
@@ -165,19 +164,6 @@ const Genre = () => {
       return bFeatured - aFeatured
     })
   }, [genres, search, landingConfig])
-
-  const activeGenre = useMemo(() => {
-    if (!selected) return null
-    return genres.find((g) => (g._id || g.id) === selected) || null
-  }, [selected, genres])
-
-  const filteredVideos = useMemo(() => {
-    if (!selected) return videos
-    return videos.filter((v) => {
-      const gId = v.genre?._id || v.genre
-      return gId === selected
-    })
-  }, [selected, videos])
 
   const getGenreVideoCount = (genreId) => {
     return videos.filter((v) => (v.genre?._id || v.genre) === genreId).length
@@ -267,7 +253,6 @@ const Genre = () => {
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 mb-16">
                 {filteredGenres.map((genre, idx) => {
                   const genreId = genre._id || genre.id
-                  const isSelected = selected === genreId
                   const isFeatured = (
                     landingConfig?.genrePage?.featuredGenres || []
                   )
@@ -277,36 +262,19 @@ const Genre = () => {
                   const count = getGenreVideoCount(genreId)
 
                   return (
-                    <button
+                    <Link
+                      to={`/genre/${genreId}`}
                       key={genreId}
-                      onClick={() =>
-                        setSelected(isSelected ? null : genreId)
-                      }
-                      className={`group relative text-left rounded-3xl overflow-hidden p-6 transition-all duration-300 border ${
-                        isSelected
-                          ? 'ring-2 ring-offset-2 scale-[1.03] shadow-2xl border-transparent'
-                          : 'border-white/60 hover:scale-[1.02] hover:shadow-xl shadow-md bg-white/60 backdrop-blur-xs'
-                      }`}
-                      style={
-                        isSelected ? { ringColor: meta.accent } : {}
-                      }
+                      className="group block relative text-left rounded-3xl overflow-hidden p-6 transition-all duration-300 border border-white/60 hover:scale-[1.02] hover:shadow-xl shadow-md bg-white/60 backdrop-blur-xs"
                     >
                       <div
-                        className={`absolute inset-0 bg-linear-to-br ${
-                          meta.gradient
-                        } transition-opacity duration-300 ${
-                          isSelected
-                            ? 'opacity-100'
-                            : 'opacity-0 group-hover:opacity-20'
-                        }`}
+                        className={`absolute inset-0 bg-linear-to-br ${meta.gradient} transition-opacity duration-300 opacity-0 group-hover:opacity-20`}
                       />
                       <div className="relative z-10">
                         {meta.tag && (
                           <span
                             className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold mb-3 shadow-xs ${
-                              isSelected
-                                ? 'bg-white/30 text-white'
-                                : isFeatured
+                              isFeatured
                                 ? 'bg-[#FF9800]/20 text-[#e65100]'
                                 : 'bg-primary/10 text-primary'
                             }`}
@@ -315,135 +283,24 @@ const Genre = () => {
                           </span>
                         )}
                         <div className="text-3xl mb-3">{meta.icon}</div>
-                        <h3
-                          className={`font-bold text-lg leading-tight mb-1 ${
-                            isSelected ? 'text-white' : 'text-navy'
-                          }`}
-                        >
+                        <h3 className="font-bold text-lg leading-tight mb-1 text-navy group-hover:text-primary transition-colors">
                           {genre.name}
                         </h3>
-                        <p
-                          className={`text-xs leading-relaxed mb-4 line-clamp-2 ${
-                            isSelected
-                              ? 'text-white/80'
-                              : 'text-navy/50'
-                          }`}
-                        >
+                        <p className="text-xs leading-relaxed mb-4 line-clamp-2 text-navy/50">
                           {genre.description ||
                             'Explore curated stories and art in this genre.'}
                         </p>
-                        <span
-                          className={`font-mono text-[10px] uppercase tracking-widest ${
-                            isSelected
-                              ? 'text-white/70'
-                              : 'text-navy/35 font-semibold'
-                          }`}
-                        >
+                        <span className="font-mono text-[10px] uppercase tracking-widest text-navy/35 font-semibold">
                           {count} {count === 1 ? 'video' : 'videos'}
                         </span>
                       </div>
-                    </button>
+                    </Link>
                   )
                 })}
               </div>
             )}
 
-            {/* Videos Section */}
-            {!loading && !error && (
-              <div>
-                <div className="flex items-end justify-between mb-8">
-                  <div>
-                    <h2 className="text-3xl font-black tracking-tighter text-navy">
-                      {activeGenre ? activeGenre.name : 'All Genres'}
-                    </h2>
-                    <p className="text-navy/55 text-sm mt-1">
-                      {activeGenre
-                        ? activeGenre.description ||
-                          'Hand-picked performances across this genre'
-                        : 'Hand-picked across every art form'}
-                    </p>
-                  </div>
-                  {selected && (
-                    <button
-                      onClick={() => setSelected(null)}
-                      className="text-sm font-semibold text-navy/50 hover:text-navy flex items-center gap-1.5 transition-colors"
-                    >
-                      ← All genres
-                    </button>
-                  )}
-                </div>
-
-                {filteredVideos.length === 0 ? (
-                  <div className="text-center py-20 bg-white/60 backdrop-blur-md rounded-3xl border border-primary/15 shadow-sm">
-                    <p className="text-navy/50 text-base font-medium">
-                      No videos available in{' '}
-                      {activeGenre ? activeGenre.name : 'this genre'} yet.
-                    </p>
-                    <p className="text-navy/35 text-xs mt-1">
-                      Check back soon for upcoming performances and releases!
-                    </p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                    {filteredVideos.map((video, idx) => {
-                      const videoId = video._id || video.id
-                      const artistName =
-                        video.artistId?.name || video.artist || 'Artist'
-                      const gradient =
-                        fallbackGradients[idx % fallbackGradients.length]
-                          .gradient
-
-                      return (
-                        <Link
-                          to={`/video/${videoId}`}
-                          key={videoId}
-                          className="group cursor-pointer block bg-white/70 rounded-2xl p-2 border border-white hover:shadow-xl transition-all duration-300"
-                        >
-                          <div
-                            className="relative rounded-xl overflow-hidden mb-3 shadow-md"
-                            style={{ aspectRatio: '16/9' }}
-                          >
-                            {video.thumbnailUrl ? (
-                              <img
-                                src={video.thumbnailUrl}
-                                alt={video.title}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                              />
-                            ) : (
-                              <div
-                                className={`w-full h-full bg-linear-to-br ${gradient} flex items-center justify-center`}
-                              >
-                                <span className="text-white/70 text-4xl group-hover:scale-110 transition-transform duration-300">
-                                  ▶
-                                </span>
-                              </div>
-                            )}
-                            {video.durationSeconds > 0 && (
-                              <div className="absolute bottom-2 right-2 px-2 py-0.5 bg-black/70 backdrop-blur-xs rounded text-[11px] text-white font-mono font-bold">
-                                {fmtDuration(video.durationSeconds)}
-                              </div>
-                            )}
-                            <div className="absolute inset-0 bg-navy/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl flex items-center justify-center">
-                              <span className="w-10 h-10 rounded-full bg-white/30 backdrop-blur-xs flex items-center justify-center text-white text-sm font-bold">
-                                ▶
-                              </span>
-                            </div>
-                          </div>
-                          <div className="px-1 pb-1">
-                            <h4 className="font-semibold text-navy text-sm truncate">
-                              {video.title}
-                            </h4>
-                            <p className="text-navy/50 text-xs mt-0.5 truncate">
-                              {artistName} • {video.viewCount || 0} views
-                            </p>
-                          </div>
-                        </Link>
-                      )
-                    })}
-                  </div>
-                )}
-              </div>
-            )}
+            {/* Videos section has been moved to its own dynamic route (/genre/:genreId) */}
           </div>
         </div>
       </div>
