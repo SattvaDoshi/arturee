@@ -154,7 +154,7 @@ const Pricing = () => {
           </span>
           <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-navy leading-tight">
             Nourish Your{' '}
-            <span className="bg-linear-to-r from-primary to-lime bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-primary to-lime text-white px-3 py-1 md:px-4 md:py-2 inline-block transform rough-border text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl shadow-lg">
               heART
             </span>
           </h1>

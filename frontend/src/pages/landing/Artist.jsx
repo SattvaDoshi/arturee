@@ -213,7 +213,7 @@ const Artist = () => {
               {pageHeadline.includes(' ') ? (
                 <>
                   {pageHeadline.split(' ').slice(0, -1).join(' ')}{' '}
-                  <span className="bg-linear-to-r from-primary to-lime bg-clip-text text-transparent drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">
+                  <span className="bg-linear-to-r from-primary to-lime text-white px-3 py-1 md:px-4 md:py-2 inline-block transform rough-border text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl shadow-lg">
                     {pageHeadline.split(' ').slice(-1)[0]}
                   </span>
                 </>

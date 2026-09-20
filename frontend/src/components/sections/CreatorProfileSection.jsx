@@ -8,9 +8,14 @@ const CreatorProfileSection = () => {
           <span className="font-mono text-navy/50 text-[10px] uppercase tracking-[0.5em] mb-6">
             art comes home
           </span>
-          <h2 className="text-6xl font-display italic text-navy font-black tracking-tighter">
-            The Dreamers
+          <div className='flex gap-6 justify-center items-center'>
+            <h2 className="text-6xl font-display italic text-navy font-black tracking-tighter">
+            The
           </h2>
+          <span className='bg-linear-to-r from-primary to-lime text-white px-3 py-1 md:px-4 md:py-2 inline-block transform rough-border text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl shadow-lg'>
+                Dreamers
+          </span>
+          </div>
         </div>
 
         {/* Arturee Intro */}
