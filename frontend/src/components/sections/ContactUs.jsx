@@ -60,7 +60,7 @@ const ContactUs = () => {
                 icon: '✉️',
                 label: 'Email Us',
                 value: 'support@arturee.com',
-                sub: 'We reply within 24 hours',
+                sub: 'We reply within 48 working hours',
                 href: 'mailto:support@arturee.com',
               },
               {
@@ -119,7 +119,7 @@ const ContactUs = () => {
                 </div>
                 <h3 className="text-2xl font-bold text-navy tracking-tight">Message Received!</h3>
                 <p className="text-navy/55 text-sm leading-relaxed max-w-xs mx-auto">
-                  Thank you for reaching out. We'll get back to you within 24 hours. You matter to us — and so does your art.
+                  Thank you for reaching out. We'll get back to you within 48 working hours. You matter to us and so does your art.
                 </p>
                 <button
                   onClick={() => { setSubmitted(false); setForm({ name: '', email: '', message: '' }) }}

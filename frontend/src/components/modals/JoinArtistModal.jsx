@@ -4,12 +4,22 @@ import { toast } from '../../context/ToastContext'
 import { useArtistModal } from '../../context/ArtistModalContext'
 import { artistApi } from '../../api/index.js'
 
+const countryCodes = [
+  { code: '+91', label: '+91 (IN)', maxLen: 10 },
+  { code: '+1', label: '+1 (US)', maxLen: 10 },
+  { code: '+44', label: '+44 (UK)', maxLen: 10 },
+  { code: '+61', label: '+61 (AU)', maxLen: 9 },
+  { code: '+971', label: '+971 (AE)', maxLen: 9 },
+]
+
 const JoinArtistModal = () => {
   const { isModalOpen, closeModal } = useArtistModal()
   
   const [formData, setFormData] = useState({
     name: '',
+    phoneCode: '+91',
     phone: '',
+    whatsappCode: '+91',
     whatsapp: '',
     email: '',
     videoLink: '',
@@ -34,7 +44,12 @@ const JoinArtistModal = () => {
     if (!formData.agreeTerms) return
     setIsSubmitting(true)
     try {
-      await artistApi.apply(formData)
+      const payload = {
+        ...formData,
+        phone: `${formData.phoneCode} ${formData.phone}`,
+        whatsapp: `${formData.whatsappCode} ${formData.whatsapp}`,
+      }
+      await artistApi.apply(payload)
       setIsSubmitted(true)
     } catch (err) {
       toast.error(err.response?.data?.message || 'Something went wrong. Please try again.')
@@ -52,7 +67,9 @@ const JoinArtistModal = () => {
       setIsSubmitting(false)
       setFormData({
         name: '',
+        phoneCode: '+91',
         phone: '',
+        whatsappCode: '+91',
         whatsapp: '',
         email: '',
         videoLink: '',
@@ -84,7 +101,7 @@ const JoinArtistModal = () => {
             <h3 className="text-2xl font-black text-navy mb-4">Submission Received!</h3>
             <p className="text-navy/70 text-base leading-relaxed mb-8">
               Thank you for trusting us with your art.<br/>
-              Our team will review your submission and get in touch with you within 2 weeks.
+              Our team will review your submission and get in touch with you within 14 working days.
             </p>
             <button 
               onClick={handleClose}
@@ -113,25 +130,58 @@ const JoinArtistModal = () => {
                 />
               </div>
               
-              <div className="grid grid-cols-2 gap-4">
-                <input 
-                  type="tel" 
-                  name="phone" 
-                  placeholder="Phone Number"
-                  required
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 bg-lightgray/50 border border-primary/20 rounded-xl focus:outline-none focus:border-primary focus:bg-white transition-all text-sm text-navy placeholder:text-navy/40"
-                />
-                <input 
-                  type="tel" 
-                  name="whatsapp" 
-                  placeholder="WhatsApp Number"
-                  required
-                  value={formData.whatsapp}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 bg-lightgray/50 border border-primary/20 rounded-xl focus:outline-none focus:border-primary focus:bg-white transition-all text-sm text-navy placeholder:text-navy/40"
-                />
+              <div className="flex flex-col gap-4">
+                <div className="flex bg-lightgray/50 border border-primary/20 rounded-xl overflow-hidden focus-within:border-primary focus-within:bg-white transition-all">
+                  <select
+                    name="phoneCode"
+                    value={formData.phoneCode}
+                    onChange={handleChange}
+                    className="bg-transparent px-2 py-3 text-sm text-navy outline-none border-r border-primary/20 cursor-pointer focus:bg-white"
+                  >
+                    {countryCodes.map((c) => (
+                      <option key={c.code} value={c.code}>{c.label}</option>
+                    ))}
+                  </select>
+                  <input 
+                    type="tel" 
+                    name="phone" 
+                    placeholder="Phone"
+                    required
+                    maxLength={countryCodes.find(c => c.code === formData.phoneCode)?.maxLen || 15}
+                    value={formData.phone}
+                    onChange={(e) => {
+                       const val = e.target.value.replace(/\D/g, '');
+                       handleChange({ target: { name: 'phone', value: val } });
+                    }}
+                    className="w-full px-3 py-3 bg-transparent outline-none text-sm text-navy placeholder:text-navy/40"
+                  />
+                </div>
+                
+                <div className="flex bg-lightgray/50 border border-primary/20 rounded-xl overflow-hidden focus-within:border-primary focus-within:bg-white transition-all">
+                  <select
+                    name="whatsappCode"
+                    value={formData.whatsappCode}
+                    onChange={handleChange}
+                    className="bg-transparent px-2 py-3 text-sm text-navy outline-none border-r border-primary/20 cursor-pointer focus:bg-white"
+                  >
+                    {countryCodes.map((c) => (
+                      <option key={c.code} value={c.code}>{c.label}</option>
+                    ))}
+                  </select>
+                  <input 
+                    type="tel" 
+                    name="whatsapp" 
+                    placeholder="WhatsApp"
+                    required
+                    maxLength={countryCodes.find(c => c.code === formData.whatsappCode)?.maxLen || 15}
+                    value={formData.whatsapp}
+                    onChange={(e) => {
+                       const val = e.target.value.replace(/\D/g, '');
+                       handleChange({ target: { name: 'whatsapp', value: val } });
+                    }}
+                    className="w-full px-3 py-3 bg-transparent outline-none text-sm text-navy placeholder:text-navy/40"
+                  />
+                </div>
               </div>
               
               <div>
@@ -150,12 +200,13 @@ const JoinArtistModal = () => {
                 <input 
                   type="url" 
                   name="videoLink" 
-                  placeholder="Upload Video Drive Link"
+                  placeholder="Video Link"
                   required
                   value={formData.videoLink}
                   onChange={handleChange}
                   className="w-full px-4 py-3 bg-lightgray/50 border border-primary/20 rounded-xl focus:outline-none focus:border-primary focus:bg-white transition-all text-sm text-navy placeholder:text-navy/40"
                 />
+                <p className="text-xs text-navy/40 mt-1">Upload Raw video link (e.g. Google Drive)</p>
               </div>
               
               <div className="pt-2">

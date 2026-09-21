@@ -75,7 +75,7 @@ export default function Checkout() {
       // 3. Open Razorpay checkout modal
       await new Promise((resolve, reject) => {
         const rzp = new window.Razorpay({
-          key:         import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_RmCmc4bECn3PRU',
+          key:         import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_live_Tej4v0plBEgW74',
           amount,
           currency:    currency || 'INR',
           order_id:    orderId,

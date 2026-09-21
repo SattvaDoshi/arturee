@@ -10,25 +10,25 @@ const CreatorProfileSection = () => {
           </span>
           <div className='flex gap-6 justify-center items-center'>
             <h2 className="text-6xl font-display italic text-navy font-black tracking-tighter">
-            The
-          </h2>
-          <span className='bg-linear-to-r from-primary to-lime text-white px-3 py-1 md:px-4 md:py-2 inline-block transform rough-border text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl shadow-lg'>
-                Dreamers
-          </span>
+              The
+            </h2>
+            <span className='bg-linear-to-r from-primary to-lime text-white px-3 py-1 md:px-4 md:py-2 inline-block transform rough-border text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl shadow-lg'>
+              Dreamers
+            </span>
           </div>
         </div>
 
         {/* Arturee Intro */}
         <div className="max-w-3xl mx-auto mb-20 text-center space-y-5">
           <p className="text-lg text-navy/70 leading-relaxed">
-            It started with an honest Dream and few modern world challenges related to <span className="font-semibold text-navy">ART</span>.
+            Every great journey comes with moments of doubt and unexpected challenges, but we anchored ourselves in one simple truth.
           </p>
           <p className="text-lg text-navy/70 leading-relaxed">
-            On the way people joined and left, making us doubt {" "}
-            <span className="text-[#ce6a6b] font-semibold">ourselves</span>.
+            If a dream is planted in your heart, it is yours to build
           </p>
           <p className="text-lg text-navy/70 leading-relaxed">
-            But, as they say, God never gives you a dream which you aren’t meant for, finally we built a strong foundation of Team Arturee one by one          </p>
+            Together, we pushed through and finally, we have turned our vision into reality.
+          </p>
           <div className="w-16 h-0.5 bg-linear-to-r from-[#ce6a6b] to-[#4a919e] mx-auto mt-4 rounded-full"></div>
         </div>
 
@@ -39,7 +39,7 @@ const CreatorProfileSection = () => {
               <div className="w-48 h-64 border-4 border-white/20 shadow-lg shrink-0">
                 <div
                   className="w-full h-full bg-cover bg-center"
-                  style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDtBBFbXLkBJnaNtyq0WMUPTRGFrYZ0EnMAycSqgnBPEGpa-xdm9pmNaVfjSKbzWLmF8_gqHKopmmOuSWONrKUJ_hOlwukNXcQPoEjnwabPqj5h6DldsnOBNlDNGiBLUViNzj2cgSBMydqGWm-EWuYVEQJj_ZiKyuomKFfpc7XyoWsSIymcIjVkg38d2uqyzIoyewrmVTZrc4Y1wse0MMdRUudKIGJMraQh9ALeSYYrKSDgLRnJ_9ds3t9tFSJs3JCbO3y02tOE3gQ')" }}
+                  style={{ backgroundImage: "url('/Suchi1.jpg')" }}
                 />
               </div>
               <div className="space-y-4 pt-4">
@@ -49,19 +49,13 @@ const CreatorProfileSection = () => {
               </div>
             </div>
             <div className="relative">
-              <div className="absolute -top-6 -right-4 w-32 h-32 opacity-20 pointer-events-none mix-blend-screen">
-                <img
-                  alt=""
-                  className="w-full h-full object-cover"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhrnU_SBMTZP-Kz9lRkOwcTw4KMoVOGPaDc8TEEfYuZe-Q4WTiOAcnfWc7wS_dgRIglpFfFvjm5cJcpKEYAcpcWVeM5kNt8DQmpWccFNRebaI6eK71NtgSFRQD3hQKZSNJDANRfzk9MmckE-JRrS9VEVDt6cdbOSv5e-FYjhXfAx6OpQNeJ_Ph7kGAch5lGIFEo0KUj0jiMWN5PSKk2PMUsCX-2Y_U_X08EQ9Ea5M1QVuCjdnRGOKlKphcHw9AUAGW2FNpoZmQDf4"
-                />
-              </div>
               <div className="text-2xl text-white/90 mb-8 leading-snug italic">
                 "I am a poetess, a storyteller, an aspiring author — and also a Chartered Accountant who genuinely loves her job. Art and numbers both tell stories; I just speak both languages."
               </div>
               <div className="border-l-2 border-[#ce6a6b] pl-6 py-2">
                 <p className="text-white/70 text-sm italic">
-                  Suchi Bansal lives life with a singular mission: to explore everything it has to offer. A Chartered Accountant by day and a storyteller at heart, she is a Financial Analyst who balances the structured world of numbers with a fearless pursuit of creative and spiritual growth. Rather than choosing a single path, Suchi embraces a multi-passionate life as a poet, storyteller, and aspiring author. She actively explores the arts through Hindustani classical music and classical Kathak dance, and as an avid traveler, she uses her journeys to deeply understand diverse perspectives. Ultimately, she blends logic and artistry to constantly expand her horizons as both a human being and a creator. The latest colour to her vision is finding Arturee—a dream she intends to paint the art world with!                </p>
+                  Suchi Bansal lives life with a singular mission: to explore everything it has to offer. A Chartered Accountant by day and a storyteller at heart, she is a Financial Analyst who balances the structured world of numbers with a fearless pursuit of creative and spiritual growth. Suchi embraces a multi-passionate life as a poet, storyteller, and aspiring author and actively learns Hindustani classical music and classical Kathak dance. As an avid traveler, she uses her journeys to deeply understand diverse perspectives which expand her horizons as both a human being and a creator. The latest colour to her vision is finding Arturee—a dream she intends to paint the art world with!
+                </p>
               </div>
             </div>
           </div>
@@ -94,6 +88,20 @@ const CreatorProfileSection = () => {
           </div>
 
 
+        </div>
+
+        {/* Gratitude Section */}
+        <div className="max-w-3xl mx-auto mt-20 text-center space-y-6">
+          <div className="w-16 h-1 bg-linear-to-r from-[#ce6a6b] to-[#4a919e] mx-auto mb-8 rounded-full opacity-50"></div>
+          <p className="text-xl text-navy/80 leading-relaxed italic font-medium">
+            "This wouldn't have been possible without the support of the artists, our friends, and our family."
+          </p>
+          <p className="text-lg text-navy/70 leading-relaxed">
+            Thank you, <span className="font-bold text-[#ce6a6b]">Nirmala Bansal</span>, for making it possible for us!
+          </p>
+          <p className="text-lg text-navy/70 leading-relaxed">
+            Gratitude to our web team <span className="font-bold text-[#4a919e]">Sattva Doshi</span> and <span className="font-bold text-[#4a919e]">Akshat Mandot</span> for doing such a commendable job.
+          </p>
         </div>
       </div>
     </section>

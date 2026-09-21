@@ -106,7 +106,7 @@ const Pricing = () => {
       .catch(() => null)
   }, [])
 
-  const pricingHeadline = landingConfig?.pricingSection?.headline || 'Plans & Pricing'
+  const pricingHeadline = landingConfig?.pricingSection?.headline || 'Pricing'
   const pricingSubheadline =
     landingConfig?.pricingSection?.subheadline ||
     'Choose how you want to experience art — pay per video or bundle the pieces that move you.'
@@ -114,55 +114,55 @@ const Pricing = () => {
     landingConfig?.pricingSection?.plans && landingConfig.pricingSection.plans.length > 0
       ? landingConfig.pricingSection.plans
       : [
-          {
-            label: 'Single Video',
-            price: videoPrices.single,
-            save: null,
-            desc: 'Watch any single video on the platform with 2 streams included.',
-            highlight: false,
-            points: ['2 streams per video', 'HD quality streaming', 'Standard Rate', 'Instant access'],
-          },
-          {
-            label: 'Bundle of 2',
-            price: videoPrices.double,
-            save: `Save Rs. ${2 * videoPrices.single - videoPrices.double}`,
-            desc: 'Hand-pick 2 videos of your choice at a discounted bundle price.',
-            highlight: false,
-            points: ['Everything in Single', '2 videos of your choice', 'Discounted bundle price', 'HD quality streaming'],
-          },
-          {
-            label: 'Bundle of 3',
-            price: videoPrices.triple,
-            save: `Save Rs. ${3 * videoPrices.single - videoPrices.triple}`,
-            desc: 'Best value! Choose 3 videos and enjoy immersive storytelling.',
-            highlight: true,
-            points: ['Best Value bundle', '3 videos of your choice', 'Maximum savings', '4K + Dolby quality'],
-          },
-        ]
+        {
+          label: 'Single Video',
+          price: videoPrices.single,
+          save: null,
+          desc: 'Watch any single video on the platform with 2 streams included.',
+          highlight: false,
+          points: ['2 streams per video', 'HD quality streaming', 'Standard Rate', 'Instant access'],
+        },
+        {
+          label: 'Bundle of 2',
+          price: videoPrices.double,
+          save: `Save Rs. ${2 * videoPrices.single - videoPrices.double}`,
+          desc: 'Hand-pick 2 videos of your choice at a discounted bundle price.',
+          highlight: false,
+          points: ['Everything in Single', '2 videos of your choice', 'Discounted bundle price', 'HD quality streaming'],
+        },
+        {
+          label: 'Bundle of 3',
+          price: videoPrices.triple,
+          save: `Save Rs. ${3 * videoPrices.single - videoPrices.triple}`,
+          desc: 'Best value! Choose 3 videos and enjoy immersive storytelling.',
+          highlight: true,
+          points: ['Best Value bundle', '3 videos of your choice', 'Maximum savings', '4K + Dolby quality'],
+        },
+      ]
 
   return (
     <div>
-        <Navbar/>
-        <div className="min-h-screen bg-linear-to-br from-[#E0F7FA] via-[#B2EBF2] to-[#F1F8E9]">
-      {/* Hero */}
-      <div className="relative pt-20 pb-16 px-6 lg:px-20 text-center overflow-hidden">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-lime/20 rounded-full blur-[120px] pointer-events-none" />
-        <div className="relative z-10 max-w-3xl mx-auto space-y-5">
-          <span className="inline-block font-mono text-[10px] uppercase tracking-[0.5em] text-navy/40">
-            {pricingHeadline}
-          </span>
-          <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-navy leading-tight">
-            Nourish Your{' '}
-            <span className="bg-linear-to-r from-primary to-lime text-white px-3 py-1 md:px-4 md:py-2 inline-block transform rough-border text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl shadow-lg">
-              heART
+      <Navbar />
+      <div className="min-h-screen bg-linear-to-br from-[#E0F7FA] via-[#B2EBF2] to-[#F1F8E9]">
+        {/* Hero */}
+        <div className="relative pt-20 pb-16 px-6 lg:px-20 text-center overflow-hidden">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[120px] pointer-events-none" />
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-lime/20 rounded-full blur-[120px] pointer-events-none" />
+          <div className="relative z-10 max-w-3xl mx-auto space-y-5">
+            <span className="inline-block font-mono text-[10px] uppercase tracking-[0.5em] text-navy/40">
+              {pricingHeadline}
             </span>
-          </h1>
-          <p className="text-lg text-navy/60 max-w-xl mx-auto leading-relaxed">
-            {pricingSubheadline}
-          </p>
-          {/* TAB TOGGLE: Subscription commented out for now, keep pay per video active */}
-          {/*
+            <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-navy leading-tight">
+              Nourish Your{' '}
+              <span className="bg-linear-to-r from-primary to-lime text-white px-3 py-1 md:px-4 md:py-2 inline-block transform rough-border text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl shadow-lg">
+                heART
+              </span>
+            </h1>
+            <p className="text-lg text-navy/60 max-w-xl mx-auto leading-relaxed">
+              {pricingSubheadline}
+            </p>
+            {/* TAB TOGGLE: Subscription commented out for now, keep pay per video active */}
+            {/*
           <div className="inline-flex bg-white border border-primary/20 rounded-2xl p-1.5 shadow-sm mt-4">
             <button
               onClick={() => setTab('subscribe')}
@@ -186,12 +186,12 @@ const Pricing = () => {
             </button>
           </div>
           */}
+          </div>
         </div>
-      </div>
 
-      <div className="px-6 lg:px-20 pb-20">
-        {/* SUBSCRIPTION PLANS (commented out for future use) */}
-        {/*
+        <div className="px-6 lg:px-20 pb-20">
+          {/* SUBSCRIPTION PLANS (commented out for future use) */}
+          {/*
         {tab === 'subscribe' && (
           <div className="max-w-[1200px] mx-auto">
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
@@ -260,109 +260,107 @@ const Pricing = () => {
         )}
         */}
 
-        {/* PAY PER VIDEO & BUNDLES */}
-        {tab === 'video' && (
-          <div className="max-w-[800px] mx-auto">
-            <div className="relative flex flex-col items-center justify-center rounded-3xl border bg-navy text-white border-navy shadow-2xl p-12 text-center overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-lime/20 rounded-full blur-[80px] pointer-events-none" />
-              <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/20 rounded-full blur-[80px] pointer-events-none" />
-              
-              <div className="relative z-10">
-                <span className="inline-block px-4 py-1 rounded-full text-xs font-bold whitespace-nowrap bg-lime text-navy mb-6">
-                  Simple & Transparent
-                </span>
-                <p className="font-mono text-sm uppercase tracking-widest mb-2 font-bold text-lime">
-                  Pay for what you watch
-                </p>
-                <div className="my-6 flex flex-col items-center justify-center gap-2">
-                  <span className="text-5xl md:text-6xl font-black text-white">
-                    1 min = 1 Rs.
+          {/* PAY PER VIDEO & BUNDLES */}
+          {tab === 'video' && (
+            <div className="max-w-[800px] mx-auto">
+              <div className="relative flex flex-col items-center justify-center rounded-3xl border bg-navy text-white border-navy shadow-2xl p-6 md:p-12 text-center overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-lime/20 rounded-full blur-[80px] pointer-events-none" />
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/20 rounded-full blur-[80px] pointer-events-none" />
+
+                <div className="relative z-10">
+                  <span className="inline-block px-4 py-1 rounded-full text-xs font-bold whitespace-nowrap bg-lime text-navy mb-6">
+                    Simple & Transparent
                   </span>
+                  <p className="font-mono text-sm uppercase tracking-widest mb-2 font-bold text-lime">
+                    Pay for what you watch
+                  </p>
+                  <div className="my-6 flex flex-col items-center justify-center gap-2">
+                    <span className="text-4xl sm:text-5xl md:text-6xl font-black text-white whitespace-nowrap">
+                      1 min = ₹1
+                    </span>
+                  </div>
+                  <p className="text-lg mt-4 leading-relaxed text-white/80 max-w-md mx-auto">
+                    This is our simple pricing for videos. Enjoy high-quality streaming without any complex bundles.
+                  </p>
+
+                  <ul className="space-y-3 mt-8 text-left max-w-sm mx-auto flex-1">
+                    <li className="flex items-start gap-3 text-sm">
+                      <span className="mt-0.5 text-base font-bold text-lime">✓</span>
+                      <span className="text-white/90">HD quality streaming</span>
+                    </li>
+                    <li className="flex items-start gap-3 text-sm">
+                      <span className="mt-0.5 text-base font-bold text-lime">✓</span>
+                      <span className="text-white/90">Pay exactly for video duration</span>
+                    </li>
+                    <li className="flex items-start gap-3 text-sm">
+                      <span className="mt-0.5 text-base font-bold text-lime">✓</span>
+                      <span className="text-white/90">Instant access to content</span>
+                    </li>
+                  </ul>
                 </div>
-                <p className="text-lg mt-4 leading-relaxed text-white/80 max-w-md mx-auto">
-                  This is our simple pricing for videos. Enjoy high-quality streaming without any complex bundles.
-                </p>
-                
-                <ul className="space-y-3 mt-8 text-left max-w-sm mx-auto flex-1">
-                  <li className="flex items-start gap-3 text-sm">
-                    <span className="mt-0.5 text-base font-bold text-lime">✓</span>
-                    <span className="text-white/90">HD quality streaming</span>
-                  </li>
-                  <li className="flex items-start gap-3 text-sm">
-                    <span className="mt-0.5 text-base font-bold text-lime">✓</span>
-                    <span className="text-white/90">Pay exactly for video duration</span>
-                  </li>
-                  <li className="flex items-start gap-3 text-sm">
-                    <span className="mt-0.5 text-base font-bold text-lime">✓</span>
-                    <span className="text-white/90">Instant access to content</span>
-                  </li>
-                </ul>
               </div>
+
+              <p className="text-center text-navy/40 text-xs mt-6 font-mono">
+                All prices in Indian Rupees (INR) · GST applicable · Per-purchase 2-view limit applies
+              </p>
+            </div>
+          )}
+
+          {/* TERMS & CONDITIONS */}
+          <div className="max-w-[900px] mx-auto mt-24">
+            <div className="text-center mb-10 space-y-4">
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-navy">
+                Terms, Policies & Fair Use
+              </h2>
+              <div className="w-16 h-1 bg-linear-to-r from-primary to-lime mx-auto rounded-full" />
+              <p className="text-navy/50 text-sm max-w-lg mx-auto">
+                We believe in being transparent. Here's everything you need to know before you dive in.
+              </p>
             </div>
 
-            <p className="text-center text-navy/40 text-xs mt-6 font-mono">
-              All prices in Indian Rupees (INR) · GST applicable · Per-purchase 2-view limit applies
-            </p>
-          </div>
-        )}
-
-        {/* TERMS & CONDITIONS */}
-        <div className="max-w-[900px] mx-auto mt-24">
-          <div className="text-center mb-10 space-y-4">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-navy">
-              Terms, Policies & Fair Use
-            </h2>
-            <div className="w-16 h-1 bg-linear-to-r from-primary to-lime mx-auto rounded-full" />
-            <p className="text-navy/50 text-sm max-w-lg mx-auto">
-              We believe in being transparent. Here's everything you need to know before you dive in.
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            {termsItems.map((item, i) => (
-              <div
-                key={i}
-                className={`bg-white rounded-3xl border overflow-hidden transition-all duration-300 shadow-sm ${
-                  item.highlight
-                    ? 'border-[#ce6a6b]/30 hover:border-[#ce6a6b]/60'
-                    : 'border-primary/15 hover:border-primary/40'
-                }`}
-              >
-                <button
-                  onClick={() => setOpenTerm(openTerm === i ? null : i)}
-                  className="w-full flex items-center justify-between p-6 text-left focus:outline-none"
+            <div className="space-y-4">
+              {termsItems.map((item, i) => (
+                <div
+                  key={i}
+                  className={`bg-white rounded-3xl border overflow-hidden transition-all duration-300 shadow-sm ${item.highlight
+                      ? 'border-[#ce6a6b]/30 hover:border-[#ce6a6b]/60'
+                      : 'border-primary/15 hover:border-primary/40'
+                    }`}
                 >
-                  <span className="flex items-center gap-3">
-                    {item.highlight && (
-                      <span className="w-2 h-2 rounded-full bg-[#ce6a6b] shrink-0" />
-                    )}
-                    <h3 className={`font-semibold text-base ${item.highlight ? 'text-[#ce6a6b]' : 'text-navy'}`}>
-                      {item.title}
-                    </h3>
-                  </span>
-                  <span
-                    className={`text-2xl transition-transform duration-300 ${
-                      openTerm === i ? 'rotate-45' : ''
-                    } ${item.highlight ? 'text-[#ce6a6b]' : 'text-primary'}`}
+                  <button
+                    onClick={() => setOpenTerm(openTerm === i ? null : i)}
+                    className="w-full flex items-center justify-between p-6 text-left focus:outline-none"
                   >
-                    +
-                  </span>
-                </button>
-                {openTerm === i && (
-                  <div className="px-6 pb-6 text-navy/60 text-sm leading-relaxed">
-                    {item.content}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+                    <span className="flex items-center gap-3">
+                      {item.highlight && (
+                        <span className="w-2 h-2 rounded-full bg-[#ce6a6b] shrink-0" />
+                      )}
+                      <h3 className={`font-semibold text-base ${item.highlight ? 'text-[#ce6a6b]' : 'text-navy'}`}>
+                        {item.title}
+                      </h3>
+                    </span>
+                    <span
+                      className={`text-2xl transition-transform duration-300 ${openTerm === i ? 'rotate-45' : ''
+                        } ${item.highlight ? 'text-[#ce6a6b]' : 'text-primary'}`}
+                    >
+                      +
+                    </span>
+                  </button>
+                  {openTerm === i && (
+                    <div className="px-6 pb-6 text-navy/60 text-sm leading-relaxed">
+                      {item.content}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
 
-          <p className="text-center text-navy/30 text-xs mt-8 font-mono">
-            By using Arturee, you agree to these terms. Last updated March 2026.
-          </p>
+            <p className="text-center text-navy/30 text-xs mt-8 font-mono">
+              By using Arturee, you agree to these terms. Last updated March 2026.
+            </p>
+          </div>
         </div>
       </div>
-    </div>
     </div>
   )
 }

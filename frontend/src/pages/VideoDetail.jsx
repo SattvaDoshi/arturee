@@ -435,10 +435,10 @@ export default function VideoDetail() {
                 )}
 
                 {/* ── Title card ── */}
-                <GlassCard className="p-5 md:p-6">
-                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
-                    <div className="flex-1">
-                      <div className="flex flex-wrap items-center gap-2 mb-2">
+                <GlassCard className="p-4 md:p-5">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                    <div className="flex-1 space-y-2.5">
+                      <div className="flex flex-wrap items-center gap-2">
                         {video?.category && (
                           <SectionPill icon={<Music className="w-3 h-3" />}>
                             {video.category}
@@ -454,38 +454,81 @@ export default function VideoDetail() {
                           </span>
                         ))}
                       </div>
-                      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight tracking-tight mb-3" style={{ color: C.navy }}>
+                      
+                      <h1 className="text-2xl sm:text-3xl font-bold leading-tight tracking-tight" style={{ color: C.navy }}>
                         {video?.title}
                       </h1>
-                      <div className="flex flex-wrap items-center gap-3 md:gap-5 text-sm" style={{ color: C.muted }}>
-                        {video?.viewCount > 0 && (
-                          <div className="flex items-center gap-1.5">
-                            <Users className="w-4 h-4" style={{ color: C.primary }} />
-                            <span>{fmtViews(video.viewCount)}</span>
-                          </div>
+                      
+                      <div className="flex flex-wrap items-center gap-3 md:gap-4 text-sm pt-1" style={{ color: C.muted }}>
+                        {video?.artistId && (
+                          <Link
+                            to={`/artist/${video.artistId._id}`}
+                            className="flex items-center gap-2 group"
+                            title="View Artist Profile"
+                          >
+                            {video.artistId.avatarUrl ? (
+                              <img
+                                src={video.artistId.avatarUrl}
+                                alt={video.artistId.name}
+                                className="w-6 h-6 rounded-full object-cover shadow-sm transition-all group-hover:scale-105"
+                                style={{ outline: '1px solid rgba(77,208,225,0.4)', outlineOffset: '1px' }}
+                              />
+                            ) : (
+                              <div
+                                className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black shrink-0 transition-all group-hover:scale-105"
+                                style={{ background: 'rgba(77,208,225,0.12)', color: C.primary }}
+                              >
+                                {video.artistId.name?.[0]?.toUpperCase() || '?'}
+                              </div>
+                            )}
+                            <div className="flex items-center gap-1.5">
+                              <span className="font-bold transition group-hover:text-[#4DD0E1]" style={{ color: C.navy }}>
+                                {video.artistId.name}
+                              </span>
+                              <div
+                                className="w-3 h-3 rounded-full flex items-center justify-center shrink-0"
+                                style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
+                              >
+                                <Check className="w-2 h-2" style={{ color: C.navy }} />
+                              </div>
+                            </div>
+                          </Link>
                         )}
-                        {video?.durationSeconds && (
-                          <div className="flex items-center gap-1.5">
-                            <Clock className="w-4 h-4" style={{ color: C.primary }} />
-                            <span>{fmtDuration(video.durationSeconds)}</span>
-                          </div>
+
+                        {video?.artistId && (
+                          <span className="w-1 h-1 rounded-full bg-primary/30 hidden sm:block"></span>
                         )}
-                        {video?.createdAt && (
-                          <div className="flex items-center gap-1.5">
-                            <Calendar className="w-4 h-4" style={{ color: C.primary }} />
-                            <span>{new Date(video.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
-                          </div>
-                        )}
+
+                        <div className="flex flex-wrap items-center gap-3 md:gap-4">
+                          {video?.viewCount > 0 && (
+                            <div className="flex items-center gap-1.5">
+                              <Users className="w-3.5 h-3.5" style={{ color: C.primary }} />
+                              <span>{fmtViews(video.viewCount)}</span>
+                            </div>
+                          )}
+                          {video?.durationSeconds && (
+                            <div className="flex items-center gap-1.5">
+                              <Clock className="w-3.5 h-3.5" style={{ color: C.primary }} />
+                              <span>{fmtDuration(video.durationSeconds)}</span>
+                            </div>
+                          )}
+                          {video?.createdAt && (
+                            <div className="flex items-center gap-1.5">
+                              <Calendar className="w-3.5 h-3.5" style={{ color: C.primary }} />
+                              <span>{new Date(video.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
 
                     {/* Price badge */}
                     <span
-                      className="inline-flex items-center px-5 py-2 rounded-full text-sm font-black shrink-0"
+                      className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-black shrink-0"
                       style={
                         video?.price > 0
                           ? { background: 'linear-gradient(135deg,#4DD0E1,#00BCD4)', color: '#fff' }
-                          : { background: 'linear-gradient(135deg,#4DD0E1,#C0E863)', boxShadow: '0 0 16px rgba(77,208,225,0.4)', color: C.navy }
+                          : { background: 'linear-gradient(135deg,#4DD0E1,#C0E863)', boxShadow: '0 0 12px rgba(77,208,225,0.3)', color: C.navy }
                       }
                     >
                       {video?.price > 0 ? `₹${video.price}` : 'Free'}
@@ -494,7 +537,7 @@ export default function VideoDetail() {
 
                   {/* CTA buttons */}
                   <div
-                    className="flex flex-wrap items-center justify-between gap-3 pt-4"
+                    className="flex flex-wrap items-center justify-between gap-3 pt-4 mt-4"
                     style={{ borderTop: '1px solid rgba(77,208,225,0.15)' }}
                   >
                     <div className="flex items-center gap-2 flex-wrap">
@@ -512,7 +555,7 @@ export default function VideoDetail() {
                         </GradBtn>
                       )}
                       
-                      {/* ── Reactions Bar (Replaced Watch Now) ── */}
+                      {/* ── Reactions Bar ── */}
                       <div className="flex flex-wrap items-center gap-2">
                         {REACTION_TYPES.map(r => {
                           const isActive = activeReactions.includes(r.id)
@@ -551,71 +594,25 @@ export default function VideoDetail() {
                   </div>
                 </GlassCard>
 
-                {/* ── Creator / description card ── */}
-                {(video?.artistId || video?.description) && (
+                {/* ── Description card ── */}
+                {video?.description && (
                   <GlassCard className="p-5 md:p-6">
-                    {video.artistId && (
-                      <div className="flex flex-col sm:flex-row sm:items-start gap-4 mb-5">
-                        {video.artistId.avatarUrl ? (
-                          <img
-                            src={video.artistId.avatarUrl}
-                            alt={video.artistId.name}
-                            className="w-14 h-14 md:w-16 md:h-16 rounded-full object-cover shrink-0"
-                            style={{ outline: '2px solid rgba(77,208,225,0.4)', outlineOffset: '2px' }}
-                          />
-                        ) : (
-                          <div
-                            className="w-14 h-14 rounded-full flex items-center justify-center text-xl font-black shrink-0"
-                            style={{ background: 'rgba(77,208,225,0.12)', color: C.primary }}
-                          >
-                            {video.artistId.name?.[0]?.toUpperCase() || '?'}
-                          </div>
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex flex-wrap items-center gap-2 mb-1">
-                            <Link
-                              to={`/artist/${video.artistId._id}`}
-                              className="text-lg md:text-xl font-bold transition hover:opacity-80"
-                              style={{ color: C.navy }}
-                            >
-                              {video.artistId.name}
-                            </Link>
-                            <div
-                              className="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
-                              style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
-                            >
-                              <Check className="w-3 h-3" style={{ color: C.navy }} />
-                            </div>
-                          </div>
-                          {video.artistId.email && (
-                            <p className="text-sm" style={{ color: C.muted }}>{video.artistId.email}</p>
-                          )}
-                        </div>
-                      </div>
-                    )}
-
-                    {video.description && (
-                      <div
-                        className="pt-4 space-y-3"
-                        style={video.artistId ? { borderTop: '1px solid rgba(77,208,225,0.15)' } : {}}
+                    <p className="text-[10px] font-black uppercase tracking-[0.18em] mb-4" style={{ color: C.primary }}>About this Video</p>
+                    <p
+                      className={`text-sm md:text-base leading-relaxed ${!descExpanded ? 'line-clamp-3' : ''}`}
+                      style={{ color: `${C.navy}cc` }}
+                    >
+                      {video.description}
+                    </p>
+                    {video.description.length > 200 && (
+                      <button
+                        className="flex items-center gap-1.5 text-sm font-bold mt-3 transition"
+                        style={{ color: C.primary }}
+                        onClick={() => setDescExpanded(e => !e)}
                       >
-                        <p
-                          className={`text-sm md:text-base leading-relaxed ${!descExpanded ? 'line-clamp-3' : ''}`}
-                          style={{ color: `${C.navy}cc` }}
-                        >
-                          {video.description}
-                        </p>
-                        {video.description.length > 200 && (
-                          <button
-                            className="flex items-center gap-1.5 text-sm font-bold transition"
-                            style={{ color: C.primary }}
-                            onClick={() => setDescExpanded(e => !e)}
-                          >
-                            <span>{descExpanded ? 'Show less' : 'Show more'}</span>
-                            <ChevronDown className={`w-4 h-4 transition-transform ${descExpanded ? 'rotate-180' : ''}`} />
-                          </button>
-                        )}
-                      </div>
+                        <span>{descExpanded ? 'Show less' : 'Show more'}</span>
+                        <ChevronDown className={`w-4 h-4 transition-transform ${descExpanded ? 'rotate-180' : ''}`} />
+                      </button>
                     )}
                   </GlassCard>
                 )}

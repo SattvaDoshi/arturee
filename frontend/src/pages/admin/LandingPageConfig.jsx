@@ -219,7 +219,7 @@ export default function LandingPageConfig() {
             cards: normalizedDiscoverCards,
           },
           pricingSection: {
-            headline: fetchedConfig.pricingSection?.headline || 'Plans & Pricing',
+            headline: fetchedConfig.pricingSection?.headline || ' Pricing',
             subheadline:
               fetchedConfig.pricingSection?.subheadline ||
               'Choose how you want to experience art — pay per video or bundle the pieces that move you.',
@@ -507,11 +507,10 @@ export default function LandingPageConfig() {
         {/* Feedback Alert */}
         {message && (
           <div
-            className={`flex items-center gap-3 p-4 rounded-2xl border text-sm font-semibold transition-all ${
-              message.type === 'success'
+            className={`flex items-center gap-3 p-4 rounded-2xl border text-sm font-semibold transition-all ${message.type === 'success'
                 ? 'bg-[#C0E863]/15 border-[#C0E863]/40 text-[#C0E863]'
                 : 'bg-red-500/15 border-red-500/40 text-red-300'
-            }`}
+              }`}
           >
             {message.type === 'success' ? (
               <Check className="w-5 h-5 shrink-0" />
@@ -526,44 +525,40 @@ export default function LandingPageConfig() {
         <div className="flex flex-wrap gap-2 border-b border-white/10 pb-4">
           <button
             onClick={() => setActiveTab('artists')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition ${
-              activeTab === 'artists'
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition ${activeTab === 'artists'
                 ? 'bg-linear-to-r from-[#4DD0E1] to-[#C0E863] text-[#051d2e] shadow-md'
                 : 'bg-white/5 text-white/70 hover:bg-white/10 hover:text-white'
-            }`}
+              }`}
           >
             <UserCheck className="w-4 h-4" />
             <span>Artists Page Config (Max 8)</span>
           </button>
           <button
             onClick={() => setActiveTab('genres')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition ${
-              activeTab === 'genres'
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition ${activeTab === 'genres'
                 ? 'bg-linear-to-r from-[#4DD0E1] to-[#C0E863] text-[#051d2e] shadow-md'
                 : 'bg-white/5 text-white/70 hover:bg-white/10 hover:text-white'
-            }`}
+              }`}
           >
             <Bookmark className="w-4 h-4" />
             <span>Genres Page Config</span>
           </button>
           <button
             onClick={() => setActiveTab('discover')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition ${
-              activeTab === 'discover'
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition ${activeTab === 'discover'
                 ? 'bg-linear-to-r from-[#4DD0E1] to-[#C0E863] text-[#051d2e] shadow-md'
                 : 'bg-white/5 text-white/70 hover:bg-white/10 hover:text-white'
-            }`}
+              }`}
           >
             <Compass className="w-4 h-4" />
             <span>Exclusive Art (Discover Section)</span>
           </button>
           <button
             onClick={() => setActiveTab('pricing')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition ${
-              activeTab === 'pricing'
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition ${activeTab === 'pricing'
                 ? 'bg-linear-to-r from-[#4DD0E1] to-[#C0E863] text-[#051d2e] shadow-md'
                 : 'bg-white/5 text-white/70 hover:bg-white/10 hover:text-white'
-            }`}
+              }`}
           >
             <Tag className="w-4 h-4" />
             <span>Pricing & Bundles Config</span>
@@ -876,18 +871,16 @@ export default function LandingPageConfig() {
                           key={genre._id}
                           type="button"
                           onClick={() => toggleFeaturedGenre(genre._id)}
-                          className={`flex items-center gap-3 p-3.5 rounded-2xl border text-left transition ${
-                            selected
+                          className={`flex items-center gap-3 p-3.5 rounded-2xl border text-left transition ${selected
                               ? 'bg-[#4DD0E1]/15 border-[#4DD0E1] text-white font-bold'
                               : 'bg-black/20 border-white/10 text-white/60 hover:text-white'
-                          }`}
+                            }`}
                         >
                           <div
-                            className={`w-5 h-5 rounded-md flex items-center justify-center shrink-0 border ${
-                              selected
+                            className={`w-5 h-5 rounded-md flex items-center justify-center shrink-0 border ${selected
                                 ? 'bg-[#4DD0E1] border-[#4DD0E1] text-[#051d2e]'
                                 : 'border-white/30'
-                            }`}
+                              }`}
                           >
                             {selected && <Check className="w-3.5 h-3.5" />}
                           </div>
@@ -1106,11 +1099,10 @@ export default function LandingPageConfig() {
                                     className="w-full bg-[#071523] border border-white/20 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-[#4DD0E1]"
                                   />
                                   <label
-                                    className={`shrink-0 cursor-pointer px-4 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 ${
-                                      uploadingDiscoverIndex === idx
+                                    className={`shrink-0 cursor-pointer px-4 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 ${uploadingDiscoverIndex === idx
                                         ? 'opacity-50 pointer-events-none bg-white/10'
                                         : 'bg-[#4DD0E1]/20 text-[#4DD0E1] hover:bg-[#4DD0E1] hover:text-[#051d2e]'
-                                    }`}
+                                      }`}
                                   >
                                     {uploadingDiscoverIndex === idx ? (
                                       <Loader2 className="w-4 h-4 animate-spin" />
@@ -1204,7 +1196,7 @@ export default function LandingPageConfig() {
                       </label>
                       <input
                         type="text"
-                        value={config.pricingSection?.headline || 'Plans & Pricing'}
+                        value={config.pricingSection?.headline || 'Pricing'}
                         onChange={(e) => updatePricingSection('headline', e.target.value)}
                         className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#4DD0E1]"
                       />
