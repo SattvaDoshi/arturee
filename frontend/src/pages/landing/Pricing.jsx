@@ -41,14 +41,6 @@ const subscriptionPlans = [
 
 const videoPrices = { single: 49, double: 89, triple: 129 }
 
-const sampleVideos = [
-  { id: 1, title: 'Petals in the Rain', artist: 'Suchi Bansal', genre: 'Poetry', thumb: 'poetry' },
-  { id: 2, title: 'Inking Emotions — Live', artist: 'Anjali Jain', genre: 'Spoken Word', thumb: 'spoken' },
-  { id: 3, title: 'The Last Canvas', artist: 'Rohan Mehta', genre: 'Short Film', thumb: 'film' },
-  { id: 4, title: 'Mitti ki Khushboo', artist: 'Priya Das', genre: 'Dance', thumb: 'dance' },
-  { id: 5, title: 'Silence Speaks', artist: 'Kabir Nair', genre: 'Music', thumb: 'music' },
-  { id: 6, title: 'Woven Dreams', artist: 'Aisha Qureshi', genre: 'Documentary', thumb: 'doc' },
-]
 
 const thumbColors = {
   poetry: 'from-[#B2EBF2] to-[#4DD0E1]',
@@ -91,6 +83,12 @@ const termsItems = [
     content:
       'Accounts are for individual use only. Sharing login credentials is prohibited.',
   },
+  {
+    title: 'Anti-Piracy & Screen Recording',
+    content:
+      'All videos are dynamically watermarked with your registered name and email address. Unauthorized screen recording, downloading, or distribution of content is strictly prohibited, and strict legal action will be taken against any violations.',
+    highlight: true,
+  },
 ]
 
 const Pricing = () => {
@@ -109,7 +107,7 @@ const Pricing = () => {
   const pricingHeadline = landingConfig?.pricingSection?.headline || 'Pricing'
   const pricingSubheadline =
     landingConfig?.pricingSection?.subheadline ||
-    'Choose how you want to experience art — pay per video or bundle the pieces that move you.'
+    'Choose how you want to experience art — pay per video per minute.'
   const activePlans =
     landingConfig?.pricingSection?.plans && landingConfig.pricingSection.plans.length > 0
       ? landingConfig.pricingSection.plans
@@ -152,7 +150,7 @@ const Pricing = () => {
             <span className="inline-block font-mono text-[10px] uppercase tracking-[0.5em] text-navy/40">
               {pricingHeadline}
             </span>
-            <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-navy leading-tight">
+            <h1 className="text-5xl md:text-6xl font-black text-navy leading-tight">
               Nourish Your{' '}
               <span className="bg-linear-to-r from-primary to-lime text-white px-3 py-1 md:px-4 md:py-2 inline-block transform rough-border text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl shadow-lg">
                 heART

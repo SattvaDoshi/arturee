@@ -597,7 +597,7 @@ export default function VideoDetail() {
                 {/* ── Description card ── */}
                 {video?.description && (
                   <GlassCard className="p-5 md:p-6">
-                    <p className="text-[10px] font-black uppercase tracking-[0.18em] mb-4" style={{ color: C.primary }}>About this Video</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.18em] mb-4" style={{ color: C.primary }}>About The Video</p>
                     <p
                       className={`text-sm md:text-base leading-relaxed ${!descExpanded ? 'line-clamp-3' : ''}`}
                       style={{ color: `${C.navy}cc` }}

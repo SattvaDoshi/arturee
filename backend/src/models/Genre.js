@@ -13,6 +13,11 @@ const genreSchema = new mongoose.Schema(
       trim: true,
       default: '',
     },
+    icon: {
+      type: String,
+      trim: true,
+      default: '🎨',
+    },
   },
   { timestamps: true }
 )

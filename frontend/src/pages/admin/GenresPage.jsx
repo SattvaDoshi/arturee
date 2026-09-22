@@ -11,7 +11,7 @@ export default function GenresPage() {
   const [editingId, setEditingId] = useState(null)
   const [actionId, setActionId] = useState(null)
   const [isAdding, setIsAdding] = useState(false)
-  const [addForm, setAddForm] = useState({ name: '', description: '' })
+  const [addForm, setAddForm] = useState({ name: '', description: '', icon: '🎨' })
   
   const fetchGenres = useCallback(() => {
     setLoading(true)
@@ -52,7 +52,7 @@ export default function GenresPage() {
       const res = await genreApi.create(addForm)
       setGenres(prev => [...prev, res.data.data])
       setIsAdding(false)
-      setAddForm({ name: '', description: '' })
+      setAddForm({ name: '', description: '', icon: '🎨' })
       toast.success('Genre added')
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to add genre')
@@ -76,19 +76,28 @@ export default function GenresPage() {
   }
 
   const EditRow = ({ genre, onSave, onCancel }) => {
-    const [form, setForm] = useState({ name: genre.name, description: genre.description || '' })
+    const [form, setForm] = useState({ name: genre.name, description: genre.description || '', icon: genre.icon || '🎨' })
     return (
       <tr style={{ background: 'rgba(77,208,225,0.04)' }}>
         <td colSpan={3} className="px-5 py-4">
           <div className="flex gap-4 items-start">
             <div className="flex-1 space-y-3">
-              <input
-                type="text"
-                value={form.name}
-                onChange={e => setForm({ ...form, name: e.target.value })}
-                placeholder="Genre Name"
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white outline-none focus:border-[#4DD0E1]/50 transition"
-              />
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={form.icon}
+                  onChange={e => setForm({ ...form, icon: e.target.value })}
+                  placeholder="Icon (Emoji)"
+                  className="w-16 bg-white/5 border border-white/10 rounded-lg px-2 py-1.5 text-center text-sm text-white outline-none focus:border-[#4DD0E1]/50 transition"
+                />
+                <input
+                  type="text"
+                  value={form.name}
+                  onChange={e => setForm({ ...form, name: e.target.value })}
+                  placeholder="Genre Name"
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white outline-none focus:border-[#4DD0E1]/50 transition"
+                />
+              </div>
               <textarea
                 value={form.description}
                 onChange={e => setForm({ ...form, description: e.target.value })}
@@ -160,14 +169,23 @@ export default function GenresPage() {
                     <td colSpan={3} className="px-5 py-4 border-b border-[#4DD0E1]/20">
                       <div className="flex gap-4 items-start">
                         <div className="flex-1 space-y-3">
-                          <input
-                            type="text"
-                            value={addForm.name}
-                            onChange={e => setAddForm({ ...addForm, name: e.target.value })}
-                            placeholder="New Genre Name"
-                            autoFocus
-                            className="w-full bg-white/5 border border-[#4DD0E1]/30 rounded-lg px-3 py-1.5 text-sm text-white outline-none focus:border-[#4DD0E1] transition"
-                          />
+                          <div className="flex gap-2">
+                            <input
+                              type="text"
+                              value={addForm.icon}
+                              onChange={e => setAddForm({ ...addForm, icon: e.target.value })}
+                              placeholder="Icon (Emoji)"
+                              className="w-16 bg-white/5 border border-[#4DD0E1]/30 rounded-lg px-2 py-1.5 text-center text-sm text-white outline-none focus:border-[#4DD0E1] transition"
+                            />
+                            <input
+                              type="text"
+                              value={addForm.name}
+                              onChange={e => setAddForm({ ...addForm, name: e.target.value })}
+                              placeholder="New Genre Name"
+                              autoFocus
+                              className="w-full bg-white/5 border border-[#4DD0E1]/30 rounded-lg px-3 py-1.5 text-sm text-white outline-none focus:border-[#4DD0E1] transition"
+                            />
+                          </div>
                           <textarea
                             value={addForm.description}
                             onChange={e => setAddForm({ ...addForm, description: e.target.value })}
@@ -187,7 +205,7 @@ export default function GenresPage() {
                             Create
                           </button>
                           <button
-                            onClick={() => { setIsAdding(false); setAddForm({ name: '', description: '' }); }}
+                            onClick={() => { setIsAdding(false); setAddForm({ name: '', description: '', icon: '🎨' }); }}
                             className="px-4 py-1.5 rounded-lg text-xs font-bold transition w-24"
                             style={{ background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.5)' }}
                           >
@@ -220,7 +238,10 @@ export default function GenresPage() {
                     return (
                       <tr key={genre._id} className="transition hover:bg-white/[0.025]">
                         <td className="px-5 py-4">
-                          <p className="text-white/85 font-bold">{genre.name}</p>
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg">{genre.icon || '🎨'}</span>
+                            <p className="text-white/85 font-bold">{genre.name}</p>
+                          </div>
                         </td>
                         <td className="px-5 py-4 hidden sm:table-cell">
                           <p className="text-white/40 text-xs truncate max-w-sm">{genre.description || '—'}</p>

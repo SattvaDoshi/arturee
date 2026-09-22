@@ -6,9 +6,15 @@ export const listArtists = asyncHandler(async (req, res) => {
   const page = Math.max(1, parseInt(req.query.page) || 1)
   const limit = Math.min(50, parseInt(req.query.limit) || 12)
   const skip = (page - 1) * limit
+  
+  const filter = { isActive: true }
+  if (req.query.search) {
+    filter.name = { $regex: req.query.search, $options: 'i' }
+  }
+
   const [artists, total] = await Promise.all([
-    Artist.find({ isActive: true }).sort({ createdAt: -1 }).skip(skip).limit(limit),
-    Artist.countDocuments({ isActive: true }),
+    Artist.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit),
+    Artist.countDocuments(filter),
   ])
   res.status(200).json({ success: true, data: { artists, pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } } })
 })

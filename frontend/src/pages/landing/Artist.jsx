@@ -209,7 +209,7 @@ const Artist = () => {
             <span className="inline-block font-mono text-[10px] uppercase tracking-[0.5em] text-navy/40">
               Meet the
             </span>
-            <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-navy leading-tight">
+            <h1 className="text-5xl md:text-6xl font-black text-navy leading-tight">
               {pageHeadline.includes(' ') ? (
                 <>
                   {pageHeadline.split(' ').slice(0, -1).join(' ')}{' '}

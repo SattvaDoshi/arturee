@@ -23,8 +23,8 @@ const CreatorProfileSection = () => {
           <p className="text-lg text-navy/70 leading-relaxed">
             Every great journey comes with moments of doubt and unexpected challenges, but we anchored ourselves in one simple truth.
           </p>
-          <p className="text-lg text-navy/70 leading-relaxed">
-            If a dream is planted in your heart, it is yours to build
+          <p className="text-2xl md:text-3xl font-black italic text-transparent bg-clip-text bg-linear-to-r from-[#ce6a6b] to-[#4a919e] leading-relaxed py-2">
+            "If a dream is planted in your heart, it is yours to build"
           </p>
           <p className="text-lg text-navy/70 leading-relaxed">
             Together, we pushed through and finally, we have turned our vision into reality.
@@ -44,7 +44,7 @@ const CreatorProfileSection = () => {
               </div>
               <div className="space-y-4 pt-4">
                 <h3 className="text-4xl font-display text-white italic font-bold">Suchi Bansal</h3>
-                <p className="text-white/50 font-mono text-xs uppercase">Founder</p>
+                <p className="text-white/50 font-mono text-xs uppercase">CEO (Founder)</p>
                 <div className="h-px w-full bg-white/10"></div>
               </div>
             </div>
@@ -71,7 +71,7 @@ const CreatorProfileSection = () => {
               </div>
               <div className="space-y-4 pt-4 text-right md:text-left">
                 <h3 className="text-4xl font-display text-white italic font-bold">Anjali Jain</h3>
-                <p className="text-white/50 font-mono text-xs uppercase">Team Arturee</p>
+                <p className="text-white/50 font-mono text-xs uppercase">CEO</p>
                 <div className="h-px w-full bg-white/10"></div>
               </div>
             </div>

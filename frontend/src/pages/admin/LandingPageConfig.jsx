@@ -222,7 +222,7 @@ export default function LandingPageConfig() {
             headline: fetchedConfig.pricingSection?.headline || ' Pricing',
             subheadline:
               fetchedConfig.pricingSection?.subheadline ||
-              'Choose how you want to experience art — pay per video or bundle the pieces that move you.',
+              'Choose how you want to experience art — pay per video per minute',
             plans:
               fetchedConfig.pricingSection?.plans && fetchedConfig.pricingSection.plans.length > 0
                 ? fetchedConfig.pricingSection.plans

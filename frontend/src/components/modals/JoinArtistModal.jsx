@@ -148,6 +148,7 @@ const JoinArtistModal = () => {
                     placeholder="Phone"
                     required
                     maxLength={countryCodes.find(c => c.code === formData.phoneCode)?.maxLen || 15}
+                    minLength={countryCodes.find(c => c.code === formData.phoneCode)?.maxLen || 15}
                     value={formData.phone}
                     onChange={(e) => {
                        const val = e.target.value.replace(/\D/g, '');
@@ -174,6 +175,7 @@ const JoinArtistModal = () => {
                     placeholder="WhatsApp"
                     required
                     maxLength={countryCodes.find(c => c.code === formData.whatsappCode)?.maxLen || 15}
+                    minLength={countryCodes.find(c => c.code === formData.whatsappCode)?.maxLen || 15}
                     value={formData.whatsapp}
                     onChange={(e) => {
                        const val = e.target.value.replace(/\D/g, '');
