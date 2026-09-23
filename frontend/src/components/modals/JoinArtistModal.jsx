@@ -82,21 +82,24 @@ const JoinArtistModal = () => {
 
   return (
     <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-navy/60 backdrop-blur-sm">
-      <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 border border-primary overflow-hidden">
+      <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-primary overflow-hidden flex flex-col max-h-[90vh]">
         
-        {/* Decorative blobs */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl pointer-events-none transform translate-x-1/2 -translate-y-1/2" />
-        <div className="absolute bottom-0 left-0 w-32 h-32 bg-lime/10 rounded-full blur-2xl pointer-events-none transform -translate-x-1/2 translate-y-1/2" />
+        {/* Decorative blobs (fixed to background) */}
+        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl pointer-events-none transform translate-x-1/2 -translate-y-1/2 z-0" />
+        <div className="absolute bottom-0 left-0 w-32 h-32 bg-lime/10 rounded-full blur-2xl pointer-events-none transform -translate-x-1/2 translate-y-1/2 z-0" />
 
+        {/* Close Button (fixed to top right) */}
         <button 
           onClick={handleClose}
-          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-lightgray text-navy hover:bg-primary hover:text-white transition-colors"
+          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-lightgray text-navy hover:bg-primary hover:text-white transition-colors z-20"
         >
           <span className="font-bold text-sm leading-none">X</span>
         </button>
 
-        {isSubmitted ? (
-          <div className="text-center py-10 relative z-10">
+        {/* Scrollable Content */}
+        <div className="p-8 overflow-y-auto custom-scrollbar relative z-10 w-full h-full">
+          {isSubmitted ? (
+            <div className="text-center py-10">
             <div className="w-20 h-20 mx-auto mb-6 bg-lime/20 rounded-full flex items-center justify-center">
               <span className="text-4xl">🎉</span>
             </div>
@@ -113,8 +116,8 @@ const JoinArtistModal = () => {
             </button>
           </div>
         ) : (
-          <div className="relative z-10">
-            <div className="mb-8 text-center">
+          <div>
+            <div className="mb-8 text-center mt-2">
               <h2 className="text-3xl font-black text-navy mb-2">Join as an <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-lime">Artist</span></h2>
               <p className="text-sm md:text-base text-navy/90 font-medium">
                 Share your art with the world and keep <span className="font-bold text-transparent bg-clip-text bg-linear-to-r from-primary to-lime">51% of the net profit</span>.
@@ -226,7 +229,7 @@ const JoinArtistModal = () => {
                     <ChevronDown size={16} className={`text-navy transition-transform duration-300 ${showTerms ? 'rotate-180' : ''}`} />
                   </button>
                   {showTerms && (
-                    <div className="p-3 pt-0 border-t border-primary/10 bg-white/50">
+                    <div className="p-3 pt-0 border-t border-primary/10 bg-white/50 max-h-40 overflow-y-auto custom-scrollbar">
                       <ul className="text-xs text-navy/70 space-y-2 list-disc pl-4 text-left mt-3">
                         <li>An exclusive recorded video (with decent video and audio quality).</li>
                         <li>Artists must not upload, distribute, or make freely available elsewhere any content submitted for paid distribution on ARTUREE. However, there are no restrictions on performing the piece live.</li>
@@ -266,6 +269,7 @@ const JoinArtistModal = () => {
             </form>
           </div>
         )}
+        </div>
       </div>
     </div>
   )
