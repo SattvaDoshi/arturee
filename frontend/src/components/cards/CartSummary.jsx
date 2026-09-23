@@ -11,14 +11,18 @@ export default function CartSummary({ onClose }) {
   const handleCheckout = () => {
     onClose()
     if (summary.items.length > 0) {
-      const item = summary.items[0];
       navigate('/checkout', {
         state: {
-          videoId: item.id,
-          title: item.title,
-          price: item.price,
-          thumbnail: item.image || item.thumbnailUrl,
-          artistName: item.artistName || item.creator
+          items: summary.items.map(item => ({
+            videoId: item.id,
+            title: item.title,
+            price: item.price,
+            thumbnail: item.image || item.thumbnailUrl,
+            artistName: item.artistName || item.creator
+          })),
+          subtotal: summary.subtotal,
+          discount: summary.discount,
+          total: summary.total
         }
       });
     }

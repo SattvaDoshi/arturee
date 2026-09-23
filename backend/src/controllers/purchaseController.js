@@ -17,44 +17,68 @@ import ApiError from '../utils/ApiError.js'
  * The frontend uses the orderId to open the Razorpay checkout modal.
  */
 export const createPurchaseOrder = asyncHandler(async (req, res) => {
-  const { videoId } = req.body
-  if (!videoId) throw new ApiError(400, 'videoId is required.')
+  let videoIds = []
+  
+  if (req.body.videoIds && Array.isArray(req.body.videoIds)) {
+    videoIds = req.body.videoIds
+  } else if (req.body.videoId) {
+    videoIds = [req.body.videoId]
+  }
+
+  if (!videoIds.length) throw new ApiError(400, 'videoId or videoIds is required.')
 
   const userId = req.user._id
 
-  // Check if already purchased
-  const existing = await Purchase.findOne({ userId, videoId, status: 'completed' })
-  if (existing) {
-    throw new ApiError(409, 'You have already purchased this video.')
+  // Filter out already purchased
+  const existingPurchases = await Purchase.find({ userId, videoId: { $in: videoIds }, status: 'completed' })
+  const existingVideoIds = existingPurchases.map(p => p.videoId.toString())
+  
+  const videoIdsToBuy = videoIds.filter(id => !existingVideoIds.includes(id.toString()))
+  if (!videoIdsToBuy.length) {
+    throw new ApiError(409, 'You have already purchased all selected videos.')
   }
 
-  // Fetch video price
-  const video = await Video.findById(videoId).select('title price currency isPublished status')
-  if (!video || !video.isPublished) throw new ApiError(404, 'Video not found.')
-  if (video.status !== 'ready') throw new ApiError(409, 'Video is not yet available for purchase.')
+  // Fetch video prices
+  const videos = await Video.find({ _id: { $in: videoIdsToBuy }, isPublished: true, status: 'ready' }).select('title price currency isPublished status')
+  if (!videos.length) throw new ApiError(404, 'Videos not found or not available for purchase.')
 
-  // Amount must be in paise (smallest unit)
-  const amountPaise = Math.round(video.price * 100)
+  let subtotal = 0
+  videos.forEach(v => subtotal += (v.price || 0))
+  
+  let discountPercentage = 0
+  if (videos.length >= 5) discountPercentage = 0.15
+  else if (videos.length >= 3) discountPercentage = 0.10
 
-  // Create pending Purchase record first
-  const purchase = await Purchase.create({
-    userId,
-    videoId,
-    razorpayOrderId: 'pending_' + Date.now(), // temporary — updated after Razorpay call
-    amountPaise,
-    currency: video.currency || 'INR',
-    status: 'pending',
-  })
+  const total = subtotal * (1 - discountPercentage)
+  const amountPaise = Math.round(total * 100)
+
+  const tempOrderId = 'pending_' + Date.now()
+
+  // Create pending Purchase records
+  await Promise.all(videos.map(video => {
+    const itemDiscount = (video.price || 0) * discountPercentage
+    const itemTotal = (video.price || 0) - itemDiscount
+    return Purchase.create({
+      userId,
+      videoId: video._id,
+      razorpayOrderId: tempOrderId,
+      amountPaise: Math.round(itemTotal * 100),
+      currency: video.currency || 'INR',
+      status: 'pending',
+    })
+  }))
 
   try {
-    const order = await createOrder(amountPaise, video.currency || 'INR', purchase._id.toString(), {
+    const order = await createOrder(amountPaise, 'INR', 'cart_checkout', {
       userId: userId.toString(),
-      videoId: videoId.toString(),
+      videoCount: videos.length.toString(),
     })
 
     // Update with real Razorpay order ID
-    purchase.razorpayOrderId = order.id
-    await purchase.save()
+    await Purchase.updateMany(
+      { razorpayOrderId: tempOrderId },
+      { $set: { razorpayOrderId: order.id } }
+    )
 
     res.status(200).json({
       success: true,
@@ -62,14 +86,15 @@ export const createPurchaseOrder = asyncHandler(async (req, res) => {
         orderId: order.id,
         amount: order.amount,
         currency: order.currency,
-        purchaseId: purchase._id,
-        videoTitle: video.title,
+        videoTitle: videos.length === 1 ? videos[0].title : `${videos.length} videos`,
       },
     })
   } catch (err) {
-    purchase.status = 'failed'
-    await purchase.save()
-    logPurchaseError(userId, videoId, err)
+    await Purchase.updateMany(
+      { razorpayOrderId: tempOrderId },
+      { $set: { status: 'failed' } }
+    )
+    logPurchaseError(userId, 'cart_checkout', err)
     throw err
   }
 })
@@ -85,45 +110,52 @@ export const createPurchaseOrder = asyncHandler(async (req, res) => {
  * Verifies HMAC signature and marks Purchase as completed.
  */
 export const verifyPurchase = asyncHandler(async (req, res) => {
-  const { razorpayOrderId, razorpayPaymentId, razorpaySignature, purchaseId } = req.body
+  const { razorpayOrderId, razorpayPaymentId, razorpaySignature } = req.body
 
-  if (!razorpayOrderId || !razorpayPaymentId || !razorpaySignature || !purchaseId) {
-    throw new ApiError(400, 'razorpayOrderId, razorpayPaymentId, razorpaySignature, and purchaseId are required.')
+  if (!razorpayOrderId || !razorpayPaymentId || !razorpaySignature) {
+    throw new ApiError(400, 'razorpayOrderId, razorpayPaymentId, and razorpaySignature are required.')
   }
 
-  const purchase = await Purchase.findById(purchaseId)
-  if (!purchase) throw new ApiError(404, 'Purchase record not found.')
-  if (purchase.userId.toString() !== req.user._id.toString()) {
+  const purchases = await Purchase.find({ razorpayOrderId })
+  if (!purchases.length) throw new ApiError(404, 'Purchase records not found.')
+  if (purchases[0].userId.toString() !== req.user._id.toString()) {
     throw new ApiError(403, 'Forbidden.')
   }
-  if (purchase.status === 'completed') {
-    return res.status(200).json({ success: true, data: { alreadyCompleted: true, purchaseId } })
+  
+  const allCompleted = purchases.every(p => p.status === 'completed')
+  if (allCompleted) {
+    return res.status(200).json({ success: true, data: { alreadyCompleted: true } })
   }
 
   // Verify HMAC
   const isValid = verifySignature(razorpayOrderId, razorpayPaymentId, razorpaySignature)
   if (!isValid) {
-    purchase.status = 'failed'
-    await purchase.save()
-    logPurchaseError(purchase.userId, purchase.videoId, new Error('Signature mismatch'))
+    await Purchase.updateMany(
+      { razorpayOrderId },
+      { $set: { status: 'failed' } }
+    )
+    logPurchaseError(purchases[0].userId, 'cart_verify', new Error('Signature mismatch'))
     throw new ApiError(400, 'Payment verification failed: invalid signature.')
   }
 
-  purchase.razorpayPaymentId = razorpayPaymentId
-  purchase.razorpaySignature = razorpaySignature
-  purchase.status = 'completed'
-  purchase.completedAt = new Date()
-  await purchase.save()
+  await Purchase.updateMany(
+    { razorpayOrderId },
+    { $set: { 
+      razorpayPaymentId, 
+      razorpaySignature, 
+      status: 'completed', 
+      completedAt: new Date() 
+    } }
+  )
 
-  // Increment purchase count on the video
-  await Video.updateOne({ _id: purchase.videoId }, { $inc: { purchaseCount: 1 } })
+  // Increment purchase count on the videos
+  const videoIds = purchases.map(p => p.videoId)
+  await Video.updateMany({ _id: { $in: videoIds } }, { $inc: { purchaseCount: 1 } })
 
   res.status(200).json({
     success: true,
     data: {
-      purchaseId: purchase._id,
-      videoId: purchase.videoId,
-      message: 'Payment verified. You can now stream this video.',
+      message: 'Payment verified. You can now stream your videos.',
     },
   })
 })

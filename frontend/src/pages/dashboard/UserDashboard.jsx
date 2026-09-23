@@ -324,7 +324,9 @@ export default function UserDashboard() {
   return (
     <UserLayout>
       {/* ══════════════ HERO CAROUSEL ══════════════ */}
-      <section className="relative w-full flex items-center overflow-hidden" style={{ minHeight: 'calc(100vh - 73px)' }}>
+      <section 
+        className="relative w-full flex items-center overflow-hidden min-h-[70vh] md:min-h-[calc(100vh-73px)]"
+      >
 
         {/* Loading state */}
         {loadingHero && (
@@ -344,7 +346,7 @@ export default function UserDashboard() {
               pointerEvents: i === current ? 'auto' : 'none',
             }}
           >
-            <img src={s.thumbnailUrl || FALLBACK_IMG} alt={s.title} className="w-full h-full object-cover" />
+            <img src={s.thumbnailUrl || FALLBACK_IMG} alt={s.title} className="w-full h-full object-cover object-top md:object-center" />
             <div className="absolute inset-0 hero-overlay-left" />
             <div className="absolute inset-0 hero-overlay-btm" />
           </div>

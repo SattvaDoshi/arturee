@@ -139,7 +139,7 @@ const GenreDetail = () => {
           <div className="absolute top-0 left-1/4 w-[500px] h-[500px] rounded-full pointer-events-none" style={{ background: `radial-gradient(circle, ${meta.accent}40 0%, transparent 70%)` }} />
           <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(77,208,225,0.15) 0%, transparent 70%)' }} />
 
-          <div className="relative z-10 max-w-[1200px] mx-auto px-6 lg:px-20 pt-32 pb-14">
+          <div className={`relative z-10 max-w-[1200px] mx-auto px-6 lg:px-20 ${fromDashboard ? 'pt-8 md:pt-12' : 'pt-24 md:pt-32'} pb-14`}>
             {/* Back Button */}
             <button
               onClick={() => navigate(fromDashboard ? '/dashboard' : '/genres')}

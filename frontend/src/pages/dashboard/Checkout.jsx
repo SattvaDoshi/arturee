@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, ShieldCheck, CheckCircle2, Lock, Loader2, AlertCircle } from 'lucide-react'
 import UserLayout from '../../components/layout/UserLayout'
 import { purchaseApi } from '../../api/index.js'
+import { useCart } from '../../context/CartContext'
 
 const C = {
   navy:    '#051d2e',
@@ -43,23 +44,26 @@ const fmtPrice = (price) => {
 export default function Checkout() {
   const navigate  = useNavigate()
   const location  = useLocation()
+  const { setCart } = useCart()
 
   /**
    * Expected state from navigate:
-   *   { videoId, title, price, thumbnail }  — for a video purchase
-   * Fallback to demo if nothing is passed.
+   *   Single item: { videoId, title, price, thumbnail }
+   *   Cart: { items: [...], subtotal, discount, total }
    */
   const checkoutData = location.state || null
+  const isCart = !!checkoutData?.items
+  const items = isCart ? checkoutData.items : (checkoutData ? [checkoutData] : [])
 
   const [status, setStatus] = useState('idle') // idle | loading | success | error
   const [errorMsg, setErrorMsg] = useState('')
 
   // Redirect to dashboard if no checkout data
   useEffect(() => {
-    if (!checkoutData?.videoId) {
+    if (!items.length) {
       navigate('/dashboard', { replace: true })
     }
-  }, [checkoutData, navigate])
+  }, [items, navigate])
 
   /* ── Initiate Razorpay payment ── */
   const handlePay = useCallback(async () => {
@@ -72,7 +76,8 @@ export default function Checkout() {
       if (!loaded) throw new Error('Razorpay SDK could not be loaded. Check your internet connection.')
 
       // 2. Create order on backend
-      const orderRes = await purchaseApi.createOrder({ videoId: checkoutData.videoId })
+      const videoIds = items.map(i => i.videoId)
+      const orderRes = await purchaseApi.createOrder({ videoIds })
       const { orderId, amount, currency, purchaseId, videoTitle } = orderRes.data.data
 
       // 3. Open Razorpay checkout modal
@@ -83,7 +88,7 @@ export default function Checkout() {
           currency:    currency || 'INR',
           order_id:    orderId,
           name:        'Arturee',
-          description: videoTitle || checkoutData.title || 'Video Purchase',
+          description: videoTitle || (isCart ? `${items.length} Videos` : checkoutData.title) || 'Video Purchase',
           image:       '/logo.png', // optional — uses fallback if not found
           theme: {
             color: '#4DD0E1',
@@ -98,8 +103,11 @@ export default function Checkout() {
                 razorpayOrderId:   response.razorpay_order_id,
                 razorpayPaymentId: response.razorpay_payment_id,
                 razorpaySignature: response.razorpay_signature,
-                purchaseId,
               })
+              
+              if (isCart) {
+                setCart([]) // clear cart on success
+              }
               resolve()
             } catch (verifyErr) {
               reject(new Error(verifyErr.response?.data?.message || 'Payment verification failed.'))
@@ -144,7 +152,7 @@ export default function Checkout() {
             Payment Successful!
           </h2>
           <p className="text-lg mb-2" style={{ color: C.muted }}>
-            You now own <strong>{checkoutData?.title}</strong>.
+            You now own <strong>{isCart ? `${items.length} videos` : items[0]?.title}</strong>.
           </p>
           <p className="text-sm mb-8" style={{ color: C.muted }}>
             Redirecting to your library…
@@ -162,11 +170,15 @@ export default function Checkout() {
   }
 
   /* ── Guard: no data ── */
-  if (!checkoutData?.videoId) return null
+  if (!items.length) return null
 
-  const numericPrice = parsePrice(checkoutData.price)
-  const priceDisplay = fmtPrice(checkoutData.price)
-  const amountPaise  = Math.round(numericPrice * 100)
+  const subtotal = isCart ? checkoutData.subtotal : parsePrice(items[0].price)
+  const discount = isCart ? checkoutData.discount : 0
+  const total = isCart ? checkoutData.total : subtotal
+  
+  const subtotalDisplay = fmtINR(subtotal * 100)
+  const discountDisplay = fmtINR(discount * 100)
+  const priceDisplay = fmtINR(total * 100)
 
   return (
     <UserLayout>
@@ -197,23 +209,30 @@ export default function Checkout() {
                   Order Summary
                 </h3>
 
-                {/* Video thumbnail + title */}
-                <div className="flex gap-4 items-start mb-6">
-                  {checkoutData.thumbnail && (
-                    <img
-                      src={checkoutData.thumbnail}
-                      alt={checkoutData.title}
-                      className="w-24 h-16 object-cover rounded-xl shadow-sm shrink-0"
-                    />
-                  )}
-                  <div className="min-w-0">
-                    <h4 className="font-bold text-sm leading-snug line-clamp-3" style={{ color: C.navy }}>
-                      {checkoutData.title}
-                    </h4>
-                    {checkoutData.artistName && (
-                      <p className="text-xs text-[#051d2e]/60 mt-1">{checkoutData.artistName}</p>
-                    )}
-                  </div>
+                {/* Video list */}
+                <div className="space-y-4 mb-6 max-h-60 overflow-y-auto custom-scrollbar">
+                  {items.map((item, idx) => (
+                    <div key={idx} className="flex gap-4 items-start pb-4 border-b border-gray-100 last:border-0 last:pb-0">
+                      {item.thumbnail && (
+                        <img
+                          src={item.thumbnail}
+                          alt={item.title}
+                          className="w-20 h-14 object-cover rounded-lg shadow-sm shrink-0"
+                        />
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <h4 className="font-bold text-sm leading-snug line-clamp-2" style={{ color: C.navy }}>
+                          {item.title}
+                        </h4>
+                        {item.artistName && (
+                          <p className="text-xs text-[#051d2e]/60 mt-0.5">{item.artistName}</p>
+                        )}
+                      </div>
+                      <div className="text-sm font-semibold shrink-0">
+                        {fmtPrice(item.price)}
+                      </div>
+                    </div>
+                  ))}
                 </div>
 
                 {/* Pricing breakdown */}
@@ -222,9 +241,15 @@ export default function Checkout() {
                   style={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}
                 >
                   <div className="flex justify-between text-gray-600">
-                    <span>Subtotal</span>
-                    <span>{priceDisplay}</span>
+                    <span>Subtotal ({items.length} item{items.length !== 1 && 's'})</span>
+                    <span>{subtotalDisplay}</span>
                   </div>
+                  {discount > 0 && (
+                    <div className="flex justify-between text-lime-600 font-bold">
+                      <span>Discount applied</span>
+                      <span>-{discountDisplay}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-gray-600">
                     <span>Taxes &amp; fees</span>
                     <span>Included</span>

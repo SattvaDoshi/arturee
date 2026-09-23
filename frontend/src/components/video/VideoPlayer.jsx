@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import Hls from 'hls.js'
 import { playbackApi, progressApi } from '../../api/index.js'
-import { AlertCircle, Loader2, ShieldX, Cast, Monitor, Airplay, Minimize2, Shield } from 'lucide-react'
+import { AlertCircle, Loader2, ShieldX, Cast, Monitor, Airplay, Minimize2, Shield, Maximize } from 'lucide-react'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -242,6 +242,7 @@ function SecurityModal({ threat, onDismiss }) {
  * @param {object}  [user]
  */
 export default function VideoPlayer({ videoId, poster, user }) {
+  const wrapperRef = useRef(null)
   const videoRef = useRef(null)
   const hlsRef   = useRef(null)
 
@@ -280,6 +281,20 @@ export default function VideoPlayer({ videoId, poster, user }) {
     setTimeout(() => {
       videoRef.current?.play().catch(() => {})
     }, 200)
+  }, [])
+
+  /** Toggle Wrapper Fullscreen */
+  const toggleFullscreen = useCallback(() => {
+    const wrapper = wrapperRef.current
+    if (!wrapper) return
+
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+      if (wrapper.requestFullscreen) wrapper.requestFullscreen().catch(()=>{})
+      else if (wrapper.webkitRequestFullscreen) wrapper.webkitRequestFullscreen()
+    } else {
+      if (document.exitFullscreen) document.exitFullscreen().catch(()=>{})
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen()
+    }
   }, [])
 
   // ── Watermark label ───────────────────────────────────────────────────────
@@ -337,9 +352,24 @@ export default function VideoPlayer({ videoId, poster, user }) {
 
     // 6. Fullscreen change — when cast tools enter fullscreen
     const onFullscreenChange = () => {
-      // If fullscreen element is NOT our own video, something else went fullscreen
-      if (document.fullscreenElement && document.fullscreenElement !== video) {
-        triggerThreat('SCREEN_RECORD')
+      const wrapper = wrapperRef.current
+      if (!wrapper) return
+      const fsElement = document.fullscreenElement || document.webkitFullscreenElement
+      
+      // If fullscreen element is NOT our own wrapper, something else went fullscreen
+      if (fsElement && fsElement !== wrapper) {
+        // If the video element itself went fullscreen natively, exit it and wrapper-fullscreen instead
+        if (fsElement === video) {
+          if (document.exitFullscreen) document.exitFullscreen().catch(()=>{})
+          else if (document.webkitExitFullscreen) document.webkitExitFullscreen()
+          
+          setTimeout(() => {
+            if (wrapper.requestFullscreen) wrapper.requestFullscreen().catch(()=>{})
+            else if (wrapper.webkitRequestFullscreen) wrapper.webkitRequestFullscreen()
+          }, 100)
+        } else {
+          triggerThreat('SCREEN_RECORD')
+        }
       }
     }
 
@@ -515,6 +545,10 @@ export default function VideoPlayer({ videoId, poster, user }) {
           from { opacity: 0; transform: translateY(24px) scale(0.96); }
           to   { opacity: 1; transform: translateY(0)    scale(1);    }
         }
+        /* Hide native fullscreen button so we can enforce wrapper-fullscreen */
+        video::-webkit-media-controls-fullscreen-button {
+          display: none !important;
+        }
       `}</style>
 
       {/* ── Security Warning Modal (full-page, above everything) ─────────── */}
@@ -522,7 +556,9 @@ export default function VideoPlayer({ videoId, poster, user }) {
 
       {/* ── Player wrapper ───────────────────────────────────────────────── */}
       <div
-        className="relative aspect-video rounded-2xl overflow-hidden bg-black shadow-2xl border"
+        ref={wrapperRef}
+        onDoubleClick={toggleFullscreen}
+        className="relative aspect-video rounded-2xl overflow-hidden bg-black shadow-2xl border group"
         style={{
           borderColor: 'rgba(77,208,225,0.25)',
           userSelect:  'none',
@@ -635,6 +671,17 @@ export default function VideoPlayer({ videoId, poster, user }) {
               WebkitUserDrag: 'none',
             }}
           />
+        )}
+
+        {/* ── Custom Fullscreen Button (shown on hover) ── */}
+        {sessionActive && !error && (
+          <button
+            onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }}
+            className="absolute top-4 right-4 z-20 p-2 bg-black/40 hover:bg-black/70 text-white rounded-lg backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 focus:opacity-100"
+            title="Toggle Fullscreen"
+          >
+            <Maximize className="w-5 h-5" />
+          </button>
         )}
 
         {/* ── Video element ── */}

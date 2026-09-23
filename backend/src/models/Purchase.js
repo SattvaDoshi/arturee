@@ -70,7 +70,7 @@ const purchaseSchema = new mongoose.Schema(
 
 // Enforce one completed purchase per user per video
 purchaseSchema.index({ userId: 1, videoId: 1 })
-purchaseSchema.index({ razorpayOrderId: 1 }, { unique: true })
+purchaseSchema.index({ razorpayOrderId: 1 })
 purchaseSchema.index({ status: 1 })
 
 const Purchase = mongoose.model('Purchase', purchaseSchema)

@@ -522,17 +522,7 @@ export default function VideoDetail() {
                       </div>
                     </div>
 
-                    {/* Price badge */}
-                    <span
-                      className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-black shrink-0"
-                      style={
-                        video?.price > 0
-                          ? { background: 'linear-gradient(135deg,#4DD0E1,#00BCD4)', color: '#fff' }
-                          : { background: 'linear-gradient(135deg,#4DD0E1,#C0E863)', boxShadow: '0 0 12px rgba(77,208,225,0.3)', color: C.navy }
-                      }
-                    >
-                      {video?.price > 0 ? `₹${video.price}` : 'Free'}
-                    </span>
+
                   </div>
 
                   {/* CTA buttons */}
