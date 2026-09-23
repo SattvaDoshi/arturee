@@ -65,7 +65,7 @@ app.use(cors({
   credentials: true,
   exposedHeaders: ['Set-Cookie'],
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'x-device-id'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-device-id', 'x-session-token'],
   optionsSuccessStatus: 204,
 }))
 // Explicitly handle all OPTIONS preflight requests before any other middleware
