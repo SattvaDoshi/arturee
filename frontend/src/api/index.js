@@ -52,6 +52,23 @@ api.interceptors.response.use(
   }
 )
 
+// getMe dedup cache — rapid callers share one in-flight promise (5s window)
+let _getMePromise = null
+let _getMeTimestamp = 0
+const GET_ME_CACHE_MS = 5000
+
+const cachedGetMe = () => {
+  const now = Date.now()
+  if (_getMePromise && (now - _getMeTimestamp) < GET_ME_CACHE_MS) {
+    return _getMePromise
+  }
+  _getMeTimestamp = now
+  _getMePromise = api.get('/auth/me').finally(() => {
+    setTimeout(() => { _getMePromise = null }, GET_ME_CACHE_MS)
+  })
+  return _getMePromise
+}
+
 // ── Auth ──────────────────────────────────────────────────────────────────
 export const authApi = {
   signup: (data) => api.post('/auth/signup', data),
@@ -62,7 +79,7 @@ export const authApi = {
   forgotPassword: (data) => api.post('/auth/forgot-password', data),
   resetPassword: (data) => api.post('/auth/reset-password', data),
   updatePassword: (data) => api.post('/auth/update-password', data),
-  getMe: () => api.get('/auth/me'),
+  getMe: cachedGetMe,
   updateProfile: (data) => api.put('/auth/update-profile', data, {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),

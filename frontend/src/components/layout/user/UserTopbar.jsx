@@ -159,10 +159,7 @@ const UserTopbar = ({ onMobileMenuToggle }) => {
         <CartButton />
 
         {/* Notification bell */}
-        <button className="relative p-2 hover:bg-[#4DD0E1]/15 rounded-full transition">
-          <Bell className="w-5 h-5 text-[#051d2e]" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#C0E863] border-2 border-[#e0f7fa]" />
-        </button>
+        
 
         {/* Upgrade badge */}
         {/* <Link

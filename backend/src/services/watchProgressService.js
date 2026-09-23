@@ -58,7 +58,7 @@ export const saveProgress = async (
     const purchase = await Purchase.findOneAndUpdate(
       { userId, videoId, status: 'completed' },
       { $inc: { viewsUsed: 1 } },
-      { new: true }
+      { returnDocument: 'after' }
     )
 
     if (purchase) {
@@ -108,7 +108,7 @@ export const saveProgress = async (
   const record = await WatchHistory.findOneAndUpdate(
     { userId, videoId },
     update,
-    { upsert: true, new: true }
+    { upsert: true, returnDocument: 'after' }
   )
 
   // Increment video view count on first play
@@ -152,6 +152,6 @@ export const markCompleted = async (userId, videoId) => {
         lastPlayedAt:       new Date(),
       },
     },
-    { upsert: true, new: true }
+    { upsert: true, returnDocument: 'after' }
   )
 }

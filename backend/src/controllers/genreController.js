@@ -2,11 +2,11 @@ import Genre from '../models/Genre.js'
 
 export const createGenre = async (req, res, next) => {
   try {
-    const { name, description } = req.body
+    const { name, description, icon } = req.body
     if (!name) {
       return res.status(400).json({ success: false, message: 'Name is required' })
     }
-    const genre = await Genre.create({ name, description })
+    const genre = await Genre.create({ name, description, icon })
     res.status(201).json({ success: true, data: genre })
   } catch (error) {
     if (error.code === 11000) {
@@ -27,11 +27,11 @@ export const getAllGenres = async (req, res, next) => {
 
 export const updateGenre = async (req, res, next) => {
   try {
-    const { name, description } = req.body
+    const { name, description, icon } = req.body
     const genre = await Genre.findByIdAndUpdate(
       req.params.id,
-      { name, description },
-      { new: true, runValidators: true }
+      { name, description, icon },
+      { returnDocument: 'after', runValidators: true }
     )
     if (!genre) {
       return res.status(404).json({ success: false, message: 'Genre not found' })

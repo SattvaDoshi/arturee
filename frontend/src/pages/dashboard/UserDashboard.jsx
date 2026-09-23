@@ -89,9 +89,15 @@ const SectionHeader = ({ title, sub, viewAllTo }) => (
       {sub && <p className="text-xs text-[#4DD0E1] font-mono tracking-widest">{sub}</p>}
     </div>
     {viewAllTo ? (
-      <Link to={viewAllTo} className="text-xs md:text-sm font-black text-[#00BCD4] hover:text-[#051d2e] transition uppercase tracking-wider shrink-0 ml-4">
-        View All →
-      </Link>
+      typeof viewAllTo === 'string' ? (
+        <Link to={viewAllTo} className="text-xs md:text-sm font-black text-[#00BCD4] hover:text-[#051d2e] transition uppercase tracking-wider shrink-0 ml-4">
+          View All →
+        </Link>
+      ) : (
+        <Link to={viewAllTo.pathname} state={viewAllTo.state} className="text-xs md:text-sm font-black text-[#00BCD4] hover:text-[#051d2e] transition uppercase tracking-wider shrink-0 ml-4">
+          View All →
+        </Link>
+      )
     ) : (
       <button className="text-xs md:text-sm font-black text-[#00BCD4] hover:text-[#051d2e] transition uppercase tracking-wider shrink-0 ml-4">
         View All →
@@ -158,7 +164,7 @@ const WideRow = ({ videos, widthClass = 'w-64 sm:w-72 md:w-80' }) => (
         <div className="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg border border-[#4DD0E1]/20">
           <img src={v.thumbnailUrl || FALLBACK_IMG} alt={v.title} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
           <HoverOverlayWide />
-          <VideoActionButtons videoId={v._id} videoData={{ id: v._id, image: v.thumbnailUrl, title: v.title, price: fmtPrice(v.price, v.currency) }} />
+          <VideoActionButtons videoId={v._id} videoData={{ id: v._id, image: v.thumbnailUrl, title: v.title, price: fmtPrice(v.price, v.currency), artistName: v.artistId?.name }} />
           {v.price
             ? <PriceBadge price={v.price} currency={v.currency} />
             : <div className="absolute top-2 right-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: '#C0E863' }}>Free</div>
@@ -182,7 +188,7 @@ const TallRow = ({ videos, showRank = false }) => (
             desc={v.description}
             stats={<><span>{fmtViews(v.viewCount)}</span>{v.durationSeconds && <><span>•</span><span>{fmtDuration(v.durationSeconds)}</span></>}</>}
           />
-          <VideoActionButtons videoId={v._id} videoData={{ id: v._id, image: v.thumbnailUrl, title: v.title, price: fmtPrice(v.price, v.currency) }} />
+          <VideoActionButtons videoId={v._id} videoData={{ id: v._id, image: v.thumbnailUrl, title: v.title, price: fmtPrice(v.price, v.currency), artistName: v.artistId?.name }} />
           {showRank && (
             <div className="absolute top-2 left-2 px-2 py-0.5 bg-red-500 rounded-full text-[10px] font-black text-white">#{idx + 1}</div>
           )}
@@ -213,6 +219,24 @@ const RowSkeleton = () => (
 
 /* ═══════════════════════════════════════════════════════ */
 export default function UserDashboard() {
+  const { toggleSavedList, isInSavedList } = useCart()
+
+  const handleHeroSaveToList = async (e, slide) => {
+    e.preventDefault()
+    e.stopPropagation()
+    const videoData = { id: slide._id, image: slide.thumbnailUrl, title: slide.title, price: fmtPrice(slide.price, slide.currency), artistName: slide.artistId?.name }
+    toggleSavedList(videoData)
+    try {
+      if (isInSavedList(slide._id)) {
+        await wishlistApi.remove(slide._id)
+      } else {
+        await wishlistApi.add(slide._id)
+      }
+    } catch {
+      // ignore
+    }
+  }
+
   // ── Hero carousel state ───────────────────────────────
   const [heroVideos, setHeroVideos] = useState([])
   const [current, setCurrent] = useState(0)
@@ -373,11 +397,16 @@ export default function UserDashboard() {
                 >
                   <Play className="w-5 h-5" fill="#051d2e" /> Watch Now
                 </Link>
-                <button className="flex items-center gap-2 px-6 py-2.5 md:px-7 md:py-3 bg-white/80 text-[#051d2e] rounded-xl font-bold hover:bg-white transition border border-[#4DD0E1]/25 text-sm md:text-base backdrop-blur-sm">
-                  More Info
-                </button>
-                <button className="p-2.5 md:p-3 bg-white/80 text-[#051d2e] rounded-xl hover:bg-white transition border border-[#4DD0E1]/25 backdrop-blur-sm">
-                  <Plus className="w-5 h-5" />
+                <button
+                  onClick={(e) => handleHeroSaveToList(e, slide)}
+                  className="p-2.5 md:p-3 bg-white/80 text-[#051d2e] rounded-xl hover:bg-white transition border border-[#4DD0E1]/25 backdrop-blur-sm"
+                  title={isInSavedList(slide._id) ? "Remove from saved" : "Save to list"}
+                >
+                  {isInSavedList(slide._id) ? (
+                    <CheckCircle className="w-5 h-5 text-green-600" />
+                  ) : (
+                    <Plus className="w-5 h-5" />
+                  )}
                 </button>
               </div>
 
@@ -469,14 +498,18 @@ export default function UserDashboard() {
         ) : genresWithVideos.length > 0 ? (
           genresWithVideos.map((genre) => (
             <div key={genre._id}>
-              <SectionHeader title={genre.name} sub={genre.description || "DISCOVER"} />
+              <SectionHeader 
+                title={genre.name} 
+                sub={genre.description || "DISCOVER"} 
+                viewAllTo={{ pathname: `/genre/${genre._id}`, state: { fromDashboard: true } }} 
+              />
               <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
                 {genre.videos.map((v) => (
                   <Link to={`/video/${v._id}`} key={v._id} className="flex-shrink-0 w-56 sm:w-64 md:w-72 group cursor-pointer block">
                     <div className="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg border border-[#4DD0E1]/20">
                       <img src={v.thumbnailUrl || FALLBACK_IMG} alt={v.title} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
                       <HoverOverlayWide />
-                      <VideoActionButtons videoId={v._id} videoData={{ id: v._id, image: v.thumbnailUrl, title: v.title, price: fmtPrice(v.price, v.currency) }} />
+                      <VideoActionButtons videoId={v._id} videoData={{ id: v._id, image: v.thumbnailUrl, title: v.title, price: fmtPrice(v.price, v.currency), artistName: v.artistId?.name }} />
                       <div className="absolute top-2 left-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>{genre.name}</div>
                       {v.price
                         ? <PriceBadge price={v.price} currency={v.currency} />

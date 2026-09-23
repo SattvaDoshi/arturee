@@ -30,10 +30,13 @@ function loadRazorpayScript() {
 
 /* ─── Format helpers ─────────────────────────────────── */
 const fmtINR = (paise) => `₹${(paise / 100).toFixed(2)}`
+const parsePrice = (val) => {
+  return parseFloat(String(val || '0').replace(/[^0-9.]/g, '').replace(/^\.+/, '')) || 0;
+}
+
 const fmtPrice = (price) => {
   if (!price) return 'Free'
-  // price may already be in rupees from the video object
-  return `₹${Number(price).toFixed(2)}`
+  return `₹${parsePrice(price).toFixed(2)}`
 }
 
 /* ══════════════════════════════════════════════════════ */
@@ -161,8 +164,9 @@ export default function Checkout() {
   /* ── Guard: no data ── */
   if (!checkoutData?.videoId) return null
 
+  const numericPrice = parsePrice(checkoutData.price)
   const priceDisplay = fmtPrice(checkoutData.price)
-  const amountPaise  = Math.round(Number(checkoutData.price) * 100)
+  const amountPaise  = Math.round(numericPrice * 100)
 
   return (
     <UserLayout>
@@ -203,15 +207,12 @@ export default function Checkout() {
                     />
                   )}
                   <div className="min-w-0">
-                    <span
-                      className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full inline-block mb-1"
-                      style={{ background: 'rgba(77,208,225,0.12)', color: C.teal }}
-                    >
-                      Lifetime Access
-                    </span>
                     <h4 className="font-bold text-sm leading-snug line-clamp-3" style={{ color: C.navy }}>
                       {checkoutData.title}
                     </h4>
+                    {checkoutData.artistName && (
+                      <p className="text-xs text-[#051d2e]/60 mt-1">{checkoutData.artistName}</p>
+                    )}
                   </div>
                 </div>
 
@@ -326,18 +327,7 @@ export default function Checkout() {
                   By paying, you agree to our Terms of Service. All purchases are final.
                 </p>
 
-                {/* Test card hint (only in development) */}
-                {import.meta.env.DEV && (
-                  <div
-                    className="mt-6 p-4 rounded-2xl text-xs space-y-1"
-                    style={{ background: 'rgba(192,232,99,0.08)', border: '1px solid rgba(192,232,99,0.2)' }}
-                  >
-                    <p className="font-black text-[#051d2e]/60 uppercase tracking-widest">🧪 Test Mode</p>
-                    <p className="text-gray-500">Card: <code className="font-mono">4111 1111 1111 1111</code></p>
-                    <p className="text-gray-500">Expiry: any future date &nbsp; CVV: any 3 digits</p>
-                    <p className="text-gray-500">UPI: <code className="font-mono">success@razorpay</code></p>
-                  </div>
-                )}
+                {/* Test card hint removed as per request */}
               </div>
             </div>
 

@@ -74,7 +74,7 @@ export const CartProvider = ({ children }) => {
   // Calculate total price with discount
   const calculateTotal = () => {
     const subtotal = cart.reduce((acc, item) => {
-      const price = parseFloat(item.price?.replace(/[^\d.]/g, '') || 0)
+      const price = parseFloat(String(item.price || '0').replace(/[^0-9.]/g, '').replace(/^\.+/, '')) || 0
       return acc + price * item.quantity
     }, 0)
     const discount = subtotal * getDiscount()

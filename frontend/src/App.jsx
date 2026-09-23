@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { GoogleOAuthProvider } from '@react-oauth/google'
 
 const ScrollToTop = () => {
   const { pathname } = useLocation()
@@ -79,6 +80,7 @@ const App = () => {
   }
 
   return (
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
     <>
       {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
       <ToastProvider>
@@ -139,6 +141,7 @@ const App = () => {
       </AuthProvider>
       </ToastProvider>
     </>
+    </GoogleOAuthProvider>
   )
 }
 

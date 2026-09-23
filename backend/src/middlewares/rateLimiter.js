@@ -5,13 +5,23 @@ import rateLimit from 'express-rate-limit'
  * All limits are intentionally conservative for a premium OTT platform.
  */
 
-// General API limiter — 100 req/15 min per IP
+// General API limiter — 2000 req/15 min per IP (increased to prevent 429s during dev/normal usage)
 export const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
+  max: 2000,
   standardHeaders: true,
   legacyHeaders: false,
   message: { success: false, message: 'Too many requests. Please try again later.' },
+})
+
+// Auth read limiter — for /auth/me, 300 req/15 min per IP
+// Higher limit because this is polled for session heartbeat
+export const authReadLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 300,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Too many auth checks. Please try again later.' },
 })
 
 // Upload initiation — 10 req/hour per IP (admin only)

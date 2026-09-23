@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom'
 import Navbar from '../../components/layout/Navbar'
 import { genreApi, videoApi } from '../../api'
 import { ArrowLeft } from 'lucide-react'
@@ -93,10 +93,13 @@ const GenreDetail = () => {
     return () => { isMounted = false }
   }, [genreId])
 
+  const { state } = useLocation()
+  const fromDashboard = state?.fromDashboard
+
   if (loading) {
     return (
       <div>
-        <Navbar />
+        {!fromDashboard && <Navbar />}
         <div className="min-h-screen bg-linear-to-br from-[#E0F7FA] via-[#B2EBF2] to-[#F1F8E9] flex items-center justify-center">
           <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
         </div>
@@ -107,7 +110,7 @@ const GenreDetail = () => {
   if (error || !genre) {
     return (
       <div>
-        <Navbar />
+        {!fromDashboard && <Navbar />}
         <div className="min-h-screen bg-linear-to-br from-[#E0F7FA] via-[#B2EBF2] to-[#F1F8E9] pt-32 px-6">
           <div className="max-w-md mx-auto text-center bg-white/80 backdrop-blur-md rounded-3xl p-8 shadow-sm">
             <p className="text-red-500 font-semibold mb-4">{error || 'Genre not found.'}</p>
@@ -127,120 +130,120 @@ const GenreDetail = () => {
 
   return (
     <div>
-      <Navbar />
-      <div className="min-h-screen bg-linear-to-br from-[#E0F7FA] via-[#B2EBF2] to-[#F1F8E9]">
-        
-        {/* Back Button */}
-        <div className="pt-24 px-6 lg:px-20 max-w-[1200px] mx-auto">
-          <button
-            onClick={() => navigate('/genres')}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl font-semibold text-sm transition text-navy hover:bg-white/50 w-fit"
-          >
-            <ArrowLeft className="w-4 h-4" /> All Genres
-          </button>
-        </div>
+      {!fromDashboard && <Navbar />}
+      <div className="min-h-screen" style={{ background: 'linear-gradient(160deg, #E0F7FA 0%, #B2EBF2 50%, #F1F8E9 100%)' }}>
 
-        {/* Hero */}
-        <div className="relative pt-8 pb-14 px-6 lg:px-20 text-center overflow-hidden">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[120px] pointer-events-none" />
-          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-lime/15 rounded-full blur-[100px] pointer-events-none" />
-          <div className="relative z-10 max-w-2xl mx-auto space-y-5">
-            <div className="text-6xl mb-4 drop-shadow-md">{meta.icon}</div>
-            <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-navy leading-tight drop-shadow-sm">
-              <span className={`bg-linear-to-r ${meta.gradient} bg-clip-text text-transparent drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]`}>
-                {genre.name}
-              </span>
-            </h1>
-            <p className="text-navy/60 text-base max-w-md mx-auto font-medium">
-              {genre.description || 'Explore curated stories and art in this genre.'}
-            </p>
-            <span className="inline-block mt-4 font-mono text-xs uppercase tracking-widest text-navy/50 font-bold bg-white/40 px-4 py-1.5 rounded-full">
-              {videos.length} {videos.length === 1 ? 'Video' : 'Videos'}
-            </span>
+        {/* ── Hero Banner ── */}
+        <div className="relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #051d2e 0%, #0a3347 60%, #051d2e 100%)' }}>
+          {/* Glowing blobs */}
+          <div className="absolute top-0 left-1/4 w-[500px] h-[500px] rounded-full pointer-events-none" style={{ background: `radial-gradient(circle, ${meta.accent}40 0%, transparent 70%)` }} />
+          <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(77,208,225,0.15) 0%, transparent 70%)' }} />
+
+          <div className="relative z-10 max-w-[1200px] mx-auto px-6 lg:px-20 pt-32 pb-14">
+            {/* Back Button */}
+            <button
+              onClick={() => navigate(fromDashboard ? '/dashboard' : '/genres')}
+              className="flex items-center gap-2 mb-8 text-white/60 hover:text-white transition text-sm font-semibold cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              {fromDashboard ? 'Back to Dashboard' : 'All Genres'}
+            </button>
+
+            <div className="flex flex-col sm:flex-row items-center sm:items-end gap-6">
+              {/* Icon */}
+              <div className="text-7xl shrink-0 select-none" style={{ filter: 'drop-shadow(0 4px 24px rgba(0,0,0,0.4))' }}>
+                {meta.icon}
+              </div>
+
+              {/* Text */}
+              <div className="text-center sm:text-left">
+                <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-none mb-3">
+                  <span className={`bg-gradient-to-r ${meta.gradient} bg-clip-text text-transparent`}>
+                    {genre.name}
+                  </span>
+                </h1>
+                <p className="text-white/55 text-base max-w-xl font-medium leading-relaxed">
+                  {genre.description || 'Explore curated stories and art in this genre.'}
+                </p>
+                <span
+                  className="inline-block mt-4 font-mono text-xs uppercase tracking-widest font-bold px-4 py-1.5 rounded-full border border-white/10"
+                  style={{ background: 'rgba(255,255,255,0.08)', color: meta.accent }}
+                >
+                  {videos.length} {videos.length === 1 ? 'Video' : 'Videos'}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Videos Grid */}
-        <div className="px-6 lg:px-20 pb-24">
-          <div className="max-w-[1200px] mx-auto">
-            {videos.length === 0 ? (
-              <div className="text-center py-20 bg-white/60 backdrop-blur-md rounded-3xl border border-primary/15 shadow-sm">
-                <p className="text-navy/50 text-base font-medium">
-                  No videos available in {genre.name} yet.
-                </p>
-                <p className="text-navy/35 text-xs mt-1">
-                  Check back soon for upcoming performances and releases!
-                </p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {videos.map((video, idx) => {
-                  const videoId = video._id || video.id
-                  const artistName = video.artistId?.name || video.artist || 'Artist'
-                  const gradient = fallbackGradients[idx % fallbackGradients.length].gradient
+        {/* ── Videos Grid ── */}
+        <div className="px-6 lg:px-20 py-12 max-w-[1200px] mx-auto">
+          {videos.length === 0 ? (
+            <div className="text-center py-20 bg-white/60 backdrop-blur-md rounded-3xl border border-[#4DD0E1]/20 shadow-sm">
+              <p className="text-[#051d2e]/50 text-base font-medium">No videos available in {genre.name} yet.</p>
+              <p className="text-[#051d2e]/35 text-xs mt-1">Check back soon for upcoming performances!</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {videos.map((video, idx) => {
+                const videoId = video._id || video.id
+                const artistName = video.artistId?.name || video.artist || 'Artist'
+                const gradient = fallbackGradients[idx % fallbackGradients.length].gradient
 
-                  return (
-                    <Link
-                      to={`/video/${videoId}`}
-                      key={videoId}
-                      className="group cursor-pointer block bg-white/70 backdrop-blur-sm rounded-2xl p-2.5 border border-white hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
-                    >
-                      <div className="relative rounded-xl overflow-hidden mb-3 shadow-md" style={{ aspectRatio: '16/9' }}>
-                        {video.thumbnailUrl ? (
-                          <img
-                            src={video.thumbnailUrl}
-                            alt={video.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                          />
-                        ) : (
-                          <div className={`w-full h-full bg-linear-to-br ${gradient} flex items-center justify-center`}>
-                            <span className="text-white/70 text-4xl group-hover:scale-110 transition-transform duration-300">
-                              ▶
-                            </span>
-                          </div>
-                        )}
-                        {video.durationSeconds > 0 && (
-                          <div className="absolute bottom-2 right-2 px-2 py-0.5 bg-black/70 backdrop-blur-xs rounded text-[11px] text-white font-mono font-bold">
-                            {fmtDuration(video.durationSeconds)}
-                          </div>
-                        )}
-                        
-                        {/* Price Badge */}
-                        <div className="absolute top-2 right-2">
-                          {video.price > 0 ? (
-                            <span className="px-2 py-1 rounded-md text-[10px] font-black text-white shadow-sm" style={{ background: 'linear-gradient(135deg,#4DD0E1,#00BCD4)' }}>
-                              ₹{video.discountedPrice || video.price}
-                            </span>
-                          ) : (
-                            <span className="px-2 py-1 rounded-md text-[10px] font-black text-navy shadow-sm" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>
-                              Free
-                            </span>
-                          )}
+                return (
+                  <Link
+                    to={`/video/${videoId}`}
+                    key={videoId}
+                    className="group cursor-pointer block rounded-2xl overflow-hidden border border-white/80 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                    style={{ background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(8px)' }}
+                  >
+                    <div className="relative overflow-hidden" style={{ aspectRatio: '16/9' }}>
+                      {video.thumbnailUrl ? (
+                        <img
+                          src={video.thumbnailUrl}
+                          alt={video.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      ) : (
+                        <div className={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center`}>
+                          <span className="text-white/70 text-4xl group-hover:scale-110 transition-transform duration-300">▶</span>
                         </div>
-
-                        <div className="absolute inset-0 bg-navy/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl flex items-center justify-center">
-                          <span className="w-10 h-10 rounded-full bg-white/30 backdrop-blur-xs flex items-center justify-center text-white text-sm font-bold">
-                            ▶
+                      )}
+                      {/* Duration */}
+                      {video.durationSeconds > 0 && (
+                        <div className="absolute bottom-2 right-2 px-2 py-0.5 bg-black/70 rounded text-[11px] text-white font-mono font-bold">
+                          {fmtDuration(video.durationSeconds)}
+                        </div>
+                      )}
+                      {/* Price Badge */}
+                      <div className="absolute top-2 left-2">
+                        {video.price > 0 ? (
+                          <span className="px-2.5 py-1 rounded-lg text-[10px] font-black text-white shadow" style={{ background: 'linear-gradient(135deg,#051d2e,#0a3347)' }}>
+                            Rs. {video.discountedPrice || video.price}
                           </span>
-                        </div>
+                        ) : (
+                          <span className="px-2.5 py-1 rounded-lg text-[10px] font-black text-[#051d2e] shadow" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>
+                            Free
+                          </span>
+                        )}
                       </div>
-                      <div className="px-1.5 pb-1.5">
-                        <h4 className="font-bold text-navy text-sm line-clamp-1 mb-0.5 group-hover:text-primary transition-colors">
-                          {video.title}
-                        </h4>
-                        <p className="text-navy/50 text-xs truncate font-medium">
-                          {artistName}
-                        </p>
-                        <p className="text-navy/40 text-[10px] uppercase font-mono tracking-wider mt-1.5">
-                          {video.viewCount || 0} views
-                        </p>
+                      {/* Hover overlay */}
+                      <div className="absolute inset-0 bg-[#051d2e]/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                        <span className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white text-lg font-bold border border-white/30">▶</span>
                       </div>
-                    </Link>
-                  )
-                })}
-              </div>
-            )}
-          </div>
+                    </div>
+                    <div className="p-3">
+                      <h4 className="font-black text-[#051d2e] text-sm line-clamp-1 mb-0.5 group-hover:text-[#4DD0E1] transition-colors">
+                        {video.title}
+                      </h4>
+                      <p className="text-[#051d2e]/55 text-xs truncate font-medium">{artistName}</p>
+                      <p className="text-[#051d2e]/35 text-[10px] uppercase font-mono tracking-wider mt-1.5">{video.viewCount || 0} views</p>
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
+          )}
         </div>
       </div>
     </div>

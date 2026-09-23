@@ -1,13 +1,12 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  User, Mail, Lock, Bell, Camera, Star, Clock, Play,
-  LogOut, CreditCard, CheckCircle, Eye, EyeOff,
+  User, Mail, Lock, Camera, Play,LogOut, Eye, EyeOff,
 } from 'lucide-react'
 import UserLayout from '../../components/layout/UserLayout'
 import { useAuth } from '../../context/AuthContext'
-import { authApi } from '../../api/index.js'
-import { useRef } from 'react'
+import { authApi, progressApi } from '../../api/index.js'
+import { useRef, useEffect } from 'react'
 
 /* ── tiny toggle ── */
 const Toggle = ({ on, onToggle }) => (
@@ -112,10 +111,37 @@ export default function Account() {
   const [isUpdating, setIsUpdating] = useState(false)
   const fileInputRef = useRef(null)
 
-  const handleAvatarChange = (e) => {
+  const [watchedCount, setWatchedCount] = useState(0)
+
+  useEffect(() => {
+    progressApi.getAll()
+      .then(res => setWatchedCount(res.data?.data?.length || 0))
+      .catch(() => {})
+  }, [])
+
+  const handleAvatarChange = async (e) => {
     if (e.target.files && e.target.files[0]) {
-      setAvatarFile(e.target.files[0])
-      setAvatarPreview(URL.createObjectURL(e.target.files[0]))
+      const file = e.target.files[0]
+      setAvatarFile(file)
+      setAvatarPreview(URL.createObjectURL(file))
+      
+      // Auto-save avatar
+      setIsUpdating(true)
+      try {
+        const formData = new FormData()
+        formData.append('name', name) // required by backend
+        formData.append('avatar', file)
+        const res = await authApi.updateProfile(formData)
+        if (res.data.success) {
+          updateUser(res.data.user)
+          setAvatarFile(null)
+        }
+      } catch (error) {
+        console.error('Failed to update avatar', error)
+        alert('Failed to update profile picture')
+      } finally {
+        setIsUpdating(false)
+      }
     }
   }
 
@@ -198,7 +224,7 @@ export default function Account() {
             <p className="text-sm text-[#051d2e]/55 mb-4">{user?.email || ''}</p>
             <div className="flex flex-wrap justify-center sm:justify-start gap-2">
               <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border border-[#4DD0E1]/30 text-[#051d2e]/65 bg-white/50">
-                <Play className="w-3 h-3 text-[#4DD0E1]" /> 42 videos watched
+                <Play className="w-3 h-3 text-[#4DD0E1]" /> {watchedCount} video{watchedCount !== 1 && 's'} watched
               </span>
             </div>
           </div>
@@ -262,7 +288,7 @@ export default function Account() {
             <Card>
               <CardTitle>Danger Zone</CardTitle>
               <p className="text-sm text-[#051d2e]/60">
-                Deleting your account is permanent and cannot be undone. All your data, purchases, and history will be lost.
+                We'd be sad to see you go! Please keep in mind that deleting your account is a permanent action. Your profile, purchases, and watch history will be removed and cannot be recovered.
               </p>
               <OutlineBtn danger onClick={() => setShowDeleteModal(true)}>Delete My Account</OutlineBtn>
             </Card>

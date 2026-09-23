@@ -205,54 +205,81 @@ export const login = async ({ email, password, ipAddress, userAgent, deviceId })
         }
       }
     },
-    { new: true }
+    { returnDocument: 'after' }
   )
 
   return issueAuthResponse(updatedUser, ipAddress, userAgent, deviceId)
 }
 
-export const googleAuth = async ({ idToken, ipAddress, userAgent, deviceId }) => {
+export const googleAuth = async ({ idToken, googleUserInfo, ipAddress, userAgent, deviceId }) => {
   if (!idToken) {
-    throw new ApiError(400, 'Google idToken is required')
-  }
-  if (!env.googleClientId) {
-    throw new ApiError(500, 'GOOGLE_CLIENT_ID is not configured')
+    throw new ApiError(400, 'Google token is required')
   }
 
-  const ticket = await googleClient.verifyIdToken({
-    idToken,
-    audience: env.googleClientId
-  })
-  const payload = ticket.getPayload()
+  let email, name, sub, picture
 
-  if (!payload?.email) {
-    throw new ApiError(400, 'Google account email not available')
+  // If frontend passed pre-fetched userInfo (from access_token flow), use it directly
+  if (googleUserInfo?.email) {
+    email   = googleUserInfo.email
+    name    = googleUserInfo.name
+    sub     = googleUserInfo.sub
+    picture = googleUserInfo.picture
+  } else {
+    // Try verifying as an id_token (JWT) first
+    if (!env.googleClientId) {
+      throw new ApiError(500, 'GOOGLE_CLIENT_ID is not configured')
+    }
+    let payload
+    try {
+      const ticket = await googleClient.verifyIdToken({
+        idToken,
+        audience: env.googleClientId
+      })
+      payload = ticket.getPayload()
+    } catch {
+      // Fallback: treat it as an access_token and fetch userinfo
+      try {
+        const r = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo`, {
+          headers: { Authorization: `Bearer ${idToken}` }
+        })
+        if (!r.ok) throw new Error('userinfo failed')
+        payload = await r.json()
+      } catch {
+        throw new ApiError(401, 'Invalid Google token')
+      }
+    }
+    if (!payload?.email) {
+      throw new ApiError(400, 'Google account email not available')
+    }
+    email   = payload.email
+    name    = payload.name
+    sub     = payload.sub
+    picture = payload.picture
   }
 
-  const email = payload.email.toLowerCase().trim()
+  email = email.toLowerCase().trim()
   let user = await User.findOne({ email })
 
   if (!user) {
     user = await User.create({
-      name: payload.name || 'Google User',
+      name: name || 'Google User',
       email,
       isEmailVerified: true,
       authProvider: 'google',
-      googleId: payload.sub,
+      googleId: sub,
+      avatarUrl: picture || null,
       password: null
     })
   } else {
     user.authProvider = 'google'
-    user.googleId = payload.sub
+    user.googleId = sub
     user.isEmailVerified = true
-    if (!user.name && payload.name) {
-      user.name = payload.name
-    }
+    if (!user.name && name) user.name = name
+    if (!user.avatarUrl && picture) user.avatarUrl = picture
     await user.save()
   }
 
   // ── Single-device enforcement ──────────────────────────────────────────
-  // Generate a new sessionId, increment sessionVersion, update activeSession
   const newSessionId = randomToken(16)
   const updatedUser = await User.findByIdAndUpdate(
     user._id,
@@ -268,7 +295,7 @@ export const googleAuth = async ({ idToken, ipAddress, userAgent, deviceId }) =>
         }
       }
     },
-    { new: true }
+    { returnDocument: 'after' }
   )
 
   return issueAuthResponse(updatedUser, ipAddress, userAgent, deviceId)

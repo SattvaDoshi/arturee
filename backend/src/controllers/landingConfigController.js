@@ -116,7 +116,7 @@ export const updateLandingConfig = asyncHandler(async (req, res) => {
   let config = await LandingConfig.findOneAndUpdate(
     { key: 'default' },
     { $set: updateFields },
-    { new: true, upsert: true, runValidators: true }
+    { returnDocument: 'after', upsert: true, runValidators: true }
   )
 
   config = await LandingConfig.findById(config._id)

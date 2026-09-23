@@ -12,6 +12,7 @@ import {
   updateProfileController
 } from '../controllers/authController.js'
 import authMiddleware from '../middlewares/authMiddleware.js'
+import { authReadLimiter } from '../middlewares/rateLimiter.js'
 import upload, { processImage } from '../middlewares/uploadMiddleware.js'
 
 const authRouter = Router()
@@ -24,7 +25,7 @@ authRouter.post('/google', googleAuthController)
 authRouter.post('/forgot-password', forgotPasswordController)
 authRouter.post('/reset-password', resetPasswordController)
 authRouter.post('/update-password', authMiddleware, updatePasswordController)
-authRouter.get('/me', authMiddleware, getMeController)
+authRouter.get('/me', authReadLimiter, authMiddleware, getMeController)
 authRouter.put('/update-profile', authMiddleware, upload.single('avatar'), processImage, updateProfileController)
 
 export default authRouter

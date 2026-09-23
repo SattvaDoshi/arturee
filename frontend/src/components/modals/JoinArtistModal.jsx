@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Loader2 } from 'lucide-react'
+import { Loader2, ChevronDown } from 'lucide-react'
 import { toast } from '../../context/ToastContext'
 import { useArtistModal } from '../../context/ArtistModalContext'
 import { artistApi } from '../../api/index.js'
@@ -28,6 +28,7 @@ const JoinArtistModal = () => {
   
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showTerms, setShowTerms] = useState(false)
 
   if (!isModalOpen) return null
 
@@ -65,6 +66,7 @@ const JoinArtistModal = () => {
     setTimeout(() => {
       setIsSubmitted(false)
       setIsSubmitting(false)
+      setShowTerms(false)
       setFormData({
         name: '',
         phoneCode: '+91',
@@ -114,7 +116,9 @@ const JoinArtistModal = () => {
           <div className="relative z-10">
             <div className="mb-8 text-center">
               <h2 className="text-3xl font-black text-navy mb-2">Join as an <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-lime">Artist</span></h2>
-              <p className="text-sm text-navy/60">Share your art with the world.</p>
+              <p className="text-sm md:text-base text-navy/90 font-medium">
+                Share your art with the world and keep <span className="font-bold text-transparent bg-clip-text bg-linear-to-r from-primary to-lime">51% of the net profit</span>.
+              </p>
             </div>
             
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -212,8 +216,28 @@ const JoinArtistModal = () => {
               </div>
               
               <div className="pt-2">
+                <div className="bg-lightgray/30 rounded-lg border border-primary/10 mb-4 overflow-hidden">
+                  <button
+                    type="button"
+                    onClick={() => setShowTerms(!showTerms)}
+                    className="w-full p-3 flex items-center justify-between hover:bg-lightgray/50 transition-colors"
+                  >
+                    <h4 className="text-xs font-bold text-navy uppercase tracking-wider">Terms & Conditions</h4>
+                    <ChevronDown size={16} className={`text-navy transition-transform duration-300 ${showTerms ? 'rotate-180' : ''}`} />
+                  </button>
+                  {showTerms && (
+                    <div className="p-3 pt-0 border-t border-primary/10 bg-white/50">
+                      <ul className="text-xs text-navy/70 space-y-2 list-disc pl-4 text-left mt-3">
+                        <li>An exclusive recorded video (with decent video and audio quality).</li>
+                        <li>Artists must not upload, distribute, or make freely available elsewhere any content submitted for paid distribution on ARTUREE. However, there are no restrictions on performing the piece live.</li>
+                        <li>All content must be 100% original and plagiarism-free. The Artist will bear full legal and financial responsibility for any copyright or plagiarism claims.</li>
+                      </ul>
+                    </div>
+                  )}
+                </div>
+
                 <label className="flex items-start gap-3 cursor-pointer group">
-                  <div className="relative flex items-center justify-center mt-0.5">
+                  <div className="relative flex items-center justify-center mt-0.5 shrink-0">
                     <input 
                       type="checkbox" 
                       name="agreeTerms"
@@ -226,7 +250,7 @@ const JoinArtistModal = () => {
                       <span className="absolute text-white pointer-events-none text-xs font-bold">✓</span>
                     )}
                   </div>
-                  <span className="text-xs text-navy/70 leading-relaxed select-none group-hover:text-navy transition-colors">
+                  <span className="text-xs text-navy/70 leading-relaxed select-none group-hover:text-navy transition-colors text-left">
                     <strong>I Agree</strong> to the terms and conditions. By submitting this form, I confirm that the content provided is my original work and I grant Arturee permission to review it.
                   </span>
                 </label>
