@@ -34,17 +34,29 @@ app.use(helmet({
 }))
 
 // ── CORS ──────────────────────────────────────────────────────────────────
-const allowedOrigins = [
-  process.env.CLIENT_URL || 'http://localhost:5173',
-  'http://localhost:5173',
-  'http://localhost:5174',
-  'http://localhost:4173',
-  'https://arturee.com',
-  'https://www.arturee.com',
+const allowedOriginPatterns = [
+  /^https?:\/\/localhost(:\d+)?$/,                 // all localhost ports
+  /^https?:\/\/127\.0\.0\.1(:\d+)?$/,             // all 127.0.0.1 ports
+  /^https:\/\/(www\.)?arturee\.com$/,              // arturee.com and www
+  /^https:\/\/[a-z0-9-]+\.arturee\.com$/,         // any subdomain (staging etc.)
 ]
+
+// Also honour explicit CLIENT_URL if set in env (catches custom domains)
+const clientUrl = process.env.CLIENT_URL
+if (clientUrl) {
+  try {
+    const { origin } = new URL(clientUrl)
+    if (origin && !allowedOriginPatterns.some(r => r.test(origin))) {
+      allowedOriginPatterns.push(new RegExp(`^${origin.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`))
+    }
+  } catch { /* ignore malformed CLIENT_URL */ }
+}
+
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    // Non-browser requests (curl, server-to-server) have no origin — allow
+    if (!origin) return callback(null, true)
+    if (allowedOriginPatterns.some(r => r.test(origin))) {
       callback(null, true)
     } else {
       callback(new Error(`CORS: origin ${origin} not allowed`))
@@ -52,7 +64,12 @@ app.use(cors({
   },
   credentials: true,
   exposedHeaders: ['Set-Cookie'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-device-id'],
+  optionsSuccessStatus: 204,
 }))
+// Explicitly handle all OPTIONS preflight requests before any other middleware
+app.options('*', cors())
 
 // ── Body parsers ──────────────────────────────────────────────────────────
 app.use(express.json({ limit: '100mb' }))
