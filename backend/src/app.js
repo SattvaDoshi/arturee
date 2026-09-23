@@ -69,7 +69,7 @@ app.use(cors({
   optionsSuccessStatus: 204,
 }))
 // Explicitly handle all OPTIONS preflight requests before any other middleware
-app.options('*', cors())
+app.options(/(.*)/, cors())
 
 // ── Body parsers ──────────────────────────────────────────────────────────
 app.use(express.json({ limit: '100mb' }))
