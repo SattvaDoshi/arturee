@@ -131,7 +131,7 @@ export default function MyList() {
                       </div>
                     </div>
                     {/* Badges */}
-                    <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>
+                    <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>
                       {formatPrice(item.price, item.currency)}
                     </div>
                     <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold border border-white/30 text-white/80" style={{ background: 'rgba(5,29,46,0.55)' }}>{item.category || 'Video'}</div>

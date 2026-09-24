@@ -57,7 +57,7 @@ const StarFilled = ({ className = '' }) => (
 const StarEmpty = () => <Star className="w-3 h-3 text-[#5a7a8a]" />
 
 const PriceBadge = ({ price, currency }) => (
-  <div className="absolute top-2 right-2 px-2.5 py-1 price-badge rounded-full text-[10px] font-black text-[#051d2e]">
+  <div className="absolute bottom-2 left-2 px-2.5 py-1 price-badge rounded-full text-[10px] font-black text-[#051d2e]">
     {fmtPrice(price, currency)}
   </div>
 )
@@ -167,7 +167,7 @@ const WideRow = ({ videos, widthClass = 'w-64 sm:w-72 md:w-80' }) => (
           <VideoActionButtons videoId={v._id} videoData={{ id: v._id, image: v.thumbnailUrl, title: v.title, price: fmtPrice(v.price, v.currency), artistName: v.artistId?.name }} />
           {v.price
             ? <PriceBadge price={v.price} currency={v.currency} />
-            : <div className="absolute top-2 right-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: '#C0E863' }}>Free</div>
+            : <div className="absolute bottom-2 left-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: '#C0E863' }}>Free</div>
           }
         </div>
         <h3 className="font-black text-sm text-[#051d2e] mb-0.5 truncate">{v.title}</h3>
@@ -194,7 +194,7 @@ const TallRow = ({ videos, showRank = false }) => (
           )}
           {v.price
             ? <PriceBadge price={v.price} currency={v.currency} />
-            : <div className="absolute top-2 right-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: '#C0E863' }}>Free</div>
+            : <div className="absolute bottom-2 left-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: '#C0E863' }}>Free</div>
           }
         </div>
         <h3 className="font-black text-sm text-[#051d2e] mb-0.5 truncate">{v.title}</h3>
@@ -502,7 +502,7 @@ export default function UserDashboard() {
             <div key={genre._id}>
               <SectionHeader 
                 title={genre.name} 
-                sub={genre.description || "DISCOVER"} 
+                sub={genre.description} 
                 viewAllTo={{ pathname: `/genre/${genre._id}`, state: { fromDashboard: true } }} 
               />
               <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
@@ -517,7 +517,7 @@ export default function UserDashboard() {
                       <div className="absolute top-2 left-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>{genre.name}</div>
                       {v.price
                         ? <PriceBadge price={v.price} currency={v.currency} />
-                        : <div className="absolute top-2 right-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: '#C0E863' }}>Free</div>
+                        : <div className="absolute bottom-2 left-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: '#C0E863' }}>Free</div>
                       }
                     </div>
                     <h3 className="font-black text-sm text-[#051d2e] mb-0.5 truncate">{v.title}</h3>
@@ -548,7 +548,7 @@ export default function UserDashboard() {
                     </div>
                     {v.price
                       ? <PriceBadge price={v.price} currency={v.currency} />
-                      : <div className="absolute top-2 right-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: '#C0E863' }}>Free</div>
+                      : <div className="absolute bottom-2 left-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: '#C0E863' }}>Free</div>
                     }
                     <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold text-[#051d2e]/80 border border-[#4DD0E1]/30" style={{ background: 'rgba(255,255,255,0.85)' }}>
                       {v.genre?.name || 'Video'}

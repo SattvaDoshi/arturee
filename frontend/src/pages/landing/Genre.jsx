@@ -271,25 +271,16 @@ const Genre = () => {
                         className={`absolute inset-0 bg-linear-to-br ${meta.gradient} transition-opacity duration-300 opacity-0 group-hover:opacity-20`}
                       />
                       <div className="relative z-10">
-                        {meta.tag && (
-                          <span
-                            className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold mb-3 shadow-xs ${
-                              isFeatured
-                                ? 'bg-[#FF9800]/20 text-[#e65100]'
-                                : 'bg-primary/10 text-primary'
-                            }`}
-                          >
-                            {meta.tag}
-                          </span>
-                        )}
+
                         <div className="text-3xl mb-3">{meta.icon}</div>
                         <h3 className="font-bold text-lg leading-tight mb-1 text-navy group-hover:text-primary transition-colors">
                           {genre.name}
                         </h3>
-                        <p className="text-xs leading-relaxed mb-4 line-clamp-2 text-navy/50">
-                          {genre.description ||
-                            'Explore curated stories and art in this genre.'}
-                        </p>
+                        {genre.description && (
+                          <p className="text-xs leading-relaxed mb-4 line-clamp-2 text-navy/50">
+                            {genre.description}
+                          </p>
+                        )}
                         <span className="font-mono text-[10px] uppercase tracking-widest text-navy/35 font-semibold">
                           {count} {count === 1 ? 'video' : 'videos'}
                         </span>

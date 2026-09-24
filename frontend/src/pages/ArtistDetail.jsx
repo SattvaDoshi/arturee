@@ -235,7 +235,7 @@ const ArtistDetail = () => {
                     )}
                     
                     {/* Dual Pricing Badge */}
-                    <div className="absolute top-2 right-2 flex flex-col items-end gap-1">
+                    <div className="absolute bottom-2 left-2 flex flex-col items-start gap-1">
                       {video.price > 0 ? (
                         video.discountedPrice ? (
                           <>

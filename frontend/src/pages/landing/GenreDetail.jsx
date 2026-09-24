@@ -162,9 +162,11 @@ const GenreDetail = () => {
                     {genre.name}
                   </span>
                 </h1>
-                <p className="text-white/55 text-base max-w-xl font-medium leading-relaxed">
-                  {genre.description || 'Explore curated stories and art in this genre.'}
-                </p>
+                {genre.description && (
+                  <p className="text-white/55 text-base max-w-xl font-medium leading-relaxed">
+                    {genre.description}
+                  </p>
+                )}
                 <span
                   className="inline-block mt-4 font-mono text-xs uppercase tracking-widest font-bold px-4 py-1.5 rounded-full border border-white/10"
                   style={{ background: 'rgba(255,255,255,0.08)', color: meta.accent }}
@@ -216,7 +218,7 @@ const GenreDetail = () => {
                         </div>
                       )}
                       {/* Price Badge */}
-                      <div className="absolute top-2 left-2">
+                      <div className="absolute bottom-2 left-2">
                         {video.price > 0 ? (
                           <span className="px-2.5 py-1 rounded-lg text-[10px] font-black text-white shadow" style={{ background: 'linear-gradient(135deg,#051d2e,#0a3347)' }}>
                             Rs. {video.discountedPrice || video.price}

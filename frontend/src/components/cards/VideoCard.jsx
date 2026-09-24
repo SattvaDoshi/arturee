@@ -110,7 +110,7 @@ const VideoCard = ({
         <div className="absolute bottom-2 right-2 px-2 py-1 bg-deepbrown/90 rounded text-xs font-semibold text-cream">
           {duration}
         </div>
-        <div className="absolute top-2 right-2 flex flex-col items-end gap-1">
+        <div className="absolute bottom-2 left-2 flex flex-col items-start gap-1">
           {price > 0 ? (
             discountedPrice ? (
               <>

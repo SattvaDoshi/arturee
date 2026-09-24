@@ -112,8 +112,8 @@ const RecCard = ({ video }) => {
           </span>
         )}
         {video.price > 0
-          ? <span className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded-full text-[10px] font-bold text-white" style={{ background: 'linear-gradient(135deg,#4DD0E1,#00BCD4)' }}>₹{video.price}</span>
-          : <span className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>Free</span>
+          ? <span className="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 rounded-full text-[10px] font-bold text-white" style={{ background: 'linear-gradient(135deg,#4DD0E1,#00BCD4)' }}>₹{video.price}</span>
+          : <span className="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>Free</span>
         }
       </div>
       <div className="flex-1 min-w-0 py-0.5">
@@ -641,7 +641,14 @@ export default function VideoDetail() {
                         return (
                           <div 
                             key={ep._id} 
-                            onClick={() => { setActiveEpisode(ep); setIsPlaying(true) }}
+                            onClick={() => {
+                              setActiveEpisode(ep);
+                              if (!needsPurchase) {
+                                setIsPlaying(true);
+                              } else {
+                                setIsPlaying(false);
+                              }
+                            }}
                             className={`flex gap-4 p-3 rounded-xl cursor-pointer transition ${isCurrent ? 'bg-[#4DD0E1]/10 border-[#4DD0E1] shadow-sm' : 'hover:bg-black/5 border-transparent'}`}
                             style={{ border: isCurrent ? '1px solid #4DD0E1' : '1px solid transparent' }}
                           >

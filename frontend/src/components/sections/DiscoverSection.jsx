@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { landingConfigApi } from '../../api/index.js'
+import { landingConfigApi, videoApi } from '../../api/index.js'
 
 const DEFAULT_CARDS = [
   {
@@ -58,19 +58,40 @@ const DiscoverSection = () => {
     let isMounted = true
     const fetchConfig = async () => {
       try {
-        const res = await landingConfigApi.get()
+        const [configRes, videoRes] = await Promise.all([
+          landingConfigApi.get().catch(() => ({ data: { data: {} } })),
+          videoApi.list({ limit: 5, sort: 'popular' }).catch(() => ({ data: { data: { videos: [] } } }))
+        ])
+        
         if (!isMounted) return
-        const discover = res.data?.data?.discoverSection
-        if (discover) {
-          setSectionData({
-            headline: discover.headline || 'Exclusive Art',
-            subheadline: discover.subheadline || 'Art : Anywhere and Everywhere',
-            ctaText: discover.ctaText || 'View All',
-            ctaLink: discover.ctaLink || '/genres',
-            cards:
-              discover.cards?.length > 0 ? discover.cards : DEFAULT_CARDS,
-          })
+        
+        const discover = configRes.data?.data?.discoverSection || {}
+        let cards = discover.cards?.length > 0 ? discover.cards : null
+
+        // If admin hasn't configured custom cards, build them dynamically from popular videos
+        if (!cards || cards.length === 0) {
+          const videos = videoRes.data?.data?.videos || []
+          if (videos.length > 0) {
+            cards = videos.slice(0, 5).map((v, i) => ({
+              title: v.title,
+              subtitle: v.artistId?.name || v.category || '',
+              imageUrl: v.thumbnailUrl || DEFAULT_CARDS[i]?.imageUrl || '',
+              tag: i === 0 ? 'Featured' : (i === 1 ? 'Trending' : ''),
+              link: `/video/${v._id}`,
+              videoId: { thumbnailUrl: v.thumbnailUrl } // So that logic mapping works as expected
+            }))
+          } else {
+            cards = [] // Show nothing if absolutely no videos in DB
+          }
         }
+
+        setSectionData({
+          headline: discover.headline || 'Exclusive Art',
+          subheadline: discover.subheadline || 'Art : Anywhere and Everywhere',
+          ctaText: discover.ctaText || 'View All',
+          ctaLink: discover.ctaLink || '/genres',
+          cards,
+        })
       } catch (err) {
         console.error('Failed to load discover section config:', err)
       }
@@ -82,11 +103,11 @@ const DiscoverSection = () => {
   }, [])
 
   const { headline, subheadline, ctaText, ctaLink, cards } = sectionData
-  const c1 = cards[0] || DEFAULT_CARDS[0]
-  const c2 = cards[1] || DEFAULT_CARDS[1]
-  const c3 = cards[2] || DEFAULT_CARDS[2]
-  const c4 = cards[3] || DEFAULT_CARDS[3]
-  const c5 = cards[4] || DEFAULT_CARDS[4]
+  const c1 = cards[0]
+  const c2 = cards[1]
+  const c3 = cards[2]
+  const c4 = cards[3]
+  const c5 = cards[4]
 
   return (
     <section className="py-20 bg-linear-to-br from-[#B2EBF2]/60 via-[#E0F7FA]/80 to-[#F1F8E9]/60 md:px-20 px-6">
@@ -107,6 +128,7 @@ const DiscoverSection = () => {
         </div>
         <div className="grid grid-cols-1 rounded-2xl sm:grid-cols-2 lg:grid-cols-[repeat(4,292px)] lg:justify-center gap-6 lg:auto-rows-[200px]">
           {/* Large Hero Card (#1) */}
+          {c1 && (
           <Link
             to={c1.link || '/pricing'}
             className={`lg:col-span-2 lg:row-span-2 rounded-2xl overflow-hidden group relative shadow-2xl ${c1.videoId?.thumbnailUrl ? 'aspect-video lg:aspect-auto' : 'aspect-[4/5] sm:aspect-square lg:aspect-auto'}`}
@@ -140,8 +162,10 @@ const DiscoverSection = () => {
               )}
             </div>
           </Link>
+          )}
 
           {/* Tall Card (#2) */}
+          {c2 && (
           <Link
             to={c2.link || '/pricing'}
             className={`lg:col-span-1 rounded-2xl lg:row-span-3 overflow-hidden group relative shadow-xl ${c2.videoId?.thumbnailUrl ? 'aspect-video lg:aspect-auto' : 'aspect-[4/5] sm:aspect-square lg:aspect-auto'}`}
@@ -177,8 +201,10 @@ const DiscoverSection = () => {
               )}
             </div>
           </Link>
+          )}
 
           {/* Medium Card (#3) */}
+          {c3 && (
           <Link
             to={c3.link || '/pricing'}
             className={`lg:col-span-1 rounded-2xl lg:row-span-2 overflow-hidden group relative shadow-xl ${c3.videoId?.thumbnailUrl ? 'aspect-video lg:aspect-auto' : 'aspect-[4/5] sm:aspect-square lg:aspect-auto'}`}
@@ -214,8 +240,10 @@ const DiscoverSection = () => {
               )}
             </div>
           </Link>
+          )}
 
           {/* Medium Card 2 (#4) */}
+          {c4 && (
           <Link
             to={c4.link || '/pricing'}
             className={`lg:col-span-1 rounded-2xl lg:row-span-2 overflow-hidden group relative shadow-xl ${c4.videoId?.thumbnailUrl ? 'aspect-video lg:aspect-auto' : 'aspect-[4/5] sm:aspect-square lg:aspect-auto'}`}
@@ -251,8 +279,10 @@ const DiscoverSection = () => {
               )}
             </div>
           </Link>
+          )}
 
           {/* Small Card (#5) */}
+          {c5 && (
           <Link
             to={c5.link || '/pricing'}
             className={`lg:col-span-1 rounded-2xl lg:row-span-1 overflow-hidden group relative shadow-xl ${c5.videoId?.thumbnailUrl ? 'aspect-video lg:aspect-auto' : 'aspect-[4/5] sm:aspect-square lg:aspect-auto'}`}
@@ -288,6 +318,7 @@ const DiscoverSection = () => {
               )}
             </div>
           </Link>
+          )}
         </div>
       </div>
     </section>
