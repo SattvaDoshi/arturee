@@ -180,6 +180,18 @@ export const deleteS3Directory = async (prefix) => {
 }
 
 /**
+ * Generate a presigned GET URL for an S3 object (e.g. original video file).
+ * Used as fallback when HLS streams have not been generated yet.
+ *
+ * @param {string} s3Key
+ * @param {number} expiresIn  seconds (default 2 hours)
+ */
+export const getPresignedDownloadUrl = async (s3Key, expiresIn = 7200) => {
+  const cmd = new GetObjectCommand({ Bucket: BUCKET, Key: s3Key })
+  return getSignedUrl(s3Client, cmd, { expiresIn })
+}
+
+/**
  * Check whether an S3 object exists (without downloading it).
  * Returns true / false.
  */

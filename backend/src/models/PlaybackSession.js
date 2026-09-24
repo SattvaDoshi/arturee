@@ -34,7 +34,7 @@ const playbackSessionSchema = new mongoose.Schema(
     // Which quality was issued
     quality: {
       type: String,
-      enum: ['720p', '1080p'],
+      enum: ['720p', '1080p', 'original'],
       required: true,
     },
 

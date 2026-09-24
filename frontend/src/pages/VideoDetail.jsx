@@ -346,9 +346,7 @@ export default function VideoDetail() {
                     </div>
                   </div>
                 ) : isPlaying ? (
-                  <div className={isVertical ? "w-full max-w-sm mx-auto aspect-[9/16]" : "aspect-video"}>
-                    <VideoPlayer videoId={videoId} poster={video?.thumbnailUrl || FALLBACK_IMG} user={user} />
-                  </div>
+                  <VideoPlayer videoId={videoId} poster={video?.thumbnailUrl || FALLBACK_IMG} user={user} isVertical={isVertical} />
                 ) : (
                 <div
                   className={`relative ${isVertical ? 'w-full max-w-sm mx-auto aspect-[9/16]' : 'aspect-video'} rounded-2xl overflow-hidden shadow-2xl border`}

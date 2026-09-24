@@ -241,7 +241,7 @@ function SecurityModal({ threat, onDismiss }) {
  * @param {string}  [poster]
  * @param {object}  [user]
  */
-export default function VideoPlayer({ videoId, poster, user }) {
+export default function VideoPlayer({ videoId, poster, user, isVertical = false }) {
   const wrapperRef = useRef(null)
   const videoRef = useRef(null)
   const hlsRef   = useRef(null)
@@ -437,6 +437,17 @@ export default function VideoPlayer({ videoId, poster, user }) {
           video.addEventListener('loadedmetadata', onLoaded)
         }
 
+        // ── Original file fallback (no HLS — MediaConvert not run) ──────────
+        // signingParams is null when the backend served a presigned S3 URL
+        // for the raw original video file. Assign directly to <video src>.
+        if (!signingParams && streamUrl && !streamUrl.includes('.m3u8')) {
+          video.src = streamUrl
+          video.addEventListener('loadedmetadata', () => {
+            if (mounted) { setLoading(false); setSessionActive(true) }
+          })
+          return
+        }
+
         if (Hls.isSupported()) {
           const hls = new Hls({
             maxBufferLength:    30,
@@ -558,7 +569,7 @@ export default function VideoPlayer({ videoId, poster, user }) {
       <div
         ref={wrapperRef}
         onDoubleClick={toggleFullscreen}
-        className="relative aspect-video rounded-2xl overflow-hidden bg-black shadow-2xl border group"
+        className={`relative ${isVertical ? 'aspect-[9/16] max-w-sm mx-auto' : 'aspect-video'} rounded-2xl overflow-hidden bg-black shadow-2xl border group`}
         style={{
           borderColor: 'rgba(77,208,225,0.25)',
           userSelect:  'none',

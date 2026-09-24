@@ -5,6 +5,7 @@ import { generateSignedUrl } from './cloudFrontService.js'
 import { createPlaybackSession } from './sessionService.js'
 import { detectDeviceType, resolveQuality } from '../utils/deviceDetect.js'
 import { buildLicenseProxyUrl } from '../drm/drmProvider.js'
+import { getPresignedDownloadUrl } from './s3Service.js'
 import ApiError from '../utils/ApiError.js'
 import awsConfig from '../config/awsConfig.js'
 
@@ -85,19 +86,44 @@ export const authorizePlayback = async ({
 
   // ── 5. Device type → quality ───────────────────────────────────────────────
   const deviceType = detectDeviceType(userAgent)
-  const quality = resolveQuality(deviceType)
+  let quality = resolveQuality(deviceType)
 
-  const cloudFrontPath =
+  let cloudFrontPath =
     quality === '720p'
       ? asset.hls720pCloudFrontPath
       : asset.hls1080pCloudFrontPath
 
   if (!cloudFrontPath) {
-    throw new ApiError(500, `${quality} stream not available for this video.`)
+    // Fallback: try the other HLS quality
+    if (asset.hls720pCloudFrontPath) {
+      cloudFrontPath = asset.hls720pCloudFrontPath
+      quality = '720p'
+    } else if (asset.hls1080pCloudFrontPath) {
+      cloudFrontPath = asset.hls1080pCloudFrontPath
+      quality = '1080p'
+    }
   }
 
   // ── 6. Generate CloudFront Signed URL (wildcard custom policy) ────────────
-  const { streamUrl, signingParams, expiresAt } = generateSignedUrl(cloudFrontPath)
+  //       If no HLS path exists (MediaConvert was never run), fall back to
+  //       a presigned URL for the original uploaded file so it can still play.
+  let streamUrl, signingParams, expiresAt
+
+  if (cloudFrontPath) {
+    const result = generateSignedUrl(cloudFrontPath)
+    streamUrl    = result.streamUrl
+    signingParams = result.signingParams
+    expiresAt    = result.expiresAt
+  } else if (asset.originalS3Key) {
+    // No HLS streams — serve the raw original file via presigned S3 URL
+    console.warn(`[Playback] No HLS streams for video ${videoId}, falling back to original file.`)
+    streamUrl    = await getPresignedDownloadUrl(asset.originalS3Key, 7200)
+    signingParams = null
+    expiresAt    = new Date(Date.now() + 7200 * 1000)
+    quality      = 'original'
+  } else {
+    throw new ApiError(500, 'No video streams are available for this video.')
+  }
 
   // ── 7. Create playback session ─────────────────────────────────────────────
   const playbackSession = await createPlaybackSession({
