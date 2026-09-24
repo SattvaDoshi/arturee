@@ -169,7 +169,11 @@ export const verifyPurchase = asyncHandler(async (req, res) => {
 export const getMyPurchases = asyncHandler(async (req, res) => {
   const userId = req.user._id
   const purchases = await Purchase.find({ userId, status: 'completed' })
-    .populate('videoId', 'title thumbnailUrl price durationSeconds isPublished')
+    .populate({
+      path: 'videoId',
+      select: 'title thumbnailUrl price durationSeconds isPublished genre',
+      populate: { path: 'genre', select: 'name' },
+    })
     .sort({ completedAt: -1 })
 
   res.status(200).json({ success: true, data: purchases })

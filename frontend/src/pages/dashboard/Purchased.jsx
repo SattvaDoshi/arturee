@@ -49,6 +49,7 @@ export default function Purchased() {
     duration: formatDuration(p.videoId?.durationSeconds),
     date: formatDate(p.completedAt),
     currency: p.currency || 'INR',
+    genreName: p.videoId?.genre?.name || '',
   }))
 
   const sorted = [...items].sort((a, b) => {
@@ -163,7 +164,7 @@ export default function Purchased() {
 
         {/* ── Grid ── */}
         {!loading && !error && sorted.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
             {sorted.map((item) => (
               <div
                 key={item._id}
@@ -171,7 +172,10 @@ export default function Purchased() {
                 style={{ background: 'rgba(255,255,255,0.75)' }}
               >
                 {/* Thumbnail */}
-                <div className="relative aspect-video overflow-hidden">
+                {(() => {
+                  const isVertical = item.genreName?.toUpperCase().includes('MOBILE')
+                  return (
+                <div className={`relative ${isVertical ? 'aspect-[9/16]' : 'aspect-video'} overflow-hidden`}>
                   <img
                     src={item.thumbnailUrl}
                     alt={item.title}
@@ -197,6 +201,8 @@ export default function Purchased() {
                     <CheckCircle className="w-3 h-3" /> Owned
                   </div>
                 </div>
+                  )
+                })()} 
 
                 {/* Info */}
                 <div className="p-4">
