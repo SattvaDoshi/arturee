@@ -60,14 +60,14 @@ const Navbar = () => {
             <button
               onClick={triggerInstall}
               title="Install App"
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black uppercase text-[#051d2e] transition hover:scale-105 hover:shadow-lg"
+              className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-black uppercase text-[#051d2e] transition hover:scale-105 hover:shadow-lg"
               style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
             >
               <Download className="w-3.5 h-3.5" />
               Install
             </button>
           )}
-          <button onClick={openModal} className="flex items-center justify-center whitespace-nowrap bg-linear-to-r from-primary to-lime text-white px-3 sm:px-6 py-2 text-xs sm:text-sm font-black uppercase tracking-wide transition-all shadow-[3px_3px_0px_#00BCD4] rounded hover:shadow-lg hover:scale-105">Join & Earn</button>
+          <button onClick={openModal} className="flex items-center justify-center whitespace-nowrap bg-linear-to-r from-primary to-lime text-white px-2 sm:px-6 py-2 text-[10px] sm:text-sm font-black uppercase tracking-wide transition-all shadow-[3px_3px_0px_#00BCD4] rounded hover:shadow-lg hover:scale-105">Join & Earn</button>
         </div>
       </div>
 

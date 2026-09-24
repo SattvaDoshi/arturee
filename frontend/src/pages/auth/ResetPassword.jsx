@@ -1,24 +1,44 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { Mail, ArrowLeft, KeyRound, Loader2, AlertCircle } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Lock, ArrowLeft, KeyRound, Loader2, AlertCircle } from 'lucide-react'
 import { authApi } from '../../api/index.js'
 
-export default function ForgotPassword() {
-  const [email, setEmail] = useState('')
+export default function ResetPassword() {
+  const [searchParams] = useSearchParams()
+  const token = searchParams.get('token')
+  const emailParam = searchParams.get('email')
+
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const navigate = useNavigate()
 
+  useEffect(() => {
+    if (!token || !emailParam) {
+      setError('Invalid or missing reset token.')
+    }
+  }, [token, emailParam])
+
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.")
+      return
+    }
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.")
+      return
+    }
+
     setLoading(true)
     setError('')
     try {
-      await authApi.forgotPassword({ email })
+      await authApi.resetPassword({ email: emailParam, token, newPassword: password })
       setSubmitted(true)
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to send reset link. Please try again.')
+      setError(err.response?.data?.message || 'Failed to reset password. The link might be expired.')
     } finally {
       setLoading(false)
     }
@@ -41,11 +61,11 @@ export default function ForgotPassword() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-6 shadow-lg border-2 border-white/50 bg-white/40 backdrop-blur-md relative">
             <KeyRound className="w-8 h-8 text-[#051d2e]" />
           </div>
-          <h1 className="text-3xl font-black text-[#051d2e] tracking-tight">Reset Password</h1>
+          <h1 className="text-3xl font-black text-[#051d2e] tracking-tight">Create New Password</h1>
           <p className="text-sm text-[#051d2e]/60 mt-2 px-4 leading-relaxed">
             {submitted 
-              ? "Check your inbox for reset instructions." 
-              : "Enter your email address and we'll send you a link to reset your password."}
+              ? "Your password has been successfully reset." 
+              : "Please enter your new password below."}
           </p>
         </div>
 
@@ -66,17 +86,33 @@ export default function ForgotPassword() {
               )}
               <div>
                 <label className="block text-xs font-bold text-[#051d2e]/55 mb-1.5 uppercase tracking-wider">
-                  Email Address
+                  New Password
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#4DD0E1]" />
+                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#4DD0E1]" />
                   <input
-                    type="email"
+                    type="password"
                     required
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    autoComplete="email"
-                    placeholder="you@example.com"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full bg-white/90 border-2 border-[#4DD0E1]/20 rounded-xl py-3.5 pl-11 pr-4 text-sm text-[#051d2e] focus:outline-none focus:ring-4 focus:ring-[#4DD0E1]/20 focus:border-[#4DD0E1] transition-all placeholder:text-[#051d2e]/30 shadow-sm"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#051d2e]/55 mb-1.5 uppercase tracking-wider">
+                  Confirm Password
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#4DD0E1]" />
+                  <input
+                    type="password"
+                    required
+                    value={confirmPassword}
+                    onChange={e => setConfirmPassword(e.target.value)}
+                    placeholder="••••••••"
                     className="w-full bg-white/90 border-2 border-[#4DD0E1]/20 rounded-xl py-3.5 pl-11 pr-4 text-sm text-[#051d2e] focus:outline-none focus:ring-4 focus:ring-[#4DD0E1]/20 focus:border-[#4DD0E1] transition-all placeholder:text-[#051d2e]/30 shadow-sm"
                   />
                 </div>
@@ -84,27 +120,27 @@ export default function ForgotPassword() {
 
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !token || !emailParam}
                 className="w-full flex items-center justify-center py-3.5 rounded-xl font-black text-[#051d2e] hover:opacity-90 active:scale-[0.98] transition-all text-sm shadow-lg border border-white/50 disabled:opacity-60"
                 style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
               >
-                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Send Reset Link'}
+                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Reset Password'}
               </button>
             </form>
           ) : (
             <div className="relative z-10 text-center animate-in zoom-in duration-300">
               <div className="w-16 h-16 bg-[#e8f5e9] rounded-2xl flex items-center justify-center mx-auto mb-4 border border-[#C0E863]">
-                <Mail className="w-8 h-8 text-[#4caf50]" />
+                <KeyRound className="w-8 h-8 text-[#4caf50]" />
               </div>
-              <h3 className="text-lg font-bold text-[#051d2e] mb-2">Email Sent!</h3>
+              <h3 className="text-lg font-bold text-[#051d2e] mb-2">Password Reset!</h3>
               <p className="text-sm text-[#051d2e]/60 mb-6">
-                We've sent a password reset link to <span className="font-bold text-[#051d2e]">{email}</span>.
+                Your password has been changed successfully.
               </p>
               <button
                 onClick={() => navigate('/login')}
                 className="w-full py-3.5 rounded-xl font-bold bg-[#051d2e]/5 text-[#051d2e] hover:bg-[#051d2e]/10 transition-all text-sm border border-[#051d2e]/10"
               >
-                Return to Login
+                Log In
               </button>
             </div>
           )}

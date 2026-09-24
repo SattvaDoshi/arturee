@@ -121,20 +121,26 @@ const Artist = () => {
       if (g.name) genreSet.add(g.name)
     })
     artists.forEach((a) => {
-      if (a.genre) genreSet.add(a.genre)
+      if (typeof a.genre === 'object' && a.genre?.name) {
+        genreSet.add(a.genre.name)
+      } else if (typeof a.genre === 'string' && a.genre.length !== 24) {
+        // Only add string genres if they are not raw MongoDB ObjectIDs
+        genreSet.add(a.genre)
+      }
     })
     return Array.from(genreSet)
   }, [genres, artists])
 
   const filtered = useMemo(() => {
     return artists.filter((a) => {
-      const artistGenre = a.genre || ''
+      // Safely extract the genre name whether it's an object or string
+      const artistGenreStr = (typeof a.genre === 'object' ? a.genre?.name : a.genre) || ''
       const matchesFilter =
         activeFilter === 'All' ||
-        artistGenre.toLowerCase().includes(activeFilter.toLowerCase())
+        artistGenreStr.toLowerCase().includes(activeFilter.toLowerCase())
       const matchesSearch =
         a.name?.toLowerCase().includes(search.toLowerCase()) ||
-        artistGenre.toLowerCase().includes(search.toLowerCase()) ||
+        artistGenreStr.toLowerCase().includes(search.toLowerCase()) ||
         a.bio?.toLowerCase().includes(search.toLowerCase())
       return matchesFilter && matchesSearch
     })
@@ -328,7 +334,7 @@ const Artist = () => {
                     >
                       {/* Avatar / Top Banner */}
                       <div
-                        className={`relative h-36 bg-linear-to-br ${gradient} flex items-center justify-center overflow-hidden`}
+                        className={`relative aspect-square bg-linear-to-br ${gradient} flex items-center justify-center overflow-hidden`}
                       >
                         {isValidImg ? (
                           <img
@@ -337,7 +343,7 @@ const Artist = () => {
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                           />
                         ) : (
-                          <span className="text-white font-black text-4xl opacity-90 tracking-wider">
+                          <span className="text-white font-black text-6xl opacity-90 tracking-wider">
                             {getInitials(artist.name)}
                           </span>
                         )}
@@ -360,7 +366,7 @@ const Artist = () => {
                       </div>
 
                       {/* Info */}
-                      <div className="p-5 flex flex-col justify-between h-[180px]">
+                      <div className="p-5 flex flex-col justify-between flex-1">
                         <div>
                           <div className="flex items-center gap-1.5 mb-1">
                             <h3 className="font-bold text-navy text-base truncate">
@@ -375,8 +381,8 @@ const Artist = () => {
                               </span>
                             )}
                           </div>
-                          <p className="text-primary text-xs font-semibold mb-2">
-                            {artist.genre || 'Story Telling'}
+                          <p className="text-primary text-xs font-semibold mb-2 truncate">
+                            {artist.genre?.name || (typeof artist.genre === 'string' && artist.genre.length !== 24 ? artist.genre : 'Artist')}
                           </p>
                           <p className="text-navy/55 text-xs leading-relaxed line-clamp-2">
                             {artist.bio ||

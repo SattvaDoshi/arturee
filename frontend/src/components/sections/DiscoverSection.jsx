@@ -105,7 +105,7 @@ const DiscoverSection = () => {
             {ctaText || 'View All'} <span className="text-sm">→</span>
           </Link>
         </div>
-        <div className="grid grid-cols-1 rounded-2xl sm:grid-cols-2 lg:grid-cols-4 gap-6 auto-rows-[200px]">
+        <div className="grid grid-cols-1 rounded-2xl sm:grid-cols-2 lg:grid-cols-[repeat(4,292px)] lg:justify-center gap-6 lg:auto-rows-[200px] auto-rows-[250px]">
           {/* Large Hero Card (#1) */}
           <Link
             to={c1.link || '/pricing'}

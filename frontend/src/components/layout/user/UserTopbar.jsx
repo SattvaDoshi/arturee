@@ -163,18 +163,7 @@ const UserTopbar = ({ onMobileMenuToggle }) => {
         {/* Shopping Cart */}
         <CartButton />
 
-        {/* PWA Install button — only shown when app is not yet installed */}
-        {!isInstalled && (canInstall || isIOS) && (
-          <button
-            onClick={triggerInstall}
-            title="Install App"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-[#051d2e] transition hover:scale-105 hover:shadow-lg"
-            style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
-          >
-            <Download className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Install</span>
-          </button>
-        )}
+        {/* Removed PWA Install button from here as requested */}
 
         {/* Notification bell */}
         

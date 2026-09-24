@@ -350,10 +350,104 @@ export default function Checkout() {
                 {/* Test card hint removed as per request */}
               </div>
             </div>
-
+            
           </div>
+          
+          {/* Suggested Videos */}
+          <SuggestedCheckoutVideos currentItems={items} isCart={isCart} />
         </div>
       </div>
     </UserLayout>
+  )
+}
+
+import { ShoppingCart } from 'lucide-react'
+
+function SuggestedCheckoutVideos({ currentItems, isCart }) {
+  const [videos, setVideos] = useState([])
+  const [loading, setLoading] = useState(true)
+  const { toggleCart, getCartSummary } = useCart()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    import('../../api/index.js').then(({ videoApi }) => {
+      videoApi.list({ limit: 5, sort: 'popular' })
+        .then(res => {
+          const vids = res.data?.data?.videos || res.data?.data || []
+          setVideos(Array.isArray(vids) ? vids : [])
+        })
+        .catch(() => setVideos([]))
+        .finally(() => setLoading(false))
+    })
+  }, [])
+
+  if (loading) return null
+
+  // Filter out videos already in checkout list
+  const checkoutIds = currentItems.map(i => i.videoId || i.id)
+  const suggestions = videos.filter(v => !checkoutIds.includes(v._id)).slice(0, 4)
+
+  if (suggestions.length === 0) return null
+
+  const handleAdd = (video) => {
+    toggleCart({
+      id: video._id,
+      title: video.title,
+      price: video.price,
+      image: video.thumbnailUrl,
+      creator: video.artistId?.name || 'Artist'
+    })
+    
+    // If we are checking out the cart, reload the page with updated cart
+    if (isCart) {
+      setTimeout(() => {
+        const summary = getCartSummary()
+        navigate('/checkout', {
+          replace: true,
+          state: {
+            items: summary.items.map(item => ({
+              videoId: item.id,
+              title: item.title,
+              price: item.price,
+              thumbnail: item.image || item.thumbnailUrl,
+              artistName: item.artistName || item.creator
+            })),
+            subtotal: summary.subtotal,
+            discount: summary.discount,
+            total: summary.total
+          }
+        })
+      }, 100)
+    } else {
+      // If we're on a direct checkout, adding to cart will just put it in the background cart.
+      // But we can let them know it's added.
+    }
+  }
+
+  return (
+    <div className="mt-12 mb-8">
+      <h3 className="text-xl font-black mb-6" style={{ color: C.navy }}>
+        You might also like
+      </h3>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {suggestions.map((video) => (
+          <div key={video._id} className="bg-white rounded-2xl p-3 border shadow-sm flex flex-col" style={{ borderColor: 'rgba(77,208,225,0.2)' }}>
+            <img src={video.thumbnailUrl || '/fallback.png'} alt="" className="w-full aspect-video object-cover rounded-xl mb-3" />
+            <h4 className="font-bold text-sm leading-tight line-clamp-2 mb-1" style={{ color: C.navy }}>{video.title}</h4>
+            <p className="text-xs text-[#051d2e]/60 mb-3">{video.artistId?.name || 'Artist'}</p>
+            <div className="mt-auto flex items-center justify-between pt-3 border-t border-gray-100">
+              <span className="font-bold text-[#4DD0E1] text-sm">Rs. {video.price}</span>
+              <button
+                onClick={() => handleAdd(video)}
+                className="p-1.5 rounded-full bg-[#4DD0E1]/10 text-[#4DD0E1] hover:bg-[#4DD0E1] hover:text-[#051d2e] transition"
+                title="Add to Cart"
+              >
+                <ShoppingCart className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }

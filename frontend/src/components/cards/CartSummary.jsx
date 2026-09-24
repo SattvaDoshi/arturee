@@ -93,6 +93,72 @@ export default function CartSummary({ onClose }) {
           Continue Shopping
         </button>
       </div>
+
+      {/* Suggested Videos */}
+      <div className="mt-6 pt-4 border-t border-[#051d2e]/10">
+        <h4 className="text-sm font-bold text-[#051d2e] mb-3">You might also like</h4>
+        <SuggestedVideos onClose={onClose} />
+      </div>
+    </div>
+  )
+}
+
+function SuggestedVideos({ onClose }) {
+  const [videos, setVideos] = React.useState([])
+  const [loading, setLoading] = React.useState(true)
+  const { toggleCart, getCartSummary } = useCart()
+  const { items } = getCartSummary()
+
+  React.useEffect(() => {
+    import('../../api/index.js').then(({ videoApi }) => {
+      videoApi.list({ limit: 4, sort: 'popular' })
+        .then(res => {
+          const vids = res.data?.data?.videos || res.data?.data || []
+          setVideos(Array.isArray(vids) ? vids : [])
+        })
+        .catch(() => setVideos([]))
+        .finally(() => setLoading(false))
+    })
+  }, [])
+
+  if (loading) {
+    return <div className="text-xs text-[#051d2e]/50 text-center py-2">Loading suggestions...</div>
+  }
+
+  // Filter out videos already in cart
+  const cartIds = items.map(i => i.id)
+  const suggestions = videos.filter(v => !cartIds.includes(v._id)).slice(0, 3)
+
+  if (suggestions.length === 0) return null
+
+  return (
+    <div className="space-y-3">
+      {suggestions.map(video => (
+        <div key={video._id} className="flex gap-3 items-center group">
+          <div className="w-16 h-10 shrink-0 bg-[#051d2e]/10 rounded overflow-hidden">
+            <img src={video.thumbnailUrl || '/fallback.png'} alt="" className="w-full h-full object-cover" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-bold text-[#051d2e] truncate">{video.title}</p>
+            <p className="text-[10px] text-[#051d2e]/60 truncate">Rs. {video.price}</p>
+          </div>
+          <button
+            onClick={() => {
+              toggleCart({
+                id: video._id,
+                title: video.title,
+                price: video.price,
+                image: video.thumbnailUrl,
+                creator: video.artistId?.name || 'Artist'
+              })
+            }}
+            className="shrink-0 p-1.5 rounded-full bg-[#4DD0E1]/10 text-[#4DD0E1] hover:bg-[#4DD0E1] hover:text-[#051d2e] transition"
+            title="Add to cart"
+          >
+            <ShoppingCart className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      ))}
     </div>
   )
 }
