@@ -33,7 +33,7 @@ const HeroSection = () => {
           </div>
 
           {/* Main polaroid image */}
-          <div className="absolute top-0 right-0 sm:right-4 md:right-8 lg:right-0 w-[75%] sm:w-[70%] md:w-[65%] bg-white p-3 pb-12 md:p-4 md:pb-16 rough-border polaroid-shadow transform rotate-3 z-10">
+          <div className="absolute top-0 right-0 sm:right-4 md:right-8 lg:right-0 w-[75%] sm:w-[70%] md:w-[65%] bg-white p-3 pb-12 md:p-4 md:pb-16 rough-border polaroid-shadow transform rotate-3 z-20">
             <img className="w-full aspect-[4/5] object-cover " alt="Featured Artist"
               src="./ArtureeLogo1.png" />
             <div className="absolute bottom-3 left-4 md:bottom-4 md:left-16 font-black uppercase italic text-base sm:text-lg md:text-2xl tracking-tighter text-navy">
@@ -49,7 +49,7 @@ const HeroSection = () => {
     bg-gradient-to-br from-primary to-lime
     rough-border
     -rotate-12
-    z-20
+    z-10
     flex items-center justify-center
     p-3 md:p-3
     shadow-[6px_6px_0px_rgba(33,46,83,0.3)]

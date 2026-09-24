@@ -51,8 +51,12 @@ const UserTopbar = ({ onMobileMenuToggle }) => {
   }, [])
 
   return (
-    <header className="sticky top-0 z-20 h-16 px-4 md:px-6 flex items-center justify-between border-b border-[#4DD0E1]/20 backdrop-blur-sm"
-      style={{ background: 'rgba(224,247,250,0.85)' }}
+    <header className="sticky top-0 z-20 px-4 md:px-6 flex items-center justify-between border-b border-[#4DD0E1]/20 backdrop-blur-sm"
+      style={{ 
+        background: 'rgba(224,247,250,0.85)',
+        paddingTop: 'calc(env(safe-area-inset-top, 0px) + 1rem)',
+        paddingBottom: '1rem'
+      }}
     >
       {/* Left — mobile hamburger */}
       <button

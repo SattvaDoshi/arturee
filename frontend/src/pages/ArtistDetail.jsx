@@ -137,7 +137,7 @@ const ArtistDetail = () => {
                     <Music className="w-3.5 h-3.5" /> FEATURED ARTIST
                   </div>
                   <h1 className="text-3xl md:text-5xl font-black tracking-tight mb-2">{artist?.name}</h1>
-                  <p className="text-sm md:text-base text-gray-200 max-w-2xl mb-4">
+                  <p className="text-sm md:text-base text-gray-200 max-w-2xl mb-4 whitespace-pre-wrap">
                     {artist?.bio || 'An amazing artist on the platform.'}
                   </p>
                 </div>
