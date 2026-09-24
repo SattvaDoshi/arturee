@@ -63,26 +63,21 @@ export const CartProvider = ({ children }) => {
   // Check if video is in saved list
   const isInSavedList = (videoId) => savedList.some((item) => item.id === videoId)
 
-  // Calculate discount based on cart items
-  const getDiscount = () => {
-    const count = cart.length
-    if (count >= 5) return 0.15 // 15% off for 5+ items
-    if (count >= 3) return 0.10 // 10% off for 3-4 items
-    return 0 // No discount for 1-2 items
-  }
-
-  // Calculate total price with discount
+  // Calculate total price with 3% platform fee
   const calculateTotal = () => {
     const subtotal = cart.reduce((acc, item) => {
       const price = parseFloat(String(item.price || '0').replace(/[^0-9.]/g, '').replace(/^\.+/, '')) || 0
       return acc + price * item.quantity
     }, 0)
-    const discount = subtotal * getDiscount()
+    
+    const platformFee = subtotal * 0.03 // 3% platform & convenience fee
+    
     return {
       subtotal,
-      discount,
-      total: subtotal - discount,
-      discountPercentage: getDiscount() * 100,
+      discount: 0,
+      platformFee,
+      total: subtotal + platformFee,
+      discountPercentage: 0,
     }
   }
 
@@ -105,7 +100,6 @@ export const CartProvider = ({ children }) => {
     isInSavedList,
     calculateTotal,
     getCartSummary,
-    getDiscount,
     setCart,
     setSavedList,
   }

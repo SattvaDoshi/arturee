@@ -131,11 +131,33 @@ export const getProgress = async (userId, videoId) => {
  * Get the full watch history for a user, sorted by last played.
  */
 export const getUserHistory = async (userId, limit = 20, skip = 0) => {
-  return WatchHistory.find({ userId })
+  const history = await WatchHistory.find({ userId })
     .sort({ lastPlayedAt: -1 })
     .skip(skip)
     .limit(limit)
-    .populate('videoId', 'title thumbnailUrl durationSeconds')
+    .populate({
+      path: 'videoId',
+      select: 'title thumbnailUrl durationSeconds genre',
+      populate: { path: 'genre', select: 'name' }
+    })
+    .lean()
+
+  const videoIds = history.map(h => h.videoId?._id).filter(Boolean)
+  const purchases = await Purchase.find({ 
+    userId, 
+    videoId: { $in: videoIds }, 
+    status: { $in: ['completed', 'expired'] } 
+  }).lean()
+  
+  const purchaseMap = purchases.reduce((acc, p) => {
+    acc[p.videoId.toString()] = p
+    return acc
+  }, {})
+
+  return history.map(h => ({
+    ...h,
+    purchase: purchaseMap[h.videoId?._id?.toString()] || null
+  }))
 }
 
 /**

@@ -57,17 +57,7 @@ export default function CartSummary({ onClose }) {
         ))}
       </div>
 
-      {/* Discount Info */}
-      {summary.itemCount >= 3 && (
-        <div className="p-3 bg-lime/15 border border-lime/30 rounded-lg">
-          <p className="text-xs font-bold text-[#051d2e]">
-            🎉 {summary.discountPercentage}% DISCOUNT APPLIED
-          </p>
-          <p className="text-xs text-[#051d2e]/70">
-            You saved Rs. {summary.discount.toFixed(2)}
-          </p>
-        </div>
-      )}
+
 
       {/* Pricing Summary */}
       <div className="space-y-2 p-3 bg-[#051d2e]/5 rounded-lg border border-[#051d2e]/10">
@@ -75,10 +65,11 @@ export default function CartSummary({ onClose }) {
           <span className="text-[#051d2e]/60">Subtotal ({summary.itemCount} items)</span>
           <span className="font-semibold text-[#051d2e]">Rs. {summary.subtotal.toFixed(2)}</span>
         </div>
-        {summary.discount > 0 && (
-          <div className="flex justify-between text-sm text-lime-600 font-bold">
-            <span>Discount ({summary.discountPercentage}%)</span>
-            <span>-Rs. {summary.discount.toFixed(2)}</span>
+
+        {summary.platformFee > 0 && (
+          <div className="flex justify-between text-sm">
+            <span className="text-[#051d2e]/60">Platform &amp; Convenience Fee (3%)</span>
+            <span className="font-semibold text-[#051d2e]">Rs. {summary.platformFee.toFixed(2)}</span>
           </div>
         )}
         <div className="border-t border-[#051d2e]/10 pt-2 flex justify-between">

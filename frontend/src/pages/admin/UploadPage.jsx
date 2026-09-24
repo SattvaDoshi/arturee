@@ -87,6 +87,7 @@ export default function UploadPage() {
     costPrice:       '',
     discountedPrice: '',
     genre:           '',
+    certification:   'U',
     tags:            '',
     thumbnailUrl:    '',
     artistId:        '',
@@ -164,6 +165,7 @@ export default function UploadPage() {
           discountedPrice: meta.discountedPrice ? Number(meta.discountedPrice) : undefined,
           youtubeUrl: meta.youtubeUrl,
           genre: meta.genre || undefined,
+          certification: meta.certification,
           tags: meta.tags,
           thumbnailUrl: meta.thumbnailUrl || undefined,
           artistId: meta.artistId || undefined,
@@ -219,6 +221,7 @@ export default function UploadPage() {
       if (meta.discountedPrice) formData.append('discountedPrice', String(meta.discountedPrice))
       formData.append('currency', 'INR')
       if (meta.genre) formData.append('genre', meta.genre)
+      formData.append('certification', meta.certification)
       formData.append('tags', JSON.stringify(
         meta.tags.split(',').map(t => t.trim()).filter(Boolean)
       ))
@@ -339,6 +342,16 @@ export default function UploadPage() {
                       {genres.map(g => (
                         <option key={g._id} value={g._id} className="bg-[#051d2e] text-white">{g.name}</option>
                       ))}
+                    </select>
+                  </div>
+                  <div>
+                    <Label>Rating</Label>
+                    <select value={meta.certification} onChange={setM('certification')} className={inputCls}>
+                      <option value="U" className="bg-[#051d2e] text-white">U</option>
+                      <option value="U/A 7+" className="bg-[#051d2e] text-white">U/A 7+</option>
+                      <option value="U/A 13+" className="bg-[#051d2e] text-white">U/A 13+</option>
+                      <option value="U/A 16+" className="bg-[#051d2e] text-white">U/A 16+</option>
+                      <option value="A" className="bg-[#051d2e] text-white">A</option>
                     </select>
                   </div>
                 </div>

@@ -66,7 +66,7 @@ const termsItems = [
   {
     title: 'Refund Policy',
     content:
-      'Subscription fees are non-refundable once the billing period begins and at least one piece of content has been accessed. If no content has been accessed within 24 hours of purchase, a full refund may be requested.',
+      'Subscription fees are non-refundable once the billing period begins and at least one piece of content has been accessed. If no content has been accessed within 24 hours of purchase, a full refund may be requested. However it will be at the discretion of Arturee',
   },
   // {
   //   title: 'Cancellation Policy',

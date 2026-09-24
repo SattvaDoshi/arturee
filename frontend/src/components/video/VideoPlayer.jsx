@@ -565,7 +565,38 @@ export default function VideoPlayer({ videoId, poster, user, isVertical = false 
       {/* ── Security Warning Modal (full-page, above everything) ─────────── */}
       <SecurityModal threat={activeThreat} onDismiss={dismissThreat} />
 
-      {/* ── Player wrapper ───────────────────────────────────────────────── */}
+      {/* ── Page-level Forensic Watermark ────────────────────────────────────
+           Rendered OUTSIDE the GPU-composited player wrapper so it lives in
+           the normal browser compositing stack. Screen recorders that capture
+           the final display output (not raw GPU buffers) will always pick
+           this up regardless of the GPU-isolation trick on the player.       */}
+      {sessionActive && wmText && (
+        <div
+          aria-hidden="true"
+          style={{
+            position:      'fixed',
+            top:           wmPos.top,
+            left:          wmPos.left,
+            zIndex:        9998,   // below SecurityModal (9999) but above everything else
+            pointerEvents: 'none',
+            userSelect:    'none',
+            opacity:       0.28,
+            color:         '#ffffff',
+            fontSize:      'clamp(11px, 1.4vw, 15px)',
+            fontFamily:    'monospace',
+            fontWeight:    700,
+            letterSpacing: '0.04em',
+            whiteSpace:    'nowrap',
+            textShadow:    '0 0 8px rgba(0,0,0,0.9), 0 1px 4px rgba(0,0,0,0.8)',
+            mixBlendMode:  'difference',   // inverts against any background colour
+            transition:    'top 1.5s ease, left 1.5s ease',
+          }}
+        >
+          {wmText}
+        </div>
+      )}
+
+
       <div
         ref={wrapperRef}
         onDoubleClick={toggleFullscreen}
@@ -634,9 +665,7 @@ export default function VideoPlayer({ videoId, poster, user, isVertical = false 
           </div>
         )}
 
-        {/* ── Forensic Watermark ──────────────────────────────────────────
-             Drifts to a random position every 60 s at 18% opacity.
-             Clearly visible in screen recordings — identifies the leaker. */}
+        {/* ── Forensic Watermark (inside player — visible during normal viewing) ── */}
         {sessionActive && wmText && (
           <div
             aria-hidden="true"
@@ -647,7 +676,7 @@ export default function VideoPlayer({ videoId, poster, user, isVertical = false 
               zIndex:        15,
               pointerEvents: 'none',
               userSelect:    'none',
-              opacity:       0.18,
+              opacity:       0.22,
               color:         '#ffffff',
               fontSize:      'clamp(10px, 1.2vw, 14px)',
               fontFamily:    'monospace',
@@ -661,6 +690,7 @@ export default function VideoPlayer({ videoId, poster, user, isVertical = false 
             {wmText}
           </div>
         )}
+
 
         {/* ── GPU-compositor anti-recording overlay ──────────────────────
              mix-blend-mode on a sibling element forces the video to be

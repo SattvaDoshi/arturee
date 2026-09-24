@@ -25,7 +25,7 @@ export default function CartButton() {
 
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute right-0 top-12 w-80 bg-white rounded-xl shadow-2xl border border-[#051d2e]/10 z-50 overflow-hidden">
+        <div className="fixed inset-x-4 top-20 sm:absolute sm:inset-auto sm:right-0 sm:top-12 sm:w-80 bg-white rounded-xl shadow-2xl border border-[#051d2e]/10 z-50 overflow-hidden">
           <div className="p-4 border-b border-[#051d2e]/10 flex items-center justify-between">
             <h3 className="font-bold text-[#051d2e]">Shopping Cart</h3>
             <button

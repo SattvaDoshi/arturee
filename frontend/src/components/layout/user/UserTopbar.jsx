@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Search, Bell, Menu, LogIn, UserPlus, Loader2 } from 'lucide-react'
+import { Search, Bell, Menu, LogIn, UserPlus, Loader2, Download, CheckCircle } from 'lucide-react'
 import CartButton from '../../cards/CartButton'
 import SavedListButton from '../../cards/SavedListButton'
 import { useAuth } from '../../../context/AuthContext'
 import { videoApi, artistApi } from '../../../api'
+import { usePWAInstall } from '../../../hooks/usePWAInstall'
 
 const UserTopbar = ({ onMobileMenuToggle }) => {
   const [searchFocused, setSearchFocused] = useState(false)
@@ -13,8 +14,8 @@ const UserTopbar = ({ onMobileMenuToggle }) => {
   const [isSearching, setIsSearching] = useState(false)
   const dropdownRef = useRef(null)
   const navigate = useNavigate()
-  
   const { isAuthenticated, user } = useAuth()
+  const { canInstall, isInstalled, isIOS, triggerInstall } = usePWAInstall()
 
   useEffect(() => {
     if (!query.trim()) {
@@ -161,6 +162,19 @@ const UserTopbar = ({ onMobileMenuToggle }) => {
 
         {/* Shopping Cart */}
         <CartButton />
+
+        {/* PWA Install button — only shown when app is not yet installed */}
+        {!isInstalled && (canInstall || isIOS) && (
+          <button
+            onClick={triggerInstall}
+            title="Install App"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-[#051d2e] transition hover:scale-105 hover:shadow-lg"
+            style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Install</span>
+          </button>
+        )}
 
         {/* Notification bell */}
         

@@ -80,10 +80,12 @@ export default function Login() {
         <div className="text-center mb-8">
           <Link
             to="/"
-            className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-4 shadow-lg hover:scale-105 transition"
-            style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
+            className="inline-flex items-center gap-3 bg-[#212e53] p-2 pr-4 rounded-xl mb-4 shadow-lg hover:scale-105 transition"
           >
-            <span className="text-[#051d2e] font-black text-2xl leading-none select-none">A</span>
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center shadow-md bg-white/10">
+              <img src="/Logomark.png" alt="" />
+            </div>
+            <span className="text-2xl font-black tracking-tighter lowercase bg-linear-to-r from-primary to-lime bg-clip-text text-transparent">arturee</span>
           </Link>
           <h1 className="text-3xl font-black text-[#051d2e] tracking-tight">Welcome back</h1>
           <p className="text-sm text-[#051d2e]/55 mt-1.5">Sign in to your arturee account</p>

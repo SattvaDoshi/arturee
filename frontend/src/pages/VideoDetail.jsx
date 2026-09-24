@@ -443,6 +443,15 @@ export default function VideoDetail() {
                   <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                     <div className="flex-1 space-y-2.5">
                       <div className="flex flex-wrap items-center gap-2">
+                        {video?.certification && (
+                          <span
+                            className="px-2 py-0.5 rounded text-[10px] font-bold tracking-wider border"
+                            style={{ background: 'rgba(5,29,46,0.06)', color: C.navy, borderColor: 'rgba(5,29,46,0.2)' }}
+                            title="Content Rating"
+                          >
+                            {video.certification}
+                          </span>
+                        )}
                         {video?.category && (
                           <SectionPill icon={<Music className="w-3 h-3" />}>
                             {video.category}

@@ -58,6 +58,11 @@ const videoSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+    certification: {
+      type: String,
+      enum: ['U', 'U/A 7+', 'U/A 13+', 'U/A 16+', 'A'],
+      default: 'U', // Defaulting to U
+    },
     genre: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Genre',

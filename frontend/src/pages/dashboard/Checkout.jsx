@@ -173,11 +173,11 @@ export default function Checkout() {
   if (!items.length) return null
 
   const subtotal = isCart ? checkoutData.subtotal : parsePrice(items[0].price)
-  const discount = isCart ? checkoutData.discount : 0
-  const total = isCart ? checkoutData.total : subtotal
+  const platformFee = isCart ? (checkoutData.platformFee || 0) : (subtotal * 0.03)
+  const total = isCart ? checkoutData.total : (subtotal + platformFee)
   
   const subtotalDisplay = fmtINR(subtotal * 100)
-  const discountDisplay = fmtINR(discount * 100)
+  const platformFeeDisplay = fmtINR(platformFee * 100)
   const priceDisplay = fmtINR(total * 100)
 
   return (
@@ -244,15 +244,10 @@ export default function Checkout() {
                     <span>Subtotal ({items.length} item{items.length !== 1 && 's'})</span>
                     <span>{subtotalDisplay}</span>
                   </div>
-                  {discount > 0 && (
-                    <div className="flex justify-between text-lime-600 font-bold">
-                      <span>Discount applied</span>
-                      <span>-{discountDisplay}</span>
-                    </div>
-                  )}
+
                   <div className="flex justify-between text-gray-600">
-                    <span>Taxes &amp; fees</span>
-                    <span>Included</span>
+                    <span>Taxes &amp; fees (3%)</span>
+                    <span>{platformFee > 0 ? platformFeeDisplay : 'Included'}</span>
                   </div>
                   <div
                     className="flex justify-between font-black text-lg pt-3"

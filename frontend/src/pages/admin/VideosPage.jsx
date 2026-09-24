@@ -35,6 +35,7 @@ const EditForm = ({ video, artists, genres, onSave, onCancel }) => {
     costPrice:   video.costPrice ?? '',
     discountedPrice: video.discountedPrice ?? '',
     genre:       video.genre?._id || video.genre || '',
+    certification: video.certification || 'U',
     thumbnailUrl: video.thumbnailUrl || '',
     artistId:     video.artistId?._id || video.artistId || '',
     tags:         (video.tags || []).join(', '),
@@ -156,6 +157,21 @@ const EditForm = ({ video, artists, genres, onSave, onCancel }) => {
               {genres.map(g => (
                 <option key={g._id} value={g._id} className="bg-[#051d2e] text-white">{g.name}</option>
               ))}
+            </select>
+          </div>
+          
+          <div className="flex flex-col gap-1">
+            <label className="text-[10px] text-white/35 font-semibold uppercase tracking-widest">Rating</label>
+            <select
+              value={form.certification}
+              onChange={e => setForm(f => ({ ...f, certification: e.target.value }))}
+              className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white outline-none focus:border-[#4DD0E1]/50 transition"
+            >
+              <option value="U" className="bg-[#051d2e] text-white">U</option>
+              <option value="U/A 7+" className="bg-[#051d2e] text-white">U/A 7+</option>
+              <option value="U/A 13+" className="bg-[#051d2e] text-white">U/A 13+</option>
+              <option value="U/A 16+" className="bg-[#051d2e] text-white">U/A 16+</option>
+              <option value="A" className="bg-[#051d2e] text-white">A</option>
             </select>
           </div>
           {field('status', 'Status')}

@@ -52,6 +52,7 @@ export const createYoutubeVideo = asyncHandler(async (req, res) => {
     youtubeUrl,
     tags = [],
     genre = null,
+    certification = 'U',
     thumbnailUrl,
     artistId,
     durationSeconds,
@@ -84,6 +85,7 @@ export const createYoutubeVideo = asyncHandler(async (req, res) => {
     status:          'youtube',
     tags:            parsedTags,
     genre:           genre || null,
+    certification,
     thumbnailUrl:    thumbnailUrl || null,
     artistId:        artistId || null,
     durationSeconds: durationSeconds ? Number(durationSeconds) : null,
@@ -124,6 +126,7 @@ export const initiateUpload = asyncHandler(async (req, res) => {
     contentType = 'video/mp4',
     tags = [],
     genre = null,
+    certification = 'U',
   } = req.body
 
   if (!title || price === undefined || !totalParts) {
@@ -145,6 +148,7 @@ export const initiateUpload = asyncHandler(async (req, res) => {
     creatorId,
     tags,
     genre,
+    certification,
     status: 'uploading',
   })
 
@@ -301,7 +305,8 @@ export const updateVideo = asyncHandler(async (req, res) => {
   const allowedFields = [
     'title', 'description', 'price', 'costPrice', 'discountedPrice',
     'isPublished', 'tags', 'genre', 'thumbnailUrl', 'artistId',
-    'featured', 'status', 'durationSeconds', 'youtubeUrl', 'videoSource'
+    'featured', 'status', 'durationSeconds', 'youtubeUrl', 'videoSource',
+    'certification'
   ]
   allowedFields.forEach((field) => {
     if (req.body[field] !== undefined) {
