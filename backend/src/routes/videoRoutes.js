@@ -18,9 +18,11 @@ import {
   createYoutubeVideo,
 } from '../controllers/videoController.js'
 
-// Multer: keep the file in memory (buffer), unlimited file size
+import os from 'os'
+
+// Multer: use temporary disk storage for large files
 const upload = multer({
-  storage: multer.memoryStorage(),
+  dest: os.tmpdir(),
   limits: { fileSize: Infinity }, // Unlimited file size
   fileFilter: (req, file, cb) => {
     if (file.mimetype.startsWith('video/')) cb(null, true)

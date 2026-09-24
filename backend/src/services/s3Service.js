@@ -7,6 +7,7 @@ import {
   HeadObjectCommand,
   GetObjectCommand,
   PutObjectCommand,
+  ListObjectsV2Command,
 } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { Upload } from '@aws-sdk/lib-storage'
@@ -144,6 +145,38 @@ export const deleteObject = async (s3Key) => {
   await s3Client.send(
     new DeleteObjectCommand({ Bucket: BUCKET, Key: s3Key })
   )
+}
+
+/**
+ * Delete all S3 objects under a specific prefix.
+ */
+export const deleteS3Directory = async (prefix) => {
+  try {
+    let isTruncated = true
+    let continuationToken = undefined
+
+    while (isTruncated) {
+      const listCmd = new ListObjectsV2Command({
+        Bucket: BUCKET,
+        Prefix: prefix,
+        ContinuationToken: continuationToken,
+      })
+      const listRes = await s3Client.send(listCmd)
+
+      if (listRes.Contents && listRes.Contents.length > 0) {
+        for (const item of listRes.Contents) {
+          if (item.Key) {
+            await deleteObject(item.Key)
+          }
+        }
+      }
+
+      isTruncated = listRes.IsTruncated
+      continuationToken = listRes.NextContinuationToken
+    }
+  } catch (err) {
+    console.error(`[S3] Failed to delete directory ${prefix}`, err)
+  }
 }
 
 /**

@@ -506,11 +506,13 @@ export default function UserDashboard() {
                 viewAllTo={{ pathname: `/genre/${genre._id}`, state: { fromDashboard: true } }} 
               />
               <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
-                {genre.videos.map((v) => (
-                  <Link to={`/video/${v._id}`} key={v._id} className="flex-shrink-0 w-56 sm:w-64 md:w-72 group cursor-pointer block">
-                    <div className="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg border border-[#4DD0E1]/20">
+                {genre.videos.map((v) => {
+                  const isVertical = genre.name?.toUpperCase().includes('MOBILE') || v.genre?.name?.toUpperCase().includes('MOBILE')
+                  return (
+                  <Link to={`/video/${v._id}`} key={v._id} className={`flex-shrink-0 ${isVertical ? 'w-44 sm:w-52 md:w-64' : 'w-56 sm:w-64 md:w-72'} group cursor-pointer block`}>
+                    <div className={`relative ${isVertical ? 'aspect-[9/16]' : 'aspect-video'} rounded-xl overflow-hidden mb-3 shadow-lg border border-[#4DD0E1]/20`}>
                       <img src={v.thumbnailUrl || FALLBACK_IMG} alt={v.title} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
-                      <HoverOverlayWide />
+                      {isVertical ? <HoverOverlayTall /> : <HoverOverlayWide />}
                       <VideoActionButtons videoId={v._id} videoData={{ id: v._id, image: v.thumbnailUrl, title: v.title, price: fmtPrice(v.price, v.currency), artistName: v.artistId?.name }} />
                       <div className="absolute top-2 left-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>{genre.name}</div>
                       {v.price
@@ -524,7 +526,7 @@ export default function UserDashboard() {
                       {[1,2,3,4,5].map(i => i <= 4 ? <StarFilled key={i} /> : <StarEmpty key={i} />)}
                     </div>
                   </Link>
-                ))}
+                )})}
               </div>
             </div>
           ))

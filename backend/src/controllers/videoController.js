@@ -7,6 +7,8 @@ import {
   buildOriginalKey,
   buildProcessedPrefix,
   uploadFileBuffer,
+  deleteObject,
+  deleteS3Directory,
 } from '../services/s3Service.js'
 import { createTranscodeJob, getJobStatus } from '../services/mediaConvertService.js'
 import { logUploadError, logMediaConvertError } from '../services/cloudWatchService.js'
@@ -14,6 +16,7 @@ import Video from '../models/Video.js'
 import VideoAsset from '../models/VideoAsset.js'
 import ApiError from '../utils/ApiError.js'
 import mongoose from 'mongoose'
+import fs from 'fs'
 
 // ── Utility: extract YouTube video ID from various URL formats ───────────────
 const extractYoutubeId = (urlOrId) => {
@@ -302,7 +305,12 @@ export const updateVideo = asyncHandler(async (req, res) => {
   ]
   allowedFields.forEach((field) => {
     if (req.body[field] !== undefined) {
-      video[field] = req.body[field]
+      // Handle empty strings for ObjectId fields
+      if (req.body[field] === '' && (field === 'genre' || field === 'artistId')) {
+        video[field] = null
+      } else {
+        video[field] = req.body[field]
+      }
     }
   })
 
@@ -433,10 +441,26 @@ export const deleteVideo = asyncHandler(async (req, res) => {
   const video = await Video.findById(videoId)
   if (!video) throw new ApiError(404, 'Video not found.')
 
+  const asset = await VideoAsset.findOne({ videoId })
+  if (asset?.originalS3Key) {
+    try {
+      await deleteObject(asset.originalS3Key)
+    } catch (err) {
+      console.error('[Delete Video] Failed to delete original file from S3:', err.message)
+    }
+  }
+
+  try {
+    const outputPrefix = buildProcessedPrefix(videoId)
+    await deleteS3Directory(outputPrefix)
+  } catch (err) {
+    console.error('[Delete Video] Failed to delete processed video directory from S3:', err.message)
+  }
+
   await Video.findByIdAndDelete(videoId)
   await VideoAsset.deleteOne({ videoId })
 
-  res.status(200).json({ success: true, message: 'Video deleted successfully.' })
+  res.status(200).json({ success: true, message: 'Video and associated files deleted permanently.' })
 })
 
 // ── Admin: Manually publish a video (bypass MediaConvert) ─────────────────────
@@ -513,8 +537,9 @@ export const proxyUpload = asyncHandler(async (req, res) => {
   const s3Key = buildOriginalKey(creatorId.toString(), videoId)
 
   try {
-    // Upload file buffer directly to S3 (server-side — no CORS issue)
-    await uploadFileBuffer(s3Key, req.file.buffer, req.file.mimetype)
+    // Upload file stream directly to S3 (server-side — no CORS issue)
+    const fileStream = fs.createReadStream(req.file.path)
+    await uploadFileBuffer(s3Key, fileStream, req.file.mimetype)
 
     // Record the asset
     await VideoAsset.create({
@@ -547,5 +572,11 @@ export const proxyUpload = asyncHandler(async (req, res) => {
     await Video.deleteOne({ _id: video._id })
     logUploadError(videoId, err)
     throw err
+  } finally {
+    if (req.file && req.file.path) {
+      fs.unlink(req.file.path, (err) => {
+        if (err) console.error('Failed to clean up temp file:', err)
+      })
+    }
   }
 })

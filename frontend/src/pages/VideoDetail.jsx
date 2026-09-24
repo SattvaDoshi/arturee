@@ -156,6 +156,8 @@ export default function VideoDetail() {
     { id: 'heart', emoji: '❤️' },
   ]
 
+  const isVertical = video?.genre?.name?.toUpperCase().includes('MOBILE') || video?.category?.toUpperCase().includes('MOBILE')
+
   /* ── Fetch video ── */
   useEffect(() => {
     if (!videoId) {
@@ -316,11 +318,13 @@ export default function VideoDetail() {
                 {/* ── Video player / preview ── */}
                 {/* YouTube videos: show the iframe directly (no play button needed) */}
                 {video?.videoSource === 'youtube' && (video?.price === 0 || purchased) ? (
-                  <YouTubePlayer youtubeUrl={video.youtubeUrl} />
+                  <div className={isVertical ? "w-full max-w-sm mx-auto aspect-[9/16]" : "aspect-video"}>
+                    <YouTubePlayer youtubeUrl={video.youtubeUrl} />
+                  </div>
                 ) : video?.videoSource === 'youtube' && video?.price > 0 && !purchased ? (
                   // YouTube + paid + not purchased: show thumbnail lock
                   <div
-                    className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl border"
+                    className={`relative ${isVertical ? 'w-full max-w-sm mx-auto aspect-[9/16]' : 'aspect-video'} rounded-2xl overflow-hidden shadow-2xl border`}
                     style={{ borderColor: 'rgba(77,208,225,0.25)' }}
                   >
                     <img src={video?.thumbnailUrl || FALLBACK_IMG} alt={video?.title} className="w-full h-full object-cover" />
@@ -342,10 +346,12 @@ export default function VideoDetail() {
                     </div>
                   </div>
                 ) : isPlaying ? (
-                  <VideoPlayer videoId={videoId} poster={video?.thumbnailUrl || FALLBACK_IMG} user={user} />
+                  <div className={isVertical ? "w-full max-w-sm mx-auto aspect-[9/16]" : "aspect-video"}>
+                    <VideoPlayer videoId={videoId} poster={video?.thumbnailUrl || FALLBACK_IMG} user={user} />
+                  </div>
                 ) : (
                 <div
-                  className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl border"
+                  className={`relative ${isVertical ? 'w-full max-w-sm mx-auto aspect-[9/16]' : 'aspect-video'} rounded-2xl overflow-hidden shadow-2xl border`}
                   style={{ borderColor: 'rgba(77,208,225,0.25)' }}
                 >
                   <img
