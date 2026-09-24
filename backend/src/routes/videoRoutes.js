@@ -16,6 +16,7 @@ import {
   proxyUpload,
   reactToVideo,
   createYoutubeVideo,
+  createSeries,
 } from '../controllers/videoController.js'
 
 import os from 'os'
@@ -44,6 +45,9 @@ router.post('/upload/abort', authMiddleware, adminMiddleware, abortUpload)
 
 // YouTube-hosted video creation (no upload, no MediaConvert)
 router.post('/youtube', authMiddleware, adminMiddleware, createYoutubeVideo)
+
+// Series container creation
+router.post('/series', authMiddleware, adminMiddleware, createSeries)
 
 // Proxy upload — file goes through backend to S3 (bypasses CORS)
 router.post('/upload/proxy', authMiddleware, adminMiddleware, upload.single('file'), proxyUpload)

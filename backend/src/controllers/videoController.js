@@ -57,6 +57,8 @@ export const createYoutubeVideo = asyncHandler(async (req, res) => {
     artistId,
     durationSeconds,
     isPublished = false,
+    seriesParentId = null,
+    episodeNumber = null,
   } = req.body
 
   if (!title)      throw new ApiError(400, 'title is required.')
@@ -90,6 +92,8 @@ export const createYoutubeVideo = asyncHandler(async (req, res) => {
     artistId:        artistId || null,
     durationSeconds: durationSeconds ? Number(durationSeconds) : null,
     isPublished:     Boolean(isPublished),
+    seriesParentId:  seriesParentId || null,
+    episodeNumber:   episodeNumber ? Number(episodeNumber) : null,
   })
 
   res.status(201).json({
@@ -101,6 +105,46 @@ export const createYoutubeVideo = asyncHandler(async (req, res) => {
       status:     video.status,
       message:    'YouTube video created successfully.',
     },
+  })
+})
+
+// ── Admin: Create Series Container ─────────────────────────────────────────────
+
+export const createSeries = asyncHandler(async (req, res) => {
+  const {
+    title, description = '', price = 0, costPrice, discountedPrice,
+    currency = 'INR', tags = [], genre = null, certification = 'U',
+    thumbnailUrl, artistId, isPublished = false
+  } = req.body
+
+  if (!title) throw new ApiError(400, 'title is required.')
+
+  let parsedTags = []
+  try {
+    parsedTags = Array.isArray(tags) ? tags : JSON.parse(tags)
+  } catch {
+    parsedTags = String(tags).split(',').map(t => t.trim()).filter(Boolean)
+  }
+
+  const series = await Video.create({
+    title, description, price: Number(price),
+    costPrice: costPrice !== undefined ? Number(costPrice) : null,
+    discountedPrice: discountedPrice !== undefined ? Number(discountedPrice) : null,
+    currency, creatorId: req.user._id,
+    videoSource: 'series',
+    status: 'series', // always ready container
+    tags: parsedTags,
+    genre: genre || null,
+    certification,
+    thumbnailUrl: thumbnailUrl || null,
+    artistId: artistId || null,
+    isPublished: Boolean(isPublished),
+    seriesEpisodes: [] // empty initially
+  })
+
+  res.status(201).json({
+    success: true,
+    data: { videoId: series._id, status: series.status, message: 'Series container created.' }
   })
 })
 
@@ -121,12 +165,18 @@ export const initiateUpload = asyncHandler(async (req, res) => {
     title,
     description = '',
     price,
+    costPrice,
+    discountedPrice,
     currency = 'INR',
     totalParts,
     contentType = 'video/mp4',
     tags = [],
     genre = null,
     certification = 'U',
+    thumbnailUrl,
+    artistId,
+    seriesParentId = null,
+    episodeNumber = null,
   } = req.body
 
   if (!title || price === undefined || !totalParts) {
@@ -144,11 +194,17 @@ export const initiateUpload = asyncHandler(async (req, res) => {
     title,
     description,
     price,
+    costPrice: costPrice !== undefined ? Number(costPrice) : null,
+    discountedPrice: discountedPrice !== undefined ? Number(discountedPrice) : null,
     currency,
     creatorId,
     tags,
     genre,
     certification,
+    thumbnailUrl,
+    artistId,
+    seriesParentId,
+    episodeNumber,
     status: 'uploading',
   })
 
@@ -306,7 +362,7 @@ export const updateVideo = asyncHandler(async (req, res) => {
     'title', 'description', 'price', 'costPrice', 'discountedPrice',
     'isPublished', 'tags', 'genre', 'thumbnailUrl', 'artistId',
     'featured', 'status', 'durationSeconds', 'youtubeUrl', 'videoSource',
-    'certification'
+    'certification', 'seriesParentId', 'seriesEpisodes', 'episodeNumber'
   ]
   allowedFields.forEach((field) => {
     if (req.body[field] !== undefined) {
@@ -337,8 +393,9 @@ export const getVideo = asyncHandler(async (req, res) => {
     .populate('creatorId', 'name email')
     .populate('artistId', 'name avatarUrl bio email isVerified')
     .populate('genre', 'name description')
+    .populate('seriesEpisodes', 'title durationSeconds thumbnailUrl status episodeNumber youtubeUrl videoSource price')
 
-  if (!video || !video.isPublished) {
+  if (!video || (!video.isPublished && !req.user?.role?.includes('admin'))) {
     throw new ApiError(404, 'Video not found.')
   }
 
@@ -400,8 +457,8 @@ export const listVideos = asyncHandler(async (req, res) => {
   const limit = Math.min(50, parseInt(req.query.limit) || 12)
   const skip = (page - 1) * limit
 
-  // Include both S3-hosted (ready) and YouTube videos
-  const filter = { isPublished: true, status: { $in: ['ready', 'youtube'] } }
+  // Include S3-hosted, YouTube videos, and Series containers. Exclude child episodes.
+  const filter = { isPublished: true, status: { $in: ['ready', 'youtube', 'series'] }, seriesParentId: null }
   if (req.query.genre) filter.genre = req.query.genre
   if (req.query.artistId) filter.artistId = req.query.artistId
   if (req.query.tags) filter.tags = { $in: req.query.tags.split(',') }
@@ -505,11 +562,16 @@ export const proxyUpload = asyncHandler(async (req, res) => {
     title,
     description = '',
     price = 0,
+    costPrice,
+    discountedPrice,
     currency = 'INR',
     tags = '[]',
     genre = null,
+    certification = 'U',
     thumbnailUrl,
     artistId,
+    seriesParentId = null,
+    episodeNumber = null,
   } = req.body
 
   if (!title) throw new ApiError(400, 'title is required.')
@@ -524,17 +586,21 @@ export const proxyUpload = asyncHandler(async (req, res) => {
     parsedTags = String(tags).split(',').map(t => t.trim()).filter(Boolean)
   }
 
-  // Create video record
   const video = await Video.create({
     title,
     description,
     price: Number(price),
+    costPrice: costPrice !== undefined ? Number(costPrice) : null,
+    discountedPrice: discountedPrice !== undefined ? Number(discountedPrice) : null,
     currency,
     creatorId,
     tags: parsedTags,
     genre: genre || null,
-    thumbnailUrl: thumbnailUrl || undefined,
-    artistId: artistId || undefined,
+    certification,
+    thumbnailUrl: thumbnailUrl || null,
+    artistId: artistId || null,
+    seriesParentId: seriesParentId || null,
+    episodeNumber: episodeNumber ? Number(episodeNumber) : null,
     status: 'uploading',
   })
 

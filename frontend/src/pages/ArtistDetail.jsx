@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
-import { ArrowLeft, Play, Calendar, Eye, Music, AlertCircle, Loader2 } from 'lucide-react'
+import { ArrowLeft, Play, Calendar, Eye, Music, AlertCircle, Loader2, Instagram, Twitter, Globe } from 'lucide-react'
 import UserLayout from '../components/layout/UserLayout'
 import { artistApi, videoApi } from '../api/index.js'
 
@@ -132,14 +132,30 @@ const ArtistDetail = () => {
                 />
                 
                 <div className="text-white">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold mb-3"
-                    style={{ background: 'linear-gradient(135deg,rgba(77,208,225,0.95),rgba(192,232,99,0.9))', color: C.navy }}>
-                    <Music className="w-3.5 h-3.5" /> FEATURED ARTIST
-                  </div>
+                  
                   <h1 className="text-3xl md:text-5xl font-black tracking-tight mb-2">{artist?.name}</h1>
                   <p className="text-sm md:text-base text-gray-200 max-w-2xl mb-4 whitespace-pre-wrap">
                     {artist?.bio || 'An amazing artist on the platform.'}
                   </p>
+                  
+                  {/* Social Links */}
+                  <div className="flex items-center gap-4 mt-2">
+                    {artist?.socialLinks?.instagram && (
+                      <a href={artist.socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-[#4DD0E1] transition-colors" title="Instagram">
+                        <Instagram className="w-5 h-5" />
+                      </a>
+                    )}
+                    {artist?.socialLinks?.twitter && (
+                      <a href={artist.socialLinks.twitter} target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-[#4DD0E1] transition-colors" title="Twitter / X">
+                        <Twitter className="w-5 h-5" />
+                      </a>
+                    )}
+                    {artist?.socialLinks?.website && (
+                      <a href={artist.socialLinks.website} target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-[#4DD0E1] transition-colors" title="Website">
+                        <Globe className="w-5 h-5" />
+                      </a>
+                    )}
+                  </div>
                 </div>
               </div>
 

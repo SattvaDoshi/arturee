@@ -51,6 +51,7 @@ import AdminVideos    from './pages/admin/VideosPage'
 import AdminUsers     from './pages/admin/UsersPage'
 import AdminArtists   from './pages/admin/ArtistsPage'
 import AdminUpload    from './pages/admin/UploadPage'
+import AdminUploadSeries from './pages/admin/UploadSeriesPage'
 import AdminSlider    from './pages/admin/SliderPage'
 import AdminRevenue   from './pages/admin/RevenuePage'
 import AdminApps      from './pages/admin/ApplicationsPage'
@@ -134,6 +135,7 @@ const App = () => {
                 <Route path="/admin/users"     element={<AdminRoute><AdminUsers /></AdminRoute>} />
                 <Route path="/admin/artists"   element={<AdminRoute><AdminArtists /></AdminRoute>} />
                 <Route path="/admin/upload"    element={<AdminRoute><AdminUpload /></AdminRoute>} />
+                <Route path="/admin/upload-series" element={<AdminRoute><AdminUploadSeries /></AdminRoute>} />
                 <Route path="/admin/applications" element={<AdminRoute><AdminApps /></AdminRoute>} />
                 <Route path="/admin/genres"    element={<AdminRoute><AdminGenres /></AdminRoute>} />
               </Routes>

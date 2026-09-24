@@ -50,7 +50,7 @@ const DiscoverSection = () => {
     headline: 'Exclusive Art',
     subheadline: 'Art : Anywhere and Everywhere',
     ctaText: 'View All',
-    ctaLink: '/pricing',
+    ctaLink: '/genres',
     cards: DEFAULT_CARDS,
   })
 
@@ -66,7 +66,7 @@ const DiscoverSection = () => {
             headline: discover.headline || 'Exclusive Art',
             subheadline: discover.subheadline || 'Art : Anywhere and Everywhere',
             ctaText: discover.ctaText || 'View All',
-            ctaLink: discover.ctaLink || '/pricing',
+            ctaLink: discover.ctaLink || '/genres',
             cards:
               discover.cards?.length > 0 ? discover.cards : DEFAULT_CARDS,
           })
@@ -99,23 +99,30 @@ const DiscoverSection = () => {
             <p className="text-navy/70 mt-2 font-medium">{subheadline}</p>
           </div>
           <Link
-            to={ctaLink || '/pricing'}
+            to={ctaLink || '/genres'}
             className="bg-linear-to-r from-primary to-lime text-white px-6 py-2 rounded-full text-sm font-bold flex items-center gap-1 hover:shadow-lg hover:scale-105 transition-all"
           >
             {ctaText || 'View All'} <span className="text-sm">→</span>
           </Link>
         </div>
-        <div className="grid grid-cols-1 rounded-2xl sm:grid-cols-2 lg:grid-cols-[repeat(4,292px)] lg:justify-center gap-6 lg:auto-rows-[200px] auto-rows-[250px]">
+        <div className="grid grid-cols-1 rounded-2xl sm:grid-cols-2 lg:grid-cols-[repeat(4,292px)] lg:justify-center gap-6 lg:auto-rows-[200px]">
           {/* Large Hero Card (#1) */}
           <Link
             to={c1.link || '/pricing'}
-            className="lg:col-span-2 lg:row-span-2 rounded-2xl overflow-hidden group relative shadow-2xl"
+            className={`lg:col-span-2 lg:row-span-2 rounded-2xl overflow-hidden group relative shadow-2xl ${c1.videoId?.thumbnailUrl ? 'aspect-video lg:aspect-auto' : 'aspect-[4/5] sm:aspect-square lg:aspect-auto'}`}
           >
             <img
               alt={c1.title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+              className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 ${c1.videoId?.thumbnailUrl ? 'hidden lg:block' : ''}`}
               src={c1.imageUrl}
             />
+            {c1.videoId?.thumbnailUrl && (
+              <img
+                alt={c1.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 block lg:hidden"
+                src={c1.videoId.thumbnailUrl}
+              />
+            )}
             <div className="absolute inset-0 bg-linear-to-t from-[#1A1A1A]/60 via-transparent to-transparent"></div>
             <div className="absolute bottom-8 left-8 right-8 text-white">
               {c1.tag && (
@@ -137,13 +144,20 @@ const DiscoverSection = () => {
           {/* Tall Card (#2) */}
           <Link
             to={c2.link || '/pricing'}
-            className="lg:col-span-1 rounded-2xl lg:row-span-3 overflow-hidden group relative shadow-xl"
+            className={`lg:col-span-1 rounded-2xl lg:row-span-3 overflow-hidden group relative shadow-xl ${c2.videoId?.thumbnailUrl ? 'aspect-video lg:aspect-auto' : 'aspect-[4/5] sm:aspect-square lg:aspect-auto'}`}
           >
             <img
               alt={c2.title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+              className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 ${c2.videoId?.thumbnailUrl ? 'hidden lg:block' : ''}`}
               src={c2.imageUrl}
             />
+            {c2.videoId?.thumbnailUrl && (
+              <img
+                alt={c2.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 block lg:hidden"
+                src={c2.videoId.thumbnailUrl}
+              />
+            )}
             {c2.tag && (
               <div className="absolute top-6 left-6">
                 <span className="px-3 py-1 bg-primary/90 backdrop-blur-md text-white text-[10px] font-black uppercase rounded-full">
@@ -167,13 +181,20 @@ const DiscoverSection = () => {
           {/* Medium Card (#3) */}
           <Link
             to={c3.link || '/pricing'}
-            className="lg:col-span-1 rounded-2xl lg:row-span-2 overflow-hidden group relative shadow-xl"
+            className={`lg:col-span-1 rounded-2xl lg:row-span-2 overflow-hidden group relative shadow-xl ${c3.videoId?.thumbnailUrl ? 'aspect-video lg:aspect-auto' : 'aspect-[4/5] sm:aspect-square lg:aspect-auto'}`}
           >
             <img
               alt={c3.title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+              className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 ${c3.videoId?.thumbnailUrl ? 'hidden lg:block' : ''}`}
               src={c3.imageUrl}
             />
+            {c3.videoId?.thumbnailUrl && (
+              <img
+                alt={c3.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 block lg:hidden"
+                src={c3.videoId.thumbnailUrl}
+              />
+            )}
             {c3.tag && (
               <div className="absolute top-6 left-6">
                 <span className="px-3 py-1 bg-primary/90 backdrop-blur-md text-white text-[10px] font-black uppercase rounded-full">
@@ -197,13 +218,20 @@ const DiscoverSection = () => {
           {/* Medium Card 2 (#4) */}
           <Link
             to={c4.link || '/pricing'}
-            className="lg:col-span-1 rounded-2xl lg:row-span-2 overflow-hidden group relative shadow-xl"
+            className={`lg:col-span-1 rounded-2xl lg:row-span-2 overflow-hidden group relative shadow-xl ${c4.videoId?.thumbnailUrl ? 'aspect-video lg:aspect-auto' : 'aspect-[4/5] sm:aspect-square lg:aspect-auto'}`}
           >
             <img
               alt={c4.title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+              className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 ${c4.videoId?.thumbnailUrl ? 'hidden lg:block' : ''}`}
               src={c4.imageUrl}
             />
+            {c4.videoId?.thumbnailUrl && (
+              <img
+                alt={c4.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 block lg:hidden"
+                src={c4.videoId.thumbnailUrl}
+              />
+            )}
             {c4.tag && (
               <div className="absolute top-6 left-6">
                 <span className="px-3 py-1 bg-primary/90 backdrop-blur-md text-white text-[10px] font-black uppercase rounded-full">
@@ -227,13 +255,20 @@ const DiscoverSection = () => {
           {/* Small Card (#5) */}
           <Link
             to={c5.link || '/pricing'}
-            className="lg:col-span-1 rounded-2xl lg:row-span-1 overflow-hidden group relative shadow-xl"
+            className={`lg:col-span-1 rounded-2xl lg:row-span-1 overflow-hidden group relative shadow-xl ${c5.videoId?.thumbnailUrl ? 'aspect-video lg:aspect-auto' : 'aspect-[4/5] sm:aspect-square lg:aspect-auto'}`}
           >
             <img
               alt={c5.title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+              className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 ${c5.videoId?.thumbnailUrl ? 'hidden lg:block' : ''}`}
               src={c5.imageUrl}
             />
+            {c5.videoId?.thumbnailUrl && (
+              <img
+                alt={c5.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 block lg:hidden"
+                src={c5.videoId.thumbnailUrl}
+              />
+            )}
             {c5.tag && (
               <div className="absolute top-4 left-4">
                 <span className="px-2 py-0.5 bg-primary/90 backdrop-blur-md text-white text-[9px] font-black uppercase rounded-full">

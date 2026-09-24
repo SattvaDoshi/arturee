@@ -100,6 +100,7 @@ export default function LandingPageConfig() {
 
   const [allArtists, setAllArtists] = useState([])
   const [allGenres, setAllGenres] = useState([])
+  const [allVideos, setAllVideos] = useState([])
 
   const [config, setConfig] = useState({
     artistPage: {
@@ -127,7 +128,7 @@ export default function LandingPageConfig() {
       headline: 'Exclusive Art',
       subheadline: 'Art : Anywhere and Everywhere',
       ctaText: 'View All',
-      ctaLink: '/pricing',
+      ctaLink: '/genres',
       cards: DEFAULT_DISCOVER_CARDS,
     },
   })
@@ -137,10 +138,12 @@ export default function LandingPageConfig() {
     const fetchAll = async () => {
       setLoading(true)
       try {
-        const [configRes, artistsRes, genresRes] = await Promise.all([
+        const { videoApi } = await import('../../api/index.js')
+        const [configRes, artistsRes, genresRes, videosRes] = await Promise.all([
           landingConfigApi.get(),
           artistApi.list({ limit: 100 }),
           genreApi.list(),
+          videoApi.list({ limit: 1000 }),
         ])
 
         if (!isMounted) return
@@ -152,9 +155,14 @@ export default function LandingPageConfig() {
         const genreList = Array.isArray(genresRes.data?.data)
           ? genresRes.data.data
           : genresRes.data?.data?.genres || []
+        
+        const videoList = Array.isArray(videosRes.data?.data)
+          ? videosRes.data.data
+          : videosRes.data?.data?.videos || []
 
         setAllArtists(artistList)
         setAllGenres(genreList)
+        setAllVideos(videoList)
 
         // Normalize artistCards artistId reference
         const normalizedCards = (fetchedConfig.artistPage?.artistCards || []).map((card) => ({
@@ -171,10 +179,14 @@ export default function LandingPageConfig() {
           (g) => g._id || g
         )
 
-        const normalizedDiscoverCards =
+        const normalizedDiscoverCards = (
           fetchedConfig.discoverSection?.cards?.length > 0
             ? fetchedConfig.discoverSection.cards
             : DEFAULT_DISCOVER_CARDS
+        ).map(c => ({
+          ...c,
+          videoId: c.videoId?._id || c.videoId || ''
+        }))
 
         setConfig({
           artistPage: {
@@ -215,7 +227,7 @@ export default function LandingPageConfig() {
               fetchedConfig.discoverSection?.subheadline ||
               'Art : Anywhere and Everywhere',
             ctaText: fetchedConfig.discoverSection?.ctaText || 'View All',
-            ctaLink: fetchedConfig.discoverSection?.ctaLink || '/pricing',
+            ctaLink: fetchedConfig.discoverSection?.ctaLink || '/genres',
             cards: normalizedDiscoverCards,
           },
           pricingSection: {
@@ -452,7 +464,16 @@ export default function LandingPageConfig() {
         },
         genrePage: config.genrePage,
         heroSection: config.heroSection,
-        discoverSection: config.discoverSection,
+        discoverSection: {
+          ...config.discoverSection,
+          cards: (config.discoverSection?.cards || []).map(card => {
+            const newCard = { ...card }
+            if (newCard.videoId === '') {
+              delete newCard.videoId // Remove empty strings so mongoose doesn't crash on ObjectId cast
+            }
+            return newCard
+          })
+        },
         pricingSection: config.pricingSection,
       }
 
@@ -1082,11 +1103,36 @@ export default function LandingPageConfig() {
                                     className="w-full bg-[#071523] border border-white/20 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-[#4DD0E1]"
                                   />
                                 </div>
+                                <div>
+                                  <label className="block text-xs font-mono uppercase text-white/60 mb-1">
+                                    Linked Video (Optional)
+                                  </label>
+                                  <select
+                                    value={card.videoId || ''}
+                                    onChange={(e) => {
+                                      const val = e.target.value
+                                      updateDiscoverCard(idx, 'videoId', val)
+                                      if (val) {
+                                        // Auto-fill link if a video is selected
+                                        updateDiscoverCard(idx, 'link', `/video/${val}`)
+                                      }
+                                    }}
+                                    className="w-full bg-[#071523] border border-white/20 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-[#4DD0E1]"
+                                  >
+                                    <option value="">-- No Video Linked --</option>
+                                    {allVideos.map(v => (
+                                      <option key={v._id} value={v._id}>
+                                        {v.title}
+                                      </option>
+                                    ))}
+                                  </select>
+                                  <p className="text-[10px] text-white/40 mt-1">If set, its thumbnail is used on mobile screens.</p>
+                                </div>
                               </div>
 
                               <div>
                                 <label className="block text-xs font-mono uppercase text-white/60 mb-1">
-                                  Image URL (Or Upload Image)
+                                  Image URL (Desktop Poster)
                                 </label>
                                 <div className="flex items-center gap-2">
                                   <input

@@ -92,15 +92,27 @@ export const listAllVideos = asyncHandler(async (req, res) => {
   const limit = Math.min(100, parseInt(req.query.limit) || 20)
   const skip = (page - 1) * limit
 
+  const filter = {}
+  if (req.query.type === 'standalone') filter.seriesParentId = null
+  if (req.query.type === 'series') filter.status = 'series'
+  if (req.query.type === 'episode') filter.seriesParentId = { $ne: null }
+  if (!req.query.type || req.query.type === 'default') {
+    filter.seriesParentId = null // Default behavior: hide episodes
+  }
+  
+  if (req.query.parent_id) {
+    filter.seriesParentId = req.query.parent_id
+  }
+
   const [videos, total] = await Promise.all([
-    Video.find()
+    Video.find(filter)
       .populate('creatorId', 'name email')
       .populate('artistId', 'name')
       .populate('genre', 'name')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit),
-    Video.countDocuments(),
+    Video.countDocuments(filter),
   ])
 
   res.status(200).json({

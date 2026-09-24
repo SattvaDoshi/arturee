@@ -19,7 +19,15 @@ const EMPTY_FORM = {
 
 /* ─── Artist form modal ──────────────────────────────── */
 const ArtistFormModal = ({ initial, onClose, onSaved }) => {
-  const [form, setForm] = useState(initial || EMPTY_FORM)
+  const [form, setForm] = useState(() => {
+    if (!initial) return EMPTY_FORM
+    return {
+      ...initial,
+      instagram: initial.socialLinks?.instagram || '',
+      twitter: initial.socialLinks?.twitter || '',
+      website: initial.socialLinks?.website || '',
+    }
+  })
   const [saving, setSaving] = useState(false)
   const [error, setError]   = useState('')
   const isEdit = Boolean(initial?._id)
@@ -54,9 +62,18 @@ const ArtistFormModal = ({ initial, onClose, onSaved }) => {
     setSaving(true)
     setError('')
     try {
+      const payload = {
+        ...form,
+        socialLinks: {
+          instagram: form.instagram,
+          twitter: form.twitter,
+          website: form.website,
+        }
+      }
+      
       const res = isEdit
-        ? await artistApi.update(initial._id, form)
-        : await artistApi.create(form)
+        ? await artistApi.update(initial._id, payload)
+        : await artistApi.create(payload)
       onSaved(res.data?.data || res.data)
       onClose()
     } catch (err) {

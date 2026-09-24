@@ -1,4 +1,4 @@
-import React from 'react'
+﻿import React from 'react'
 import { Instagram } from 'lucide-react'
 import Navbar from '../../components/layout/Navbar'
 

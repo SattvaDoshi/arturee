@@ -173,7 +173,7 @@ export default function Purchased() {
               >
                 {/* Thumbnail */}
                 {(() => {
-                  const isVertical = item.genreName?.toUpperCase().includes('MOBILE')
+                  const isVertical = item.genreName?.toUpperCase().includes('MOBILE') || item.genreName?.toUpperCase().includes('SPOKEN WORD')
                   return (
                 <div className={`relative ${isVertical ? 'aspect-[9/16]' : 'aspect-video'} overflow-hidden`}>
                   <img

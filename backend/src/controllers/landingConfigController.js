@@ -9,6 +9,7 @@ export const getLandingConfig = asyncHandler(async (req, res) => {
     .populate('artistPage.artistCards.artistId')
     .populate('artistPage.featuredArtistId')
     .populate('genrePage.featuredGenres')
+    .populate('discoverSection.cards.videoId')
 
   if (!config) {
     const artists = await Artist.find({ isActive: true }).limit(8)
@@ -57,6 +58,7 @@ export const getLandingConfig = asyncHandler(async (req, res) => {
       .populate('artistPage.artistCards.artistId')
       .populate('artistPage.featuredArtistId')
       .populate('genrePage.featuredGenres')
+      .populate('discoverSection.cards.videoId')
   }
 
   if (config && (!config.pricingSection || !config.pricingSection.plans || config.pricingSection.plans.length === 0)) {
@@ -123,6 +125,7 @@ export const updateLandingConfig = asyncHandler(async (req, res) => {
     .populate('artistPage.artistCards.artistId')
     .populate('artistPage.featuredArtistId')
     .populate('genrePage.featuredGenres')
+    .populate('discoverSection.cards.videoId')
 
   res.status(200).json({ success: true, data: config })
 })

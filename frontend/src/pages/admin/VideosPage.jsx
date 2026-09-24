@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Plus, Trash2, Eye, EyeOff, Edit3, Loader2, CheckCircle, ChevronLeft, ChevronRight, Film, Archive } from 'lucide-react'
 import { toast } from '../../context/ToastContext'
 import AdminLayout from '../../components/layout/AdminLayout'
@@ -28,6 +28,7 @@ const StatusBadge = ({ status }) => {
 
 /* ─── Inline edit form ───────────────────────────────── */
 const EditForm = ({ video, artists, genres, onSave, onCancel }) => {
+  const navigate = useNavigate()
   const [form, setForm] = useState({
     title:       video.title || '',
     description: video.description || '',
@@ -222,6 +223,28 @@ const EditForm = ({ video, artists, genres, onSave, onCancel }) => {
           >
             Cancel
           </button>
+          
+          {video.status === 'series' && (
+            <>
+              <div className="w-px h-6 mx-2" style={{ background: 'rgba(255,255,255,0.1)' }} />
+              <button
+                onClick={() => navigate(`/admin/upload?seriesId=${video._id}`)}
+                className="px-4 py-1.5 rounded-lg text-xs font-bold transition border hover:bg-white/10"
+                style={{ borderColor: '#4DD0E1', color: '#4DD0E1' }}
+              >
+                + Add Episode
+              </button>
+              <button
+                onClick={() => {
+                  window.location.href = `/admin/videos?type=episode&parent_id=${video._id}`
+                }}
+                className="px-4 py-1.5 rounded-lg text-xs font-bold transition border hover:bg-white/10"
+                style={{ borderColor: 'rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.8)' }}
+              >
+                View Episodes
+              </button>
+            </>
+          )}
         </div>
       </td>
     </tr>
@@ -261,10 +284,17 @@ const Pagination = ({ page, totalPages, onChange }) => {
 /* ═══════════════════════════════════════════════════════ */
 export default function VideosPage() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  
+  const initialType = searchParams.get('type') || 'default'
+  const parentIdParam = searchParams.get('parent_id') || ''
+
   const [videos, setVideos]         = useState([])
   const [loading, setLoading]       = useState(true)
   const [page, setPage]             = useState(1)
   const [totalPages, setTotalPages] = useState(1)
+  const [typeFilter, setTypeFilter] = useState(initialType)
+  const [parentIdFilter, setParentIdFilter] = useState(parentIdParam)
   const [editingId, setEditingId]   = useState(null)
   const [actionId, setActionId]     = useState(null)
 
@@ -281,15 +311,15 @@ export default function VideosPage() {
   /* ── fetch ── */
   const fetchVideos = useCallback(() => {
     setLoading(true)
-    adminApi.listAllVideos({ page, limit: LIMIT })
+    adminApi.listAllVideos({ page, limit: LIMIT, type: typeFilter, parent_id: parentIdFilter || undefined })
       .then(res => {
         const d = res.data
         setVideos(d.data?.videos || d.data || [])
-        setTotalPages(d.data?.totalPages || d.totalPages || 1)
+        setTotalPages(d.data?.pagination?.totalPages || d.data?.totalPages || d.totalPages || 1)
       })
       .catch(() => setVideos([]))
       .finally(() => setLoading(false))
-  }, [page])
+  }, [page, typeFilter, parentIdFilter])
 
   useEffect(() => { fetchVideos() }, [fetchVideos])
 
@@ -352,17 +382,50 @@ export default function VideosPage() {
         {/* ── Header ── */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-black uppercase tracking-tight text-white">Videos</h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-black uppercase tracking-tight text-white">Videos</h1>
+              {parentIdFilter && (
+                <button
+                  onClick={() => window.location.href = '/admin/videos'}
+                  className="px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 text-xs font-bold text-white transition"
+                >
+                  Clear Filter
+                </button>
+              )}
+            </div>
             <p className="text-sm text-white/40 mt-0.5">Manage all video content on the platform.</p>
           </div>
-          <button
-            onClick={() => navigate('/admin/upload')}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition hover:opacity-90"
-            style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)', color: '#051d2e' }}
-          >
-            <Plus className="w-4 h-4" />
-            Upload New Video
-          </button>
+          <div className="flex items-center gap-3">
+            <select
+              value={typeFilter}
+              onChange={(e) => {
+                setTypeFilter(e.target.value)
+                setPage(1)
+              }}
+              className="bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-[#4DD0E1]/50 transition"
+            >
+              <option value="default" className="bg-[#051d2e] text-white">All Videos & Series</option>
+              <option value="standalone" className="bg-[#051d2e] text-white">Standalone Videos</option>
+              <option value="series" className="bg-[#051d2e] text-white">Series Only</option>
+              <option value="episode" className="bg-[#051d2e] text-white">Episodes Only</option>
+              <option value="all" className="bg-[#051d2e] text-white">Show Everything</option>
+            </select>
+            <button
+              onClick={() => navigate('/admin/upload-series')}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition border border-[#4DD0E1] text-[#4DD0E1] hover:bg-[#4DD0E1]/10"
+            >
+              <Plus className="w-4 h-4" />
+              Create Series
+            </button>
+            <button
+              onClick={() => navigate('/admin/upload')}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition hover:opacity-90"
+              style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)', color: '#051d2e' }}
+            >
+              <Plus className="w-4 h-4" />
+              Upload Video
+            </button>
+          </div>
         </div>
 
         {/* ── Table card ── */}
@@ -370,9 +433,9 @@ export default function VideosPage() {
           className="rounded-2xl border overflow-hidden"
           style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.08)' }}
         >
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto overflow-y-auto max-h-[calc(100vh-280px)] custom-scrollbar">
             <table className="w-full text-sm">
-              <thead>
+              <thead className="sticky top-0 z-10 backdrop-blur-md" style={{ background: 'rgba(7, 21, 35, 0.9)' }}>
                 <tr
                   className="text-white/30 text-[11px] uppercase tracking-widest border-b"
                   style={{ borderColor: 'rgba(255,255,255,0.07)' }}

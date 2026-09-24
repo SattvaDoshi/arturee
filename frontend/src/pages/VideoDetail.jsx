@@ -147,6 +147,7 @@ export default function VideoDetail() {
   const [reactions, setReactions] = useState({ party: 0, clap: 0, fire: 0, star: 0, heart: 0 })
   const [reacting, setReacting] = useState(false)
   const [activeReactions, setActiveReactions] = useState([])
+  const [activeEpisode, setActiveEpisode] = useState(null)
 
   const REACTION_TYPES = [
     { id: 'party', emoji: '🎉' },
@@ -156,7 +157,11 @@ export default function VideoDetail() {
     { id: 'heart', emoji: '❤️' },
   ]
 
-  const isVertical = video?.genre?.name?.toUpperCase().includes('MOBILE') || video?.category?.toUpperCase().includes('MOBILE')
+  const isVertical = 
+    video?.genre?.name?.toUpperCase().includes('MOBILE') || 
+    video?.category?.toUpperCase().includes('MOBILE') ||
+    video?.genre?.name?.toUpperCase().includes('SPOKEN WORD') ||
+    video?.category?.toUpperCase().includes('SPOKEN WORD')
 
   /* ── Fetch video ── */
   useEffect(() => {
@@ -168,10 +173,17 @@ export default function VideoDetail() {
     setLoading(true)
     setError('')
     setIsPlaying(false)
+    setActiveEpisode(null)
 
     videoApi.get(videoId)
       .then(res => {
-        setVideo(res.data.data)
+        const v = res.data.data
+        setVideo(v)
+        if (v.videoSource === 'series' && v.seriesEpisodes?.length > 0) {
+          // Sort episodes if they have episodeNumber, else keep original order
+          v.seriesEpisodes.sort((a, b) => (a.episodeNumber || 0) - (b.episodeNumber || 0))
+          setActiveEpisode(v.seriesEpisodes[0])
+        }
         if (res.data.data.reactions) {
           setReactions(res.data.data.reactions)
         }
@@ -316,127 +328,149 @@ export default function VideoDetail() {
               <div className="xl:col-span-2 space-y-6">
 
                 {/* ── Video player / preview ── */}
-                {/* YouTube videos: show the iframe directly (no play button needed) */}
-                {video?.videoSource === 'youtube' && (video?.price === 0 || purchased) ? (
-                  <div className={isVertical ? "w-full max-w-sm mx-auto aspect-[9/16]" : "aspect-video"}>
-                    <YouTubePlayer youtubeUrl={video.youtubeUrl} />
-                  </div>
-                ) : video?.videoSource === 'youtube' && video?.price > 0 && !purchased ? (
-                  // YouTube + paid + not purchased: show thumbnail lock
-                  <div
-                    className={`relative ${isVertical ? 'w-full max-w-sm mx-auto aspect-[9/16]' : 'aspect-video'} rounded-2xl overflow-hidden shadow-2xl border`}
-                    style={{ borderColor: 'rgba(77,208,225,0.25)' }}
-                  >
-                    <img src={video?.thumbnailUrl || FALLBACK_IMG} alt={video?.title} className="w-full h-full object-cover" />
-                    <div className="absolute inset-0" style={{ background: 'linear-gradient(to top,rgba(5,29,46,0.7),rgba(5,29,46,0.1))' }} />
-                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
-                      <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ background: 'rgba(5,29,46,0.7)', backdropFilter: 'blur(4px)', border: '2px solid rgba(77,208,225,0.5)' }}>
-                        <ShoppingCart className="w-7 h-7" style={{ color: C.primary }} />
-                      </div>
-                      <p className="text-white font-bold text-lg drop-shadow">Purchase to watch</p>
-                      <GradBtn onClick={handleBuy} className="flex items-center gap-2 px-6 py-3 rounded-full font-black text-[#051d2e]">
-                        <ShoppingCart className="w-4 h-4" />
-                        {video.costPrice && video.discountedPrice ? (
-                          <span className="flex items-center gap-2">
-                            <span style={{ textDecoration: 'line-through', opacity: 0.6, fontSize: '0.85em' }}>₹{video.costPrice}</span>
-                            Buy for ₹{video.discountedPrice}
-                          </span>
-                        ) : `Buy for ₹${effectivePrice}`}
-                      </GradBtn>
-                    </div>
-                  </div>
-                ) : isPlaying ? (
-                  <VideoPlayer videoId={videoId} poster={video?.thumbnailUrl || FALLBACK_IMG} user={user} isVertical={isVertical} />
-                ) : (
-                <div
-                  className={`relative ${isVertical ? 'w-full max-w-sm mx-auto aspect-[9/16]' : 'aspect-video'} rounded-2xl overflow-hidden shadow-2xl border`}
-                  style={{ borderColor: 'rgba(77,208,225,0.25)' }}
-                >
-                  <img
-                    src={video?.thumbnailUrl || FALLBACK_IMG}
-                    alt={video?.title}
-                    className="w-full h-full object-cover"
-                  />
-                  <div
-                    className="absolute inset-0"
-                    style={{ background: 'linear-gradient(to top,rgba(5,29,46,0.7),rgba(5,29,46,0.1))' }}
-                  />
+                {/* Calculate current video properties for series vs single */}
+                {(() => {
+                  const currentVideo = video?.videoSource === 'series' ? activeEpisode : video
+                  if (!currentVideo) return <div className="aspect-video bg-black/5 rounded-2xl flex items-center justify-center"><Loader2 className="animate-spin text-primary" /></div>
 
-                  {/* Lock overlay for paid-unpurchased */}
-                  {video?.price > 0 && !purchased && !checkingPurchase && (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+                  const isYoutube = currentVideo.videoSource === 'youtube' || currentVideo.youtubeUrl
+                  const needsPurchase = video?.price > 0 && !purchased && !checkingPurchase
+                  
+                  // For series container UI, we use the parent's poster and price overlay
+                  // But for playback, we use the child's id and url
+                  const targetVideoId = currentVideo._id || videoId
+                  const targetYoutubeUrl = currentVideo.youtubeUrl
+
+                  if (isYoutube && !needsPurchase) {
+                    return (
+                      <div className={isVertical ? "w-full max-w-sm mx-auto aspect-[9/16]" : "aspect-video"}>
+                        <YouTubePlayer youtubeUrl={targetYoutubeUrl} />
+                      </div>
+                    )
+                  }
+                  
+                  if (isYoutube && needsPurchase) {
+                    return (
                       <div
-                        className="w-16 h-16 rounded-full flex items-center justify-center"
-                        style={{ background: 'rgba(5,29,46,0.7)', backdropFilter: 'blur(4px)', border: '2px solid rgba(77,208,225,0.5)' }}
+                        className={`relative ${isVertical ? 'w-full max-w-sm mx-auto aspect-[9/16]' : 'aspect-video'} rounded-2xl overflow-hidden shadow-2xl border`}
+                        style={{ borderColor: 'rgba(77,208,225,0.25)' }}
                       >
-                        <ShoppingCart className="w-7 h-7" style={{ color: C.primary }} />
-                      </div>
-                      <p className="text-white font-bold text-lg drop-shadow">Purchase to watch</p>
-                      <GradBtn
-                        onClick={handleBuy}
-                        className="flex items-center gap-2 px-6 py-3 rounded-full font-black text-[#051d2e]"
-                      >
-                        <ShoppingCart className="w-4 h-4" />
-                        {video.costPrice && video.discountedPrice ? (
-                          <span className="flex items-center gap-2">
-                            <span style={{ textDecoration: 'line-through', opacity: 0.6, fontSize: '0.85em' }}>₹{video.costPrice}</span>
-                            Buy for ₹{video.discountedPrice}
-                          </span>
-                        ) : `Buy for ₹${effectivePrice}`}
-                      </GradBtn>
-                    </div>
-                  )}
-
-                  {/* Play button for free or purchased */}
-                  {(video?.price === 0 || purchased) && (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <button
-                        onClick={() => setIsPlaying(true)}
-                        className="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center transition hover:scale-110 shadow-2xl"
-                        style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)', boxShadow: '0 0 32px rgba(77,208,225,0.6)' }}
-                      >
-                        <Play className="w-7 h-7 md:w-9 md:h-9 ml-1" style={{ color: C.navy }} fill={C.navy} />
-                      </button>
-                    </div>
-                  )}
-
-                  {/* Price badge — dual pricing */}
-                  <div className="absolute top-4 right-4">
-                    {video?.price > 0 ? (
-                      video?.discountedPrice ? (
-                        <div className="flex flex-col items-end gap-1">
-                          <span className="px-3 py-1.5 rounded-full text-sm font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>
-                            ₹{video.discountedPrice}
-                          </span>
-                          {video.costPrice && (
-                            <span className="px-2 py-0.5 rounded-full text-xs font-semibold text-white/70" style={{ background: 'rgba(5,29,46,0.6)', textDecoration: 'line-through' }}>
-                              ₹{video.costPrice}
-                            </span>
-                          )}
+                        <img src={video?.thumbnailUrl || FALLBACK_IMG} alt={video?.title} className="w-full h-full object-cover" />
+                        <div className="absolute inset-0" style={{ background: 'linear-gradient(to top,rgba(5,29,46,0.7),rgba(5,29,46,0.1))' }} />
+                        <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+                          <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ background: 'rgba(5,29,46,0.7)', backdropFilter: 'blur(4px)', border: '2px solid rgba(77,208,225,0.5)' }}>
+                            <ShoppingCart className="w-7 h-7" style={{ color: C.primary }} />
+                          </div>
+                          <p className="text-white font-bold text-lg drop-shadow">Purchase to watch</p>
+                          <GradBtn onClick={handleBuy} className="flex items-center gap-2 px-6 py-3 rounded-full font-black text-[#051d2e]">
+                            <ShoppingCart className="w-4 h-4" />
+                            {video.costPrice && video.discountedPrice ? (
+                              <span className="flex items-center gap-2">
+                                <span style={{ textDecoration: 'line-through', opacity: 0.6, fontSize: '0.85em' }}>₹{video.costPrice}</span>
+                                Buy for ₹{video.discountedPrice}
+                              </span>
+                            ) : `Buy for ₹${effectivePrice}`}
+                          </GradBtn>
                         </div>
-                      ) : (
-                        <span className="px-3 py-1.5 rounded-full text-sm font-black text-white" style={{ background: 'linear-gradient(135deg,#4DD0E1,#00BCD4)', backdropFilter: 'blur(4px)' }}>
-                          ₹{video.price}
-                        </span>
-                      )
-                    ) : (
-                      <span className="px-3 py-1.5 rounded-full text-sm font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>
-                        Free
-                      </span>
-                    )}
-                  </div>
+                      </div>
+                    )
+                  }
 
-                  {/* Duration */}
-                  {video?.durationSeconds && (
+                  if (isPlaying) {
+                    return <VideoPlayer videoId={targetVideoId} poster={currentVideo.thumbnailUrl || video?.thumbnailUrl || FALLBACK_IMG} user={user} isVertical={isVertical} />
+                  }
+
+                  return (
                     <div
-                      className="absolute bottom-4 right-4 px-3 py-1.5 rounded-full text-xs font-semibold text-white"
-                      style={{ background: 'rgba(5,29,46,0.8)', backdropFilter: 'blur(4px)' }}
+                      className={`relative ${isVertical ? 'w-full max-w-sm mx-auto aspect-[9/16]' : 'aspect-video'} rounded-2xl overflow-hidden shadow-2xl border`}
+                      style={{ borderColor: 'rgba(77,208,225,0.25)' }}
                     >
-                      {fmtDuration(video.durationSeconds)}
+                      <img
+                        src={currentVideo.thumbnailUrl || video?.thumbnailUrl || FALLBACK_IMG}
+                        alt={currentVideo.title || video?.title}
+                        className="w-full h-full object-cover"
+                      />
+                      <div
+                        className="absolute inset-0"
+                        style={{ background: 'linear-gradient(to top,rgba(5,29,46,0.7),rgba(5,29,46,0.1))' }}
+                      />
+
+                      {/* Lock overlay for paid-unpurchased */}
+                      {needsPurchase && (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+                          <div
+                            className="w-16 h-16 rounded-full flex items-center justify-center"
+                            style={{ background: 'rgba(5,29,46,0.7)', backdropFilter: 'blur(4px)', border: '2px solid rgba(77,208,225,0.5)' }}
+                          >
+                            <ShoppingCart className="w-7 h-7" style={{ color: C.primary }} />
+                          </div>
+                          <p className="text-white font-bold text-lg drop-shadow">Purchase to watch</p>
+                          <GradBtn
+                            onClick={handleBuy}
+                            className="flex items-center gap-2 px-6 py-3 rounded-full font-black text-[#051d2e]"
+                          >
+                            <ShoppingCart className="w-4 h-4" />
+                            {video.costPrice && video.discountedPrice ? (
+                              <span className="flex items-center gap-2">
+                                <span style={{ textDecoration: 'line-through', opacity: 0.6, fontSize: '0.85em' }}>₹{video.costPrice}</span>
+                                Buy for ₹{video.discountedPrice}
+                              </span>
+                            ) : `Buy for ₹${effectivePrice}`}
+                          </GradBtn>
+                        </div>
+                      )}
+
+                      {/* Play button for free or purchased */}
+                      {!needsPurchase && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <button
+                            onClick={() => setIsPlaying(true)}
+                            className="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center transition hover:scale-110 shadow-2xl"
+                            style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)', boxShadow: '0 0 32px rgba(77,208,225,0.6)' }}
+                          >
+                            <Play className="w-7 h-7 md:w-9 md:h-9 ml-1" style={{ color: C.navy }} fill={C.navy} />
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Price badge — dual pricing (on parent container) */}
+                      <div className="absolute top-4 right-4">
+                        {video?.price > 0 ? (
+                          video?.discountedPrice ? (
+                            <div className="flex flex-col items-end gap-1">
+                              <span className="px-3 py-1.5 rounded-full text-sm font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>
+                                ₹{video.discountedPrice}
+                              </span>
+                              {video.costPrice && (
+                                <span className="px-2 py-0.5 rounded-full text-xs font-semibold text-white/70" style={{ background: 'rgba(5,29,46,0.6)', textDecoration: 'line-through' }}>
+                                  ₹{video.costPrice}
+                                </span>
+                              )}
+                            </div>
+                          ) : (
+                            <span className="px-3 py-1.5 rounded-full text-sm font-black text-white" style={{ background: 'linear-gradient(135deg,#4DD0E1,#00BCD4)', backdropFilter: 'blur(4px)' }}>
+                              ₹{video.price}
+                            </span>
+                          )
+                        ) : (
+                          <span className="px-3 py-1.5 rounded-full text-sm font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>
+                            Free
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Duration */}
+                      {currentVideo?.durationSeconds && (
+                        <div
+                          className="absolute bottom-4 right-4 px-3 py-1.5 rounded-full text-xs font-semibold text-white"
+                          style={{ background: 'rgba(5,29,46,0.8)', backdropFilter: 'blur(4px)' }}
+                        >
+                          {fmtDuration(currentVideo.durationSeconds)}
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-                )}
+                  )
+                })()}
 
                 {/* ── Title card ── */}
                 <GlassCard className="p-4 md:p-5">
@@ -596,6 +630,50 @@ export default function VideoDetail() {
                     </button>
                   </div>
                 </GlassCard>
+
+                {/* ── Series Episodes List ── */}
+                {video?.videoSource === 'series' && video?.seriesEpisodes?.length > 0 && (
+                  <GlassCard className="p-4 md:p-5">
+                    <h3 className="text-lg font-bold text-navy mb-4" style={{ color: C.navy }}>Episodes ({video.seriesEpisodes.length})</h3>
+                    <div className="space-y-3">
+                      {video.seriesEpisodes.map((ep) => {
+                        const isCurrent = activeEpisode?._id === ep._id;
+                        return (
+                          <div 
+                            key={ep._id} 
+                            onClick={() => { setActiveEpisode(ep); setIsPlaying(true) }}
+                            className={`flex gap-4 p-3 rounded-xl cursor-pointer transition ${isCurrent ? 'bg-[#4DD0E1]/10 border-[#4DD0E1] shadow-sm' : 'hover:bg-black/5 border-transparent'}`}
+                            style={{ border: isCurrent ? '1px solid #4DD0E1' : '1px solid transparent' }}
+                          >
+                            <div className="relative w-28 sm:w-36 aspect-video rounded-lg overflow-hidden shrink-0 bg-black/10">
+                              <img src={ep.thumbnailUrl || video.thumbnailUrl || FALLBACK_IMG} alt={ep.title} className="w-full h-full object-cover" />
+                              <div className="absolute bottom-1 right-1 bg-black/70 px-1.5 py-0.5 rounded text-[10px] text-white">
+                                {fmtDuration(ep.durationSeconds)}
+                              </div>
+                              {isCurrent && isPlaying && (
+                                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                                  <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>
+                                    <Play className="w-4 h-4 ml-0.5" style={{ color: C.navy }} fill={C.navy} />
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex-1 flex flex-col justify-center">
+                              <h4 className={`font-bold text-sm sm:text-base line-clamp-2`} style={{ color: isCurrent ? C.teal : C.navy }}>
+                                {ep.episodeNumber ? `${ep.episodeNumber}. ` : ''}{ep.title}
+                              </h4>
+                              <div className="mt-1 flex items-center gap-2">
+                                {ep.status !== 'ready' && ep.status !== 'youtube' && (
+                                  <span className="text-[10px] text-orange-500 font-bold uppercase">Processing</span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </GlassCard>
+                )}
 
                 {/* ── Description card ── */}
                 {video?.description && (

@@ -118,17 +118,17 @@ const Artist = () => {
   const specialties = useMemo(() => {
     const genreSet = new Set(['All'])
     genres.forEach((g) => {
-      if (g.name) genreSet.add(g.name)
+      if (g.name && g.name.trim()) genreSet.add(g.name.trim())
     })
     artists.forEach((a) => {
-      if (typeof a.genre === 'object' && a.genre?.name) {
-        genreSet.add(a.genre.name)
-      } else if (typeof a.genre === 'string' && a.genre.length !== 24) {
+      if (typeof a.genre === 'object' && a.genre?.name && a.genre.name.trim()) {
+        genreSet.add(a.genre.name.trim())
+      } else if (typeof a.genre === 'string' && a.genre.length !== 24 && a.genre.trim()) {
         // Only add string genres if they are not raw MongoDB ObjectIDs
-        genreSet.add(a.genre)
+        genreSet.add(a.genre.trim())
       }
     })
-    return Array.from(genreSet)
+    return Array.from(genreSet).filter(Boolean)
   }, [genres, artists])
 
   const filtered = useMemo(() => {

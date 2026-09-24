@@ -71,9 +71,10 @@ const videoSchema = new mongoose.Schema(
     // ── Video source ──────────────────────────────────────────────────────────
     // 'upload'  = hosted on S3/CloudFront (default)
     // 'youtube' = embedded from YouTube; no S3 asset needed
+    // 'series'  = container for multiple episode videos
     videoSource: {
       type: String,
-      enum: ['upload', 'youtube'],
+      enum: ['upload', 'youtube', 'series'],
       default: 'upload',
     },
     // YouTube video URL or ID — only set when videoSource === 'youtube'
@@ -81,6 +82,24 @@ const videoSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    
+    // ── Series Support ────────────────────────────────────────────────────────
+    // If videoSource === 'series', this holds the list of episode videos.
+    seriesEpisodes: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Video',
+    }],
+    // If this video is an episode, it links back to its parent series video.
+    seriesParentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Video',
+      default: null,
+    },
+    episodeNumber: {
+      type: Number,
+      default: null,
+    },
+
     status: {
       type: String,
       enum: [
@@ -91,6 +110,7 @@ const videoSchema = new mongoose.Schema(
         'failed',        // MediaConvert job failed
         'archived',
         'youtube',       // YouTube-hosted — always ready
+        'series',        // Series container — always ready
       ],
       default: 'draft',
     },

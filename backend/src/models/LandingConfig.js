@@ -32,6 +32,10 @@ const discoverCardSchema = new mongoose.Schema(
     imageUrl: { type: String, default: '' },
     tag: { type: String, default: '' },
     link: { type: String, default: '/pricing' },
+    videoId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Video',
+    },
   },
   { _id: false }
 )

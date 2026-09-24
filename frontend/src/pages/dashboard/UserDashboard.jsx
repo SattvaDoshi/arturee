@@ -507,7 +507,7 @@ export default function UserDashboard() {
               />
               <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
                 {genre.videos.map((v) => {
-                  const isVertical = genre.name?.toUpperCase().includes('MOBILE') || v.genre?.name?.toUpperCase().includes('MOBILE')
+                  const isVertical = genre.name?.toUpperCase().includes('MOBILE') || v.genre?.name?.toUpperCase().includes('MOBILE') || genre.name?.toUpperCase().includes('SPOKEN WORD') || v.genre?.name?.toUpperCase().includes('SPOKEN WORD')
                   return (
                   <Link to={`/video/${v._id}`} key={v._id} className={`flex-shrink-0 ${isVertical ? 'w-44 sm:w-52 md:w-64' : 'w-56 sm:w-64 md:w-72'} group cursor-pointer block`}>
                     <div className={`relative ${isVertical ? 'aspect-[9/16]' : 'aspect-video'} rounded-xl overflow-hidden mb-3 shadow-lg border border-[#4DD0E1]/20`}>

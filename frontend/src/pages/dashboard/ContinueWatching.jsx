@@ -93,7 +93,7 @@ export default function ContinueWatching() {
           {items.map((item) => {
             const video = item.videoId
             if (!video) return null
-            const isVertical = video.genre?.name?.toUpperCase().includes('MOBILE')
+            const isVertical = video.genre?.name?.toUpperCase().includes('MOBILE') || video.genre?.name?.toUpperCase().includes('SPOKEN WORD')
             const remainingSecs = Math.max(0, (video.durationSeconds || 0) - (item.currentTimestamp || 0))
             const viewsUsed = item.purchase?.viewsUsed || 0
             const viewsLeft = Math.max(0, 2 - viewsUsed)

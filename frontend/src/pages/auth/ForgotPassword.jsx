@@ -98,7 +98,7 @@ export default function ForgotPassword() {
               </div>
               <h3 className="text-lg font-bold text-[#051d2e] mb-2">Email Sent!</h3>
               <p className="text-sm text-[#051d2e]/60 mb-6">
-                We've sent a password reset link to <span className="font-bold text-[#051d2e]">{email}</span>.
+                If the email exists, a reset link has been sent.
               </p>
               <button
                 onClick={() => navigate('/login')}

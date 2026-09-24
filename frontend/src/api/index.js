@@ -92,6 +92,8 @@ export const videoApi = {
   react: (videoId, type) => api.post(`/videos/${videoId}/react`, { type }),
   update: (videoId, data) => api.patch(`/videos/${videoId}`, data),
   delete: (videoId) => api.delete(`/videos/${videoId}`),
+  // Series creation
+  createSeries: (data) => api.post('/videos/series', data),
   // YouTube-hosted video (no upload)
   createYoutube: (data) => api.post('/videos/youtube', data),
   // Admin upload (presigned multipart — requires S3 CORS to be configured)

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Upload, CheckCircle, ArrowRight, ArrowLeft, Film, Loader2 } from 'lucide-react'
 import AdminLayout from '../../components/layout/AdminLayout'
 import { videoApi, adminApi, artistApi, genreApi } from '../../api/index.js'
@@ -75,6 +75,7 @@ const inputCls = "w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.
 /* ═══════════════════════════════════════════════════════ */
 export default function UploadPage() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
 
   /* ── Step state ── */
   const [step, setStep] = useState(1)
@@ -93,15 +94,19 @@ export default function UploadPage() {
     artistId:        '',
     videoSource:     'upload',
     youtubeUrl:      '',
+    seriesParentId:  searchParams.get('seriesId') || '',
+    episodeNumber:   '',
   })
   const [metaError, setMetaError] = useState('')
 
   const [artists, setArtists] = useState([])
   const [genres, setGenres] = useState([])
+  const [seriesList, setSeriesList] = useState([])
 
   useEffect(() => {
     artistApi.list().then(res => setArtists(res.data?.data?.artists || res.data?.data || []))
     genreApi.list().then(res => setGenres(res.data?.data || []))
+    adminApi.listAllVideos({ limit: 100, type: 'series' }).then(res => setSeriesList(res.data?.data?.videos || []))
   }, [])
 
   const setM = (key) => (e) =>
@@ -169,6 +174,8 @@ export default function UploadPage() {
           tags: meta.tags,
           thumbnailUrl: meta.thumbnailUrl || undefined,
           artistId: meta.artistId || undefined,
+          seriesParentId: meta.seriesParentId || undefined,
+          episodeNumber: meta.episodeNumber ? Number(meta.episodeNumber) : undefined,
           isPublished: false,
         }
         const res = await videoApi.createYoutube(payload)
@@ -227,6 +234,8 @@ export default function UploadPage() {
       ))
       if (meta.thumbnailUrl) formData.append('thumbnailUrl', meta.thumbnailUrl)
       if (meta.artistId)     formData.append('artistId', meta.artistId)
+      if (meta.seriesParentId) formData.append('seriesParentId', meta.seriesParentId)
+      if (meta.episodeNumber)  formData.append('episodeNumber', String(meta.episodeNumber))
 
       /* POST to backend proxy — no CORS issues */
       const res = await videoApi.proxyUpload(formData, (e) => {
@@ -374,6 +383,25 @@ export default function UploadPage() {
                       ))}
                     </select>
                   </div>
+                </div>
+
+                {/* Series fields */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label>Assign to Series (Optional)</Label>
+                    <select value={meta.seriesParentId} onChange={setM('seriesParentId')} className={inputCls}>
+                      <option value="" className="bg-[#051d2e] text-white">None (Standalone Video)</option>
+                      {seriesList.map(s => (
+                        <option key={s._id} value={s._id} className="bg-[#051d2e] text-white">{s.title}</option>
+                      ))}
+                    </select>
+                  </div>
+                  {meta.seriesParentId && (
+                    <div>
+                      <Label>Episode Number</Label>
+                      <input type="number" min="1" value={meta.episodeNumber} onChange={setM('episodeNumber')} className={inputCls} placeholder="e.g. 7" />
+                    </div>
+                  )}
                 </div>
 
                 {metaError && <p className="text-xs text-red-400">{metaError}</p>}
