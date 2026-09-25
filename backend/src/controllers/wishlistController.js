@@ -5,7 +5,14 @@ import ApiError from '../utils/ApiError.js'
 
 export const getWishlist = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id)
-    .populate('wishlist', 'title thumbnailUrl price currency durationSeconds status isPublished viewCount createdAt')
+    .populate({
+      path: 'wishlist',
+      select: 'title thumbnailUrl price currency durationSeconds status isPublished viewCount createdAt genre artistId',
+      populate: [
+        { path: 'genre', select: 'name' },
+        { path: 'artistId', select: 'name' }
+      ]
+    })
   res.status(200).json({ success: true, data: user.wishlist || [] })
 })
 

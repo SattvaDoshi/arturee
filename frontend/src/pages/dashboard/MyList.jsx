@@ -3,10 +3,12 @@ import { Link } from 'react-router-dom'
 import { Play, ChevronLeft, BookmarkCheck, Trash2, Loader2 } from 'lucide-react'
 import UserLayout from '../../components/layout/UserLayout'
 import { wishlistApi } from '../../api/index.js'
+import { useCart } from '../../context/CartContext'
 
-const GENRES = ['All', 'Music', 'Comedy', 'Doc', 'Podcast']
+// Genres are now generated dynamically based on items in wishlist
 
 export default function MyList() {
+  const { toggleSavedList, isInSavedList } = useCart()
   const [activeGenre, setActiveGenre] = useState('All')
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
@@ -22,19 +24,17 @@ export default function MyList() {
     try {
       await wishlistApi.remove(videoId)
       setItems(prev => prev.filter(v => v._id !== videoId))
+      if (isInSavedList(videoId)) {
+        toggleSavedList({ id: videoId })
+      }
     } catch {}
   }
 
-  // Derive a rough genre from category field, defaulting to 'Other'
   const getGenre = (item) => {
-    if (!item.category) return 'Other'
-    const cat = item.category.toLowerCase()
-    if (cat.includes('music')) return 'Music'
-    if (cat.includes('comedy')) return 'Comedy'
-    if (cat.includes('doc')) return 'Doc'
-    if (cat.includes('podcast')) return 'Podcast'
-    return 'Other'
+    return item.genre?.name || 'Other'
   }
+
+  const availableGenres = ['All', ...new Set(items.map(getGenre).filter(Boolean))]
 
   const filtered = items.filter(item =>
     activeGenre === 'All' || getGenre(item) === activeGenre
@@ -65,7 +65,7 @@ export default function MyList() {
 
         {/* ── Genre filter ── */}
         <div className="flex flex-wrap gap-2 mt-6 mb-8">
-          {GENRES.map(g => (
+          {availableGenres.map(g => (
             <button
               key={g}
               onClick={() => setActiveGenre(g)}
@@ -115,7 +115,7 @@ export default function MyList() {
             {filtered.map((item) => (
               <div key={item._id} className="group relative">
                 <Link to={`/video/${item._id}`} className="block">
-                  <div className="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-md border border-[#4DD0E1]/20">
+                  <div className="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-md border border-[#4DD0E1]/20">
                     <img
                       src={item.thumbnailUrl || undefined}
                       alt={item.title}
@@ -134,28 +134,25 @@ export default function MyList() {
                     <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>
                       {formatPrice(item.price, item.currency)}
                     </div>
-                    <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold border border-white/30 text-white/80" style={{ background: 'rgba(5,29,46,0.55)' }}>{item.category || 'Video'}</div>
-                    {/* Bookmark saved indicator */}
-                    <div className="absolute bottom-2 right-2 p-1.5 rounded-full" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>
-                      <BookmarkCheck className="w-3.5 h-3.5 text-[#051d2e]" fill="#051d2e" />
+                    <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold border border-white/30 text-white/80" style={{ background: 'rgba(5,29,46,0.55)' }}>
+                      {item.genre?.name || 'Video'}
                     </div>
+                    {/* Bookmark saved indicator - click to remove */}
+                    <button 
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        remove(item._id)
+                      }}
+                      className="absolute bottom-2 right-2 p-1.5 rounded-full hover:scale-110 transition-transform cursor-pointer" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
+                      title="Remove from My List"
+                    >
+                      <BookmarkCheck className="w-3.5 h-3.5 text-[#051d2e]" fill="#051d2e" />
+                    </button>
                   </div>
                   <h3 className="font-black text-xs text-[#051d2e] truncate mb-0.5">{item.title}</h3>
-                  <p className="text-[10px] text-[#051d2e]/55">{item.category || 'Video'}</p>
+                  <p className="text-[10px] text-[#051d2e]/55">{item.genre?.name || 'Video'}</p>
                 </Link>
-                {/* Remove button — appears on hover */}
-                <button
-                  onClick={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    remove(item._id)
-                  }}
-                  title="Remove from My List"
-                  className="absolute top-2 left-2 p-1.5 rounded-full bg-red-500 text-white opacity-100 lg:opacity-0 group-hover:opacity-100 transition shadow-md hover:bg-red-600"
-                  style={{ zIndex: 10 }}
-                >
-                  <Trash2 className="w-3 h-3" />
-                </button>
               </div>
             ))}
           </div>

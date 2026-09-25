@@ -149,11 +149,15 @@ const Artist = () => {
     if (configuredCards.length > 0 && activeFilter === 'All' && !search) {
       const mapped = configuredCards
         .map((c) => {
-          const artistObj =
+          let artistObj =
             typeof c.artistId === 'object' && c.artistId?._id
               ? c.artistId
-              : artists.find((a) => (a._id || a.id) === c.artistId)
-          if (!artistObj) return null
+              : null
+          
+          const apiArtist = artists.find((a) => (a._id || a.id) === (artistObj?._id || c.artistId))
+          if (!artistObj && !apiArtist) return null
+          
+          artistObj = { ...(artistObj || {}), ...(apiArtist || {}) }
           return {
             artist: artistObj,
             tag: c.tag,
