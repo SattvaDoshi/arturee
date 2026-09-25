@@ -4,7 +4,7 @@ import {
   getAllCategorys,
   updateCategory,
   deleteCategory,
-} from '../controllers/CategoryController.js'
+} from '../controllers/categoryController.js'
 import authMiddleware from '../middlewares/authMiddleware.js'
 import adminMiddleware from '../middlewares/adminMiddleware.js'
 
