@@ -541,7 +541,7 @@ export default function UserDashboard() {
             <SectionHeader 
               title={`${category.icon || ''} ${category.name}`} 
               sub={category.description} 
-              viewAllTo="#"
+              viewAllTo={{ pathname: `/category/${category._id}`, state: { fromDashboard: true } }}
             />
             <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
               {category.videos.map((v) => {

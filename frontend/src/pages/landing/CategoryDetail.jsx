@@ -1,21 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom'
 import Navbar from '../../components/layout/Navbar'
-import { genreApi, videoApi } from '../../api'
+import { categoryApi, videoApi } from '../../api'
 import { ArrowLeft } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 
-const genreMetadataMap = {
-  'story telling': { icon: '📖', gradient: 'from-[#FFF9C4] to-[#F9A825]', accent: '#F9A825' },
-  'poetry': { icon: '✍️', gradient: 'from-[#B2EBF2] to-[#4DD0E1]', accent: '#4DD0E1' },
-  'spoken word': { icon: '🎙️', gradient: 'from-[#F8BBD0] to-[#ce6a6b]', accent: '#ce6a6b' },
-  'ghazal': { icon: '🎶', gradient: 'from-[#D1C4E9] to-[#7E57C2]', accent: '#7E57C2' },
-  'social cause': { icon: '🌍', gradient: 'from-[#DCEDC8] to-[#C0E863]', accent: '#8bc34a' },
-  'short films': { icon: '🎬', gradient: 'from-[#D1C4E9] to-[#7E57C2]', accent: '#7E57C2' },
-  'dance': { icon: '💃', gradient: 'from-[#DCEDC8] to-[#C0E863]', accent: '#8bc34a' },
-  'music': { icon: '🎵', gradient: 'from-[#FFE0B2] to-[#FF9800]', accent: '#FF9800' },
-  'visual art': { icon: '🎨', gradient: 'from-[#FCE4EC] to-[#E91E63]', accent: '#E91E63' },
-  'theatre': { icon: '🎭', gradient: 'from-[#CFD8DC] to-[#455A64]', accent: '#607D8B' },
+const categoryMetadataMap = {
+  'mobile view': { icon: '📱', gradient: 'from-[#D1C4E9] to-[#7E57C2]', accent: '#7E57C2' },
+  'web view': { icon: '💻', gradient: 'from-[#DCEDC8] to-[#C0E863]', accent: '#8bc34a' },
+  'desktop view': { icon: '🖥️', gradient: 'from-[#B2EBF2] to-[#4DD0E1]', accent: '#4DD0E1' },
 }
 
 const fallbackGradients = [
@@ -26,9 +19,9 @@ const fallbackGradients = [
   { icon: '🎨', gradient: 'from-[#FFE0B2] to-[#FF9800]', accent: '#FF9800' },
 ]
 
-const getGenreMeta = (genre) => {
-  const key = (genre.name || '').trim().toLowerCase()
-  return genreMetadataMap[key] || fallbackGradients[0]
+const getCategoryMeta = (category) => {
+  const key = (category.name || '').trim().toLowerCase()
+  return categoryMetadataMap[key] || fallbackGradients[Math.abs(key.length % fallbackGradients.length)] || fallbackGradients[0]
 }
 
 const fmtDuration = (secs) => {
@@ -38,11 +31,11 @@ const fmtDuration = (secs) => {
   return `${m}:${s < 10 ? '0' : ''}${s}`
 }
 
-const GenreDetail = () => {
-  const { genreId } = useParams()
+const CategoryDetail = () => {
+  const { categoryId } = useParams()
   const navigate = useNavigate()
   
-  const [genre, setGenre] = useState(null)
+  const [category, setCategory] = useState(null)
   const [videos, setVideos] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -53,37 +46,37 @@ const GenreDetail = () => {
       setLoading(true)
       setError(null)
       try {
-        const [genreRes, videoRes] = await Promise.all([
-          genreApi.list(),
+        const [categoryRes, videoRes] = await Promise.all([
+          categoryApi.list(),
           videoApi.list({ limit: 100 }),
         ])
         
         if (!isMounted) return
 
-        const genreList = Array.isArray(genreRes.data?.data)
-          ? genreRes.data.data
-          : genreRes.data?.data?.genres || []
+        const categoryList = Array.isArray(categoryRes.data?.data)
+          ? categoryRes.data.data
+          : categoryRes.data?.data?.categories || []
 
-        const currentGenre = genreList.find(g => (g._id || g.id) === genreId)
+        const currentCategory = categoryList.find(c => (c._id || c.id) === categoryId)
         
-        if (!currentGenre) {
-          setError('Genre not found.')
+        if (!currentCategory) {
+          setError('Category not found.')
           return
         }
         
-        setGenre(currentGenre)
+        setCategory(currentCategory)
 
         const videoList = Array.isArray(videoRes.data?.data)
           ? videoRes.data.data
           : videoRes.data?.data?.videos || []
 
-        const filtered = videoList.filter(v => (v.genre?._id || v.genre) === genreId)
+        const filtered = videoList.filter(v => v.categories?.some(cat => (cat._id || cat) === categoryId))
         setVideos(filtered)
 
       } catch (err) {
-        console.error('Failed to fetch genre details:', err)
+        console.error('Failed to fetch category details:', err)
         if (isMounted) {
-          setError('Unable to load genre details at the moment.')
+          setError('Unable to load category details at the moment.')
         }
       } finally {
         if (isMounted) setLoading(false)
@@ -92,7 +85,7 @@ const GenreDetail = () => {
 
     fetchData()
     return () => { isMounted = false }
-  }, [genreId])
+  }, [categoryId])
 
   const { state } = useLocation()
   const { isAuthenticated } = useAuth()
@@ -109,18 +102,18 @@ const GenreDetail = () => {
     )
   }
 
-  if (error || !genre) {
+  if (error || !category) {
     return (
       <div>
         {!fromDashboard && <Navbar />}
         <div className="min-h-screen bg-linear-to-br from-[#E0F7FA] via-[#B2EBF2] to-[#F1F8E9] pt-32 px-6">
           <div className="max-w-md mx-auto text-center bg-white/80 backdrop-blur-md rounded-3xl p-8 shadow-sm">
-            <p className="text-red-500 font-semibold mb-4">{error || 'Genre not found.'}</p>
+            <p className="text-red-500 font-semibold mb-4">{error || 'Category not found.'}</p>
             <button
-              onClick={() => navigate('/genres')}
+              onClick={() => navigate('/dashboard')}
               className="px-6 py-2 rounded-xl bg-primary text-white font-bold text-sm hover:opacity-90 transition-opacity"
             >
-              Back to Genres
+              Back to Dashboard
             </button>
           </div>
         </div>
@@ -128,7 +121,7 @@ const GenreDetail = () => {
     )
   }
 
-  const meta = getGenreMeta(genre)
+  const meta = getCategoryMeta(category)
 
   return (
     <div>
@@ -144,11 +137,11 @@ const GenreDetail = () => {
           <div className={`relative z-10 max-w-[1200px] mx-auto px-6 lg:px-20 ${fromDashboard ? 'pt-8 md:pt-12' : 'pt-24 md:pt-32'} pb-14`}>
             {/* Back Button */}
             <button
-              onClick={() => navigate(fromDashboard ? '/dashboard' : '/genres')}
+              onClick={() => navigate(fromDashboard ? '/dashboard' : '/dashboard')}
               className="flex items-center gap-2 mb-8 text-white/60 hover:text-white transition text-sm font-semibold cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
-              {fromDashboard ? 'Back to Dashboard' : 'All Genres'}
+              {fromDashboard ? 'Back to Dashboard' : 'Back'}
             </button>
 
             <div className="flex flex-col sm:flex-row items-center sm:items-end gap-6">
@@ -161,12 +154,12 @@ const GenreDetail = () => {
               <div className="text-center sm:text-left">
                 <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-none mb-3">
                   <span className={`bg-gradient-to-r ${meta.gradient} bg-clip-text text-transparent`}>
-                    {genre.name}
+                    {category.name}
                   </span>
                 </h1>
-                {genre.description && (
+                {category.description && (
                   <p className="text-white/55 text-base max-w-xl font-medium leading-relaxed">
-                    {genre.description}
+                    {category.description}
                   </p>
                 )}
                 <span
@@ -184,7 +177,7 @@ const GenreDetail = () => {
         <div className="px-6 lg:px-20 py-12 max-w-[1200px] mx-auto">
           {videos.length === 0 ? (
             <div className="text-center py-20 bg-white/60 backdrop-blur-md rounded-3xl border border-[#4DD0E1]/20 shadow-sm">
-              <p className="text-[#051d2e]/50 text-base font-medium">No videos available in {genre.name} yet.</p>
+              <p className="text-[#051d2e]/50 text-base font-medium">No videos available in {category.name} yet.</p>
               <p className="text-[#051d2e]/35 text-xs mt-1">Check back soon for upcoming performances!</p>
             </div>
           ) : (
@@ -194,14 +187,17 @@ const GenreDetail = () => {
                 const artistName = video.artistId?.name || video.artist || 'Artist'
                 const gradient = fallbackGradients[idx % fallbackGradients.length].gradient
 
+                // Determine aspect ratio for categories (e.g. mobile views might prefer portrait)
+                const isVertical = category.name?.toUpperCase().includes('MOBILE') || video.genre?.name?.toUpperCase().includes('MOBILE')
+                
                 return (
                   <Link
                     to={`/video/${videoId}`}
                     key={videoId}
-                    className="group cursor-pointer block rounded-2xl overflow-hidden border border-white/80 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
-                    style={{ background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(8px)' }}
+                    className="group cursor-pointer block rounded-2xl overflow-hidden border border-white/80 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 mx-auto w-full"
+                    style={{ background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(8px)', maxWidth: isVertical ? '300px' : 'none' }}
                   >
-                    <div className="relative overflow-hidden" style={{ aspectRatio: '16/9' }}>
+                    <div className="relative overflow-hidden" style={{ aspectRatio: isVertical ? '9/16' : '16/9' }}>
                       {video.thumbnailUrl ? (
                         <img
                           src={video.thumbnailUrl}
@@ -254,4 +250,4 @@ const GenreDetail = () => {
   )
 }
 
-export default GenreDetail
+export default CategoryDetail

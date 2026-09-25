@@ -26,6 +26,7 @@ import AboutUs      from './pages/landing/AboutUs'
 import ArtistPage   from './pages/landing/Artist'
 import Genre        from './pages/landing/Genre'
 import GenreDetail  from './pages/landing/GenreDetail'
+import CategoryDetail from './pages/landing/CategoryDetail'
 import Pricing      from './pages/landing/Pricing'
 
 // ── Auth ─────────────────────────────────────────────────
@@ -112,7 +113,7 @@ const App = () => {
                 <Route path="/artist/:artistId"    element={<ArtistDetail />} />
                 <Route path="/artist/marcus-cole"  element={<ArtistDetail />} />
                 <Route path="/genre/:genreId"      element={<GenreDetail />} />
-
+                <Route path="/category/:categoryId" element={<CategoryDetail />} />
                 {/* ── Auth ── */}
                 <Route path="/login"           element={<Login />} />
                 <Route path="/signup"          element={<Signup />} />
