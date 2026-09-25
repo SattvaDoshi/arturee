@@ -6,6 +6,8 @@ const artistSchema = new mongoose.Schema(
     bio: { type: String, default: '', maxlength: 2000 },
     avatarUrl: { type: String, default: null },
     genre: { type: String, default: null },
+    genres: { type: [String], default: [] },
+    specialties: { type: [String], default: [] },
     socialLinks: {
       instagram: { type: String, default: null },
       twitter: { type: String, default: null },

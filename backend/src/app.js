@@ -13,6 +13,8 @@ import adminRouter from './routes/adminRoutes.js'
 import artistRouter from './routes/artistRoutes.js'
 import wishlistRouter from './routes/wishlistRoutes.js'
 import genreRouter from './routes/genreRoutes.js'
+import categoryRouter from './routes/categoryRoutes.js'
+import specialtyRouter from './routes/SpecialtyRoutes.js'
 import landingConfigRouter from './routes/landingConfigRoutes.js'
 
 import { errorHandler, notFound } from './middlewares/errorHandler.js'
@@ -98,6 +100,8 @@ app.use('/api/admin', adminRouter)
 app.use('/api/artists', artistRouter)
 app.use('/api/wishlist', wishlistRouter)
 app.use('/api/genres', genreRouter)
+app.use('/api/categories', categoryRouter)
+app.use('/api/specialties', specialtyRouter)
 app.use('/api/landing-config', landingConfigRouter)
 
 // ── 404 + Error handlers (MUST be last) ──────────────────────────────────

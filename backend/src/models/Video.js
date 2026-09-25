@@ -68,6 +68,10 @@ const videoSchema = new mongoose.Schema(
       ref: 'Genre',
       default: null,
     },
+    categories: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Category',
+    }],
     // ── Video source ──────────────────────────────────────────────────────────
     // 'upload'  = hosted on S3/CloudFront (default)
     // 'youtube' = embedded from YouTube; no S3 asset needed

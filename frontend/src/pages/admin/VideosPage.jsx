@@ -4,7 +4,7 @@ import { Plus, Trash2, Eye, EyeOff, Edit3, Loader2, CheckCircle, ChevronLeft, Ch
 import { toast } from '../../context/ToastContext'
 import AdminLayout from '../../components/layout/AdminLayout'
 import ConfirmModal from '../../components/ui/ConfirmModal'
-import { adminApi, videoApi, artistApi, genreApi } from '../../api/index.js'
+import { adminApi, videoApi, artistApi, genreApi, categoryApi } from '../../api/index.js'
 
 /* ─── Status badge ───────────────────────────────────── */
 const STATUS_STYLES = {
@@ -27,7 +27,7 @@ const StatusBadge = ({ status }) => {
 }
 
 /* ─── Inline edit form ───────────────────────────────── */
-const EditForm = ({ video, artists, genres, onSave, onCancel }) => {
+const EditForm = ({ video, artists, genres, categories, onSave, onCancel }) => {
   const navigate = useNavigate()
   const [form, setForm] = useState({
     title:       video.title || '',
@@ -36,6 +36,7 @@ const EditForm = ({ video, artists, genres, onSave, onCancel }) => {
     costPrice:   video.costPrice ?? '',
     discountedPrice: video.discountedPrice ?? '',
     genre:       video.genre?._id || video.genre || '',
+    categories:  (video.categories || []).map(c => c._id || c),
     certification: video.certification || 'U',
     thumbnailUrl: video.thumbnailUrl || '',
     artistId:     video.artistId?._id || video.artistId || '',
@@ -74,10 +75,11 @@ const EditForm = ({ video, artists, genres, onSave, onCancel }) => {
     try {
       const submitData = {
         ...form,
-        tags: form.tags.split(',').map(t => t.trim()).filter(Boolean)
+        tags: form.tags.split(',').map(t => t.trim()).filter(Boolean),
+        categories: form.categories,
       }
       await videoApi.update(video._id, submitData)
-      onSave({ ...video, ...submitData })
+      onSave({ ...video, ...submitData, categories: form.categories.map(id => categories.find(c => c._id === id) || id) })
     } catch { /* silent */ } finally { setSaving(false) }
   }
 
@@ -159,6 +161,29 @@ const EditForm = ({ video, artists, genres, onSave, onCancel }) => {
                 <option key={g._id} value={g._id} className="bg-[#051d2e] text-white">{g.name}</option>
               ))}
             </select>
+          </div>
+          
+          <div className="flex flex-col gap-1 md:col-span-4">
+            <label className="text-[10px] text-white/35 font-semibold uppercase tracking-widest">Categories</label>
+            <div className="flex flex-wrap gap-2 mt-1">
+              {categories.map(c => (
+                <label key={c._id} className="flex items-center gap-2 text-white/70 text-sm cursor-pointer hover:text-white bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={form.categories.includes(c._id)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setForm(f => ({ ...f, categories: [...f.categories, c._id] }))
+                      } else {
+                        setForm(f => ({ ...f, categories: f.categories.filter(id => id !== c._id) }))
+                      }
+                    }}
+                    className="accent-[#4DD0E1]"
+                  />
+                  {c.icon} {c.name}
+                </label>
+              ))}
+            </div>
           </div>
           
           <div className="flex flex-col gap-1">
@@ -300,10 +325,12 @@ export default function VideosPage() {
 
   const [artists, setArtists] = useState([])
   const [genres, setGenres] = useState([])
+  const [categoriesList, setCategoriesList] = useState([])
 
   useEffect(() => {
     artistApi.list().then(res => setArtists(res.data?.data?.artists || res.data?.data || []))
     genreApi.list().then(res => setGenres(res.data?.data || []))
+    categoryApi.list().then(res => setCategoriesList(res.data?.data || []))
   }, [])
 
   const LIMIT = 10
@@ -480,7 +507,10 @@ export default function VideosPage() {
                       {/* Title */}
                       <td className="px-5 py-3">
                         <p className="text-white/85 font-semibold truncate max-w-[160px]">{video.title}</p>
-                        <p className="text-white/30 text-xs truncate max-w-[160px]">{video.genre?.name || '—'}</p>
+                        <p className="text-white/30 text-xs truncate max-w-[160px]">
+                          {video.genre?.name || '—'}
+                          {video.categories?.length > 0 && ` • ${video.categories.map(c => c.name || '').join(', ')}`}
+                        </p>
                       </td>
 
                       {/* Status */}
@@ -568,6 +598,7 @@ export default function VideosPage() {
                         video={video}
                         artists={artists}
                         genres={genres}
+                        categories={categoriesList}
                         onSave={handleEditSave}
                         onCancel={() => setEditingId(null)}
                       />

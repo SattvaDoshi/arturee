@@ -26,7 +26,7 @@ export const getArtist = asyncHandler(async (req, res) => {
 })
 
 export const createArtist = asyncHandler(async (req, res) => {
-  const { name, bio, avatarUrl, genre, isVerified, instagram, twitter, website, socialLinks: sl } = req.body
+  const { name, bio, avatarUrl, genre, genres, specialties, isVerified, instagram, twitter, website, socialLinks: sl } = req.body
   if (!name) throw new ApiError(400, 'name is required.')
 
   // Accept either nested socialLinks OR flat fields from the admin form
@@ -36,7 +36,7 @@ export const createArtist = asyncHandler(async (req, res) => {
     website:   website   || sl?.website   || null,
   }
 
-  const artist = await Artist.create({ name, bio, avatarUrl, genre, socialLinks, isVerified })
+  const artist = await Artist.create({ name, bio, avatarUrl, genre, genres, specialties, socialLinks, isVerified })
   res.status(201).json({ success: true, data: artist })
 })
 
@@ -45,7 +45,7 @@ export const updateArtist = asyncHandler(async (req, res) => {
   if (!artist) throw new ApiError(404, 'Artist not found.')
 
   const { instagram, twitter, website, socialLinks: sl, ...rest } = req.body
-  const allowed = ['name', 'bio', 'avatarUrl', 'genre', 'isVerified', 'isActive', 'emoticonCount', 'followerCount']
+  const allowed = ['name', 'bio', 'avatarUrl', 'genre', 'genres', 'specialties', 'isVerified', 'isActive', 'emoticonCount', 'followerCount']
   allowed.forEach(f => { if (rest[f] !== undefined) artist[f] = rest[f] })
 
   // Merge flat fields OR nested socialLinks into the existing sub-object

@@ -59,6 +59,7 @@ export const createYoutubeVideo = asyncHandler(async (req, res) => {
     isPublished = false,
     seriesParentId = null,
     episodeNumber = null,
+    categories = [],
   } = req.body
 
   if (!title)      throw new ApiError(400, 'title is required.')
@@ -87,6 +88,7 @@ export const createYoutubeVideo = asyncHandler(async (req, res) => {
     status:          'youtube',
     tags:            parsedTags,
     genre:           genre || null,
+    categories:      Array.isArray(categories) ? categories : (categories ? JSON.parse(categories) : []),
     certification,
     thumbnailUrl:    thumbnailUrl || null,
     artistId:        artistId || null,
@@ -113,7 +115,7 @@ export const createYoutubeVideo = asyncHandler(async (req, res) => {
 export const createSeries = asyncHandler(async (req, res) => {
   const {
     title, description = '', price = 0, costPrice, discountedPrice,
-    currency = 'INR', tags = [], genre = null, certification = 'U',
+    currency = 'INR', tags = [], genre = null, categories = [], certification = 'U',
     thumbnailUrl, artistId, isPublished = false
   } = req.body
 
@@ -135,6 +137,7 @@ export const createSeries = asyncHandler(async (req, res) => {
     status: 'series', // always ready container
     tags: parsedTags,
     genre: genre || null,
+    categories: Array.isArray(categories) ? categories : (categories ? JSON.parse(categories) : []),
     certification,
     thumbnailUrl: thumbnailUrl || null,
     artistId: artistId || null,
@@ -172,6 +175,7 @@ export const initiateUpload = asyncHandler(async (req, res) => {
     contentType = 'video/mp4',
     tags = [],
     genre = null,
+    categories = [],
     certification = 'U',
     thumbnailUrl,
     artistId,
@@ -200,6 +204,7 @@ export const initiateUpload = asyncHandler(async (req, res) => {
     creatorId,
     tags,
     genre,
+    categories: Array.isArray(categories) ? categories : (categories ? JSON.parse(categories) : []),
     certification,
     thumbnailUrl,
     artistId,
@@ -360,7 +365,7 @@ export const updateVideo = asyncHandler(async (req, res) => {
 
   const allowedFields = [
     'title', 'description', 'price', 'costPrice', 'discountedPrice',
-    'isPublished', 'tags', 'genre', 'thumbnailUrl', 'artistId',
+    'isPublished', 'tags', 'genre', 'categories', 'thumbnailUrl', 'artistId',
     'featured', 'status', 'durationSeconds', 'youtubeUrl', 'videoSource',
     'certification', 'seriesParentId', 'seriesEpisodes', 'episodeNumber'
   ]
@@ -393,6 +398,7 @@ export const getVideo = asyncHandler(async (req, res) => {
     .populate('creatorId', 'name email')
     .populate('artistId', 'name avatarUrl bio email isVerified')
     .populate('genre', 'name description')
+    .populate('categories', 'name description')
     .populate('seriesEpisodes', 'title durationSeconds thumbnailUrl status episodeNumber youtubeUrl videoSource price')
 
   if (!video || (!video.isPublished && !req.user?.role?.includes('admin'))) {
@@ -460,6 +466,7 @@ export const listVideos = asyncHandler(async (req, res) => {
   // Include S3-hosted, YouTube videos, and Series containers. Exclude child episodes.
   const filter = { isPublished: true, status: { $in: ['ready', 'youtube', 'series'] }, seriesParentId: null }
   if (req.query.genre) filter.genre = req.query.genre
+  if (req.query.categories) filter.categories = { $in: req.query.categories.split(',') }
   if (req.query.artistId) filter.artistId = req.query.artistId
   if (req.query.tags) filter.tags = { $in: req.query.tags.split(',') }
   if (req.query.featured === 'true') filter.featured = true
@@ -475,9 +482,10 @@ export const listVideos = asyncHandler(async (req, res) => {
 
   const [videos, total] = await Promise.all([
     Video.find(filter)
-      .select('title description thumbnailUrl price costPrice discountedPrice currency durationSeconds tags genre viewCount createdAt featured artistId reactions videoSource youtubeUrl')
+      .select('title description thumbnailUrl price costPrice discountedPrice currency durationSeconds tags genre categories viewCount createdAt featured artistId reactions videoSource youtubeUrl')
       .populate('artistId', 'name avatarUrl')
       .populate('genre', 'name')
+      .populate('categories', 'name')
       .sort(sortBy)
       .skip(skip)
       .limit(limit),
@@ -567,6 +575,7 @@ export const proxyUpload = asyncHandler(async (req, res) => {
     currency = 'INR',
     tags = '[]',
     genre = null,
+    categories = '[]',
     certification = 'U',
     thumbnailUrl,
     artistId,
@@ -596,6 +605,7 @@ export const proxyUpload = asyncHandler(async (req, res) => {
     creatorId,
     tags: parsedTags,
     genre: genre || null,
+    categories: Array.isArray(categories) ? categories : (categories ? JSON.parse(categories) : []),
     certification,
     thumbnailUrl: thumbnailUrl || null,
     artistId: artistId || null,

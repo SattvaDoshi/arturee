@@ -56,6 +56,8 @@ import AdminSlider    from './pages/admin/SliderPage'
 import AdminRevenue   from './pages/admin/RevenuePage'
 import AdminApps      from './pages/admin/ApplicationsPage'
 import AdminGenres    from './pages/admin/GenresPage'
+import AdminCategories from './pages/admin/CategoriesPage'
+import AdminSpecialties from './pages/admin/SpecialtiesPage'
 import AdminLandingConfig from './pages/admin/LandingPageConfig'
 
 // ── Shared ────────────────────────────────────────────────
@@ -138,6 +140,8 @@ const App = () => {
                 <Route path="/admin/upload-series" element={<AdminRoute><AdminUploadSeries /></AdminRoute>} />
                 <Route path="/admin/applications" element={<AdminRoute><AdminApps /></AdminRoute>} />
                 <Route path="/admin/genres"    element={<AdminRoute><AdminGenres /></AdminRoute>} />
+                <Route path="/admin/categories" element={<AdminRoute><AdminCategories /></AdminRoute>} />
+                <Route path="/admin/specialties" element={<AdminRoute><AdminSpecialties /></AdminRoute>} />
               </Routes>
             </BrowserRouter>
           </CartProvider>

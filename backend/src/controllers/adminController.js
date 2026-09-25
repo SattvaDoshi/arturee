@@ -109,6 +109,7 @@ export const listAllVideos = asyncHandler(async (req, res) => {
       .populate('creatorId', 'name email')
       .populate('artistId', 'name')
       .populate('genre', 'name')
+      .populate('categories', 'name')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit),
@@ -228,6 +229,7 @@ export const getRevenueStats = asyncHandler(async (req, res) => {
           title: '$video.title',
           thumbnailUrl: '$video.thumbnailUrl',
           genre: '$video.genre',
+          categories: '$video.categories',
           price: '$video.price',
           viewCount: '$video.viewCount',
           revenue: 1,
@@ -252,6 +254,7 @@ export const getRevenueStats = asyncHandler(async (req, res) => {
           title: '$video.title',
           thumbnailUrl: '$video.thumbnailUrl',
           genre: '$video.genre',
+          categories: '$video.categories',
           price: '$video.price',
           viewCount: '$video.viewCount',
           revenue: 1,

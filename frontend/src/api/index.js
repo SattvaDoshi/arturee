@@ -175,6 +175,22 @@ export const genreApi = {
   delete: (id) => api.delete(`/genres/${id}`),
 }
 
+// ── Categories ────────────────────────────────────────────────────────────
+export const categoryApi = {
+  list: () => api.get('/categories'),
+  create: (data) => api.post('/categories', data),
+  update: (id, data) => api.patch(`/categories/${id}`, data),
+  delete: (id) => api.delete(`/categories/${id}`),
+}
+
+// ── Specialties ────────────────────────────────────────────────────────────
+export const specialtyApi = {
+  list: () => api.get('/specialties'),
+  create: (data) => api.post('/specialties', data),
+  update: (id, data) => api.put(`/specialties/${id}`, data),
+  delete: (id) => api.delete(`/specialties/${id}`),
+}
+
 // ── Landing Page Config ───────────────────────────────────────────────────
 export const landingConfigApi = {
   get: () => api.get('/landing-config'),

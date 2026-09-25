@@ -14,7 +14,8 @@ export default function SliderPage() {
     // Fetch all ready videos
     adminApi.listAllVideos({ limit: 1000 })
       .then(res => {
-        const allVids = res.data.data.videos.filter(v => v.status === 'ready' && v.isPublished)
+        const allowedStatuses = ['ready', 'youtube', 'series']
+        const allVids = res.data.data.videos.filter(v => allowedStatuses.includes(v.status))
         setVideos(allVids)
         // Extract initially featured videos sorted by order
         const featured = allVids.filter(v => v.featured).sort((a, b) => (a.featuredOrder || 0) - (b.featuredOrder || 0))

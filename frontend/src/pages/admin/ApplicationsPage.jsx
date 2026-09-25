@@ -128,7 +128,15 @@ export default function ApplicationsPage() {
                       <td className="px-5 py-3">
                         <p className="text-white font-semibold">{app.name}</p>
                         <p className="text-white/40 text-xs">{app.email}</p>
-                        {app.specialty && <p className="text-[#4DD0E1] text-xs mt-0.5">{app.specialty}</p>}
+                        {((app.specialties && app.specialties.length > 0) || app.specialty) && (
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {(app.specialties?.length > 0 ? app.specialties : [app.specialty]).map((s, i) => (
+                              <span key={i} className="text-[#4DD0E1] text-[10px] font-semibold bg-[#4DD0E1]/10 px-1.5 py-0.5 rounded">
+                                {s}
+                              </span>
+                            ))}
+                          </div>
+                        )}
                       </td>
                       <td className="px-5 py-3 text-white/70 text-xs space-y-1">
                         <p>Tel: {app.phone}</p>

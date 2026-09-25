@@ -26,6 +26,8 @@ const navItems = [
   { label: "Users",     icon: Users,            to: "/admin/users" },
   { label: "Artists",   icon: UserCheck,        to: "/admin/artists" },
   { label: "Genres",    icon: Bookmark,         to: "/admin/genres" },
+  { label: "Categories",icon: Bookmark,         to: "/admin/categories" },
+  { label: "Specialties", icon: Bookmark,       to: "/admin/specialties" },
   { label: "Applications", icon: Briefcase,     to: "/admin/applications" },
 ];
 

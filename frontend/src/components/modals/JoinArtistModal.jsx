@@ -23,7 +23,8 @@ const JoinArtistModal = () => {
     whatsapp: '',
     email: '',
     videoLink: '',
-    specialty: '',
+    specialty: '', // keeping for fallback/compat
+    specialties: [],
     agreeTerms: false,
   })
   
@@ -87,6 +88,7 @@ const JoinArtistModal = () => {
         email: '',
         videoLink: '',
         specialty: '',
+        specialties: [],
         agreeTerms: false,
       })
     }, 300)
@@ -150,18 +152,31 @@ const JoinArtistModal = () => {
               </div>
 
               <div>
-                <select
-                  name="specialty"
-                  required
-                  value={formData.specialty}
-                  onChange={handleChange}
-                  className={`w-full px-4 py-3 bg-lightgray/50 border border-primary/20 rounded-xl focus:outline-none focus:border-primary focus:bg-white transition-all text-sm ${formData.specialty ? 'text-navy' : 'text-navy/40'}`}
-                >
-                  <option value="" disabled>Select Specialty (Genre)</option>
-                  {genres.map(g => (
-                    <option key={g._id || g.id} value={g.name} className="text-navy">{g.name}</option>
-                  ))}
-                </select>
+                <label className="block text-xs font-semibold text-navy/70 mb-2">Specialties (Select all that apply) <span className="text-red-500">*</span></label>
+                <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto custom-scrollbar p-2 bg-lightgray/30 rounded-xl border border-primary/20">
+                  {genres.map(g => {
+                    const isSelected = formData.specialties.includes(g.name);
+                    return (
+                      <label key={g._id || g.id} className={`cursor-pointer px-3 py-1.5 rounded-lg text-xs font-semibold border transition select-none ${isSelected ? 'bg-primary/20 border-primary text-primary' : 'bg-white border-primary/10 text-navy/60 hover:border-primary/40'}`}>
+                        <input 
+                          type="checkbox" 
+                          className="hidden" 
+                          checked={isSelected}
+                          onChange={(e) => {
+                            const checked = e.target.checked;
+                            setFormData(prev => {
+                              const newSpecs = checked 
+                                ? [...prev.specialties, g.name] 
+                                : prev.specialties.filter(name => name !== g.name);
+                              return { ...prev, specialties: newSpecs, specialty: newSpecs.join(', ') };
+                            });
+                          }}
+                        />
+                        {g.name}
+                      </label>
+                    )
+                  })}
+                </div>
               </div>
               
               <div className="flex flex-col gap-4">
@@ -288,7 +303,7 @@ const JoinArtistModal = () => {
               
               <button 
                 type="submit" 
-                disabled={!formData.agreeTerms || isSubmitting}
+                disabled={!formData.agreeTerms || isSubmitting || formData.specialties.length === 0}
                 className="w-full mt-6 flex justify-center py-3.5 bg-linear-to-r from-primary to-lime text-white font-black uppercase tracking-wider text-sm rounded shadow-[4px_4px_0px_rgba(77,208,225,0.4)] hover:shadow-none hover:translate-y-1 hover:translate-x-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-[4px_4px_0px_rgba(77,208,225,0.4)] disabled:hover:translate-y-0 disabled:hover:translate-x-0"
               >
                 {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Submit Application'}

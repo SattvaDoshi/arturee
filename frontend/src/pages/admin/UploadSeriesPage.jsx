@@ -2,22 +2,25 @@ import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Upload, CheckCircle, ArrowRight, ArrowLeft, Film, Loader2, Plus, Trash2 } from 'lucide-react'
 import AdminLayout from '../../components/layout/AdminLayout'
-import { videoApi, adminApi, artistApi, genreApi } from '../../api/index.js'
+import { videoApi, adminApi, artistApi, genreApi, categoryApi } from '../../api/index.js'
 
 export default function UploadSeriesPage() {
   const navigate = useNavigate()
 
   const [artists, setArtists] = useState([])
   const [genres, setGenres] = useState([])
+  const [categoriesList, setCategoriesList] = useState([])
 
   useEffect(() => {
     artistApi.list().then(res => setArtists(res.data?.data?.artists || res.data?.data || []))
     genreApi.list().then(res => setGenres(res.data?.data || []))
+    categoryApi.list().then(res => setCategoriesList(res.data?.data || []))
   }, [])
 
   const [meta, setMeta] = useState({
     title: '', description: '', price: 0, costPrice: '', discountedPrice: '',
-    genre: '', certification: 'U', tags: '', thumbnailUrl: '', artistId: '',
+    genre: '', categories: [], certification: 'U', tags: '', thumbnailUrl: '', artistId: '',
+    isPublished: true,
   })
   const [episodes, setEpisodes] = useState([
     { id: 1, title: 'Episode 1', file: null, progress: 0, uploading: false, done: false, error: '' }
@@ -51,12 +54,13 @@ export default function UploadSeriesPage() {
     setIsSubmitting(true)
 
     try {
-      // 1. Create Series Container
       const seriesRes = await videoApi.createSeries({
         ...meta,
         price: Number(meta.price) || 0,
         costPrice: meta.costPrice ? Number(meta.costPrice) : undefined,
         discountedPrice: meta.discountedPrice ? Number(meta.discountedPrice) : undefined,
+        categories: meta.categories,
+        isPublished: meta.isPublished,
       })
       const newSeriesId = seriesRes.data.data.videoId
       setSeriesId(newSeriesId)
@@ -150,7 +154,18 @@ export default function UploadSeriesPage() {
         )}
 
         <div className="rounded-2xl border p-6 space-y-5 bg-white/5 border-white/10">
-          <h2 className="text-lg font-bold text-white mb-2">Series Metadata</h2>
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-lg font-bold text-white mb-2">Series Metadata</h2>
+            <label className="flex items-center gap-2 text-sm text-white font-bold cursor-pointer">
+              <input 
+                type="checkbox" 
+                checked={meta.isPublished} 
+                onChange={e => setMeta(p => ({...p, isPublished: e.target.checked}))}
+                className="w-4 h-4 accent-[#4DD0E1]"
+              />
+              Publish Immediately
+            </label>
+          </div>
           <div>
             <label className="block text-[10px] text-white/35 font-semibold uppercase tracking-widest mb-1">Series Title <span className="text-red-400">*</span></label>
             <input className={inputCls} value={meta.title} onChange={e => setMeta(p => ({...p, title: e.target.value}))} placeholder="e.g. The Dreamers (Season 1)" />
@@ -180,6 +195,28 @@ export default function UploadSeriesPage() {
                   <option key={g._id} value={g._id} className="bg-[#051d2e] text-white">{g.name}</option>
                 ))}
               </select>
+            </div>
+            <div className="md:col-span-5">
+              <label className="block text-[10px] text-white/35 font-semibold uppercase tracking-widest mb-1">Categories</label>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {categoriesList.map(c => (
+                  <label key={c._id} className="flex items-center gap-2 text-white/70 text-sm cursor-pointer hover:text-white bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={meta.categories.includes(c._id)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setMeta(m => ({ ...m, categories: [...m.categories, c._id] }))
+                        } else {
+                          setMeta(m => ({ ...m, categories: m.categories.filter(id => id !== c._id) }))
+                        }
+                      }}
+                      className="accent-[#4DD0E1]"
+                    />
+                    {c.icon} {c.name}
+                  </label>
+                ))}
+              </div>
             </div>
             <div>
               <label className="block text-[10px] text-white/35 font-semibold uppercase tracking-widest mb-1">Rating</label>

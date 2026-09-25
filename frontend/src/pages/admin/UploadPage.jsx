@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Upload, CheckCircle, ArrowRight, ArrowLeft, Film, Loader2 } from 'lucide-react'
 import AdminLayout from '../../components/layout/AdminLayout'
-import { videoApi, adminApi, artistApi, genreApi } from '../../api/index.js'
+import { videoApi, adminApi, artistApi, genreApi, categoryApi } from '../../api/index.js'
 import api from '../../api/index.js'
 import { toast } from '../../context/ToastContext.jsx'
 
@@ -96,16 +96,19 @@ export default function UploadPage() {
     youtubeUrl:      '',
     seriesParentId:  searchParams.get('seriesId') || '',
     episodeNumber:   '',
+    categories:      [],
   })
   const [metaError, setMetaError] = useState('')
 
   const [artists, setArtists] = useState([])
   const [genres, setGenres] = useState([])
+  const [categoriesList, setCategoriesList] = useState([])
   const [seriesList, setSeriesList] = useState([])
 
   useEffect(() => {
     artistApi.list().then(res => setArtists(res.data?.data?.artists || res.data?.data || []))
     genreApi.list().then(res => setGenres(res.data?.data || []))
+    categoryApi.list().then(res => setCategoriesList(res.data?.data || []))
     adminApi.listAllVideos({ limit: 100, type: 'series' }).then(res => setSeriesList(res.data?.data?.videos || []))
   }, [])
 
@@ -170,6 +173,7 @@ export default function UploadPage() {
           discountedPrice: meta.discountedPrice ? Number(meta.discountedPrice) : undefined,
           youtubeUrl: meta.youtubeUrl,
           genre: meta.genre || undefined,
+          categories: meta.categories,
           certification: meta.certification,
           tags: meta.tags,
           thumbnailUrl: meta.thumbnailUrl || undefined,
@@ -228,6 +232,7 @@ export default function UploadPage() {
       if (meta.discountedPrice) formData.append('discountedPrice', String(meta.discountedPrice))
       formData.append('currency', 'INR')
       if (meta.genre) formData.append('genre', meta.genre)
+      formData.append('categories', JSON.stringify(meta.categories))
       formData.append('certification', meta.certification)
       formData.append('tags', JSON.stringify(
         meta.tags.split(',').map(t => t.trim()).filter(Boolean)
@@ -352,6 +357,28 @@ export default function UploadPage() {
                         <option key={g._id} value={g._id} className="bg-[#051d2e] text-white">{g.name}</option>
                       ))}
                     </select>
+                  </div>
+                  <div className="md:col-span-4">
+                    <Label>Categories</Label>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {categoriesList.map(c => (
+                        <label key={c._id} className="flex items-center gap-2 text-white/70 text-sm cursor-pointer hover:text-white bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg transition-colors">
+                          <input
+                            type="checkbox"
+                            checked={meta.categories.includes(c._id)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setMeta(m => ({ ...m, categories: [...m.categories, c._id] }))
+                              } else {
+                                setMeta(m => ({ ...m, categories: m.categories.filter(id => id !== c._id) }))
+                              }
+                            }}
+                            className="accent-[#4DD0E1]"
+                          />
+                          {c.icon} {c.name}
+                        </label>
+                      ))}
+                    </div>
                   </div>
                   <div>
                     <Label>Rating</Label>

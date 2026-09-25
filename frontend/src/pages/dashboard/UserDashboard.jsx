@@ -7,7 +7,7 @@ import {
 } from 'lucide-react'
 import UserLayout from '../../components/layout/UserLayout'
 import { useCart } from '../../context/CartContext'
-import { videoApi, wishlistApi, purchaseApi, progressApi, genreApi } from '../../api/index.js'
+import { videoApi, wishlistApi, purchaseApi, progressApi, genreApi, categoryApi } from '../../api/index.js'
 
 /* ─── Fallback thumbnail ─────────────────────────────────── */
 const FALLBACK_IMG = undefined
@@ -245,6 +245,7 @@ export default function UserDashboard() {
 
   // ── Content rows ──────────────────────────────────────
   const [genresWithVideos, setGenresWithVideos] = useState([])
+  const [categoriesWithVideos, setCategoriesWithVideos] = useState([])
   const [latestVideos, setLatestVideos] = useState([])
   const [continueWatching, setContinueWatching] = useState([])
   const [wishlist, setWishlist] = useState([])
@@ -265,22 +266,30 @@ export default function UserDashboard() {
       })
       .catch(() => setLoadingHero(false))
 
-    // Fetch genres and all videos to group them
+    // Fetch genres, categories, and all videos to group them
     Promise.all([
       genreApi.list(),
+      categoryApi.list(),
       videoApi.list({ limit: 100, sort: 'new' })
-    ]).then(([genreRes, videoRes]) => {
+    ]).then(([genreRes, categoryRes, videoRes]) => {
       const allGenres = genreRes.data?.data || []
+      const allCategories = categoryRes.data?.data || []
       const allVideos = videoRes.data?.data?.videos || []
       
       setLatestVideos(allVideos.slice(0, 8))
 
-      const grouped = allGenres.map(g => {
+      const groupedGenres = allGenres.map(g => {
         const vids = allVideos.filter(v => v.genre?._id === g._id || v.genre === g._id)
         return { ...g, videos: vids }
       }).filter(g => g.videos.length > 0)
       
-      setGenresWithVideos(grouped)
+      const groupedCategories = allCategories.map(c => {
+        const vids = allVideos.filter(v => v.categories?.some(cat => cat._id === c._id || cat === c._id))
+        return { ...c, videos: vids }
+      }).filter(c => c.videos.length > 0)
+      
+      setGenresWithVideos(groupedGenres)
+      setCategoriesWithVideos(groupedCategories)
     }).catch(() => {}).finally(() => setLoadingContent(false))
 
     // User-specific: wishlist, purchases, watch progress
@@ -530,10 +539,42 @@ export default function UserDashboard() {
               </div>
             </div>
           ))
-        ) : (
-          <p className="text-[#051d2e]/40 text-sm py-6 text-center">No videos yet — check back soon!</p>
-        )}
+        ) : null}
 
+        {/* Categories sections */}
+        {!loadingContent && categoriesWithVideos.length > 0 && categoriesWithVideos.map((category) => (
+          <div key={`cat-${category._id}`}>
+            <SectionHeader 
+              title={`${category.icon || ''} ${category.name}`} 
+              sub={category.description} 
+              viewAllTo="#"
+            />
+            <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
+              {category.videos.map((v) => {
+                const isVertical = category.name?.toUpperCase().includes('MOBILE') || v.genre?.name?.toUpperCase().includes('MOBILE')
+                return (
+                <Link to={`/video/${v._id}`} key={`cat-vid-${v._id}`} className={`flex-shrink-0 ${isVertical ? 'w-44 sm:w-52 md:w-64' : 'w-56 sm:w-64 md:w-72'} group cursor-pointer block`}>
+                  <div className={`relative ${isVertical ? 'aspect-[9/16]' : 'aspect-video'} rounded-xl overflow-hidden mb-3 shadow-lg border border-[#4DD0E1]/20`}>
+                    <img src={v.thumbnailUrl || FALLBACK_IMG} alt={v.title} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
+                    {isVertical ? <HoverOverlayTall /> : <HoverOverlayWide />}
+                    <VideoActionButtons videoId={v._id} videoData={{ id: v._id, image: v.thumbnailUrl, title: v.title, price: fmtPrice(v.price, v.currency), artistName: v.artistId?.name }} />
+                    <div className="absolute top-2 left-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>{category.name}</div>
+                    {v.price
+                      ? <PriceBadge price={v.price} currency={v.currency} />
+                      : <div className="absolute bottom-2 left-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: '#C0E863' }}>Free</div>
+                    }
+                  </div>
+                  <h3 className="font-black text-sm text-[#051d2e] mb-0.5 truncate">{v.title}</h3>
+                  <p className="text-xs text-[#051d2e]/60 mb-1">{v.artistId?.name || v.genre?.name || ''}</p>
+                  <div className="flex items-center gap-1">
+                    {[1,2,3,4,5].map(i => i <= 4 ? <StarFilled key={i} /> : <StarEmpty key={i} />)}
+                  </div>
+                </Link>
+              )})}
+            </div>
+          </div>
+        ))}
+        
         {/* My List — from wishlist API */}
         {wishlist.length > 0 && (
           <div id="mylist">
@@ -591,7 +632,7 @@ export default function UserDashboard() {
         )}
 
         {/* All Videos fallback when DB has content but no specific category */}
-        {!loadingContent && genresWithVideos.length === 0 && (
+        {!loadingContent && genresWithVideos.length === 0 && categoriesWithVideos.length === 0 && (
           <div className="flex flex-col items-center justify-center py-24 text-center">
             <div className="w-20 h-20 rounded-3xl flex items-center justify-center mb-6" style={{ background: 'linear-gradient(135deg,rgba(77,208,225,0.15),rgba(192,232,99,0.15))' }}>
               <ShoppingBag className="w-10 h-10 text-[#4DD0E1]" />

@@ -5,9 +5,9 @@ import ApiError from '../utils/ApiError.js'
 // ── Public: Submit Application ──────────────────────────────────────────────
 
 export const submitApplication = asyncHandler(async (req, res) => {
-  const { name, phone, whatsapp, email, videoLink, specialty } = req.body
+  const { name, phone, whatsapp, email, videoLink, specialty, specialties } = req.body
 
-  if (!name || !phone || !whatsapp || !email || !videoLink || !specialty) {
+  if (!name || !phone || !whatsapp || !email || !videoLink || (!specialty && (!specialties || specialties.length === 0))) {
     throw new ApiError(400, 'All fields are required.')
   }
 
@@ -18,6 +18,7 @@ export const submitApplication = asyncHandler(async (req, res) => {
     email,
     videoLink,
     specialty,
+    specialties: specialties || (specialty ? [specialty] : []),
   })
 
   res.status(201).json({

@@ -9,7 +9,8 @@ import { adminApi, artistApi, genreApi } from '../../api/index.js'
 const EMPTY_FORM = {
   name:       '',
   bio:        '',
-  genre:      '',
+  genres:     [],
+  specialties: [],
   avatarUrl:  '',
   emoticonCount: 0,
   instagram:  '',
@@ -23,6 +24,8 @@ const ArtistFormModal = ({ initial, onClose, onSaved }) => {
     if (!initial) return EMPTY_FORM
     return {
       ...initial,
+      genres: initial.genres?.length ? initial.genres : (initial.genre ? [initial.genre] : []),
+      specialties: initial.specialties || [],
       instagram: initial.socialLinks?.instagram || '',
       twitter: initial.socialLinks?.twitter || '',
       website: initial.socialLinks?.website || '',
@@ -34,6 +37,7 @@ const ArtistFormModal = ({ initial, onClose, onSaved }) => {
 
   const [uploadingImage, setUploadingImage] = useState(false)
   const [genres, setGenres] = useState([])
+  const [specialties, setSpecialties] = useState([])
 
   useEffect(() => {
     genreApi.list()
@@ -42,6 +46,11 @@ const ArtistFormModal = ({ initial, onClose, onSaved }) => {
         setGenres(Array.isArray(d) ? d : d?.genres || [])
       })
       .catch(console.error)
+    
+    // specialtyApi doesn't exist yet, we will import it
+    import('../../api/index.js').then(({ specialtyApi }) => {
+      specialtyApi.list().then(res => setSpecialties(res.data?.data || []))
+    })
   }, [])
 
   const handleImageUpload = async (e, key) => {
@@ -145,22 +154,59 @@ const ArtistFormModal = ({ initial, onClose, onSaved }) => {
 
           {/* Genre + AvatarUrl row */}
           <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-[10px] text-white/35 font-semibold uppercase tracking-widest mb-1">Genre</label>
-              <select 
-                value={form.genre} 
-                onChange={set('genre')} 
-                className={`${inputCls} appearance-none cursor-pointer`}
-              >
-                <option value="">Select a genre...</option>
-                {genres.map(g => (
-                  <option key={g._id || g.id} value={g.name} className="bg-[#051d2e] text-white">
-                    {g.name}
-                  </option>
-                ))}
-              </select>
+            <div className="col-span-2">
+              <label className="block text-[10px] text-white/35 font-semibold uppercase tracking-widest mb-1">Genres</label>
+              <div className="flex flex-wrap gap-2">
+                {genres.map(g => {
+                  const isSelected = form.genres.includes(g.name);
+                  return (
+                    <label key={g._id || g.id} className={`cursor-pointer px-3 py-1.5 rounded-lg text-xs font-semibold border transition select-none ${isSelected ? 'bg-[#4DD0E1]/20 border-[#4DD0E1] text-[#4DD0E1]' : 'bg-white/5 border-white/10 text-white/60 hover:bg-white/10'}`}>
+                      <input 
+                        type="checkbox" 
+                        className="hidden" 
+                        checked={isSelected}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          setForm(f => ({
+                            ...f,
+                            genres: checked ? [...f.genres, g.name] : f.genres.filter(name => name !== g.name)
+                          }))
+                        }}
+                      />
+                      {g.name}
+                    </label>
+                  )
+                })}
+              </div>
             </div>
-            {imageUploadField('avatarUrl', 'Avatar URL')}
+            <div className="col-span-2">
+              <label className="block text-[10px] text-white/35 font-semibold uppercase tracking-widest mb-1">Specialties</label>
+              <div className="flex flex-wrap gap-2">
+                {specialties.map(s => {
+                  const isSelected = form.specialties.includes(s.name);
+                  return (
+                    <label key={s._id || s.id} className={`cursor-pointer px-3 py-1.5 rounded-lg text-xs font-semibold border transition select-none ${isSelected ? 'bg-[#4DD0E1]/20 border-[#4DD0E1] text-[#4DD0E1]' : 'bg-white/5 border-white/10 text-white/60 hover:bg-white/10'}`}>
+                      <input 
+                        type="checkbox" 
+                        className="hidden" 
+                        checked={isSelected}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          setForm(f => ({
+                            ...f,
+                            specialties: checked ? [...f.specialties, s.name] : f.specialties.filter(name => name !== s.name)
+                          }))
+                        }}
+                      />
+                      {s.icon} {s.name}
+                    </label>
+                  )
+                })}
+              </div>
+            </div>
+            <div className="col-span-2 mt-2">
+              {imageUploadField('avatarUrl', 'Avatar URL')}
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -250,7 +296,20 @@ const ArtistCard = ({ artist, onEdit, onDelete }) => (
             <CheckCircle className="w-3.5 h-3.5 shrink-0" style={{ color: '#4DD0E1' }} />
           )}
         </div>
-        {artist.genre && <p className="text-[#C0E863] text-xs font-semibold">{artist.genre}</p>}
+        {((artist.genres && artist.genres.length > 0) || artist.genre) && (
+          <div className="flex flex-wrap gap-1 mt-1">
+            {(artist.genres?.length > 0 ? artist.genres : (artist.genre ? [artist.genre] : [])).map((g, i) => (
+              <span key={i} className="text-[#C0E863] text-[10px] font-semibold bg-[#C0E863]/10 px-1.5 py-0.5 rounded">
+                {g}
+              </span>
+            ))}
+            {(artist.specialties || []).map((s, i) => (
+              <span key={`s-${i}`} className="text-[#4DD0E1] text-[10px] font-semibold bg-[#4DD0E1]/10 px-1.5 py-0.5 rounded">
+                {s}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
     </div>
 

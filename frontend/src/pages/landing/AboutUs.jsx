@@ -50,7 +50,7 @@ const AboutUs = () => {
                   <p className="text-white/50 font-mono text-xs uppercase">CEO & Founder</p>
                   <span className="text-white/30">•</span>
                   <a
-                    href="https://www.instagram.com/sakhiii"
+                    href="https://www.instagram.com/suchhee.23"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-linear-to-r from-[#ce6a6b]/60 to-transparent hover:from-[#ce6a6b]/40 border border-[#ce6a6b]/30 hover:border-[#ce6a6b]/60 transition-all group shadow-sm"
@@ -58,6 +58,7 @@ const AboutUs = () => {
                     <Instagram size={14} className="text-[#ce6a6b] group-hover:scale-110 transition-transform" />
                     <span className="font-mono text-xs text-[#ce6a6b] font-medium tracking-wide">Sakhiii</span>
                   </a>
+                  
                 </div>
                 <div className="h-px w-full bg-white/10"></div>
               </div>
