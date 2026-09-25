@@ -51,10 +51,6 @@ const PlayBtn = ({ size = 14 }) => {
   )
 }
 
-const StarFilled = ({ className = '' }) => (
-  <Star className={`w-3 h-3 text-[#C0E863] ${className}`} fill="#C0E863" />
-)
-const StarEmpty = () => <Star className="w-3 h-3 text-[#5a7a8a]" />
 
 const PriceBadge = ({ price, currency }) => (
   <div className="absolute bottom-2 left-2 px-2.5 py-1 price-badge rounded-full text-[10px] font-black text-[#051d2e]">
@@ -531,9 +527,7 @@ export default function UserDashboard() {
                     </div>
                     <h3 className="font-black text-sm text-[#051d2e] mb-0.5 truncate">{v.title}</h3>
                     <p className="text-xs text-[#051d2e]/60 mb-1">{v.artistId?.name || v.genre?.name || ''}</p>
-                    <div className="flex items-center gap-1">
-                      {[1,2,3,4,5].map(i => i <= 4 ? <StarFilled key={i} /> : <StarEmpty key={i} />)}
-                    </div>
+
                   </Link>
                 )})}
               </div>
@@ -566,9 +560,7 @@ export default function UserDashboard() {
                   </div>
                   <h3 className="font-black text-sm text-[#051d2e] mb-0.5 truncate">{v.title}</h3>
                   <p className="text-xs text-[#051d2e]/60 mb-1">{v.artistId?.name || v.genre?.name || ''}</p>
-                  <div className="flex items-center gap-1">
-                    {[1,2,3,4,5].map(i => i <= 4 ? <StarFilled key={i} /> : <StarEmpty key={i} />)}
-                  </div>
+
                 </Link>
               )})}
             </div>
