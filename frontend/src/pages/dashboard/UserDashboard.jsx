@@ -375,11 +375,6 @@ export default function UserDashboard() {
                 <span className="section-pill">
                   <Star className="w-3 h-3" fill="currentColor" /> {slide.genre?.name || 'Featured'}
                 </span>
-                {slide.featured && (
-                  <span className="flex items-center gap-1.5 px-3 py-1 bg-[#4DD0E1] rounded-full text-xs font-bold text-[#051d2e] shadow-lg">
-                    Featured
-                  </span>
-                )}
               </div>
 
               {/* Title */}

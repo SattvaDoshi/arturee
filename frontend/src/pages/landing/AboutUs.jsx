@@ -58,7 +58,7 @@ const AboutUs = () => {
                     <Instagram size={14} className="text-[#ce6a6b] group-hover:scale-110 transition-transform" />
                     <span className="font-mono text-xs text-[#ce6a6b] font-medium tracking-wide">Sakhiii</span>
                   </a>
-                  
+
                 </div>
                 <div className="h-px w-full bg-white/10"></div>
               </div>
@@ -69,7 +69,7 @@ const AboutUs = () => {
               </div>
               <div className="border-l-2 border-[#ce6a6b] pl-6 py-2">
                 <p className="text-white/70 text-sm italic">
-                  Suchi Bansal lives life with a singular mission: to explore everything it has to offer. A Chartered Accountant by day and a storyteller at heart, she is a Financial Analyst who balances the structured world of numbers with a fearless pursuit of creative and spiritual growth. Suchi embraces a multi-passionate life as a poet, storyteller, and aspiring author and actively learns Hindustani classical music and classical Kathak dance. As an avid traveler, she uses her journeys to deeply understand diverse perspectives which expand her horizons as both a human being and a creator. The latest colour to her vision is finding Arturee—a dream she intends to paint the art world with!
+                  Suchi Bansal lives life with a singular mission: to explore everything it has to offer. A Chartered Accountant by day and a storyteller at heart, she is a Financial Analyst who balances the structured world of numbers with a fearless pursuit of creative and spiritual growth. <br /> <br /> Suchi embraces a multi-passionate life as a poet, storyteller, and aspiring author and actively learns Hindustani classical music and classical Kathak dance. As an avid traveler, she uses her journeys to deeply understand diverse perspectives which expand her horizons as both a human being and a creator. The latest colour to her vision is finding Arturee—a dream she intends to paint the art world with!
                 </p>
               </div>
             </div>

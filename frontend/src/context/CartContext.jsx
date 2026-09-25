@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState } from 'react'
-
+import React, { createContext, useContext, useState, useEffect } from 'react'
+import { useAuth } from './AuthContext'
+import { wishlistApi } from '../api'
 const CartContext = createContext()
 
 const load = (key, fallback) => {
@@ -16,6 +17,21 @@ const save = (key, value) => {
 export const CartProvider = ({ children }) => {
   const [cart, setCartState] = useState(() => load('art_cart', []))
   const [savedList, setSavedListState] = useState(() => load('art_savedlist', []))
+  const { isAuthenticated } = useAuth()
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      wishlistApi.get().then(res => {
+        const items = res.data?.data || []
+        const formatted = items.map(v => ({ id: v._id }))
+        setSavedListState(formatted)
+        save('art_savedlist', formatted)
+      }).catch(() => {})
+    } else {
+      setSavedListState([])
+      save('art_savedlist', [])
+    }
+  }, [isAuthenticated])
 
   const setCart = (updater) => {
     setCartState(prev => {
