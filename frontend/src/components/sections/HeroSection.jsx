@@ -29,7 +29,7 @@ const HeroSection = () => {
         <div className="w-full lg:w-1/2 relative min-h-[500px] sm:min-h-[550px] md:min-h-[600px] mt-8 lg:mt-0 mb-16 sm:mb-20">
           {/* Background cyan frame - hidden on mobile */}
           <div className="absolute top-20 md:top-16 lg:top-20 -left-6 md:-left-10 w-48 h-60 md:w-56 md:h-72 lg:w-64 lg:h-80 bg-linear-to-br from-salmon to-lime rough-border transform rotate-6 z-0 overflow-hidden hidden md:block">
-            <img className="w-full h-full object-cover mix-blend-multiply opacity-60" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCt-jEXc91uTeJMaVK6zjnOMFJKCGus_B1r6AYlGDj7_wlxzJJBj_lRGPAWkyiE4Qr7cD4sfnnIdlZ3bSfgEuHe89crQEMsg3-ReTjP-VsU7nFrMufroLvl2bb7Hz5wWv1HzpQ_PZVZ_NebgzWxa_pBZpZLxR2Gpg8fOVsTWb9266HoYO5I924k2u04SvPfegjaO3GWO6B8EPlCUe2h44GXeTJD8Xeer3p1eV5E31cIXxxzHmgt5I0Sx4Ny_RKL1i8NICHTI6242mQ" alt="Background" />
+            <img className="w-full h-full object-cover mix-blend-multiply opacity-60" src="./Landing.jpeg" alt="Background" />
           </div>
 
           {/* Main polaroid image */}

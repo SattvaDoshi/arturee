@@ -136,6 +136,7 @@ export default function VideoDetail() {
   const [error,     setError]     = useState('')
 
   const [purchased,   setPurchased]   = useState(false)
+  const [purchasedEpisodes, setPurchasedEpisodes] = useState([])
   const [checkingPurchase, setCheckingPurchase] = useState(false)
 
   const [saved,       setSaved]       = useState(false)
@@ -202,10 +203,18 @@ export default function VideoDetail() {
   useEffect(() => {
     if (!isAuthenticated || !videoId) return
     setCheckingPurchase(true)
-    purchaseApi.checkPurchase(videoId)
-      .then(res => setPurchased(res.data.data.purchased))
-      .catch(() => {})
-      .finally(() => setCheckingPurchase(false))
+    Promise.all([
+      purchaseApi.checkPurchase(videoId),
+      purchaseApi.getMyPurchases()
+    ]).then(([checkRes, allPurchasesRes]) => {
+      setPurchased(checkRes.data.data.purchased)
+      if (allPurchasesRes.data?.data) {
+        const pEps = allPurchasesRes.data.data.map(p => p.videoId?._id || p.videoId)
+        setPurchasedEpisodes(pEps)
+      }
+    })
+    .catch(() => {})
+    .finally(() => setCheckingPurchase(false))
   }, [isAuthenticated, videoId])
 
   /* ── Load recommended videos ── */
@@ -236,14 +245,15 @@ export default function VideoDetail() {
 
   /* ── Buy now ── */
   const effectivePrice = video?.discountedPrice ?? video?.price ?? 0
-  const handleBuy = () => {
+  const handleBuy = (targetVideo = video) => {
     if (!isAuthenticated) { navigate('/login'); return }
+    const p = targetVideo.discountedPrice ?? targetVideo.price ?? 0
     navigate('/checkout', {
       state: {
-        videoId:   video._id,
-        title:     video.title,
-        price:     effectivePrice,
-        thumbnail: video.thumbnailUrl,
+        videoId:   targetVideo._id,
+        title:     targetVideo.title,
+        price:     p,
+        thumbnail: targetVideo.thumbnailUrl || video?.thumbnailUrl,
       },
     })
   }
@@ -334,7 +344,15 @@ export default function VideoDetail() {
                   if (!currentVideo) return <div className="aspect-video bg-black/5 rounded-2xl flex items-center justify-center"><Loader2 className="animate-spin text-primary" /></div>
 
                   const isYoutube = currentVideo.videoSource === 'youtube' || currentVideo.youtubeUrl
-                  const needsPurchase = video?.price > 0 && !purchased && !checkingPurchase
+                  const needsPurchase = (() => {
+                    if (checkingPurchase) return false
+                    if (purchased) return false
+                    if (currentVideo?._id && purchasedEpisodes.includes(currentVideo._id)) return false
+                    if (video?.videoSource === 'series' && currentVideo?._id !== video?._id) {
+                      return currentVideo?.price > 0
+                    }
+                    return video?.price > 0
+                  })()
                   
                   // For series container UI, we use the parent's poster and price overlay
                   // But for playback, we use the child's id and url
@@ -362,14 +380,14 @@ export default function VideoDetail() {
                             <ShoppingCart className="w-7 h-7" style={{ color: C.primary }} />
                           </div>
                           <p className="text-white font-bold text-lg drop-shadow">Purchase to watch</p>
-                          <GradBtn onClick={handleBuy} className="flex items-center gap-2 px-6 py-3 rounded-full font-black text-[#051d2e]">
+                          <GradBtn onClick={() => handleBuy(currentVideo)} className="flex items-center gap-2 px-6 py-3 rounded-full font-black text-[#051d2e]">
                             <ShoppingCart className="w-4 h-4" />
-                            {video.costPrice && video.discountedPrice ? (
+                            {currentVideo.costPrice && currentVideo.discountedPrice ? (
                               <span className="flex items-center gap-2">
-                                <span style={{ textDecoration: 'line-through', opacity: 0.6, fontSize: '0.85em' }}>₹{video.costPrice}</span>
-                                Buy for ₹{video.discountedPrice}
+                                <span style={{ textDecoration: 'line-through', opacity: 0.6, fontSize: '0.85em' }}>₹{currentVideo.costPrice}</span>
+                                Buy for ₹{currentVideo.discountedPrice}
                               </span>
-                            ) : `Buy for ₹${effectivePrice}`}
+                            ) : `Buy for ₹${currentVideo.discountedPrice ?? currentVideo.price ?? 0}`}
                           </GradBtn>
                         </div>
                       </div>
@@ -406,16 +424,16 @@ export default function VideoDetail() {
                           </div>
                           <p className="text-white font-bold text-lg drop-shadow">Purchase to watch</p>
                           <GradBtn
-                            onClick={handleBuy}
+                            onClick={() => handleBuy(currentVideo)}
                             className="flex items-center gap-2 px-6 py-3 rounded-full font-black text-[#051d2e]"
                           >
                             <ShoppingCart className="w-4 h-4" />
-                            {video.costPrice && video.discountedPrice ? (
+                            {currentVideo.costPrice && currentVideo.discountedPrice ? (
                               <span className="flex items-center gap-2">
-                                <span style={{ textDecoration: 'line-through', opacity: 0.6, fontSize: '0.85em' }}>₹{video.costPrice}</span>
-                                Buy for ₹{video.discountedPrice}
+                                <span style={{ textDecoration: 'line-through', opacity: 0.6, fontSize: '0.85em' }}>₹{currentVideo.costPrice}</span>
+                                Buy for ₹{currentVideo.discountedPrice}
                               </span>
-                            ) : `Buy for ₹${effectivePrice}`}
+                            ) : `Buy for ₹${currentVideo.discountedPrice ?? currentVideo.price ?? 0}`}
                           </GradBtn>
                         </div>
                       )}
@@ -581,7 +599,7 @@ export default function VideoDetail() {
                       {/* Buy button (if not purchased and not free) */}
                       {video?.price > 0 && !purchased && (
                         <GradBtn
-                          onClick={handleBuy}
+                          onClick={() => handleBuy(video)}
                           disabled={checkingPurchase}
                           className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm text-[#051d2e] mr-2"
                         >
@@ -669,9 +687,25 @@ export default function VideoDetail() {
                               <h4 className={`font-bold text-sm sm:text-base line-clamp-2`} style={{ color: isCurrent ? C.teal : C.navy }}>
                                 {ep.episodeNumber ? `${ep.episodeNumber}. ` : ''}{ep.title}
                               </h4>
-                              <div className="mt-1 flex items-center gap-2">
-                                {ep.status !== 'ready' && ep.status !== 'youtube' && (
+                              <div className="mt-1 flex flex-wrap items-center gap-2 justify-between w-full">
+                                {ep.status !== 'ready' && ep.status !== 'youtube' ? (
                                   <span className="text-[10px] text-orange-500 font-bold uppercase">Processing</span>
+                                ) : (
+                                  <span className="text-xs font-semibold" style={{ color: C.muted }}>
+                                    {ep.price > 0 && !purchased && !purchasedEpisodes.includes(ep._id) ? '' : 'Available'}
+                                  </span>
+                                )}
+                                {ep.price > 0 && !purchased && !purchasedEpisodes.includes(ep._id) && (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      handleBuy(ep)
+                                    }}
+                                    className="px-3 py-1 rounded-full text-xs font-bold text-[#051d2e] shadow-md hover:scale-105 transition"
+                                    style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
+                                  >
+                                    Buy ₹{ep.discountedPrice ?? ep.price}
+                                  </button>
                                 )}
                               </div>
                             </div>

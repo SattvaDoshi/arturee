@@ -52,8 +52,10 @@ export default function Checkout() {
    *   Cart: { items: [...], subtotal, discount, total }
    */
   const checkoutData = location.state || null
-  const isCart = !!checkoutData?.items
-  const items = isCart ? checkoutData.items : (checkoutData ? [checkoutData] : [])
+  const isCartOrigin = !!checkoutData?.items
+  const [items, setItems] = useState(() => {
+    return isCartOrigin ? checkoutData.items : (checkoutData ? [checkoutData] : [])
+  })
 
   const [status, setStatus] = useState('idle') // idle | loading | success | error
   const [errorMsg, setErrorMsg] = useState('')
@@ -88,7 +90,7 @@ export default function Checkout() {
           currency:    currency || 'INR',
           order_id:    orderId,
           name:        'Arturee',
-          description: videoTitle || (isCart ? `${items.length} Videos` : checkoutData.title) || 'Video Purchase',
+          description: videoTitle || (items.length > 1 ? `${items.length} Videos` : items[0]?.title) || 'Video Purchase',
           image:       '/logo.png', // optional — uses fallback if not found
           theme: {
             color: '#4DD0E1',
@@ -105,7 +107,7 @@ export default function Checkout() {
                 razorpaySignature: response.razorpay_signature,
               })
               
-              if (isCart) {
+              if (isCartOrigin) {
                 setCart([]) // clear cart on success
               }
               resolve()
@@ -152,7 +154,7 @@ export default function Checkout() {
             Payment Successful!
           </h2>
           <p className="text-lg mb-2" style={{ color: C.muted }}>
-            You now own <strong>{isCart ? `${items.length} videos` : items[0]?.title}</strong>.
+            You now own <strong>{items.length > 1 ? `${items.length} videos` : items[0]?.title}</strong>.
           </p>
           <p className="text-sm mb-8" style={{ color: C.muted }}>
             Redirecting to your library…
@@ -172,9 +174,9 @@ export default function Checkout() {
   /* ── Guard: no data ── */
   if (!items.length) return null
 
-  const subtotal = isCart ? checkoutData.subtotal : parsePrice(items[0].price)
-  const platformFee = isCart ? (checkoutData.platformFee || 0) : (subtotal * 0.03)
-  const total = isCart ? checkoutData.total : (subtotal + platformFee)
+  const subtotal = items.reduce((acc, item) => acc + parsePrice(item.price), 0)
+  const platformFee = subtotal * 0.03
+  const total = subtotal + platformFee
   
   const subtotalDisplay = fmtINR(subtotal * 100)
   const platformFeeDisplay = fmtINR(platformFee * 100)
@@ -354,7 +356,7 @@ export default function Checkout() {
           </div>
           
           {/* Suggested Videos */}
-          <SuggestedCheckoutVideos currentItems={items} isCart={isCart} />
+          <SuggestedCheckoutVideos currentItems={items} setItems={setItems} />
         </div>
       </div>
     </UserLayout>
@@ -363,7 +365,7 @@ export default function Checkout() {
 
 import { ShoppingCart } from 'lucide-react'
 
-function SuggestedCheckoutVideos({ currentItems, isCart }) {
+function SuggestedCheckoutVideos({ currentItems, setItems }) {
   const [videos, setVideos] = useState([])
   const [loading, setLoading] = useState(true)
   const { toggleCart, getCartSummary } = useCart()
@@ -397,31 +399,15 @@ function SuggestedCheckoutVideos({ currentItems, isCart }) {
       image: video.thumbnailUrl,
       creator: video.artistId?.name || 'Artist'
     })
-    
-    // If we are checking out the cart, reload the page with updated cart
-    if (isCart) {
-      setTimeout(() => {
-        const summary = getCartSummary()
-        navigate('/checkout', {
-          replace: true,
-          state: {
-            items: summary.items.map(item => ({
-              videoId: item.id,
-              title: item.title,
-              price: item.price,
-              thumbnail: item.image || item.thumbnailUrl,
-              artistName: item.artistName || item.creator
-            })),
-            subtotal: summary.subtotal,
-            discount: summary.discount,
-            total: summary.total
-          }
-        })
-      }, 100)
-    } else {
-      // If we're on a direct checkout, adding to cart will just put it in the background cart.
-      // But we can let them know it's added.
+    // Update local checkout session items
+    const newItem = {
+      videoId: video._id,
+      title: video.title,
+      price: video.price,
+      thumbnail: video.thumbnailUrl,
+      artistName: video.artistId?.name || 'Artist'
     }
+    setItems(prev => [...prev, newItem])
   }
 
   return (

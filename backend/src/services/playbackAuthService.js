@@ -46,20 +46,13 @@ export const authorizePlayback = async ({
   // ── 2. YouTube-hosted path: no S3/CloudFront needed ───────────────────────
   if (video.videoSource === 'youtube') {
     // For paid YouTube videos, still verify purchase
-    if (video.price > 0 || video.seriesParentId) {
-      const targetVideoId = video.seriesParentId ? video.seriesParentId : videoId
-      let requiresPurchase = video.price > 0
-      if (video.seriesParentId) {
-         const parent = await Video.findById(video.seriesParentId)
-         if (parent && parent.price > 0) requiresPurchase = true
-         else requiresPurchase = false
-      }
-  
-      if (requiresPurchase) {
-        const purchase = await Purchase.findOne({ userId, videoId: targetVideoId, status: 'completed' })
-        if (!purchase) {
-          throw new ApiError(403, 'Access denied: purchase required to watch this video or series.')
-        }
+    if (video.price > 0) {
+      const targetVideoIds = [videoId]
+      if (video.seriesParentId) targetVideoIds.push(video.seriesParentId)
+      
+      const purchase = await Purchase.findOne({ userId, videoId: { $in: targetVideoIds }, status: 'completed' })
+      if (!purchase) {
+        throw new ApiError(403, 'Access denied: purchase required to watch this video.')
       }
     }
     return {
@@ -81,22 +74,13 @@ export const authorizePlayback = async ({
   }
 
   // For paid videos, verify purchase
-  if (video.price > 0 || video.seriesParentId) {
-    const targetVideoId = video.seriesParentId ? video.seriesParentId : videoId
-    // If it's part of a series, the parent handles the pricing. If the parent is free (price=0) or paid.
-    // Wait, we need to check the parent's price.
-    let requiresPurchase = video.price > 0
-    if (video.seriesParentId) {
-       const parent = await Video.findById(video.seriesParentId)
-       if (parent && parent.price > 0) requiresPurchase = true
-       else requiresPurchase = false // If parent is free, the episode is free
-    }
-
-    if (requiresPurchase) {
-      const purchase = await Purchase.findOne({ userId, videoId: targetVideoId, status: 'completed' })
-      if (!purchase) {
-        throw new ApiError(403, 'Access denied: purchase required to watch this video or series.')
-      }
+  if (video.price > 0) {
+    const targetVideoIds = [videoId]
+    if (video.seriesParentId) targetVideoIds.push(video.seriesParentId)
+    
+    const purchase = await Purchase.findOne({ userId, videoId: { $in: targetVideoIds }, status: 'completed' })
+    if (!purchase) {
+      throw new ApiError(403, 'Access denied: purchase required to watch this video.')
     }
   }
 

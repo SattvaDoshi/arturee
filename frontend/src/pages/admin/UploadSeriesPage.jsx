@@ -23,7 +23,7 @@ export default function UploadSeriesPage() {
     isPublished: true,
   })
   const [episodes, setEpisodes] = useState([
-    { id: 1, title: 'Episode 1', file: null, progress: 0, uploading: false, done: false, error: '' }
+    { id: 1, title: 'Episode 1', file: null, price: 0, progress: 0, uploading: false, done: false, error: '' }
   ])
   const [globalError, setGlobalError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -33,7 +33,7 @@ export default function UploadSeriesPage() {
   const handleAddEpisode = () => {
     setEpisodes(prev => [
       ...prev,
-      { id: Date.now(), title: `Episode ${prev.length + 1}`, file: null, progress: 0, uploading: false, done: false, error: '' }
+      { id: Date.now(), title: `Episode ${prev.length + 1}`, file: null, price: 0, progress: 0, uploading: false, done: false, error: '' }
     ])
   }
 
@@ -78,7 +78,7 @@ export default function UploadSeriesPage() {
           formData.append('title', ep.title)
           formData.append('seriesParentId', newSeriesId)
           formData.append('episodeNumber', i + 1)
-          formData.append('price', '0') // episodes themselves are free
+          formData.append('price', String(ep.price || 0))
           
           if (meta.genre) formData.append('genre', meta.genre)
           if (meta.certification) formData.append('certification', meta.certification)
@@ -287,7 +287,12 @@ export default function UploadSeriesPage() {
                   {idx + 1}
                 </div>
                 <div className="flex-1 space-y-3 w-full">
-                  <input className={inputCls} value={ep.title} onChange={e => handleEpisodeChange(ep.id, 'title', e.target.value)} disabled={isSubmitting} placeholder="Episode Title" />
+                  <div className="flex gap-3">
+                    <input className={`${inputCls} flex-1`} value={ep.title} onChange={e => handleEpisodeChange(ep.id, 'title', e.target.value)} disabled={isSubmitting} placeholder="Episode Title" />
+                    <div className="w-24">
+                      <input type="number" className={inputCls} value={ep.price} onChange={e => handleEpisodeChange(ep.id, 'price', e.target.value)} disabled={isSubmitting} placeholder="Price ₹" />
+                    </div>
+                  </div>
                   
                   <div className="flex flex-col sm:flex-row gap-3">
                     <div className="flex-1">
