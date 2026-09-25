@@ -268,9 +268,9 @@ export default function UserDashboard() {
 
     // Fetch genres, categories, and all videos to group them
     Promise.all([
-      genreApi.list(),
-      categoryApi.list(),
-      videoApi.list({ limit: 100, sort: 'new' })
+      genreApi.list().catch(() => ({ data: { data: [] } })),
+      categoryApi.list().catch(() => ({ data: { data: [] } })),
+      videoApi.list({ limit: 100, sort: 'new' }).catch(() => ({ data: { data: { videos: [] } } }))
     ]).then(([genreRes, categoryRes, videoRes]) => {
       const allGenres = genreRes.data?.data || []
       const allCategories = categoryRes.data?.data || []
