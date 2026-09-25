@@ -131,7 +131,7 @@ export default function VideoDetail() {
   const { videoId } = useParams()
   const navigate    = useNavigate()
   const { isAuthenticated, user } = useAuth()
-  const { toggleCart, isInCart } = useCart()
+  const { toggleCart, isInCart, toggleSavedList, isInSavedList } = useCart()
 
   const [video,     setVideo]     = useState(null)
   const [loading,   setLoading]   = useState(true)
@@ -141,7 +141,7 @@ export default function VideoDetail() {
   const [purchasedEpisodes, setPurchasedEpisodes] = useState([])
   const [checkingPurchase, setCheckingPurchase] = useState(false)
 
-  const [saved,       setSaved]       = useState(false)
+  const [saved,       setSaved]       = useState(() => isInSavedList(videoId))
   const [descExpanded, setDescExpanded] = useState(false)
   const [isPlaying,   setIsPlaying]   = useState(false)
 
@@ -175,6 +175,7 @@ export default function VideoDetail() {
     setError('')
     setIsPlaying(false)
     setActiveEpisode(null)
+    setSaved(isInSavedList(videoId))
 
     videoApi.get(videoId)
       .then(res => {
@@ -232,6 +233,15 @@ export default function VideoDetail() {
     if (!isAuthenticated) { navigate('/login'); return }
     const next = !saved
     setSaved(next)
+    
+    const videoData = {
+      id: videoId,
+      image: video?.thumbnailUrl,
+      title: video?.title,
+      artistName: video?.artistId?.name || ''
+    }
+    toggleSavedList(videoData)
+    
     try {
       if (next) {
         await wishlistApi.add(videoId)
@@ -240,8 +250,9 @@ export default function VideoDetail() {
       }
     } catch {
       setSaved(!next) // revert on error
+      toggleSavedList(videoData) // revert context on error
     }
-  }, [isAuthenticated, saved, videoId, navigate])
+  }, [isAuthenticated, saved, videoId, navigate, video, toggleSavedList])
 
   /* ── Buy now ── */
   const effectivePrice = video?.discountedPrice || video?.price || 0
