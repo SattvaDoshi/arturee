@@ -50,9 +50,6 @@ const getArtistTag = (artist, index, customTag, customColor) => {
   if ((artist?.videoCount || 0) >= 3) {
     return { tag: 'Trending', tagColor: 'bg-lime/40 text-navy font-extrabold' }
   }
-  if (artist?.isVerified) {
-    return { tag: 'Verified', tagColor: 'bg-primary/20 text-primary' }
-  }
   return null
 }
 

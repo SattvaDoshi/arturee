@@ -78,6 +78,7 @@ const DiscoverSection = () => {
               imageUrl: v.thumbnailUrl || DEFAULT_CARDS[i]?.imageUrl || '',
               tag: i === 0 ? 'Featured' : (i === 1 ? 'Trending' : ''),
               link: `/video/${v._id}`,
+              isVertical: v.genre?.name?.toUpperCase().includes('MOBILE') || v.category?.toUpperCase().includes('MOBILE'),
               videoId: { thumbnailUrl: v.thumbnailUrl } // So that logic mapping works as expected
             }))
           } else {
@@ -131,17 +132,17 @@ const DiscoverSection = () => {
           {c1 && (
           <Link
             to={c1.link || '/pricing'}
-            className={`lg:col-span-2 lg:row-span-2 rounded-2xl overflow-hidden group relative shadow-2xl ${c1.videoId?.thumbnailUrl ? 'aspect-video lg:aspect-auto' : 'aspect-[4/5] sm:aspect-square lg:aspect-auto'}`}
+            className={`block w-full ${c1.isVertical ? 'aspect-[9/16]' : 'aspect-auto'} lg:w-auto lg:aspect-auto lg:col-span-2 lg:row-span-2 rounded-2xl overflow-hidden group relative shadow-2xl`}
           >
             <img
               alt={c1.title}
-              className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 ${c1.videoId?.thumbnailUrl ? 'hidden lg:block' : ''}`}
+              className={`w-full h-auto lg:h-full object-cover group-hover:scale-105 transition-transform duration-1000 ${c1.videoId?.thumbnailUrl ? 'hidden lg:block' : ''}`}
               src={c1.imageUrl}
             />
             {c1.videoId?.thumbnailUrl && (
               <img
                 alt={c1.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 block lg:hidden"
+                className="w-full h-auto lg:h-full object-cover group-hover:scale-105 transition-transform duration-1000 block lg:hidden"
                 src={c1.videoId.thumbnailUrl}
               />
             )}
@@ -168,17 +169,17 @@ const DiscoverSection = () => {
           {c2 && (
           <Link
             to={c2.link || '/pricing'}
-            className={`lg:col-span-1 rounded-2xl lg:row-span-3 overflow-hidden group relative shadow-xl ${c2.videoId?.thumbnailUrl ? 'aspect-video lg:aspect-auto' : 'aspect-[4/5] sm:aspect-square lg:aspect-auto'}`}
+            className={`block w-full ${c2.isVertical ? 'aspect-[9/16]' : 'aspect-auto'} lg:w-auto lg:aspect-auto lg:col-span-1 rounded-2xl lg:row-span-3 overflow-hidden group relative shadow-xl`}
           >
             <img
               alt={c2.title}
-              className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 ${c2.videoId?.thumbnailUrl ? 'hidden lg:block' : ''}`}
+              className={`w-full h-auto lg:h-full object-cover group-hover:scale-105 transition-transform duration-1000 ${c2.videoId?.thumbnailUrl ? 'hidden lg:block' : ''}`}
               src={c2.imageUrl}
             />
             {c2.videoId?.thumbnailUrl && (
               <img
                 alt={c2.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 block lg:hidden"
+                className="w-full h-auto lg:h-full object-cover group-hover:scale-105 transition-transform duration-1000 block lg:hidden"
                 src={c2.videoId.thumbnailUrl}
               />
             )}
@@ -207,17 +208,17 @@ const DiscoverSection = () => {
           {c3 && (
           <Link
             to={c3.link || '/pricing'}
-            className={`lg:col-span-1 rounded-2xl lg:row-span-2 overflow-hidden group relative shadow-xl ${c3.videoId?.thumbnailUrl ? 'aspect-video lg:aspect-auto' : 'aspect-[4/5] sm:aspect-square lg:aspect-auto'}`}
+            className={`block w-full ${c3.isVertical ? 'aspect-[9/16]' : 'aspect-auto'} lg:w-auto lg:aspect-auto lg:col-span-1 rounded-2xl lg:row-span-2 overflow-hidden group relative shadow-xl`}
           >
             <img
               alt={c3.title}
-              className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 ${c3.videoId?.thumbnailUrl ? 'hidden lg:block' : ''}`}
+              className={`w-full h-auto lg:h-full object-cover group-hover:scale-105 transition-transform duration-1000 ${c3.videoId?.thumbnailUrl ? 'hidden lg:block' : ''}`}
               src={c3.imageUrl}
             />
             {c3.videoId?.thumbnailUrl && (
               <img
                 alt={c3.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 block lg:hidden"
+                className="w-full h-auto lg:h-full object-cover group-hover:scale-105 transition-transform duration-1000 block lg:hidden"
                 src={c3.videoId.thumbnailUrl}
               />
             )}
@@ -246,17 +247,17 @@ const DiscoverSection = () => {
           {c4 && (
           <Link
             to={c4.link || '/pricing'}
-            className={`lg:col-span-1 rounded-2xl lg:row-span-2 overflow-hidden group relative shadow-xl ${c4.videoId?.thumbnailUrl ? 'aspect-video lg:aspect-auto' : 'aspect-[4/5] sm:aspect-square lg:aspect-auto'}`}
+            className={`block w-full ${c4.isVertical ? 'aspect-[9/16]' : 'aspect-auto'} lg:w-auto lg:aspect-auto lg:col-span-1 rounded-2xl lg:row-span-2 overflow-hidden group relative shadow-xl`}
           >
             <img
               alt={c4.title}
-              className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 ${c4.videoId?.thumbnailUrl ? 'hidden lg:block' : ''}`}
+              className={`w-full h-auto lg:h-full object-cover group-hover:scale-105 transition-transform duration-1000 ${c4.videoId?.thumbnailUrl ? 'hidden lg:block' : ''}`}
               src={c4.imageUrl}
             />
             {c4.videoId?.thumbnailUrl && (
               <img
                 alt={c4.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 block lg:hidden"
+                className="w-full h-auto lg:h-full object-cover group-hover:scale-105 transition-transform duration-1000 block lg:hidden"
                 src={c4.videoId.thumbnailUrl}
               />
             )}
@@ -285,17 +286,17 @@ const DiscoverSection = () => {
           {c5 && (
           <Link
             to={c5.link || '/pricing'}
-            className={`lg:col-span-1 rounded-2xl lg:row-span-1 overflow-hidden group relative shadow-xl ${c5.videoId?.thumbnailUrl ? 'aspect-video lg:aspect-auto' : 'aspect-[4/5] sm:aspect-square lg:aspect-auto'}`}
+            className={`block w-full ${c5.isVertical ? 'aspect-[9/16]' : 'aspect-auto'} lg:w-auto lg:aspect-auto lg:col-span-1 rounded-2xl lg:row-span-1 overflow-hidden group relative shadow-xl`}
           >
             <img
               alt={c5.title}
-              className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 ${c5.videoId?.thumbnailUrl ? 'hidden lg:block' : ''}`}
+              className={`w-full h-auto lg:h-full object-cover group-hover:scale-105 transition-transform duration-1000 ${c5.videoId?.thumbnailUrl ? 'hidden lg:block' : ''}`}
               src={c5.imageUrl}
             />
             {c5.videoId?.thumbnailUrl && (
               <img
                 alt={c5.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 block lg:hidden"
+                className="w-full h-auto lg:h-full object-cover group-hover:scale-105 transition-transform duration-1000 block lg:hidden"
                 src={c5.videoId.thumbnailUrl}
               />
             )}

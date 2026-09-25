@@ -18,7 +18,7 @@ const CTASection = () => {
     },
     {
       question: "How much does it cost?",
-      answer: "For viewers, we offer flexible pricing combinations to suit your lifestyle. For artists ready to share their craft, click the Join Us button to become part of the Arturee family and start earning from your passion."
+      answer: "We believe in simple, transparent pricing: 1 minute = 1 Rs. You only pay for the exact length of the content. For artists ready to share their craft, click the Join Us button to become part of the Arturee family and start earning from your passion."
     },
     {
       question: "Why choose Arturee?",

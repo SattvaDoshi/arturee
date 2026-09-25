@@ -4,7 +4,7 @@ import ApiError from '../utils/ApiError.js'
 
 export const listArtists = asyncHandler(async (req, res) => {
   const page = Math.max(1, parseInt(req.query.page) || 1)
-  const limit = Math.min(50, parseInt(req.query.limit) || 12)
+  const limit = Math.min(100, parseInt(req.query.limit) || 12)
   const skip = (page - 1) * limit
   
   const filter = { isActive: true }
@@ -13,7 +13,30 @@ export const listArtists = asyncHandler(async (req, res) => {
   }
 
   const [artists, total] = await Promise.all([
-    Artist.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit),
+    Artist.aggregate([
+      { $match: filter },
+      { $sort: { createdAt: -1 } },
+      { $skip: skip },
+      { $limit: limit },
+      {
+        $lookup: {
+          from: 'videos',
+          localField: '_id',
+          foreignField: 'artistId',
+          as: 'videos'
+        }
+      },
+      {
+        $addFields: {
+          videoCount: { $size: '$videos' }
+        }
+      },
+      {
+        $project: {
+          videos: 0
+        }
+      }
+    ]),
     Artist.countDocuments(filter),
   ])
   res.status(200).json({ success: true, data: { artists, pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } } })

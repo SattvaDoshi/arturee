@@ -8,6 +8,7 @@ import {
 import UserLayout from '../components/layout/UserLayout'
 import { videoApi, purchaseApi, wishlistApi } from '../api/index.js'
 import { useAuth } from '../context/AuthContext'
+import { useCart } from '../context/CartContext'
 import VideoPlayer from '../components/video/VideoPlayer'
 import YouTubePlayer from '../components/video/YouTubePlayer'
 
@@ -130,6 +131,7 @@ export default function VideoDetail() {
   const { videoId } = useParams()
   const navigate    = useNavigate()
   const { isAuthenticated, user } = useAuth()
+  const { toggleCart, isInCart } = useCart()
 
   const [video,     setVideo]     = useState(null)
   const [loading,   setLoading]   = useState(true)
@@ -161,8 +163,6 @@ export default function VideoDetail() {
   const isVertical = 
     video?.genre?.name?.toUpperCase().includes('MOBILE') || 
     video?.category?.toUpperCase().includes('MOBILE') ||
-    video?.genre?.name?.toUpperCase().includes('SPOKEN WORD') ||
-    video?.category?.toUpperCase().includes('SPOKEN WORD')
 
   /* ── Fetch video ── */
   useEffect(() => {
@@ -451,27 +451,27 @@ export default function VideoDetail() {
                         </div>
                       )}
 
-                      {/* Price badge — dual pricing (on parent container) */}
-                      <div className="absolute top-4 right-4">
-                        {video?.price > 0 ? (
-                          video?.discountedPrice ? (
+                      {/* Price badge — dual pricing (on active video) */}
+                      <div className="absolute top-4 right-4 pointer-events-none">
+                        {(currentVideo?.discountedPrice ?? currentVideo?.price) > 0 ? (
+                          currentVideo?.discountedPrice ? (
                             <div className="flex flex-col items-end gap-1">
-                              <span className="px-3 py-1.5 rounded-full text-sm font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>
-                                ₹{video.discountedPrice}
+                              <span className="px-3 py-1.5 rounded-full text-sm font-black text-[#051d2e] shadow-md" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>
+                                ₹{currentVideo.discountedPrice}
                               </span>
-                              {video.costPrice && (
-                                <span className="px-2 py-0.5 rounded-full text-xs font-semibold text-white/70" style={{ background: 'rgba(5,29,46,0.6)', textDecoration: 'line-through' }}>
-                                  ₹{video.costPrice}
+                              {currentVideo.costPrice && (
+                                <span className="px-2 py-0.5 rounded-full text-xs font-semibold text-white/90 shadow-sm" style={{ background: 'rgba(5,29,46,0.7)', textDecoration: 'line-through' }}>
+                                  ₹{currentVideo.costPrice}
                                 </span>
                               )}
                             </div>
                           ) : (
-                            <span className="px-3 py-1.5 rounded-full text-sm font-black text-white" style={{ background: 'linear-gradient(135deg,#4DD0E1,#00BCD4)', backdropFilter: 'blur(4px)' }}>
-                              ₹{video.price}
+                            <span className="px-3 py-1.5 rounded-full text-sm font-black text-white shadow-md" style={{ background: 'linear-gradient(135deg,#4DD0E1,#00BCD4)', backdropFilter: 'blur(4px)' }}>
+                              ₹{currentVideo.price}
                             </span>
                           )
                         ) : (
-                          <span className="px-3 py-1.5 rounded-full text-sm font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>
+                          <span className="px-3 py-1.5 rounded-full text-sm font-black text-[#051d2e] shadow-md" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>
                             Free
                           </span>
                         )}
@@ -597,17 +597,27 @@ export default function VideoDetail() {
                   >
                     <div className="flex items-center gap-2 flex-wrap">
                       {/* Buy button (if not purchased and not free) */}
-                      {video?.price > 0 && !purchased && (
-                        <GradBtn
-                          onClick={() => handleBuy(video)}
-                          disabled={checkingPurchase}
-                          className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm text-[#051d2e] mr-2"
-                        >
-                          {checkingPurchase
-                            ? <><Loader2 className="w-4 h-4 animate-spin" /> Checking…</>
-                            : <><ShoppingCart className="w-4 h-4" /> Buy ₹{video?.price}</>
-                          }
-                        </GradBtn>
+                      {(video?.discountedPrice ?? video?.price) > 0 && !purchased && (
+                        <div className="flex items-center gap-2 mr-2">
+                          <GradBtn
+                            onClick={() => handleBuy(video)}
+                            disabled={checkingPurchase}
+                            className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm text-[#051d2e]"
+                          >
+                            {checkingPurchase
+                              ? <><Loader2 className="w-4 h-4 animate-spin" /> Checking…</>
+                              : <><ShoppingCart className="w-4 h-4" /> Buy ₹{video?.discountedPrice ?? video?.price}</>
+                            }
+                          </GradBtn>
+                          
+                          <button
+                            onClick={() => toggleCart({ id: video._id, image: video.thumbnailUrl, title: video.title, price: (video?.discountedPrice ?? video?.price), artistName: video.artistId?.name || '' })}
+                            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition ${isInCart(video._id) ? 'bg-black/5' : ''}`}
+                            style={{ border: '2px solid rgba(77,208,225,0.4)', color: C.navy }}
+                          >
+                            {isInCart(video._id) ? 'In Cart' : '+ Cart'}
+                          </button>
+                        </div>
                       )}
                       
                       {/* ── Reactions Bar ── */}
@@ -695,17 +705,29 @@ export default function VideoDetail() {
                                     {ep.price > 0 && !purchased && !purchasedEpisodes.includes(ep._id) ? '' : 'Available'}
                                   </span>
                                 )}
-                                {ep.price > 0 && !purchased && !purchasedEpisodes.includes(ep._id) && (
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation()
-                                      handleBuy(ep)
-                                    }}
-                                    className="px-3 py-1 rounded-full text-xs font-bold text-[#051d2e] shadow-md hover:scale-105 transition"
-                                    style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
-                                  >
-                                    Buy ₹{ep.discountedPrice ?? ep.price}
-                                  </button>
+                                {(ep.discountedPrice ?? ep.price) > 0 && !purchased && !purchasedEpisodes.includes(ep._id) && (
+                                  <div className="flex items-center gap-1.5">
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        handleBuy(ep)
+                                      }}
+                                      className="px-3 py-1 rounded-full text-xs font-bold text-[#051d2e] shadow-md hover:scale-105 transition"
+                                      style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
+                                    >
+                                      Buy ₹{ep.discountedPrice ?? ep.price}
+                                    </button>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        toggleCart({ id: ep._id, image: ep.thumbnailUrl || video.thumbnailUrl, title: ep.title, price: (ep.discountedPrice ?? ep.price), artistName: video.artistId?.name || '' })
+                                      }}
+                                      className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${isInCart(ep._id) ? 'bg-black/5' : ''}`}
+                                      style={{ border: '1px solid rgba(77,208,225,0.6)', color: C.navy }}
+                                    >
+                                      {isInCart(ep._id) ? 'In Cart' : '+ Cart'}
+                                    </button>
+                                  </div>
                                 )}
                               </div>
                             </div>

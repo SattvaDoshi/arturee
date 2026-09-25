@@ -145,9 +145,13 @@ export default function MyList() {
                 </Link>
                 {/* Remove button — appears on hover */}
                 <button
-                  onClick={() => remove(item._id)}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    remove(item._id)
+                  }}
                   title="Remove from My List"
-                  className="absolute top-2 left-2 p-1.5 rounded-full bg-red-500 text-white opacity-0 group-hover:opacity-100 transition shadow-md hover:bg-red-600"
+                  className="absolute top-2 left-2 p-1.5 rounded-full bg-red-500 text-white opacity-100 lg:opacity-0 group-hover:opacity-100 transition shadow-md hover:bg-red-600"
                   style={{ zIndex: 10 }}
                 >
                   <Trash2 className="w-3 h-3" />

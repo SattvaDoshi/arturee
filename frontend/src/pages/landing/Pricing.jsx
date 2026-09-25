@@ -267,7 +267,7 @@ const Pricing = () => {
 
                 <div className="relative z-10">
                   <span className="inline-block px-4 py-1 rounded-full text-xs font-bold whitespace-nowrap bg-lime text-navy mb-6">
-                    Simple & Transparent
+                    Shubhaarambh
                   </span>
                   <p className="font-mono text-sm uppercase tracking-widest mb-2 font-bold text-lime">
                     Pay for what you watch
