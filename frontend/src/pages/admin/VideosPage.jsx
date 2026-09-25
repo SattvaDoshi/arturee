@@ -34,7 +34,7 @@ const EditForm = ({ video, artists, genres, categories, onSave, onCancel }) => {
     description: video.description || '',
     price:       video.price ?? 0,
     costPrice:   video.costPrice ?? '',
-    discountedPrice: video.discountedPrice ?? '',
+    discountedPrice: video.discountedPrice || '',
     genre:       video.genre?._id || video.genre || '',
     categories:  (video.categories || []).map(c => c._id || c),
     certification: video.certification || 'U',

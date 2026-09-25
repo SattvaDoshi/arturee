@@ -183,7 +183,7 @@ export default function VideoDetail() {
         if (v.videoSource === 'series' && v.seriesEpisodes?.length > 0) {
           // Sort episodes if they have episodeNumber, else keep original order
           v.seriesEpisodes.sort((a, b) => (a.episodeNumber || 0) - (b.episodeNumber || 0))
-          setActiveEpisode(v.seriesEpisodes[0])
+          // Do NOT auto-select the first episode, so bundle price is shown initially
         }
         if (res.data.data.reactions) {
           setReactions(res.data.data.reactions)
@@ -244,10 +244,10 @@ export default function VideoDetail() {
   }, [isAuthenticated, saved, videoId, navigate])
 
   /* ── Buy now ── */
-  const effectivePrice = video?.discountedPrice ?? video?.price ?? 0
+  const effectivePrice = video?.discountedPrice || video?.price || 0
   const handleBuy = (targetVideo = video) => {
     if (!isAuthenticated) { navigate('/login'); return }
-    const p = targetVideo.discountedPrice ?? targetVideo.price ?? 0
+    const p = targetVideo.discountedPrice || targetVideo.price || 0
     navigate('/checkout', {
       state: {
         videoId:   targetVideo._id,
@@ -340,7 +340,7 @@ export default function VideoDetail() {
                 {/* ── Video player / preview ── */}
                 {/* Calculate current video properties for series vs single */}
                 {(() => {
-                  const currentVideo = video?.videoSource === 'series' ? activeEpisode : video
+                  const currentVideo = video?.videoSource === 'series' ? (activeEpisode || video) : video
                   if (!currentVideo) return <div className="aspect-video bg-black/5 rounded-2xl flex items-center justify-center"><Loader2 className="animate-spin text-primary" /></div>
 
                   const isYoutube = currentVideo.videoSource === 'youtube' || currentVideo.youtubeUrl
@@ -387,7 +387,7 @@ export default function VideoDetail() {
                                 <span style={{ textDecoration: 'line-through', opacity: 0.6, fontSize: '0.85em' }}>₹{currentVideo.costPrice}</span>
                                 Buy for ₹{currentVideo.discountedPrice}
                               </span>
-                            ) : `Buy for ₹${currentVideo.discountedPrice ?? currentVideo.price ?? 0}`}
+                            ) : `Buy for ₹${currentVideo.discountedPrice || currentVideo.price || 0}`}
                           </GradBtn>
                         </div>
                       </div>
@@ -433,7 +433,7 @@ export default function VideoDetail() {
                                 <span style={{ textDecoration: 'line-through', opacity: 0.6, fontSize: '0.85em' }}>₹{currentVideo.costPrice}</span>
                                 Buy for ₹{currentVideo.discountedPrice}
                               </span>
-                            ) : `Buy for ₹${currentVideo.discountedPrice ?? currentVideo.price ?? 0}`}
+                            ) : `Buy for ₹${currentVideo.discountedPrice || currentVideo.price || 0}`}
                           </GradBtn>
                         </div>
                       )}
@@ -442,7 +442,12 @@ export default function VideoDetail() {
                       {!needsPurchase && (
                         <div className="absolute inset-0 flex items-center justify-center">
                           <button
-                            onClick={() => setIsPlaying(true)}
+                            onClick={() => {
+                              if (video?.videoSource === 'series' && !activeEpisode && video?.seriesEpisodes?.length > 0) {
+                                setActiveEpisode(video.seriesEpisodes[0])
+                              }
+                              setIsPlaying(true)
+                            }}
                             className="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center transition hover:scale-110 shadow-2xl"
                             style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)', boxShadow: '0 0 32px rgba(77,208,225,0.6)' }}
                           >
@@ -453,7 +458,7 @@ export default function VideoDetail() {
 
                       {/* Price badge — dual pricing (on active video) */}
                       <div className="absolute top-4 right-4 pointer-events-none">
-                        {(currentVideo?.discountedPrice ?? currentVideo?.price) > 0 ? (
+                        {(currentVideo?.discountedPrice || currentVideo?.price) > 0 ? (
                           currentVideo?.discountedPrice ? (
                             <div className="flex flex-col items-end gap-1">
                               <span className="px-3 py-1.5 rounded-full text-sm font-black text-[#051d2e] shadow-md" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>
@@ -597,7 +602,7 @@ export default function VideoDetail() {
                   >
                     <div className="flex items-center gap-2 flex-wrap">
                       {/* Buy button (if not purchased and not free) */}
-                      {(video?.discountedPrice ?? video?.price) > 0 && !purchased && (
+                      {(video?.discountedPrice || video?.price) > 0 && !purchased && (
                         <div className="flex items-center gap-2 mr-2">
                           <GradBtn
                             onClick={() => handleBuy(video)}
@@ -606,12 +611,12 @@ export default function VideoDetail() {
                           >
                             {checkingPurchase
                               ? <><Loader2 className="w-4 h-4 animate-spin" /> Checking…</>
-                              : <><ShoppingCart className="w-4 h-4" /> Buy ₹{video?.discountedPrice ?? video?.price}</>
+                              : <><ShoppingCart className="w-4 h-4" /> Buy ₹{video?.discountedPrice || video?.price}</>
                             }
                           </GradBtn>
                           
                           <button
-                            onClick={() => toggleCart({ id: video._id, image: video.thumbnailUrl, title: video.title, price: (video?.discountedPrice ?? video?.price), artistName: video.artistId?.name || '' })}
+                            onClick={() => toggleCart({ id: video._id, image: video.thumbnailUrl, title: video.title, price: (video?.discountedPrice || video?.price), artistName: video.artistId?.name || '' })}
                             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition ${isInCart(video._id) ? 'bg-black/5' : ''}`}
                             style={{ border: '2px solid rgba(77,208,225,0.4)', color: C.navy }}
                           >
@@ -705,7 +710,7 @@ export default function VideoDetail() {
                                     {ep.price > 0 && !purchased && !purchasedEpisodes.includes(ep._id) ? '' : 'Available'}
                                   </span>
                                 )}
-                                {(ep.discountedPrice ?? ep.price) > 0 && !purchased && !purchasedEpisodes.includes(ep._id) && (
+                                {(ep.discountedPrice || ep.price) > 0 && !purchased && !purchasedEpisodes.includes(ep._id) && (
                                   <div className="flex items-center gap-1.5">
                                     <button
                                       onClick={(e) => {
@@ -715,12 +720,12 @@ export default function VideoDetail() {
                                       className="px-3 py-1 rounded-full text-xs font-bold text-[#051d2e] shadow-md hover:scale-105 transition"
                                       style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
                                     >
-                                      Buy ₹{ep.discountedPrice ?? ep.price}
+                                      Buy ₹{ep.discountedPrice || ep.price}
                                     </button>
                                     <button
                                       onClick={(e) => {
                                         e.stopPropagation()
-                                        toggleCart({ id: ep._id, image: ep.thumbnailUrl || video.thumbnailUrl, title: ep.title, price: (ep.discountedPrice ?? ep.price), artistName: video.artistId?.name || '' })
+                                        toggleCart({ id: ep._id, image: ep.thumbnailUrl || video.thumbnailUrl, title: ep.title, price: (ep.discountedPrice || ep.price), artistName: video.artistId?.name || '' })
                                       }}
                                       className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${isInCart(ep._id) ? 'bg-black/5' : ''}`}
                                       style={{ border: '1px solid rgba(77,208,225,0.6)', color: C.navy }}

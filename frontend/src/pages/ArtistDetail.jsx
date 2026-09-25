@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
-import { ArrowLeft, Play, Calendar, Eye, Music, AlertCircle, Loader2, Instagram, Twitter, Globe } from 'lucide-react'
+import { ArrowLeft, Play, Calendar, Eye, Music, AlertCircle, Loader2, Instagram, Twitter, Globe, ShoppingCart } from 'lucide-react'
 import UserLayout from '../components/layout/UserLayout'
 import { artistApi, videoApi } from '../api/index.js'
+import { useCart } from '../context/CartContext'
 
 const C = {
   navy: '#051d2e',
@@ -29,6 +30,7 @@ const fmtViews = (n) => {
 const ArtistDetail = () => {
   const navigate = useNavigate()
   const { artistId } = useParams()
+  const { setCart } = useCart()
   
   const [artist, setArtist] = useState(null)
   const [videos, setVideos] = useState([])
@@ -49,7 +51,6 @@ const ArtistDetail = () => {
     }).finally(() => setLoading(false))
   }, [artistId])
 
-  // Aggregate reactions from all videos
   const aggregateReactions = () => {
     let totals = { party: 0, clap: 0, fire: 0, star: 0, heart: 0 }
     videos.forEach(v => {
@@ -62,6 +63,28 @@ const ArtistDetail = () => {
       }
     })
     return totals
+  }
+  
+  const handleBuyAll = (e) => {
+    e.stopPropagation()
+    setCart((prev) => {
+      const newItems = [...prev]
+      videos.forEach(video => {
+        // Only add videos that have a price > 0
+        const price = video.discountedPrice || video.price || 0
+        if (price > 0 && !newItems.find(item => item.id === video._id)) {
+          newItems.push({
+            id: video._id,
+            image: video.thumbnailUrl,
+            title: video.title,
+            price: price,
+            artistName: video.artistId?.name || artist?.name || '',
+            quantity: 1
+          })
+        }
+      })
+      return newItems
+    })
   }
   
   const totals = aggregateReactions()
@@ -196,13 +219,25 @@ const ArtistDetail = () => {
 
           <section className="rounded-3xl border p-5 md:p-7" style={{ background: 'rgba(255,255,255,0.82)', borderColor: 'rgba(77,208,225,0.25)' }}>
             <div className="flex items-center justify-between gap-4 mb-5">
-              <h2 className="text-xl md:text-3xl font-black tracking-tight" style={{ color: C.navy }}>
-                All Videos
-              </h2>
-              <span className="text-xs md:text-sm font-bold uppercase tracking-wider"
-                style={{ color: C.teal }}>
-                {videos.length} uploads
-              </span>
+              <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-4">
+                <h2 className="text-xl md:text-3xl font-black tracking-tight" style={{ color: C.navy }}>
+                  All Videos
+                </h2>
+                <span className="text-xs md:text-sm font-bold uppercase tracking-wider" style={{ color: C.teal }}>
+                  {videos.length} uploads
+                </span>
+              </div>
+              
+              {videos.some(v => (v.discountedPrice || v.price) > 0) && (
+                <button
+                  onClick={handleBuyAll}
+                  className="flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl font-bold text-[#051d2e] hover:scale-105 transition-all text-xs sm:text-sm shadow-md"
+                  style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
+                >
+                  <ShoppingCart className="w-4 h-4" />
+                  <span>Buy All</span>
+                </button>
+              )}
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">

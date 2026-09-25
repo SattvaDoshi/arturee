@@ -160,9 +160,9 @@ const WideRow = ({ videos, widthClass = 'w-64 sm:w-72 md:w-80' }) => (
         <div className="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-lg border border-[#4DD0E1]/20">
           <img src={v.thumbnailUrl || FALLBACK_IMG} alt={v.title} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
           <HoverOverlayWide />
-          <VideoActionButtons videoId={v._id} videoData={{ id: v._id, image: v.thumbnailUrl, title: v.title, price: fmtPrice(v.discountedPrice ?? v.price, v.currency), artistName: v.artistId?.name }} />
-          {(v.discountedPrice ?? v.price) > 0
-            ? <PriceBadge price={v.discountedPrice ?? v.price} currency={v.currency} />
+          <VideoActionButtons videoId={v._id} videoData={{ id: v._id, image: v.thumbnailUrl, title: v.title, price: fmtPrice(v.discountedPrice || v.price, v.currency), artistName: v.artistId?.name }} />
+          {(v.discountedPrice || v.price) > 0
+            ? <PriceBadge price={v.discountedPrice || v.price} currency={v.currency} />
             : <div className="absolute bottom-2 left-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: '#C0E863' }}>Free</div>
           }
         </div>
@@ -184,12 +184,12 @@ const TallRow = ({ videos, showRank = false }) => (
             desc={v.description}
             stats={<><span>{fmtViews(v.viewCount)}</span>{v.durationSeconds && <><span>•</span><span>{fmtDuration(v.durationSeconds)}</span></>}</>}
           />
-          <VideoActionButtons videoId={v._id} videoData={{ id: v._id, image: v.thumbnailUrl, title: v.title, price: fmtPrice(v.discountedPrice ?? v.price, v.currency), artistName: v.artistId?.name }} />
+          <VideoActionButtons videoId={v._id} videoData={{ id: v._id, image: v.thumbnailUrl, title: v.title, price: fmtPrice(v.discountedPrice || v.price, v.currency), artistName: v.artistId?.name }} />
           {showRank && (
             <div className="absolute top-2 left-2 px-2 py-0.5 bg-red-500 rounded-full text-[10px] font-black text-white">#{idx + 1}</div>
           )}
-          {(v.discountedPrice ?? v.price) > 0
-            ? <PriceBadge price={v.discountedPrice ?? v.price} currency={v.currency} />
+          {(v.discountedPrice || v.price) > 0
+            ? <PriceBadge price={v.discountedPrice || v.price} currency={v.currency} />
             : <div className="absolute bottom-2 left-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: '#C0E863' }}>Free</div>
           }
         </div>
@@ -220,7 +220,7 @@ export default function UserDashboard() {
   const handleHeroSaveToList = async (e, slide) => {
     e.preventDefault()
     e.stopPropagation()
-    const videoData = { id: slide._id, image: slide.thumbnailUrl, title: slide.title, price: fmtPrice(slide.discountedPrice ?? slide.price, slide.currency), artistName: slide.artistId?.name }
+    const videoData = { id: slide._id, image: slide.thumbnailUrl, title: slide.title, price: fmtPrice(slide.discountedPrice || slide.price, slide.currency), artistName: slide.artistId?.name }
     toggleSavedList(videoData)
     try {
       if (isInSavedList(slide._id)) {
@@ -518,10 +518,10 @@ export default function UserDashboard() {
                     <div className={`relative ${isVertical ? 'aspect-[9/16]' : 'aspect-video'} rounded-xl overflow-hidden mb-3 shadow-lg border border-[#4DD0E1]/20`}>
                       <img src={v.thumbnailUrl || FALLBACK_IMG} alt={v.title} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
                       {isVertical ? <HoverOverlayTall /> : <HoverOverlayWide />}
-                      <VideoActionButtons videoId={v._id} videoData={{ id: v._id, image: v.thumbnailUrl, title: v.title, price: fmtPrice(v.discountedPrice ?? v.price, v.currency), artistName: v.artistId?.name }} />
+                      <VideoActionButtons videoId={v._id} videoData={{ id: v._id, image: v.thumbnailUrl, title: v.title, price: fmtPrice(v.discountedPrice || v.price, v.currency), artistName: v.artistId?.name }} />
                       <div className="absolute top-2 left-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>{genre.name}</div>
-                      {(v.discountedPrice ?? v.price) > 0
-                        ? <PriceBadge price={v.discountedPrice ?? v.price} currency={v.currency} />
+                      {(v.discountedPrice || v.price) > 0
+                        ? <PriceBadge price={v.discountedPrice || v.price} currency={v.currency} />
                         : <div className="absolute bottom-2 left-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: '#C0E863' }}>Free</div>
                       }
                     </div>
@@ -551,10 +551,10 @@ export default function UserDashboard() {
                   <div className={`relative ${isVertical ? 'aspect-[9/16]' : 'aspect-video'} rounded-xl overflow-hidden mb-3 shadow-lg border border-[#4DD0E1]/20`}>
                     <img src={v.thumbnailUrl || FALLBACK_IMG} alt={v.title} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
                     {isVertical ? <HoverOverlayTall /> : <HoverOverlayWide />}
-                    <VideoActionButtons videoId={v._id} videoData={{ id: v._id, image: v.thumbnailUrl, title: v.title, price: fmtPrice(v.discountedPrice ?? v.price, v.currency), artistName: v.artistId?.name }} />
+                    <VideoActionButtons videoId={v._id} videoData={{ id: v._id, image: v.thumbnailUrl, title: v.title, price: fmtPrice(v.discountedPrice || v.price, v.currency), artistName: v.artistId?.name }} />
                     <div className="absolute top-2 left-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>{category.name}</div>
-                    {(v.discountedPrice ?? v.price) > 0
-                      ? <PriceBadge price={v.discountedPrice ?? v.price} currency={v.currency} />
+                    {(v.discountedPrice || v.price) > 0
+                      ? <PriceBadge price={v.discountedPrice || v.price} currency={v.currency} />
                       : <div className="absolute bottom-2 left-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: '#C0E863' }}>Free</div>
                     }
                   </div>

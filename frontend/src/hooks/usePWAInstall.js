@@ -4,8 +4,10 @@ import { useState, useEffect } from "react"
  * Shared PWA install hook.
  * Returns: canInstall, isInstalled, isIOS, triggerInstall
  */
+let globalDeferredPrompt = null;
+
 export function usePWAInstall() {
-  const [deferredPrompt, setDeferredPrompt] = useState(null)
+  const [deferredPrompt, setDeferredPrompt] = useState(globalDeferredPrompt)
 
   const standaloneNow =
     window.matchMedia("(display-mode: standalone)").matches ||
@@ -23,12 +25,14 @@ export function usePWAInstall() {
 
     const handler = (e) => {
       e.preventDefault()
+      globalDeferredPrompt = e
       setDeferredPrompt(e)
     }
 
     const installedHandler = () => {
       setIsInstalled(true)
       localStorage.setItem("pwa-installed", "true")
+      globalDeferredPrompt = null
       setDeferredPrompt(null)
     }
 
@@ -48,6 +52,7 @@ export function usePWAInstall() {
       setIsInstalled(true)
       localStorage.setItem("pwa-installed", "true")
     }
+    globalDeferredPrompt = null
     setDeferredPrompt(null)
     return outcome === "accepted"
   }

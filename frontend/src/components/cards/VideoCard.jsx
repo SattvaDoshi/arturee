@@ -18,7 +18,7 @@ const VideoCard = ({
 }) => {
   const { toggleCart, toggleSavedList, isInCart, isInSavedList } = useCart()
 
-  const effectivePrice = discountedPrice ?? price ?? 0
+  const effectivePrice = discountedPrice ||  || 0
   const video = { id, image, title, creator, price: effectivePrice }
 
   const handleAddToCart = (e) => {
