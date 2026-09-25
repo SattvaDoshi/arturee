@@ -128,6 +128,7 @@ export default function ApplicationsPage() {
                       <td className="px-5 py-3">
                         <p className="text-white font-semibold">{app.name}</p>
                         <p className="text-white/40 text-xs">{app.email}</p>
+                        {app.specialty && <p className="text-[#4DD0E1] text-xs mt-0.5">{app.specialty}</p>}
                       </td>
                       <td className="px-5 py-3 text-white/70 text-xs space-y-1">
                         <p>Tel: {app.phone}</p>

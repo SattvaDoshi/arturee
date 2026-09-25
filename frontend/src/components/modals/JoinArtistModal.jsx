@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Loader2, ChevronDown } from 'lucide-react'
 import { toast } from '../../context/ToastContext'
 import { useArtistModal } from '../../context/ArtistModalContext'
-import { artistApi } from '../../api/index.js'
+import { artistApi, genreApi } from '../../api/index.js'
 
 const countryCodes = [
   { code: '+91', label: '+91 (IN)', maxLen: 10 },
@@ -23,12 +23,23 @@ const JoinArtistModal = () => {
     whatsapp: '',
     email: '',
     videoLink: '',
+    specialty: '',
     agreeTerms: false,
   })
   
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showTerms, setShowTerms] = useState(false)
+  const [genres, setGenres] = useState([])
+
+  useEffect(() => {
+    genreApi.list().then(res => {
+      const genreList = Array.isArray(res.data?.data)
+        ? res.data.data
+        : res.data?.data?.genres || []
+      setGenres(genreList)
+    }).catch(err => console.error('Failed to load genres', err))
+  }, [])
 
   if (!isModalOpen) return null
 
@@ -75,6 +86,7 @@ const JoinArtistModal = () => {
         whatsapp: '',
         email: '',
         videoLink: '',
+        specialty: '',
         agreeTerms: false,
       })
     }, 300)
@@ -135,6 +147,21 @@ const JoinArtistModal = () => {
                   onChange={handleChange}
                   className="w-full px-4 py-3 bg-lightgray/50 border border-primary/20 rounded-xl focus:outline-none focus:border-primary focus:bg-white transition-all text-sm text-navy placeholder:text-navy/40"
                 />
+              </div>
+
+              <div>
+                <select
+                  name="specialty"
+                  required
+                  value={formData.specialty}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-3 bg-lightgray/50 border border-primary/20 rounded-xl focus:outline-none focus:border-primary focus:bg-white transition-all text-sm ${formData.specialty ? 'text-navy' : 'text-navy/40'}`}
+                >
+                  <option value="" disabled>Select Specialty (Genre)</option>
+                  {genres.map(g => (
+                    <option key={g._id || g.id} value={g.name} className="text-navy">{g.name}</option>
+                  ))}
+                </select>
               </div>
               
               <div className="flex flex-col gap-4">

@@ -25,6 +25,10 @@ const artistApplicationSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    specialty: {
+      type: String,
+      required: true,
+    },
     status: {
       type: String,
       enum: ['pending', 'reviewed', 'approved', 'rejected'],

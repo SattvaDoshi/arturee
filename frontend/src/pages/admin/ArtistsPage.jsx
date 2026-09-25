@@ -3,7 +3,7 @@ import { Plus, Edit3, Trash2, X, CheckCircle, Loader2 } from 'lucide-react'
 import { toast } from '../../context/ToastContext'
 import AdminLayout from '../../components/layout/AdminLayout'
 import ConfirmModal from '../../components/ui/ConfirmModal'
-import { adminApi, artistApi } from '../../api/index.js'
+import { adminApi, artistApi, genreApi } from '../../api/index.js'
 
 /* ─── Default empty form ─────────────────────────────── */
 const EMPTY_FORM = {
@@ -33,6 +33,16 @@ const ArtistFormModal = ({ initial, onClose, onSaved }) => {
   const isEdit = Boolean(initial?._id)
 
   const [uploadingImage, setUploadingImage] = useState(false)
+  const [genres, setGenres] = useState([])
+
+  useEffect(() => {
+    genreApi.list()
+      .then(res => {
+        const d = res.data?.data
+        setGenres(Array.isArray(d) ? d : d?.genres || [])
+      })
+      .catch(console.error)
+  }, [])
 
   const handleImageUpload = async (e, key) => {
     const file = e.target.files[0]
@@ -137,7 +147,18 @@ const ArtistFormModal = ({ initial, onClose, onSaved }) => {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-[10px] text-white/35 font-semibold uppercase tracking-widest mb-1">Genre</label>
-              <input value={form.genre} onChange={set('genre')} placeholder="e.g. Jazz" className={inputCls} />
+              <select 
+                value={form.genre} 
+                onChange={set('genre')} 
+                className={`${inputCls} appearance-none cursor-pointer`}
+              >
+                <option value="">Select a genre...</option>
+                {genres.map(g => (
+                  <option key={g._id || g.id} value={g.name} className="bg-[#051d2e] text-white">
+                    {g.name}
+                  </option>
+                ))}
+              </select>
             </div>
             {imageUploadField('avatarUrl', 'Avatar URL')}
           </div>
