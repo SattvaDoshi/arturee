@@ -360,8 +360,8 @@ export default function CouponsPage() {
                   onChange={e => setForm(f => ({ ...f, discountType: e.target.value }))}
                   className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#4DD0E1]/50"
                 >
-                  <option value="flat">Flat (₹)</option>
-                  <option value="percent">Percent (%)</option>
+                  <option className="bg-[#051d2e] text-white" value="flat">Flat (₹)</option>
+                  <option className="bg-[#051d2e] text-white" value="percent">Percent (%)</option>
                 </select>
               </div>
 
