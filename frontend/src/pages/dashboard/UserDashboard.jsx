@@ -182,7 +182,7 @@ const TallRow = ({ videos, showRank = false }) => (
           <img src={v.thumbnailUrl || FALLBACK_IMG} alt={v.title} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
           <HoverOverlayTall
             desc={v.description}
-            stats={<><span>{fmtViews(v.viewCount)}</span>{v.durationSeconds && <><span>•</span><span>{fmtDuration(v.durationSeconds)}</span></>}</>}
+            stats={<>{v.price > 0 && <span>{fmtViews(v.viewCount)}</span>}{v.durationSeconds > 0 && <>{v.price > 0 && <span>•</span>}<span>{fmtDuration(v.durationSeconds)}</span></>}</>}
           />
           <VideoActionButtons videoId={v._id} videoData={{ id: v._id, image: v.thumbnailUrl, title: v.title, price: fmtPrice(v.discountedPrice || v.price, v.currency), artistName: v.artistId?.name }} />
           {showRank && (
@@ -380,7 +380,7 @@ export default function UserDashboard() {
               {/* Title */}
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.08] tracking-tight text-[#f0fdfa] max-w-3xl line-clamp-2">
                 {slide.title.split(' ').slice(0, -1).join(' ')}{' '}
-                <GradText className="italic">{slide.title.split(' ').slice(-1)[0]}</GradText>
+                <GradText className="italic pr-2">{slide.title.split(' ').slice(-1)[0]}</GradText>
               </h1>
 
               {/* Description */}
@@ -414,8 +414,8 @@ export default function UserDashboard() {
 
               {/* Meta */}
               <div className="flex flex-wrap items-center gap-5 text-xs text-[#f0fdfa]/80 font-medium">
-                <div className="flex items-center gap-1.5"><Users className="w-4 h-4 text-[#4DD0E1]" /><span>{fmtViews(slide.viewCount)}</span></div>
-                {slide.durationSeconds && (
+                {slide.price > 0 && <div className="flex items-center gap-1.5"><Users className="w-4 h-4 text-[#4DD0E1]" /><span>{fmtViews(slide.viewCount)}</span></div>}
+                {slide.durationSeconds > 0 && (
                   <div className="flex items-center gap-1.5"><Clock className="w-4 h-4 text-[#4DD0E1]" /><span>{fmtDuration(slide.durationSeconds)} runtime</span></div>
                 )}
               </div>

@@ -305,7 +305,7 @@ const ArtistDetail = () => {
                       {video.title}
                     </h3>
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs" style={{ color: C.muted }}>
-                      <span className="inline-flex items-center gap-1"><Eye className="w-3.5 h-3.5" />{fmtViews(video.viewCount)}</span>
+                      {video.price > 0 && <span className="inline-flex items-center gap-1"><Eye className="w-3.5 h-3.5" />{fmtViews(video.viewCount)}</span>}
                       <span className="inline-flex items-center gap-1"><Calendar className="w-3.5 h-3.5" />{new Date(video.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
                     </div>
                   </div>

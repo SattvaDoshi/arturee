@@ -237,7 +237,7 @@ const CategoryDetail = () => {
                         {video.title}
                       </h4>
                       <p className="text-[#051d2e]/55 text-xs truncate font-medium">{artistName}</p>
-                      <p className="text-[#051d2e]/35 text-[10px] uppercase font-mono tracking-wider mt-1.5">{video.viewCount || 0} views</p>
+                      {video.price > 0 && <p className="text-[#051d2e]/35 text-[10px] uppercase font-mono tracking-wider mt-1.5">{video.viewCount || 0} views</p>}
                     </div>
                   </Link>
                 )

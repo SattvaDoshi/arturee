@@ -120,7 +120,7 @@ const RecCard = ({ video }) => {
       <div className="flex-1 min-w-0 py-0.5">
         <h3 className="font-bold text-sm line-clamp-2 mb-1" style={{ color: C.navy }}>{video.title}</h3>
         <p className="text-xs mb-0.5" style={{ color: C.muted }}>{video.artistId?.name || video.category || ''}</p>
-        <p className="text-xs" style={{ color: C.muted }}>{fmtViews(video.viewCount)}</p>
+        {video.price > 0 && <p className="text-xs" style={{ color: C.muted }}>{fmtViews(video.viewCount)}</p>}
       </div>
     </div>
   )
@@ -581,13 +581,13 @@ export default function VideoDetail() {
                         )}
 
                         <div className="flex flex-wrap items-center gap-3 md:gap-4">
-                          {video?.viewCount > 0 && (
+                          {video?.price > 0 && video?.viewCount > 0 && (
                             <div className="flex items-center gap-1.5">
                               <Users className="w-3.5 h-3.5" style={{ color: C.primary }} />
                               <span>{fmtViews(video.viewCount)}</span>
                             </div>
                           )}
-                          {video?.durationSeconds && (
+                          {video?.durationSeconds > 0 && (
                             <div className="flex items-center gap-1.5">
                               <Clock className="w-3.5 h-3.5" style={{ color: C.primary }} />
                               <span>{fmtDuration(video.durationSeconds)}</span>
