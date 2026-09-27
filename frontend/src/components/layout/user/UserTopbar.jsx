@@ -177,13 +177,33 @@ const UserTopbar = ({ onMobileMenuToggle }) => {
         </Link> */}
 
         {isAuthenticated ? (
-          /* Avatar */
-          <Link to="/account" className="w-9 h-9 rounded-full ring-2 ring-[#C0E863]/70 ring-offset-1 overflow-hidden cursor-pointer shrink-0">
-            <img
-              src={user?.avatarUrl || "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"}
-              alt={user?.name || "User"}
-              className="w-full h-full object-cover"
-            />
+          /* Smart avatar: photo → initials fallback */
+          <Link
+            to="/account"
+            className="w-9 h-9 rounded-full ring-2 ring-[#C0E863]/70 ring-offset-1 overflow-hidden cursor-pointer shrink-0 flex items-center justify-center"
+            style={{ background: user?.avatarUrl ? undefined : 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
+          >
+            {user?.avatarUrl ? (
+              <img
+                src={user.avatarUrl}
+                alt={user?.name || 'User'}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  // If image fails to load, replace with initials
+                  e.currentTarget.style.display = 'none'
+                  e.currentTarget.parentElement.setAttribute('data-fallback', 'true')
+                  e.currentTarget.parentElement.style.background = 'linear-gradient(135deg,#4DD0E1,#C0E863)'
+                  const span = document.createElement('span')
+                  span.className = 'text-[#051d2e] font-black text-sm select-none'
+                  span.textContent = (user?.name || 'U').charAt(0).toUpperCase()
+                  e.currentTarget.parentElement.appendChild(span)
+                }}
+              />
+            ) : (
+              <span className="text-[#051d2e] font-black text-sm select-none">
+                {(user?.name || 'U').charAt(0).toUpperCase()}
+              </span>
+            )}
           </Link>
         ) : (
           <div className="flex items-center gap-2 ml-2">

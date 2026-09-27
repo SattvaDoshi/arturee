@@ -14,6 +14,7 @@ import {
   Briefcase,
   Bookmark,
   Layout,
+  Tag,
 } from "lucide-react";
 
 const navItems = [
@@ -29,6 +30,7 @@ const navItems = [
   { label: "Categories",icon: Bookmark,         to: "/admin/categories" },
   { label: "Specialties", icon: Bookmark,       to: "/admin/specialties" },
   { label: "Applications", icon: Briefcase,     to: "/admin/applications" },
+  { label: "Coupons",      icon: Tag,            to: "/admin/coupons" },
 ];
 
 

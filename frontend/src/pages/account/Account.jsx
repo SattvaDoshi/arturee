@@ -135,6 +135,7 @@ export default function Account() {
         if (res.data.success) {
           updateUser(res.data.user)
           setAvatarFile(null)
+          setAvatarPreview(null)
         }
       } catch (error) {
         console.error('Failed to update avatar', error)
@@ -158,6 +159,7 @@ export default function Account() {
       if (res.data.success) {
         updateUser(res.data.user)
         setAvatarFile(null)
+        setAvatarPreview(null)
       }
     } catch (error) {
       console.error('Failed to update profile', error)
@@ -196,12 +198,29 @@ export default function Account() {
           style={{ background: 'linear-gradient(135deg,rgba(224,247,250,0.9),rgba(232,245,233,0.9))' }}
         >
           <div className="relative shrink-0">
-            <div className="w-24 h-24 rounded-full ring-4 ring-[#4DD0E1]/40 ring-offset-2 ring-offset-transparent overflow-hidden bg-gray-200">
-              <img
-                src={avatarPreview || user?.avatarUrl || "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"}
-                alt="avatar"
-                className="w-full h-full object-cover"
-              />
+            <div 
+              className="w-24 h-24 rounded-full ring-4 ring-[#4DD0E1]/40 ring-offset-2 ring-offset-transparent overflow-hidden flex items-center justify-center shrink-0"
+              style={{ background: (avatarPreview || user?.avatarUrl) ? '#e5e7eb' : 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
+            >
+              {(avatarPreview || user?.avatarUrl) ? (
+                <img
+                  src={avatarPreview || user.avatarUrl}
+                  alt="avatar"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none'
+                    e.currentTarget.parentElement.style.background = 'linear-gradient(135deg,#4DD0E1,#C0E863)'
+                    const span = document.createElement('span')
+                    span.className = 'text-[#051d2e] font-black text-4xl select-none'
+                    span.textContent = (user?.name || 'U').charAt(0).toUpperCase()
+                    e.currentTarget.parentElement.appendChild(span)
+                  }}
+                />
+              ) : (
+                <span className="text-[#051d2e] font-black text-4xl select-none">
+                  {(user?.name || 'U').charAt(0).toUpperCase()}
+                </span>
+              )}
             </div>
             <button
               onClick={() => fileInputRef.current?.click()}

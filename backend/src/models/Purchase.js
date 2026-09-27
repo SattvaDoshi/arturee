@@ -62,6 +62,12 @@ const purchaseSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+
+    // Coupon applied at purchase time (if any)
+    couponCode: {
+      type: String,
+      default: null,
+    },
   },
   {
     timestamps: true,

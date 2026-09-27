@@ -146,7 +146,11 @@ export const AuthProvider = ({ children }) => {
   const dismissKicked = useCallback(() => setKickedReason(null), [])
 
   const updateUser = useCallback((updates) => {
-    setUser(prev => ({ ...prev, ...updates }))
+    setUser(prev => {
+      const newUser = { ...prev, ...updates }
+      localStorage.setItem('art_user', JSON.stringify(newUser))
+      return newUser
+    })
   }, [])
 
   const isAdmin         = user?.role === 'admin'

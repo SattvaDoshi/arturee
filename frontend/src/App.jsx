@@ -60,6 +60,7 @@ import AdminGenres    from './pages/admin/GenresPage'
 import AdminCategories from './pages/admin/CategoriesPage'
 import AdminSpecialties from './pages/admin/SpecialtiesPage'
 import AdminLandingConfig from './pages/admin/LandingPageConfig'
+import AdminCoupons from './pages/admin/CouponsPage'
 
 // ── Shared ────────────────────────────────────────────────
 import VideoDetail  from './pages/VideoDetail'
@@ -143,6 +144,7 @@ const App = () => {
                 <Route path="/admin/genres"    element={<AdminRoute><AdminGenres /></AdminRoute>} />
                 <Route path="/admin/categories" element={<AdminRoute><AdminCategories /></AdminRoute>} />
                 <Route path="/admin/specialties" element={<AdminRoute><AdminSpecialties /></AdminRoute>} />
+                <Route path="/admin/coupons"     element={<AdminRoute><AdminCoupons /></AdminRoute>} />
               </Routes>
             </BrowserRouter>
           </CartProvider>

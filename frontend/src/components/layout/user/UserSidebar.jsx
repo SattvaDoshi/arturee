@@ -155,12 +155,29 @@ const UserSidebar = ({ mobile = false, onMobileClose }) => {
                 collapsed ? 'justify-center p-1' : 'gap-3 px-3 py-2.5',
               ].join(' ')}
             >
-              <div className="w-8 h-8 rounded-full ring-2 ring-[#4DD0E1]/50 overflow-hidden shrink-0">
-                <img
-                  src={user?.avatarUrl || "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"}
-                  alt="avatar"
-                  className="w-full h-full object-cover"
-                />
+              <div
+                className="w-8 h-8 rounded-full ring-2 ring-[#4DD0E1]/50 overflow-hidden shrink-0 flex items-center justify-center"
+                style={{ background: user?.avatarUrl ? undefined : 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
+              >
+                {user?.avatarUrl ? (
+                  <img
+                    src={user.avatarUrl}
+                    alt="avatar"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none'
+                      e.currentTarget.parentElement.style.background = 'linear-gradient(135deg,#4DD0E1,#C0E863)'
+                      const span = document.createElement('span')
+                      span.className = 'text-[#051d2e] font-black text-xs select-none'
+                      span.textContent = (user?.name || 'U').charAt(0).toUpperCase()
+                      e.currentTarget.parentElement.appendChild(span)
+                    }}
+                  />
+                ) : (
+                  <span className="text-[#051d2e] font-black text-xs select-none">
+                    {(user?.name || 'U').charAt(0).toUpperCase()}
+                  </span>
+                )}
               </div>
               <div
                 className="overflow-hidden transition-all duration-300"

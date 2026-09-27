@@ -16,6 +16,7 @@ import genreRouter from './routes/genreRoutes.js'
 import categoryRouter from './routes/categoryRoutes.js'
 import specialtyRouter from './routes/SpecialtyRoutes.js'
 import landingConfigRouter from './routes/landingConfigRoutes.js'
+import couponRouter from './routes/couponRoutes.js'
 
 import { errorHandler, notFound } from './middlewares/errorHandler.js'
 import { generalLimiter } from './middlewares/rateLimiter.js'
@@ -103,6 +104,7 @@ app.use('/api/genres', genreRouter)
 app.use('/api/categories', categoryRouter)
 app.use('/api/specialties', specialtyRouter)
 app.use('/api/landing-config', landingConfigRouter)
+app.use('/api/coupons', couponRouter)
 
 // ── 404 + Error handlers (MUST be last) ──────────────────────────────────
 app.use(notFound)

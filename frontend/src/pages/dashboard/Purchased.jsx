@@ -1,30 +1,71 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Play, ChevronLeft, CheckCircle, ShoppingBag, AlertCircle, Loader2 } from 'lucide-react'
+import { Play, ChevronLeft, CheckCircle, ShoppingBag, AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react'
 import UserLayout from '../../components/layout/UserLayout'
 import { purchaseApi } from '../../api/index.js'
 
+const VIEW_LIMIT  = 2   // must match backend VIEW_LIMIT
 const SORT_OPTIONS = ['Recently Purchased', 'Title A – Z', 'Highest Price']
 
-const formatDate = (iso) => {
-  if (!iso) return ''
-  return new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
-}
+const formatDate = (iso) =>
+  iso ? new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : ''
 
 const formatDuration = (secs) => {
   if (!secs) return ''
   const m = Math.floor(secs / 60)
   if (m < 60) return `${m} min`
-  const h = Math.floor(m / 60)
-  const rem = m % 60
+  const h = Math.floor(m / 60); const rem = m % 60
   return rem > 0 ? `${h}h ${rem}m` : `${h}h`
 }
 
+/* ── Watch-count indicator ────────────────────────── */
+function ViewsIndicator({ viewsUsed }) {
+  const used      = Math.min(viewsUsed ?? 0, VIEW_LIMIT)
+  const remaining = VIEW_LIMIT - used
+
+  return (
+    <div className="flex flex-col gap-1 mt-3 pt-3" style={{ borderTop: '1px solid rgba(5,29,46,0.07)' }}>
+      {/* pip row */}
+      <div className="flex items-center gap-1.5">
+        {Array.from({ length: VIEW_LIMIT }).map((_, i) => {
+          const watched = i < used
+          return (
+            <div
+              key={i}
+              className="flex-1 h-1.5 rounded-full transition-all duration-500"
+              style={{
+                background: watched
+                  ? (remaining === 0 ? '#f87171' : '#4DD0E1')
+                  : 'rgba(5,29,46,0.12)',
+              }}
+            />
+          )
+        })}
+      </div>
+
+      {/* label */}
+      <div className="flex items-center justify-between">
+        <span className="text-[10px] font-semibold" style={{
+          color: remaining === 0 ? '#ef4444' : remaining === 1 ? '#f59e0b' : '#4DD0E1'
+        }}>
+          {remaining === 0
+            ? '⚠ No views left'
+            : `${remaining} view${remaining !== 1 ? 's' : ''} left`}
+        </span>
+        <span className="text-[10px] text-[#051d2e]/35 font-medium">
+          {used}/{VIEW_LIMIT} watched
+        </span>
+      </div>
+    </div>
+  )
+}
+
+/* ═══════════════════════════════════════════════════ */
 export default function Purchased() {
-  const [sort, setSort] = useState('Recently Purchased')
+  const [sort,      setSort]      = useState('Recently Purchased')
   const [purchases, setPurchases] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  const [loading,   setLoading]   = useState(true)
+  const [error,     setError]     = useState('')
 
   useEffect(() => {
     const load = async () => {
@@ -41,24 +82,26 @@ export default function Purchased() {
   }, [])
 
   const items = purchases.map(p => ({
-    _id: p._id,
-    videoId: p.videoId?._id,
-    title: p.videoId?.title || 'Untitled',
+    _id:          p._id,
+    videoId:      p.videoId?._id,
+    title:        p.videoId?.title || 'Untitled',
     thumbnailUrl: p.videoId?.thumbnailUrl || undefined,
-    price: p.amountPaise ? p.amountPaise / 100 : 0,
-    duration: formatDuration(p.videoId?.durationSeconds),
-    date: formatDate(p.completedAt),
-    currency: p.currency || 'INR',
-    genreName: p.videoId?.genre?.name || '',
+    price:        p.amountPaise ? p.amountPaise / 100 : 0,
+    duration:     formatDuration(p.videoId?.durationSeconds),
+    date:         formatDate(p.completedAt),
+    currency:     p.currency || 'INR',
+    genreName:    p.videoId?.genre?.name || '',
+    viewsUsed:    p.viewsUsed ?? 0,
   }))
 
   const sorted = [...items].sort((a, b) => {
-    if (sort === 'Title A – Z') return a.title.localeCompare(b.title)
+    if (sort === 'Title A – Z')   return a.title.localeCompare(b.title)
     if (sort === 'Highest Price') return b.price - a.price
     return 0
   })
 
-  const totalSpent = items.reduce((s, i) => s + i.price, 0)
+  const totalSpent   = items.reduce((s, i) => s + i.price, 0)
+  const viewsWarning = items.filter(i => VIEW_LIMIT - i.viewsUsed <= 1).length
 
   return (
     <UserLayout>
@@ -94,6 +137,15 @@ export default function Purchased() {
               >
                 Total spent: ₹{totalSpent.toFixed(2)}
               </div>
+              {viewsWarning > 0 && (
+                <div
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-semibold"
+                  style={{ background: 'rgba(251,191,36,0.1)', borderColor: 'rgba(245,158,11,0.3)', color: '#92400e' }}
+                >
+                  <EyeOff className="w-4 h-4 text-amber-500" />
+                  {viewsWarning} title{viewsWarning > 1 ? 's' : ''} almost expired
+                </div>
+              )}
             </div>
 
             {/* ── Sort control ── */}
@@ -118,8 +170,9 @@ export default function Purchased() {
             </div>
           </div>
 
+          {/* Watch policy card */}
           <div
-            className="rounded-2xl border border-[#4DD0E1]/20 p-4"
+            className="rounded-2xl border border-[#4DD0E1]/20 p-4 space-y-3"
             style={{ background: 'rgba(255,255,255,0.65)' }}
           >
             <div className="flex items-start gap-2">
@@ -129,8 +182,24 @@ export default function Purchased() {
               <div className="min-w-0">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-[#051d2e]/45 mb-1">Watch policy</p>
                 <p className="text-sm font-semibold text-[#051d2e] leading-snug">
-                  Each title can be watched twice. After that, it returns to Unpurchased.
+                  Each title can be watched <strong>{VIEW_LIMIT} times</strong>. After {VIEW_LIMIT} full views (80%+), it returns to Unpurchased.
                 </p>
+              </div>
+            </div>
+
+            {/* Legend */}
+            <div className="flex flex-col gap-1.5 pt-2" style={{ borderTop: '1px solid rgba(5,29,46,0.07)' }}>
+              <div className="flex items-center gap-2 text-[11px] text-[#051d2e]/50">
+                <div className="w-6 h-1.5 rounded-full" style={{ background: '#4DD0E1' }} />
+                Views used
+              </div>
+              <div className="flex items-center gap-2 text-[11px] text-[#051d2e]/50">
+                <div className="w-6 h-1.5 rounded-full" style={{ background: 'rgba(5,29,46,0.12)' }} />
+                Views remaining
+              </div>
+              <div className="flex items-center gap-2 text-[11px] text-[#051d2e]/50">
+                <div className="w-6 h-1.5 rounded-full" style={{ background: '#f87171' }} />
+                No views left
               </div>
             </div>
           </div>
@@ -144,9 +213,7 @@ export default function Purchased() {
         )}
 
         {/* Error */}
-        {error && (
-          <p className="text-center text-red-500 py-10">{error}</p>
-        )}
+        {error && <p className="text-center text-red-500 py-10">{error}</p>}
 
         {/* Empty state */}
         {!loading && !error && sorted.length === 0 && (
@@ -164,65 +231,88 @@ export default function Purchased() {
 
         {/* ── Grid ── */}
         {!loading && !error && sorted.length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
-            {sorted.map((item) => (
-              <div
-                key={item._id}
-                className="group rounded-2xl overflow-hidden border border-[#4DD0E1]/20 shadow-sm hover:shadow-lg transition-shadow"
-                style={{ background: 'rgba(255,255,255,0.75)' }}
-              >
-                {/* Thumbnail */}
-                {(() => {
-                  const isVertical = item.genreName?.toUpperCase().includes('MOBILE') 
-                  return (
-                <div className={`relative ${isVertical ? 'aspect-[9/16]' : 'aspect-video'} overflow-hidden`}>
-                  <img
-                    src={item.thumbnailUrl}
-                    alt={item.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                  />
-                  {/* Hover overlay */}
-                  <Link
-                    to={`/video/${item.videoId}`}
-                    className="absolute inset-0 bg-[#051d2e]/50 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center"
-                  >
-                    <div
-                      className="flex items-center gap-2 px-5 py-2.5 rounded-full font-black text-[#051d2e] text-sm shadow-lg"
-                      style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
-                    >
-                      <Play className="w-4 h-4" fill="#051d2e" /> Watch Now
-                    </div>
-                  </Link>
-                  {/* Owned badge */}
-                  <div
-                    className="absolute top-2 left-2 flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]"
-                    style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
-                  >
-                    <CheckCircle className="w-3 h-3" /> Owned
-                  </div>
-                </div>
-                  )
-                })()} 
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+            {sorted.map((item) => {
+              const remaining = VIEW_LIMIT - item.viewsUsed
+              const isWarning = remaining === 1
+              const isOut     = remaining === 0
 
-                {/* Info */}
-                <div className="p-4">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-[#4DD0E1]">Video</span>
-                    <span className="text-[10px] font-bold text-[#051d2e]/45">{item.duration}</span>
-                  </div>
-                  <h3 className="font-black text-sm text-[#051d2e] mb-3">{item.title}</h3>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-[10px] text-[#051d2e]/40 uppercase tracking-wider">Purchased</p>
-                      <p className="text-xs font-semibold text-[#051d2e]/60">{item.date}</p>
+              return (
+                <div
+                  key={item._id}
+                  className="group rounded-2xl overflow-hidden border shadow-sm hover:shadow-lg transition-shadow"
+                  style={{
+                    background:   'rgba(255,255,255,0.75)',
+                    borderColor:  isOut ? 'rgba(248,113,113,0.4)' : isWarning ? 'rgba(245,158,11,0.35)' : 'rgba(77,208,225,0.2)',
+                  }}
+                >
+                  {/* Thumbnail */}
+                  {(() => {
+                    const isVertical = item.genreName?.toUpperCase().includes('MOBILE')
+                    return (
+                      <div className={`relative ${isVertical ? 'aspect-[9/16]' : 'aspect-video'} overflow-hidden`}>
+                        <img
+                          src={item.thumbnailUrl}
+                          alt={item.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                        />
+                        {/* Hover overlay */}
+                        <Link
+                          to={`/video/${item.videoId}`}
+                          className="absolute inset-0 bg-[#051d2e]/50 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center"
+                        >
+                          <div
+                            className="flex items-center gap-2 px-5 py-2.5 rounded-full font-black text-[#051d2e] text-sm shadow-lg"
+                            style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
+                          >
+                            <Play className="w-4 h-4" fill="#051d2e" /> Watch Now
+                          </div>
+                        </Link>
+                        {/* Owned badge */}
+                        <div
+                          className="absolute top-2 left-2 flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]"
+                          style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
+                        >
+                          <CheckCircle className="w-3 h-3" /> Owned
+                        </div>
+                        {/* Views remaining badge — top right */}
+                        <div
+                          className="absolute top-2 right-2 flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-black backdrop-blur-sm"
+                          style={{
+                            background: isOut     ? 'rgba(239,68,68,0.85)'    :
+                                        isWarning ? 'rgba(245,158,11,0.85)'   :
+                                                    'rgba(5,29,46,0.65)',
+                            color: '#fff',
+                          }}
+                        >
+                          <Eye className="w-3 h-3" />
+                          {remaining} left
+                        </div>
+                      </div>
+                    )
+                  })()}
+
+                  {/* Info */}
+                  <div className="p-4">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-[#4DD0E1]">Video</span>
+                      <span className="text-[10px] font-bold text-[#051d2e]/45">{item.duration}</span>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <h3 className="font-black text-sm text-[#051d2e] mb-3 line-clamp-2">{item.title}</h3>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-[10px] text-[#051d2e]/40 uppercase tracking-wider">Purchased</p>
+                        <p className="text-xs font-semibold text-[#051d2e]/60">{item.date}</p>
+                      </div>
                       <span className="text-sm font-black text-[#051d2e]">₹{item.price.toFixed(2)}</span>
                     </div>
+
+                    {/* ── Views indicator ── */}
+                    <ViewsIndicator viewsUsed={item.viewsUsed} />
                   </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
 

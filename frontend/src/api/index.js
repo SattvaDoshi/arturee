@@ -197,4 +197,15 @@ export const landingConfigApi = {
   update: (data) => api.put('/landing-config', data),
 }
 
+// ── Coupons ───────────────────────────────────────────────────────────────
+export const couponApi = {
+  // User
+  validate: (data) => api.post('/coupons/validate', data),
+  // Admin
+  list:   (params) => api.get('/coupons', { params }),
+  create: (data)   => api.post('/coupons', data),
+  update: (id, data) => api.patch(`/coupons/${id}`, data),
+  delete: (id)     => api.delete(`/coupons/${id}`),
+}
+
 export default api
