@@ -39,25 +39,30 @@ export const createPurchaseOrder = asyncHandler(async (req, res) => {
   }
 
   // Fetch video prices
-  const videos = await Video.find({ _id: { $in: videoIdsToBuy }, isPublished: true, status: 'ready' }).select('title price currency isPublished status')
+  const videos = await Video.find({ _id: { $in: videoIdsToBuy }, isPublished: true, status: 'ready' }).select('title price costPrice discountedPrice currency isPublished status')
   if (!videos.length) throw new ApiError(404, 'Videos not found or not available for purchase.')
 
   let subtotal = 0
-  videos.forEach(v => subtotal += (v.price || 0))
+  videos.forEach(v => subtotal += (v.discountedPrice ?? v.price ?? 0))
   
   let discountPercentage = 0
   if (videos.length >= 5) discountPercentage = 0.15
   else if (videos.length >= 3) discountPercentage = 0.10
 
-  const total = subtotal * (1 - discountPercentage)
+  const discountedSubtotal = subtotal * (1 - discountPercentage)
+  const platformFee = discountedSubtotal * 0.03          // 3% fee — matches frontend
+  const total = discountedSubtotal + platformFee
   const amountPaise = Math.round(total * 100)
 
   const tempOrderId = 'pending_' + Date.now()
 
   // Create pending Purchase records
   await Promise.all(videos.map(video => {
-    const itemDiscount = (video.price || 0) * discountPercentage
-    const itemTotal = (video.price || 0) - itemDiscount
+    const effectivePrice = video.discountedPrice ?? video.price ?? 0
+    const itemDiscount = effectivePrice * discountPercentage
+    const itemDiscountedPrice = effectivePrice - itemDiscount
+    const itemFee = itemDiscountedPrice * 0.03
+    const itemTotal = itemDiscountedPrice + itemFee
     return Purchase.create({
       userId,
       videoId: video._id,

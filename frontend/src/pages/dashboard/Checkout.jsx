@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, ShieldCheck, CheckCircle2, Lock, Loader2, AlertCircle } from 'lucide-react'
 import UserLayout from '../../components/layout/UserLayout'
-import { purchaseApi } from '../../api/index.js'
+import { purchaseApi, videoApi } from '../../api/index.js'
 import { useCart } from '../../context/CartContext'
 
 const C = {
@@ -59,6 +59,7 @@ export default function Checkout() {
 
   const [status, setStatus] = useState('idle') // idle | loading | success | error
   const [errorMsg, setErrorMsg] = useState('')
+  const [priceLoading, setPriceLoading] = useState(true)
 
   // Redirect to dashboard if no checkout data
   useEffect(() => {
@@ -66,6 +67,32 @@ export default function Checkout() {
       navigate('/dashboard', { replace: true })
     }
   }, [items, navigate])
+
+  // Fetch fresh prices from DB so display matches what Razorpay will charge
+  useEffect(() => {
+    if (!items.length) return
+    const fetchFreshPrices = async () => {
+      try {
+        const freshItems = await Promise.all(
+          items.map(async (item) => {
+            try {
+              const res = await videoApi.get(item.videoId)
+              const video = res.data?.data || res.data
+              const effectivePrice = video?.discountedPrice ?? video?.price ?? item.price
+              return { ...item, price: effectivePrice }
+            } catch {
+              return item // fallback to cached price if fetch fails
+            }
+          })
+        )
+        setItems(freshItems)
+      } finally {
+        setPriceLoading(false)
+      }
+    }
+    fetchFreshPrices()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   /* ── Initiate Razorpay payment ── */
   const handlePay = useCallback(async () => {
@@ -137,7 +164,7 @@ export default function Checkout() {
         setStatus('error')
       }
     }
-  }, [checkoutData, navigate])
+  }, [items, isCartOrigin, navigate])
 
   /* ── Success screen ── */
   if (status === 'success') {
@@ -178,9 +205,9 @@ export default function Checkout() {
   const platformFee = subtotal * 0.03
   const total = subtotal + platformFee
   
-  const subtotalDisplay = fmtINR(subtotal * 100)
-  const platformFeeDisplay = fmtINR(platformFee * 100)
-  const priceDisplay = fmtINR(total * 100)
+  const subtotalDisplay = priceLoading ? '…' : fmtINR(subtotal * 100)
+  const platformFeeDisplay = priceLoading ? '…' : fmtINR(platformFee * 100)
+  const priceDisplay = priceLoading ? '…' : fmtINR(total * 100)
 
   return (
     <UserLayout>
@@ -325,14 +352,19 @@ export default function Checkout() {
                 <button
                   id="pay-now-btn"
                   onClick={handlePay}
-                  disabled={status === 'loading'}
+                  disabled={status === 'loading' || priceLoading}
                   className="w-full py-4 rounded-2xl font-black text-lg shadow-lg flex items-center justify-center gap-3 transition hover:opacity-90 active:scale-98 disabled:opacity-60"
                   style={{
                     background: 'linear-gradient(135deg,#4DD0E1,#C0E863)',
                     color: C.navy,
                   }}
                 >
-                  {status === 'loading' ? (
+                  {priceLoading ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Calculating price…
+                    </>
+                  ) : status === 'loading' ? (
                     <>
                       <Loader2 className="w-5 h-5 animate-spin" />
                       Opening Razorpay…
