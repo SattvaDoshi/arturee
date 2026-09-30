@@ -17,6 +17,7 @@ import categoryRouter from './routes/categoryRoutes.js'
 import specialtyRouter from './routes/SpecialtyRoutes.js'
 import landingConfigRouter from './routes/landingConfigRoutes.js'
 import couponRouter from './routes/couponRoutes.js'
+import contactRouter from './routes/contactRoutes.js'
 
 import { errorHandler, notFound } from './middlewares/errorHandler.js'
 import { generalLimiter } from './middlewares/rateLimiter.js'
@@ -98,6 +99,7 @@ app.use('/api/drm', drmRouter)
 
 // ── Admin & utility routes ────────────────────────────────────────────────
 app.use('/api/admin', adminRouter)
+app.use('/api/contact', contactRouter)
 app.use('/api/artists', artistRouter)
 app.use('/api/wishlist', wishlistRouter)
 app.use('/api/genres', genreRouter)

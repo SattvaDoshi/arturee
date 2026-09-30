@@ -11,12 +11,18 @@ import {
   updateFeaturedVideos,
   getRevenueStats,
   uploadImage,
+  getAccountDeletions
 } from '../controllers/adminController.js'
 import {
   getApplications,
   updateApplicationStatus,
   deleteApplication,
 } from '../controllers/artistApplicationController.js'
+import {
+  getContactMessages,
+  updateContactMessageStatus,
+  deleteContactMessage,
+} from '../controllers/contactController.js'
 import upload, { processImage } from '../middlewares/uploadMiddleware.js'
 
 const router = Router()
@@ -31,10 +37,15 @@ router.patch('/users/:userId/role', updateUserRole)
 router.delete('/users/:userId', deleteUser)
 router.get('/videos', listAllVideos)
 router.get('/revenue', getRevenueStats)
+router.get('/account-deletions', getAccountDeletions)
 
 router.get('/applications', getApplications)
 router.patch('/applications/:applicationId/status', updateApplicationStatus)
 router.delete('/applications/:applicationId', deleteApplication)
+
+router.get('/contact-messages', getContactMessages)
+router.patch('/contact-messages/:messageId/status', updateContactMessageStatus)
+router.delete('/contact-messages/:messageId', deleteContactMessage)
 
 router.post('/upload-image', upload.single('image'), processImage, uploadImage)
 

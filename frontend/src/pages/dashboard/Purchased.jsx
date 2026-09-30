@@ -81,18 +81,22 @@ export default function Purchased() {
     load()
   }, [])
 
-  const items = purchases.map(p => ({
-    _id:          p._id,
-    videoId:      p.videoId?._id,
-    title:        p.videoId?.title || 'Untitled',
-    thumbnailUrl: p.videoId?.thumbnailUrl || undefined,
-    price:        p.amountPaise ? p.amountPaise / 100 : 0,
-    duration:     formatDuration(p.videoId?.durationSeconds),
-    date:         formatDate(p.completedAt),
-    currency:     p.currency || 'INR',
-    genreName:    p.videoId?.genre?.name || '',
-    viewsUsed:    p.viewsUsed ?? 0,
-  }))
+  const items = purchases.map(p => {
+    const isMobile = p.videoId?.categories?.some(c => c.name?.toUpperCase().includes('MOBILE')) || false
+    return {
+      _id:          p._id,
+      videoId:      p.videoId?._id,
+      title:        p.videoId?.title || 'Untitled',
+      thumbnailUrl: p.videoId?.thumbnailUrl || undefined,
+      price:        p.amountPaise ? p.amountPaise / 100 : 0,
+      duration:     formatDuration(p.videoId?.durationSeconds),
+      date:         formatDate(p.completedAt),
+      currency:     p.currency || 'INR',
+      genreName:    p.videoId?.genre?.name || '',
+      isMobile:     isMobile || p.videoId?.genre?.name?.toUpperCase().includes('MOBILE'),
+      viewsUsed:    p.viewsUsed ?? 0,
+    }
+  })
 
   const sorted = [...items].sort((a, b) => {
     if (sort === 'Title A – Z')   return a.title.localeCompare(b.title)
@@ -230,91 +234,111 @@ export default function Purchased() {
         )}
 
         {/* ── Grid ── */}
-        {!loading && !error && sorted.length > 0 && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
-            {sorted.map((item) => {
-              const remaining = VIEW_LIMIT - item.viewsUsed
-              const isWarning = remaining === 1
-              const isOut     = remaining === 0
+        {!loading && !error && sorted.length > 0 && (() => {
+          const landscape = sorted.filter(i => !i.isMobile)
+          const portrait  = sorted.filter(i => i.isMobile)
 
-              return (
-                <div
-                  key={item._id}
-                  className="group rounded-2xl overflow-hidden border shadow-sm hover:shadow-lg transition-shadow"
-                  style={{
-                    background:   'rgba(255,255,255,0.75)',
-                    borderColor:  isOut ? 'rgba(248,113,113,0.4)' : isWarning ? 'rgba(245,158,11,0.35)' : 'rgba(77,208,225,0.2)',
-                  }}
-                >
-                  {/* Thumbnail */}
-                  {(() => {
-                    const isVertical = item.genreName?.toUpperCase().includes('MOBILE')
-                    return (
-                      <div className={`relative ${isVertical ? 'aspect-[9/16]' : 'aspect-video'} overflow-hidden`}>
-                        <img
-                          src={item.thumbnailUrl}
-                          alt={item.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                        />
-                        {/* Hover overlay */}
-                        <Link
-                          to={`/video/${item.videoId}`}
-                          className="absolute inset-0 bg-[#051d2e]/50 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center"
-                        >
-                          <div
-                            className="flex items-center gap-2 px-5 py-2.5 rounded-full font-black text-[#051d2e] text-sm shadow-lg"
-                            style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
-                          >
-                            <Play className="w-4 h-4" fill="#051d2e" /> Watch Now
-                          </div>
-                        </Link>
-                        {/* Owned badge */}
-                        <div
-                          className="absolute top-2 left-2 flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]"
-                          style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
-                        >
-                          <CheckCircle className="w-3 h-3" /> Owned
-                        </div>
-                        {/* Views remaining badge — top right */}
-                        <div
-                          className="absolute top-2 right-2 flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-black backdrop-blur-sm"
-                          style={{
-                            background: isOut     ? 'rgba(239,68,68,0.85)'    :
-                                        isWarning ? 'rgba(245,158,11,0.85)'   :
-                                                    'rgba(5,29,46,0.65)',
-                            color: '#fff',
-                          }}
-                        >
-                          <Eye className="w-3 h-3" />
-                          {remaining} left
-                        </div>
-                      </div>
-                    )
-                  })()}
-
-                  {/* Info */}
-                  <div className="p-4">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-[#4DD0E1]">Video</span>
-                      <span className="text-[10px] font-bold text-[#051d2e]/45">{item.duration}</span>
+          const VideoCard = ({ item, isPortrait }) => {
+            const remaining = VIEW_LIMIT - item.viewsUsed
+            const isWarning = remaining === 1
+            const isOut     = remaining === 0
+            return (
+              <div
+                className="group rounded-2xl overflow-hidden border shadow-sm hover:shadow-lg transition-shadow"
+                style={{
+                  background:  'rgba(255,255,255,0.75)',
+                  borderColor: isOut ? 'rgba(248,113,113,0.4)' : isWarning ? 'rgba(245,158,11,0.35)' : 'rgba(77,208,225,0.2)',
+                }}
+              >
+                {/* Thumbnail */}
+                <div className={`relative overflow-hidden ${isPortrait ? 'aspect-[9/16]' : 'aspect-video'}`}>
+                  <img
+                    src={item.thumbnailUrl}
+                    alt={item.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                  />
+                  <Link
+                    to={`/video/${item.videoId}`}
+                    className="absolute inset-0 bg-[#051d2e]/50 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center"
+                  >
+                    <div
+                      className="flex items-center gap-2 px-5 py-2.5 rounded-full font-black text-[#051d2e] text-sm shadow-lg"
+                      style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
+                    >
+                      <Play className="w-4 h-4" fill="#051d2e" /> Watch Now
                     </div>
-                    <h3 className="font-black text-sm text-[#051d2e] mb-3 line-clamp-2">{item.title}</h3>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-[10px] text-[#051d2e]/40 uppercase tracking-wider">Purchased</p>
-                        <p className="text-xs font-semibold text-[#051d2e]/60">{item.date}</p>
-                      </div>
-                      <span className="text-sm font-black text-[#051d2e]">₹{item.price.toFixed(2)}</span>
-                    </div>
-
-                    {/* ── Views indicator ── */}
-                    <ViewsIndicator viewsUsed={item.viewsUsed} />
+                  </Link>
+                  <div
+                    className="absolute top-2 left-2 flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]"
+                    style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
+                  >
+                    <CheckCircle className="w-3 h-3" /> Owned
+                  </div>
+                  <div
+                    className="absolute top-2 right-2 flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-black backdrop-blur-sm"
+                    style={{
+                      background: isOut ? 'rgba(239,68,68,0.85)' : isWarning ? 'rgba(245,158,11,0.85)' : 'rgba(5,29,46,0.65)',
+                      color: '#fff',
+                    }}
+                  >
+                    <Eye className="w-3 h-3" />
+                    {remaining} left
                   </div>
                 </div>
-              )
-            })}
-          </div>
-        )}
+
+                {/* Info */}
+                <div className="p-4">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-[#4DD0E1]">Video</span>
+                    <span className="text-[10px] font-bold text-[#051d2e]/45">{item.duration}</span>
+                  </div>
+                  <h3 className="font-black text-sm text-[#051d2e] mb-3 line-clamp-2">{item.title}</h3>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-[10px] text-[#051d2e]/40 uppercase tracking-wider">Purchased</p>
+                      <p className="text-xs font-semibold text-[#051d2e]/60">{item.date}</p>
+                    </div>
+                    <span className="text-sm font-black text-[#051d2e]">₹{item.price.toFixed(2)}</span>
+                  </div>
+                  <ViewsIndicator viewsUsed={item.viewsUsed} />
+                </div>
+              </div>
+            )
+          }
+
+          return (
+            <div className="space-y-10">
+              {/* Landscape section */}
+              {landscape.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-2 mb-4">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-[#051d2e]/40">🖥 Videos</span>
+                    <div className="flex-1 h-px" style={{ background: 'rgba(77,208,225,0.2)' }} />
+                    <span className="text-[10px] text-[#051d2e]/30">{landscape.length} title{landscape.length !== 1 ? 's' : ''}</span>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+                    {landscape.map(item => <VideoCard key={item._id} item={item} isPortrait={false} />)}
+                  </div>
+                </div>
+              )}
+
+              {/* Portrait / Mobile section */}
+              {portrait.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-2 mb-4">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-[#051d2e]/40">📱 Mobile Videos</span>
+                    <div className="flex-1 h-px" style={{ background: 'rgba(77,208,225,0.2)' }} />
+                    <span className="text-[10px] text-[#051d2e]/30">{portrait.length} title{portrait.length !== 1 ? 's' : ''}</span>
+                  </div>
+                  <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                    {portrait.map(item => <VideoCard key={item._id} item={item} isPortrait={true} />)}
+                  </div>
+                </div>
+              )}
+            </div>
+          )
+        })()}
+
 
       </div>
     </UserLayout>

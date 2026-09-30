@@ -7,9 +7,10 @@ export const getWishlist = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id)
     .populate({
       path: 'wishlist',
-      select: 'title thumbnailUrl price currency durationSeconds status isPublished viewCount createdAt genre artistId',
+      select: 'title thumbnailUrl price currency durationSeconds status isPublished viewCount createdAt genre artistId categories',
       populate: [
         { path: 'genre', select: 'name' },
+        { path: 'categories', select: 'name' },
         { path: 'artistId', select: 'name' }
       ]
     })

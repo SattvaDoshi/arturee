@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { useArtistModal } from '../../context/ArtistModalContext'
 
+import { contactApi } from '../../api/index.js'
+
 const Field = ({ id, label, error, children }) => (
   <div className="space-y-2">
     <label htmlFor={id} className="block text-sm font-semibold text-navy">
@@ -16,6 +18,7 @@ const ContactUs = () => {
   const [form, setForm] = useState({ name: '', email: '', message: '' })
   const [submitted, setSubmitted] = useState(false)
   const [errors, setErrors] = useState({})
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const validate = () => {
     const e = {}
@@ -26,12 +29,21 @@ const ContactUs = () => {
     return e
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     const e2 = validate()
     if (Object.keys(e2).length) { setErrors(e2); return }
     setErrors({})
-    setSubmitted(true)
+    setIsSubmitting(true)
+    try {
+      await contactApi.submit(form)
+      setSubmitted(true)
+    } catch (err) {
+      console.error(err)
+      setErrors({ message: err.response?.data?.message || 'Failed to submit' })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -187,9 +199,10 @@ const ContactUs = () => {
                   </p>
                   <button
                     type="submit"
-                    className="px-8 py-3 rounded-2xl bg-linear-to-r from-primary to-teal text-white font-bold text-sm hover:shadow-lg hover:shadow-primary/30 hover:scale-[1.02] transition-all duration-200"
+                    disabled={isSubmitting}
+                    className="px-8 py-3 rounded-2xl bg-linear-to-r from-primary to-teal text-white font-bold text-sm hover:shadow-lg hover:shadow-primary/30 hover:scale-[1.02] transition-all duration-200 disabled:opacity-70 disabled:scale-100"
                   >
-                    Send Message →
+                    {isSubmitting ? 'Sending...' : 'Send Message →'}
                   </button>
                 </div>
               </form>

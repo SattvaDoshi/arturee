@@ -89,69 +89,99 @@ export default function ContinueWatching() {
             You don't have any videos in progress.
           </div>
         ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
-          {items.map((item) => {
-            const video = item.videoId
-            if (!video) return null
-            const isVertical = video.genre?.name?.toUpperCase().includes('MOBILE') 
-            const remainingSecs = Math.max(0, (video.durationSeconds || 0) - (item.currentTimestamp || 0))
-            const viewsUsed = item.purchase?.viewsUsed || 0
-            const viewsLeft = Math.max(0, 2 - viewsUsed)
-            
-            return (
-            <Link
-              to={`/video/${video._id}`}
-              key={item._id}
-              className="group block rounded-2xl overflow-hidden border border-[#4DD0E1]/20 shadow-sm hover:shadow-lg transition-shadow"
-              style={{ background: 'rgba(255,255,255,0.75)' }}
-            >
-              {/* Thumbnail */}
-              <div className={`relative ${isVertical ? 'aspect-[9/16]' : 'aspect-video'} overflow-hidden`}>
-                <img
-                  src={video.thumbnailUrl}
-                  alt={video.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                />
-                {/* Hover overlay */}
-                <div className="absolute inset-0 bg-[#051d2e]/50 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
-                  <div
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-full font-black text-[#051d2e] text-sm shadow-lg"
-                    style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
-                  >
-                    <Play className="w-4 h-4" fill="#051d2e" /> Resume
+          (() => {
+            const landscape = items.filter(i => {
+              const hasMobileCat = i.videoId?.categories?.some(c => c.name?.toUpperCase().includes('MOBILE'))
+              const hasMobileGen = i.videoId?.genre?.name?.toUpperCase().includes('MOBILE')
+              return !(hasMobileCat || hasMobileGen)
+            })
+            const portrait  = items.filter(i => {
+              const hasMobileCat = i.videoId?.categories?.some(c => c.name?.toUpperCase().includes('MOBILE'))
+              const hasMobileGen = i.videoId?.genre?.name?.toUpperCase().includes('MOBILE')
+              return (hasMobileCat || hasMobileGen)
+            })
+
+            const WatchCard = ({ item, isPortrait }) => {
+              const video = item.videoId
+              if (!video) return null
+              const remainingSecs = Math.max(0, (video.durationSeconds || 0) - (item.currentTimestamp || 0))
+              const viewsUsed = item.purchase?.viewsUsed || 0
+              const viewsLeft = Math.max(0, 2 - viewsUsed)
+              return (
+                <Link
+                  to={`/video/${video._id}`}
+                  className="group block rounded-2xl overflow-hidden border border-[#4DD0E1]/20 shadow-sm hover:shadow-lg transition-shadow"
+                  style={{ background: 'rgba(255,255,255,0.75)' }}
+                >
+                  <div className={`relative overflow-hidden ${isPortrait ? 'aspect-[9/16]' : 'aspect-video'}`}>
+                    <img
+                      src={video.thumbnailUrl}
+                      alt={video.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                    />
+                    <div className="absolute inset-0 bg-[#051d2e]/50 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                      <div
+                        className="flex items-center gap-2 px-5 py-2.5 rounded-full font-black text-[#051d2e] text-sm shadow-lg"
+                        style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
+                      >
+                        <Play className="w-4 h-4" fill="#051d2e" /> Resume
+                      </div>
+                    </div>
+                    <div className="absolute top-2 right-2 flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: viewsLeft === 0 ? '#ffb3b3' : 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>
+                      <Eye className="w-3 h-3" />
+                      {viewsLeft} views left
+                    </div>
+                    <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-[#051d2e]/20">
+                      <div className="h-full rounded-r-full" style={{ width: `${item.completionPercent}%`, background: progressColour(item.completionPercent) }} />
+                    </div>
                   </div>
-                </div>
-                {/* Views Left Badge */}
-                <div className="absolute top-2 right-2 flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: viewsLeft === 0 ? '#ffb3b3' : 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>
-                  <Eye className="w-3 h-3" />
-                  {viewsLeft} views left
-                </div>
-                
-                {/* Progress bar */}
-                <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-[#051d2e]/20">
-                  <div className="h-full rounded-r-full" style={{ width: `${item.completionPercent}%`, background: progressColour(item.completionPercent) }} />
-                </div>
-              </div>
+                  <div className="p-4">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-[#4DD0E1]">{video.genre?.name || 'Video'}</span>
+                      <span className="text-[10px] font-semibold text-[#051d2e]/50">{item.completionPercent}% watched</span>
+                    </div>
+                    <h3 className="font-black text-sm text-[#051d2e] truncate mb-2">{video.title}</h3>
+                    <div className="flex items-center justify-between text-xs text-[#051d2e]/55">
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-3 h-3 text-[#4DD0E1]" /> {formatDuration(remainingSecs)} left
+                      </span>
+                      <span>{formatDuration(video.durationSeconds)} total</span>
+                    </div>
+                  </div>
+                </Link>
+              )
+            }
 
-              {/* Info */}
-              <div className="p-4">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#4DD0E1]">{video.genre?.name || 'Video'}</span>
-                  <span className="text-[10px] font-semibold text-[#051d2e]/50">{item.completionPercent}% watched</span>
-                </div>
-                <h3 className="font-black text-sm text-[#051d2e] truncate mb-2">{video.title}</h3>
-                <div className="flex items-center justify-between text-xs text-[#051d2e]/55">
-                  <span className="flex items-center gap-1">
-                    <Clock className="w-3 h-3 text-[#4DD0E1]" /> {formatDuration(remainingSecs)} left
-                  </span>
-                  <span>{formatDuration(video.durationSeconds)} total</span>
-                </div>
+            return (
+              <div className="space-y-10">
+                {landscape.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-4">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-[#051d2e]/40">🖥 Videos</span>
+                      <div className="flex-1 h-px" style={{ background: 'rgba(77,208,225,0.2)' }} />
+                      <span className="text-[10px] text-[#051d2e]/30">{landscape.length} in progress</span>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+                      {landscape.map(item => <WatchCard key={item._id} item={item} isPortrait={false} />)}
+                    </div>
+                  </div>
+                )}
+                {portrait.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-4">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-[#051d2e]/40">📱 Mobile Videos</span>
+                      <div className="flex-1 h-px" style={{ background: 'rgba(77,208,225,0.2)' }} />
+                      <span className="text-[10px] text-[#051d2e]/30">{portrait.length} in progress</span>
+                    </div>
+                    <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                      {portrait.map(item => <WatchCard key={item._id} item={item} isPortrait={true} />)}
+                    </div>
+                  </div>
+                )}
               </div>
-            </Link>
-          )})}
-        </div>
+            )
+          })()
         )}
-
       </div>
     </UserLayout>
   )

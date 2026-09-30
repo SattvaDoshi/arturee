@@ -113,7 +113,11 @@ export const saveProgress = async (
 
   // Increment video view count on first play
   if (!existing && currentTimestamp < 10) {
+    const video = await Video.findById(videoId).select('seriesParentId')
     await Video.updateOne({ _id: videoId }, { $inc: { viewCount: 1 } })
+    if (video && video.seriesParentId) {
+      await Video.updateOne({ _id: video.seriesParentId }, { $inc: { viewCount: 1 } })
+    }
   }
 
   return { record, purchaseExpired }
@@ -137,8 +141,11 @@ export const getUserHistory = async (userId, limit = 20, skip = 0) => {
     .limit(limit)
     .populate({
       path: 'videoId',
-      select: 'title thumbnailUrl durationSeconds genre',
-      populate: { path: 'genre', select: 'name' }
+      select: 'title thumbnailUrl durationSeconds genre categories',
+      populate: [
+        { path: 'genre', select: 'name' },
+        { path: 'categories', select: 'name' }
+      ]
     })
     .lean()
 

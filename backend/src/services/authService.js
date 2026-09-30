@@ -400,3 +400,33 @@ export const updateProfile = async ({ userId, name, avatarUrl }) => {
 
   return { message: 'Profile updated successfully', user: sanitizeUser(user) }
 }
+
+import DeletionFeedback from '../models/DeletionFeedback.js'
+import WatchHistory from '../models/WatchHistory.js'
+import Purchase from '../models/Purchase.js'
+import DeviceSession from '../models/DeviceSession.js'
+import PlaybackSession from '../models/PlaybackSession.js'
+
+export const deleteAccount = async ({ userId, reason, message }) => {
+  const user = await User.findById(userId)
+  if (!user) {
+    throw new ApiError(404, 'User not found')
+  }
+
+  // 1. Record feedback
+  await DeletionFeedback.create({
+    reason: reason || 'No reason provided',
+    message: message || '',
+  })
+
+  // 2. Cleanup user data
+  await Promise.all([
+    WatchHistory.deleteMany({ userId }),
+    Purchase.deleteMany({ userId }),
+    DeviceSession.deleteMany({ userId }),
+    PlaybackSession.deleteMany({ userId }),
+    User.findByIdAndDelete(userId),
+  ])
+
+  return { message: 'Account deleted successfully' }
+}

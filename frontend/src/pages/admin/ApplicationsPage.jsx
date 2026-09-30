@@ -15,6 +15,12 @@ export default function ApplicationsPage() {
   
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, app: null })
 
+  // Contact Messages state
+  const [messages, setMessages] = useState([])
+  const [loadingMsgs, setLoadingMsgs] = useState(true)
+  const [msgPage, setMsgPage] = useState(1)
+  const [totalMsgPages, setTotalMsgPages] = useState(1)
+
   const fetchApplications = () => {
     setLoading(true)
     adminApi.getApplications({ page, limit: 10, status: statusFilter })
@@ -26,9 +32,24 @@ export default function ApplicationsPage() {
       .finally(() => setLoading(false))
   }
 
+  const fetchMessages = () => {
+    setLoadingMsgs(true)
+    adminApi.getContactMessages({ page: msgPage, limit: 10 })
+      .then(res => {
+        setMessages(res.data.data.messages)
+        setTotalMsgPages(res.data.data.pagination.totalPages)
+      })
+      .catch(() => setMessages([]))
+      .finally(() => setLoadingMsgs(false))
+  }
+
   useEffect(() => {
     fetchApplications()
   }, [page, statusFilter])
+
+  useEffect(() => {
+    fetchMessages()
+  }, [msgPage])
 
   const handleStatusChange = async (appId, status) => {
     setActionId(appId)
@@ -203,6 +224,101 @@ export default function ApplicationsPage() {
             </div>
           )}
         </div>
+
+        {/* ── Contact Messages Section ── */}
+        <div className="pt-8">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+            <div>
+              <h2 className="text-2xl font-black uppercase tracking-tight text-white">Contact Us Messages</h2>
+              <p className="text-sm text-white/40 mt-0.5">Messages submitted via the contact form on the landing page.</p>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border overflow-hidden" style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.08)' }}>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-white/30 text-[11px] uppercase tracking-widest border-b" style={{ borderColor: 'rgba(255,255,255,0.07)' }}>
+                    <th className="text-left px-5 py-3 font-semibold">User Info</th>
+                    <th className="text-left px-5 py-3 font-semibold w-1/2">Message</th>
+                    <th className="text-left px-5 py-3 font-semibold">Date</th>
+                    <th className="text-center px-5 py-3 font-semibold">Status</th>
+                    <th className="text-right px-5 py-3 font-semibold">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/[0.05]">
+                  {loadingMsgs ? (
+                    <tr>
+                      <td colSpan={5} className="py-20 text-center">
+                        <Loader2 className="w-8 h-8 animate-spin text-[#4DD0E1] mx-auto" />
+                      </td>
+                    </tr>
+                  ) : messages.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="py-20 text-center text-white/40">
+                        No contact messages found.
+                      </td>
+                    </tr>
+                  ) : (
+                    messages.map(msg => (
+                      <tr key={msg._id} className="transition hover:bg-white/[0.025]">
+                        <td className="px-5 py-3">
+                          <p className="text-white font-semibold">{msg.name}</p>
+                          <p className="text-white/40 text-xs">{msg.email}</p>
+                        </td>
+                        <td className="px-5 py-3 text-white/70 text-xs whitespace-pre-wrap">
+                          {msg.message}
+                        </td>
+                        <td className="px-5 py-3 text-white/50 text-xs">
+                          {new Date(msg.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                        </td>
+                        <td className="px-5 py-3 text-center">
+                          {msg.status === 'unread' && <span className="bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase">Unread</span>}
+                          {msg.status === 'read' && <span className="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase">Read</span>}
+                          {msg.status === 'replied' && <span className="bg-[#C0E863]/10 text-[#C0E863] border border-[#C0E863]/20 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase">Replied</span>}
+                        </td>
+                        <td className="px-5 py-3 text-right">
+                          <select
+                            value={msg.status}
+                            onChange={async (e) => {
+                              try {
+                                await adminApi.updateContactMessageStatus(msg._id, { status: e.target.value })
+                                setMessages(prev => prev.map(m => m._id === msg._id ? { ...m, status: e.target.value } : m))
+                                toast.success('Status updated')
+                              } catch {
+                                toast.error('Failed to update status')
+                              }
+                            }}
+                            className="bg-white/5 border border-white/10 rounded-lg px-2 py-1 text-xs text-white outline-none focus:border-[#4DD0E1]/50 transition cursor-pointer"
+                          >
+                            <option value="unread">Unread</option>
+                            <option value="read">Read</option>
+                            <option value="replied">Replied</option>
+                          </select>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {totalMsgPages > 1 && (
+              <div className="flex items-center justify-between px-5 py-3 border-t" style={{ borderColor: 'rgba(255,255,255,0.07)' }}>
+                <span className="text-white/30 text-xs">Page {msgPage} of {totalMsgPages}</span>
+                <div className="flex items-center gap-1.5">
+                  <button onClick={() => setMsgPage(p => Math.max(1, p - 1))} disabled={msgPage === 1} className="p-1 text-white/50 hover:text-white disabled:opacity-30">
+                    &lt; Prev
+                  </button>
+                  <button onClick={() => setMsgPage(p => Math.min(totalMsgPages, p + 1))} disabled={msgPage === totalMsgPages} className="p-1 text-white/50 hover:text-white disabled:opacity-30">
+                    Next &gt;
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
       </div>
 
       <ConfirmModal

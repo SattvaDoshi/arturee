@@ -30,6 +30,7 @@ const navItems = [
   { label: "Categories",icon: Bookmark,         to: "/admin/categories" },
   { label: "Specialties", icon: Bookmark,       to: "/admin/specialties" },
   { label: "Applications", icon: Briefcase,     to: "/admin/applications" },
+  { label: "Deletions",    icon: Settings,       to: "/admin/deletions" },
   { label: "Coupons",      icon: Tag,            to: "/admin/coupons" },
 ];
 

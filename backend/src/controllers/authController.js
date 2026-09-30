@@ -8,7 +8,8 @@ import {
   forgotPassword,
   resetPassword,
   updatePassword,
-  updateProfile
+  updateProfile,
+  deleteAccount
 } from '../services/authService.js'
 import { extractIp } from '../services/ipService.js'
 
@@ -93,4 +94,14 @@ export const updateProfileController = asyncHandler(async (req, res) => {
   });
 
   res.status(200).json({ success: true, ...result });
+})
+
+export const deleteAccountController = asyncHandler(async (req, res) => {
+  const { reason, message } = req.body
+  const result = await deleteAccount({
+    userId: req.user._id,
+    reason,
+    message
+  })
+  res.status(200).json({ success: true, ...result })
 })

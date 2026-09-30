@@ -15,6 +15,7 @@ import {
   manuallyPublishVideo,
   proxyUpload,
   reactToVideo,
+  incrementView,
   createYoutubeVideo,
   createSeries,
 } from '../controllers/videoController.js'
@@ -36,6 +37,7 @@ const router = Router()
 // ── Public routes ──────────────────────────────────────────────────────────
 router.get('/', generalLimiter, listVideos)
 router.get('/:videoId', generalLimiter, getVideo)
+router.post('/:videoId/view', generalLimiter, incrementView)
 router.post('/:videoId/react', authMiddleware, generalLimiter, reactToVideo)
 
 // ── Admin-only routes ──────────────────────────────────────────────────────

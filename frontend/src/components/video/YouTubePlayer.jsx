@@ -1,3 +1,6 @@
+import { useEffect } from 'react'
+import { videoApi } from '../../api'
+
 /**
  * YouTubePlayer
  *
@@ -9,6 +12,7 @@
  * Props:
  *   youtubeUrl  {string}  Full YouTube URL (https://www.youtube.com/watch?v=...)
  *               or bare 11-char video ID
+ *   videoId     {string}  The internal video ID to track views
  */
 
 const extractYoutubeId = (url) => {
@@ -18,10 +22,17 @@ const extractYoutubeId = (url) => {
   return m ? m[1] : null
 }
 
-export default function YouTubePlayer({ youtubeUrl }) {
-  const videoId = extractYoutubeId(youtubeUrl)
+export default function YouTubePlayer({ youtubeUrl, videoId }) {
+  const ytId = extractYoutubeId(youtubeUrl)
 
-  if (!videoId) {
+  useEffect(() => {
+    if (videoId) {
+      // Fire and forget view increment for YouTube videos
+      videoApi.incrementView(videoId).catch(() => {})
+    }
+  }, [videoId])
+
+  if (!ytId) {
     return (
       <div style={{
         width: '100%', aspectRatio: '16/9',
@@ -37,7 +48,7 @@ export default function YouTubePlayer({ youtubeUrl }) {
   }
 
   const src = [
-    `https://www.youtube-nocookie.com/embed/${videoId}`,
+    `https://www.youtube-nocookie.com/embed/${ytId}`,
     '?autoplay=1',
     '&rel=0',
     '&modestbranding=1',
@@ -70,3 +81,4 @@ export default function YouTubePlayer({ youtubeUrl }) {
     </div>
   )
 }
+

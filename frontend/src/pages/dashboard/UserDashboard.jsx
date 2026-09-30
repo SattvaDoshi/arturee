@@ -252,11 +252,11 @@ export default function UserDashboard() {
 
   // Load all data
   useEffect(() => {
-    // Hero: 4 newest featured videos (or just 4 newest)
-    videoApi.list({ limit: 4, sort: 'new', featured: true })
+    // Hero: Fetch featured videos (fallback to newest)
+    videoApi.list({ limit: 10, sort: 'new', featured: true })
       .then(res => {
         let vids = res.data.data.videos
-        if (!vids.length) return videoApi.list({ limit: 4, sort: 'new' })
+        if (!vids.length) return videoApi.list({ limit: 10, sort: 'new' })
         setHeroVideos(vids)
         setLoadingHero(false)
       })
@@ -299,7 +299,7 @@ export default function UserDashboard() {
   // Hero-specific: when featured videos don't exist, fall back to latest
   useEffect(() => {
     if (!loadingHero && heroVideos.length === 0 && latestVideos.length > 0) {
-      setHeroVideos(latestVideos.slice(0, 4))
+      setHeroVideos(latestVideos.slice(0, 10))
     }
   }, [loadingHero, heroVideos.length, latestVideos])
 

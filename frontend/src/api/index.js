@@ -83,6 +83,7 @@ export const authApi = {
   updateProfile: (data) => api.put('/auth/update-profile', data, {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),
+  deleteAccount: (data) => api.delete('/auth/me', { data }),
 }
 
 // ── Videos ────────────────────────────────────────────────────────────────
@@ -90,6 +91,7 @@ export const videoApi = {
   list: (params) => api.get('/videos', { params }),
   get: (videoId) => api.get(`/videos/${videoId}`),
   react: (videoId, type) => api.post(`/videos/${videoId}/react`, { type }),
+  incrementView: (videoId) => api.post(`/videos/${videoId}/view`),
   update: (videoId, data) => api.patch(`/videos/${videoId}`, data),
   delete: (videoId) => api.delete(`/videos/${videoId}`),
   // Series creation
@@ -158,6 +160,10 @@ export const adminApi = {
   getApplications: (params) => api.get('/admin/applications', { params }),
   updateApplicationStatus: (id, data) => api.patch(`/admin/applications/${id}/status`, data),
   deleteApplication: (id) => api.delete(`/admin/applications/${id}`),
+  getAccountDeletions: (params) => api.get('/admin/account-deletions', { params }),
+  getContactMessages: (params) => api.get('/admin/contact-messages', { params }),
+  updateContactMessageStatus: (id, data) => api.patch(`/admin/contact-messages/${id}/status`, data),
+  deleteContactMessage: (id) => api.delete(`/admin/contact-messages/${id}`),
 }
 
 // ── Playback ──────────────────────────────────────────────────────────────
@@ -206,6 +212,11 @@ export const couponApi = {
   create: (data)   => api.post('/coupons', data),
   update: (id, data) => api.patch(`/coupons/${id}`, data),
   delete: (id)     => api.delete(`/coupons/${id}`),
+}
+
+// ── Contact ───────────────────────────────────────────────────────────────
+export const contactApi = {
+  submit: (data) => api.post('/contact', data),
 }
 
 export default api

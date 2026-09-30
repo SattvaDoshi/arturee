@@ -373,7 +373,7 @@ export default function VideoDetail() {
                   if (isYoutube && !needsPurchase) {
                     return (
                       <div className={isVertical ? "w-full max-w-sm mx-auto aspect-[9/16]" : "aspect-video"}>
-                        <YouTubePlayer youtubeUrl={targetYoutubeUrl} />
+                        <YouTubePlayer youtubeUrl={targetYoutubeUrl} videoId={targetVideoId} />
                       </div>
                     )
                   }

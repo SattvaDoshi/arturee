@@ -109,7 +109,21 @@ export default function Account() {
   const [avatarFile, setAvatarFile] = useState(null)
   const [avatarPreview, setAvatarPreview] = useState(null)
   const [isUpdating, setIsUpdating] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
   const fileInputRef = useRef(null)
+
+  const handleDeleteAccount = async () => {
+    try {
+      setIsDeleting(true)
+      await authApi.deleteAccount({ reason: selectedReason, message: otherMessage })
+      logout()
+      window.location.href = '/'
+    } catch (err) {
+      console.error(err)
+      setIsDeleting(false)
+      // Optional: show toast error
+    }
+  }
 
   const [watchedCount, setWatchedCount] = useState(0)
 
@@ -391,11 +405,12 @@ export default function Account() {
                         Keep Account
                       </button>
                       <button
-                        disabled={!selectedReason || (selectedReason === 'Other' && !otherMessage.trim())}
+                        onClick={handleDeleteAccount}
+                        disabled={isDeleting || !selectedReason || (selectedReason === 'Other' && !otherMessage.trim())}
                         className="flex-1 px-6 py-3.5 rounded-xl font-bold text-white text-sm shadow-lg shadow-red-200 hover:opacity-90 active:scale-95 transition disabled:opacity-50 disabled:grayscale disabled:scale-100"
                         style={{ background: 'linear-gradient(135deg, #ef4444, #f87171)' }}
                       >
-                        Delete Permanently
+                        {isDeleting ? 'Deleting...' : 'Delete Permanently'}
                       </button>
                     </div>
                   </div>

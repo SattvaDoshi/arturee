@@ -3,6 +3,7 @@ import User from '../models/User.js'
 import Video from '../models/Video.js'
 import Purchase from '../models/Purchase.js'
 import ApiError from '../utils/ApiError.js'
+import DeletionFeedback from '../models/DeletionFeedback.js'
 
 // GET /api/admin/stats
 export const getDashboardStats = asyncHandler(async (req, res) => {
@@ -300,5 +301,21 @@ export const uploadImage = asyncHandler(async (req, res) => {
     data: {
       url: req.file.path
     }
+  })
+})
+
+export const getAccountDeletions = asyncHandler(async (req, res) => {
+  const page = Math.max(1, parseInt(req.query.page) || 1)
+  const limit = Math.min(100, parseInt(req.query.limit) || 20)
+  const skip = (page - 1) * limit
+
+  const [deletions, total] = await Promise.all([
+    DeletionFeedback.find().sort({ createdAt: -1 }).skip(skip).limit(limit),
+    DeletionFeedback.countDocuments()
+  ])
+
+  res.status(200).json({
+    success: true,
+    data: { deletions, total, page, limit }
   })
 })

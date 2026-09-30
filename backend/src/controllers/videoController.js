@@ -452,6 +452,26 @@ export const reactToVideo = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, data: video.reactions, userReactions: userActiveReactions })
 })
 
+// ── Public: Increment View Count ──────────────────────────────────────────────
+
+/**
+ * POST /api/videos/:videoId/view
+ * Used for YouTube embeds where progress pinging is unavailable.
+ */
+export const incrementView = asyncHandler(async (req, res) => {
+  const { videoId } = req.params
+
+  const video = await Video.findById(videoId).select('seriesParentId')
+  if (!video) throw new ApiError(404, 'Video not found.')
+
+  await Video.updateOne({ _id: videoId }, { $inc: { viewCount: 1 } })
+  if (video.seriesParentId) {
+    await Video.updateOne({ _id: video.seriesParentId }, { $inc: { viewCount: 1 } })
+  }
+
+  res.status(200).json({ success: true })
+})
+
 // ── Public: List all published videos ────────────────────────────────────────
 
 /**

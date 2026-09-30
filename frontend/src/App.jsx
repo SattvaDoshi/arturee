@@ -61,6 +61,7 @@ import AdminCategories from './pages/admin/CategoriesPage'
 import AdminSpecialties from './pages/admin/SpecialtiesPage'
 import AdminLandingConfig from './pages/admin/LandingPageConfig'
 import AdminCoupons from './pages/admin/CouponsPage'
+import AdminDeletions from './pages/admin/AdminDeletions'
 
 // ── Shared ────────────────────────────────────────────────
 import VideoDetail  from './pages/VideoDetail'
@@ -145,6 +146,7 @@ const App = () => {
                 <Route path="/admin/categories" element={<AdminRoute><AdminCategories /></AdminRoute>} />
                 <Route path="/admin/specialties" element={<AdminRoute><AdminSpecialties /></AdminRoute>} />
                 <Route path="/admin/coupons"     element={<AdminRoute><AdminCoupons /></AdminRoute>} />
+                <Route path="/admin/deletions"   element={<AdminRoute><AdminDeletions /></AdminRoute>} />
               </Routes>
             </BrowserRouter>
           </CartProvider>

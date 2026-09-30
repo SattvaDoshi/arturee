@@ -110,53 +110,86 @@ export default function MyList() {
         )}
 
         {/* ── Poster grid ── */}
-        {!loading && filtered.length > 0 && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {filtered.map((item) => (
-              <div key={item._id} className="group relative">
-                <Link to={`/video/${item._id}`} className="block">
-                  <div className="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-md border border-[#4DD0E1]/20">
-                    <img
-                      src={item.thumbnailUrl || undefined}
-                      alt={item.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                    />
-                    {/* Hover overlay */}
-                    <div className="absolute inset-0 bg-[#051d2e]/60 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
-                      <div
-                        className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg"
-                        style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
-                      >
-                        <Play className="w-5 h-5 ml-0.5" fill="#051d2e" />
-                      </div>
-                    </div>
-                    {/* Badges */}
-                    <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>
-                      {formatPrice(item.price, item.currency)}
-                    </div>
-                    <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold border border-white/30 text-white/80" style={{ background: 'rgba(5,29,46,0.55)' }}>
-                      {item.genre?.name || 'Video'}
-                    </div>
-                    {/* Bookmark saved indicator - click to remove */}
-                    <button 
-                      onClick={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        remove(item._id)
-                      }}
-                      className="absolute bottom-2 right-2 p-1.5 rounded-full hover:scale-110 transition-transform cursor-pointer" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
-                      title="Remove from My List"
+        {!loading && filtered.length > 0 && (() => {
+          const landscape = filtered.filter(i => {
+            const hasMobileCat = i.categories?.some(c => c.name?.toUpperCase().includes('MOBILE'))
+            const hasMobileGen = i.genre?.name?.toUpperCase().includes('MOBILE')
+            return !(hasMobileCat || hasMobileGen)
+          })
+          const portrait  = filtered.filter(i => {
+            const hasMobileCat = i.categories?.some(c => c.name?.toUpperCase().includes('MOBILE'))
+            const hasMobileGen = i.genre?.name?.toUpperCase().includes('MOBILE')
+            return (hasMobileCat || hasMobileGen)
+          })
+
+          const ListCard = ({ item, isPortrait }) => (
+            <div className="group relative">
+              <Link to={`/video/${item._id}`} className="block">
+                <div className={`relative rounded-xl overflow-hidden mb-3 shadow-md border border-[#4DD0E1]/20 ${isPortrait ? 'aspect-[9/16]' : 'aspect-video'}`}>
+                  <img
+                    src={item.thumbnailUrl || undefined}
+                    alt={item.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                  />
+                  <div className="absolute inset-0 bg-[#051d2e]/60 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                    <div
+                      className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg"
+                      style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
                     >
-                      <BookmarkCheck className="w-3.5 h-3.5 text-[#051d2e]" fill="#051d2e" />
-                    </button>
+                      <Play className="w-5 h-5 ml-0.5" fill="#051d2e" />
+                    </div>
                   </div>
-                  <h3 className="font-black text-xs text-[#051d2e] truncate mb-0.5">{item.title}</h3>
-                  <p className="text-[10px] text-[#051d2e]/55">{item.genre?.name || 'Video'}</p>
-                </Link>
-              </div>
-            ))}
-          </div>
-        )}
+                  <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>
+                    {formatPrice(item.price, item.currency)}
+                  </div>
+                  <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold border border-white/30 text-white/80" style={{ background: 'rgba(5,29,46,0.55)' }}>
+                    {item.genre?.name || 'Video'}
+                  </div>
+                  <button
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); remove(item._id) }}
+                    className="absolute bottom-2 right-2 p-1.5 rounded-full hover:scale-110 transition-transform cursor-pointer"
+                    style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
+                    title="Remove from My List"
+                  >
+                    <BookmarkCheck className="w-3.5 h-3.5 text-[#051d2e]" fill="#051d2e" />
+                  </button>
+                </div>
+                <h3 className="font-black text-xs text-[#051d2e] truncate mb-0.5">{item.title}</h3>
+                <p className="text-[10px] text-[#051d2e]/55">{item.genre?.name || 'Video'}</p>
+              </Link>
+            </div>
+          )
+
+          return (
+            <div className="space-y-10">
+              {landscape.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-2 mb-4">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-[#051d2e]/40">🖥 Videos</span>
+                    <div className="flex-1 h-px" style={{ background: 'rgba(77,208,225,0.2)' }} />
+                    <span className="text-[10px] text-[#051d2e]/30">{landscape.length} saved</span>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    {landscape.map(item => <ListCard key={item._id} item={item} isPortrait={false} />)}
+                  </div>
+                </div>
+              )}
+              {portrait.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-2 mb-4">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-[#051d2e]/40">📱 Mobile Videos</span>
+                    <div className="flex-1 h-px" style={{ background: 'rgba(77,208,225,0.2)' }} />
+                    <span className="text-[10px] text-[#051d2e]/30">{portrait.length} saved</span>
+                  </div>
+                  <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                    {portrait.map(item => <ListCard key={item._id} item={item} isPortrait={true} />)}
+                  </div>
+                </div>
+              )}
+            </div>
+          )
+        })()}
+
 
       </div>
     </UserLayout>

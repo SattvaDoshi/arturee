@@ -9,7 +9,8 @@ import {
   resetPasswordController,
   updatePasswordController,
   getMeController,
-  updateProfileController
+  updateProfileController,
+  deleteAccountController
 } from '../controllers/authController.js'
 import authMiddleware from '../middlewares/authMiddleware.js'
 import { authReadLimiter } from '../middlewares/rateLimiter.js'
@@ -27,5 +28,6 @@ authRouter.post('/reset-password', resetPasswordController)
 authRouter.post('/update-password', authMiddleware, updatePasswordController)
 authRouter.get('/me', authReadLimiter, authMiddleware, getMeController)
 authRouter.put('/update-profile', authMiddleware, upload.single('avatar'), processImage, updateProfileController)
+authRouter.delete('/me', authMiddleware, deleteAccountController)
 
 export default authRouter

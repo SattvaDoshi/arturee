@@ -1,11 +1,27 @@
 import { useState, useEffect } from "react"
 
+let globalDeferredPrompt = null;
+let promptListeners = [];
+
+// Listen globally immediately when the module loads, so we don't miss the event
+if (typeof window !== 'undefined') {
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    globalDeferredPrompt = e;
+    promptListeners.forEach(listener => listener(e));
+  });
+
+  window.addEventListener("appinstalled", () => {
+    localStorage.setItem("pwa-installed", "true");
+    globalDeferredPrompt = null;
+    promptListeners.forEach(listener => listener(null));
+  });
+}
+
 /**
  * Shared PWA install hook.
  * Returns: canInstall, isInstalled, isIOS, triggerInstall
  */
-let globalDeferredPrompt = null;
-
 export function usePWAInstall() {
   const [deferredPrompt, setDeferredPrompt] = useState(globalDeferredPrompt)
 
@@ -21,41 +37,44 @@ export function usePWAInstall() {
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream
 
   useEffect(() => {
-    if (isInstalled) return
+    // Keep deferredPrompt in sync with global state
+    const handler = (e) => setDeferredPrompt(e)
+    promptListeners.push(handler)
+    
+    setDeferredPrompt(globalDeferredPrompt)
 
-    const handler = (e) => {
-      e.preventDefault()
-      globalDeferredPrompt = e
-      setDeferredPrompt(e)
+    // Sync isInstalled across tabs
+    const storageHandler = (e) => {
+      if (e.key === "pwa-installed" && e.newValue === "true") {
+        setIsInstalled(true)
+      }
     }
+    window.addEventListener("storage", storageHandler)
 
-    const installedHandler = () => {
-      setIsInstalled(true)
-      localStorage.setItem("pwa-installed", "true")
-      globalDeferredPrompt = null
-      setDeferredPrompt(null)
-    }
-
-    window.addEventListener("beforeinstallprompt", handler)
-    window.addEventListener("appinstalled", installedHandler)
     return () => {
-      window.removeEventListener("beforeinstallprompt", handler)
-      window.removeEventListener("appinstalled", installedHandler)
+      promptListeners = promptListeners.filter(l => l !== handler)
+      window.removeEventListener("storage", storageHandler)
     }
-  }, [isInstalled])
+  }, [])
 
   const triggerInstall = async () => {
-    if (!deferredPrompt) return false
-    deferredPrompt.prompt()
-    const { outcome } = await deferredPrompt.userChoice
-    if (outcome === "accepted") {
-      setIsInstalled(true)
-      localStorage.setItem("pwa-installed", "true")
+    if (!globalDeferredPrompt) return false
+    try {
+      globalDeferredPrompt.prompt()
+      const { outcome } = await globalDeferredPrompt.userChoice
+      if (outcome === "accepted") {
+        setIsInstalled(true)
+        localStorage.setItem("pwa-installed", "true")
+      }
+      globalDeferredPrompt = null
+      promptListeners.forEach(l => l(null))
+      return outcome === "accepted"
+    } catch (err) {
+      console.error("Install prompt failed:", err)
+      return false
     }
-    globalDeferredPrompt = null
-    setDeferredPrompt(null)
-    return outcome === "accepted"
   }
 
   return { canInstall: !!deferredPrompt, isInstalled, isIOS, triggerInstall }
 }
+
