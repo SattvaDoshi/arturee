@@ -169,7 +169,7 @@ export default function MyList() {
                     <div className="flex-1 h-px" style={{ background: 'rgba(77,208,225,0.2)' }} />
                     <span className="text-[10px] text-[#051d2e]/30">{landscape.length} saved</span>
                   </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {landscape.map(item => <ListCard key={item._id} item={item} isPortrait={false} />)}
                   </div>
                 </div>
@@ -181,7 +181,7 @@ export default function MyList() {
                     <div className="flex-1 h-px" style={{ background: 'rgba(77,208,225,0.2)' }} />
                     <span className="text-[10px] text-[#051d2e]/30">{portrait.length} saved</span>
                   </div>
-                  <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
                     {portrait.map(item => <ListCard key={item._id} item={item} isPortrait={true} />)}
                   </div>
                 </div>
