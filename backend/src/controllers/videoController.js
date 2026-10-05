@@ -14,6 +14,7 @@ import { createTranscodeJob, getJobStatus } from '../services/mediaConvertServic
 import { logUploadError, logMediaConvertError } from '../services/cloudWatchService.js'
 import Video from '../models/Video.js'
 import VideoAsset from '../models/VideoAsset.js'
+import Artist from '../models/Artist.js'
 import ApiError from '../utils/ApiError.js'
 import mongoose from 'mongoose'
 import fs from 'fs'
@@ -437,10 +438,20 @@ export const reactToVideo = asyncHandler(async (req, res) => {
     // If they clicked the same reaction, they are removing it
     video.reactions[type] = Math.max(0, video.reactions[type] - 1)
     video.userReactions.splice(existingReactionIndex, 1)
+
+    // Decrement artist emoticon count
+    if (video.artistId) {
+      await Artist.findByIdAndUpdate(video.artistId, { $inc: { emoticonCount: -1 } })
+    }
   } else {
     // New reaction for this type
     video.reactions[type] += 1
     video.userReactions.push({ userId: req.user._id, type })
+
+    // Increment artist emoticon count
+    if (video.artistId) {
+      await Artist.findByIdAndUpdate(video.artistId, { $inc: { emoticonCount: 1 } })
+    }
   }
   
   await video.save()

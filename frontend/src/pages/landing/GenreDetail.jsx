@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom'
 import Navbar from '../../components/layout/Navbar'
+import UserLayout from '../../components/layout/UserLayout'
 import { genreApi, videoApi } from '../../api'
 import { ArrowLeft } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
@@ -130,48 +131,50 @@ const GenreDetail = () => {
 
   const meta = getGenreMeta(genre)
 
+  const Wrapper = isAuthenticated ? UserLayout : React.Fragment;
+
   return (
-    <div>
+    <Wrapper>
       {!fromDashboard && <Navbar />}
-      <div className="min-h-screen" style={{ background: 'linear-gradient(160deg, #E0F7FA 0%, #B2EBF2 50%, #F1F8E9 100%)' }}>
+      <div className="min-h-screen bg-linear-to-br from-[#E0F7FA] via-[#B2EBF2] to-[#F1F8E9]">
 
         {/* ── Hero Banner ── */}
-        <div className="relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #051d2e 0%, #0a3347 60%, #051d2e 100%)' }}>
+        <div className="relative overflow-hidden pt-10 pb-8 text-center">
           {/* Glowing blobs */}
-          <div className="absolute top-0 left-1/4 w-[500px] h-[500px] rounded-full pointer-events-none" style={{ background: `radial-gradient(circle, ${meta.accent}40 0%, transparent 70%)` }} />
-          <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(77,208,225,0.15) 0%, transparent 70%)' }} />
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#4DD0E1]/20 rounded-full blur-[120px] pointer-events-none" />
+          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-[#C0E863]/20 rounded-full blur-[100px] pointer-events-none" />
 
-          <div className={`relative z-10 max-w-[1200px] mx-auto px-6 lg:px-20 ${fromDashboard ? 'pt-8 md:pt-12' : 'pt-24 md:pt-32'} pb-14`}>
+          <div className={`relative z-10 max-w-[1200px] mx-auto px-6 lg:px-20 ${fromDashboard ? 'pt-8 md:pt-12' : 'pt-24 md:pt-32'} pb-8`}>
             {/* Back Button */}
             <button
               onClick={() => navigate(fromDashboard ? '/dashboard' : '/genres')}
-              className="flex items-center gap-2 mb-8 text-white/60 hover:text-white transition text-sm font-semibold cursor-pointer"
+              className="flex items-center justify-center gap-2 mx-auto mb-8 text-[#051d2e]/60 hover:text-[#051d2e] transition text-sm font-semibold cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
               {fromDashboard ? 'Back to Dashboard' : 'All Genres'}
             </button>
 
-            <div className="flex flex-col sm:flex-row items-center sm:items-end gap-6">
+            <div className="flex flex-col items-center gap-4">
               {/* Icon */}
-              <div className="text-7xl shrink-0 select-none" style={{ filter: 'drop-shadow(0 4px 24px rgba(0,0,0,0.4))' }}>
+              <div className="text-7xl shrink-0 select-none drop-shadow-md">
                 {meta.icon}
               </div>
 
               {/* Text */}
-              <div className="text-center sm:text-left">
-                <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-none mb-3">
-                  <span className={`bg-gradient-to-r ${meta.gradient} bg-clip-text text-transparent`}>
+              <div className="text-center">
+                <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-none mb-5">
+                  <span className={`bg-gradient-to-r ${meta.gradient} text-[#051d2e] px-6 py-2 rounded-3xl shadow-lg inline-block border border-white/60`}>
                     {genre.name}
                   </span>
                 </h1>
                 {genre.description && (
-                  <p className="text-white/55 text-base max-w-xl font-medium leading-relaxed">
+                  <p className="text-[#051d2e]/55 text-base max-w-xl mx-auto font-medium leading-relaxed">
                     {genre.description}
                   </p>
                 )}
                 <span
-                  className="inline-block mt-4 font-mono text-xs uppercase tracking-widest font-bold px-4 py-1.5 rounded-full border border-white/10"
-                  style={{ background: 'rgba(255,255,255,0.08)', color: meta.accent }}
+                  className="inline-block mt-4 font-mono text-xs uppercase tracking-widest font-bold px-4 py-1.5 rounded-full border border-[#051d2e]/10 text-[#051d2e]"
+                  style={{ background: 'rgba(5, 29, 46, 0.05)' }}
                 >
                   {videos.length} {videos.length === 1 ? 'Video' : 'Videos'}
                 </span>
@@ -250,7 +253,7 @@ const GenreDetail = () => {
           )}
         </div>
       </div>
-    </div>
+    </Wrapper>
   )
 }
 

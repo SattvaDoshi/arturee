@@ -105,7 +105,7 @@ export default function Purchased() {
   })
 
   const totalSpent   = items.reduce((s, i) => s + i.price, 0)
-  const viewsWarning = items.filter(i => VIEW_LIMIT - i.viewsUsed <= 1).length
+  const viewsWarning = items.filter(i => i.price > 0 && VIEW_LIMIT - i.viewsUsed <= 1).length
 
   return (
     <UserLayout>
@@ -239,9 +239,10 @@ export default function Purchased() {
           const portrait  = sorted.filter(i => i.isMobile)
 
           const VideoCard = ({ item, isPortrait }) => {
-            const remaining = VIEW_LIMIT - item.viewsUsed
-            const isWarning = remaining === 1
-            const isOut     = remaining === 0
+            const isFree    = item.price === 0
+            const remaining = isFree ? '∞' : Math.max(0, VIEW_LIMIT - item.viewsUsed)
+            const isWarning = !isFree && remaining === 1
+            const isOut     = !isFree && remaining === 0
             return (
               <div
                 className="group rounded-2xl overflow-hidden border shadow-sm hover:shadow-lg transition-shadow"
@@ -277,12 +278,12 @@ export default function Purchased() {
                   <div
                     className="absolute top-2 right-2 flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-black backdrop-blur-sm"
                     style={{
-                      background: isOut ? 'rgba(239,68,68,0.85)' : isWarning ? 'rgba(245,158,11,0.85)' : 'rgba(5,29,46,0.65)',
+                      background: isFree ? 'rgba(5,29,46,0.65)' : isOut ? 'rgba(239,68,68,0.85)' : isWarning ? 'rgba(245,158,11,0.85)' : 'rgba(5,29,46,0.65)',
                       color: '#fff',
                     }}
                   >
                     <Eye className="w-3 h-3" />
-                    {remaining} left
+                    {isFree ? 'Unlimited' : `${remaining} left`}
                   </div>
                 </div>
 
@@ -300,7 +301,13 @@ export default function Purchased() {
                     </div>
                     <span className="text-sm font-black text-[#051d2e]">₹{item.price.toFixed(2)}</span>
                   </div>
-                  <ViewsIndicator viewsUsed={item.viewsUsed} />
+                  {isFree ? (
+                    <div className="mt-3 pt-3 flex items-center gap-2" style={{ borderTop: '1px solid rgba(5,29,46,0.07)' }}>
+                      <span className="text-[10px] font-bold text-[#4DD0E1] uppercase tracking-widest">Free • Unlimited Views</span>
+                    </div>
+                  ) : (
+                    <ViewsIndicator viewsUsed={item.viewsUsed} />
+                  )}
                 </div>
               </div>
             )

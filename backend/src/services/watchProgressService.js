@@ -54,9 +54,9 @@ export const saveProgress = async (
   let purchaseExpired = false
 
   if (shouldIncrementCount) {
-    // Atomically increment viewsUsed on the Purchase record
+    // Atomically increment viewsUsed on the Purchase record, but ONLY if the video is NOT free (amountPaise > 0)
     const purchase = await Purchase.findOneAndUpdate(
-      { userId, videoId, status: 'completed' },
+      { userId, videoId, status: 'completed', amountPaise: { $gt: 0 } },
       { $inc: { viewsUsed: 1 } },
       { returnDocument: 'after' }
     )
