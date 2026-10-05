@@ -14,7 +14,9 @@ const HeroSection = () => {
           </h1>
           <div className="bg-white/90 backdrop-blur-sm rough-border p-4 md:p-6 shadow-[6px_6px_0px_#4DD0E1] md:shadow-[10px_10px_0px_#4DD0E1] max-w-md transform -rotate-1">
             <p className="text-base md:text-lg lg:text-xl font-bold leading-tight text-navy">
-              Modern life has its weights; <br /> Art makes it worth living
+              Stream exclusive Poetry  and  <br />
+              Storytelling performances here. <br />
+              Click on Start Watching now!
             </p>
           </div>
           <div className="flex flex-col sm:flex-row flex-wrap gap-4 md:gap-6 pt-2 md:pt-4">

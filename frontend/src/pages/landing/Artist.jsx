@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Navbar from '../../components/layout/Navbar'
+import UserLayout from '../../components/layout/UserLayout'
+import { useAuth } from '../../context/AuthContext'
 import { useArtistModal } from '../../context/ArtistModalContext'
 import { artistApi, genreApi, landingConfigApi } from '../../api'
 
@@ -54,6 +56,7 @@ const getArtistTag = (artist, index, customTag, customColor) => {
 }
 
 const Artist = () => {
+  const { isAuthenticated } = useAuth()
   const navigate = useNavigate()
   const [artists, setArtists] = useState([])
   const [genres, setGenres] = useState([])
@@ -202,11 +205,13 @@ const Artist = () => {
     landingConfig?.artistPage?.ctaTitle || 'Ignite the Artist in You'
   const ctaText =
     landingConfig?.artistPage?.ctaText ||
-    'Arturee is your sky. Spread your wings, share your art, and earn from what you love.'
+    'arturee is your sky. Spread your wings, share your art, and earn from what you love.'
+
+  const Wrapper = isAuthenticated ? UserLayout : React.Fragment;
 
   return (
-    <div>
-      <Navbar />
+    <Wrapper>
+      {!isAuthenticated && <Navbar />}
       <div className="min-h-screen bg-linear-to-br from-[#E0F7FA] via-[#B2EBF2] to-[#F1F8E9]">
         {/* Hero */}
         <div className="relative pt-20 pb-14 px-6 lg:px-20 text-center overflow-hidden">
@@ -461,7 +466,7 @@ const Artist = () => {
           </div>
         </div>
       </div>
-    </div>
+    </Wrapper>
   )
 }
 

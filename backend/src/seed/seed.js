@@ -37,7 +37,7 @@ const artistsData = [
   }, 
   { 
     name: "Suchhee aka Sakhiii", 
-    bio: "Suchi Bansal lives life with a singular mission: to explore everything it has to offer. A Chartered Accountant by day and a storyteller at heart, she is a Financial Analyst who balances the structured world of numbers with a fearless pursuit of creative and spiritual growth. Rather than choosing a single path, Suchi embraces a multi-passionate life as a poet, storyteller, and aspiring author. She actively explores the arts through Hindustani classical music and classical Kathak dance, and as an avid traveler, she uses her journeys to deeply understand diverse perspectives. Ultimately, she blends logic and artistry to constantly expand her horizons as both a human being and a creator. The latest colour to her vision is finding Arturee—a dream she intends to paint the art world with!", 
+    bio: "Suchi Bansal lives life with a singular mission: to explore everything it has to offer. A Chartered Accountant by day and a storyteller at heart, she is a Financial Analyst who balances the structured world of numbers with a fearless pursuit of creative and spiritual growth. Rather than choosing a single path, Suchi embraces a multi-passionate life as a poet, storyteller, and aspiring author. She actively explores the arts through Hindustani classical music and classical Kathak dance, and as an avid traveler, she uses her journeys to deeply understand diverse perspectives. Ultimately, she blends logic and artistry to constantly expand her horizons as both a human being and a creator. The latest colour to her vision is finding arturee—a dream she intends to paint the art world with!", 
     genreName: "Story Telling",
     avatarUrl: null,
   }, 

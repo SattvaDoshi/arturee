@@ -17,7 +17,7 @@ const THREATS = {
     id:      'SCREEN_RECORD',
     icon:    Monitor,
     title:   'Screen Recording Detected',
-    message: 'Screen recording and screen capture of Arturee content is strictly prohibited by our Terms of Service.',
+    message: 'Screen recording and screen capture of arturee content is strictly prohibited by our Terms of Service.',
     detail:  'Please stop any active screen recording software, then tap "I Understand" to resume playback.',
     color:   '#ef4444',
   },
@@ -26,14 +26,14 @@ const THREATS = {
     icon:    Cast,
     title:   'Casting Not Allowed',
     message: 'Casting or mirroring this content to external devices is strictly prohibited.',
-    detail:  'Arturee content is licensed for personal viewing only on this device.',
+    detail:  'arturee content is licensed for personal viewing only on this device.',
     color:   '#f97316',
   },
   AIRPLAY: {
     id:      'AIRPLAY',
     icon:    Airplay,
     title:   'AirPlay Blocked',
-    message: 'AirPlay streaming of Arturee content to external displays is not permitted.',
+    message: 'AirPlay streaming of arturee content to external displays is not permitted.',
     detail:  'Please disconnect AirPlay and continue watching on this device.',
     color:   '#f97316',
   },
@@ -42,7 +42,7 @@ const THREATS = {
     icon:    Minimize2,
     title:   'Picture-in-Picture Blocked',
     message: 'Picture-in-Picture mode is not allowed for protected content.',
-    detail:  'Please return to full-screen viewing within the Arturee app.',
+    detail:  'Please return to full-screen viewing within the arturee app.',
     color:   '#8b5cf6',
   },
   FOCUS_LOST: {
@@ -213,7 +213,7 @@ function SecurityModal({ threat, onDismiss }) {
             lineHeight: 1.5,
           }}
         >
-          Unauthorised recording or distribution of Arturee content is a violation of our Terms of Service and may be subject to legal action.
+          Unauthorised recording or distribution of arturee content is a violation of our Terms of Service and may be subject to legal action.
         </p>
       </div>
     </div>

@@ -63,7 +63,7 @@ const Footer = () => {
           </div>
         </div>
         <div className="pt-8 border-t border-primary/30 flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="text-navy/60 text-xs">© 2026 Arturee Cinematic Platform. Crafted for the curious.</p>
+          <p className="text-navy/60 text-xs">© 2026 arturee Cinematic Platform. Crafted for the curious.</p>
           <div className="flex gap-8 text-xs text-navy/60">
             <a href="#" className="hover:text-primary transition-colors">Privacy</a>
             <a href="#" className="hover:text-primary transition-colors">Terms</a>

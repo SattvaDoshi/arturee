@@ -1,11 +1,17 @@
-﻿import React from 'react'
+import React from 'react'
 import { Instagram } from 'lucide-react'
 import Navbar from '../../components/layout/Navbar'
+import UserLayout from '../../components/layout/UserLayout'
+import { useAuth } from '../../context/AuthContext'
 
 const AboutUs = () => {
+  const { isAuthenticated } = useAuth()
+  const Wrapper = isAuthenticated ? UserLayout : React.Fragment;
+
   return (
-    <div className="min-h-screen bg-linear-to-br from-[#E0F7FA] via-[#B2EBF2] to-[#F1F8E9]">
-        <Navbar/>
+    <Wrapper>
+      {!isAuthenticated && <Navbar/>}
+      <div className="min-h-screen bg-linear-to-br from-[#E0F7FA] via-[#B2EBF2] to-[#F1F8E9]">
         <section className="bg-linear-to-br from-[#E0F7FA]/70 via-[#B2EBF2]/40 to-[#F1F8E9]/60 pb-20 px-6 lg:px-20 overflow-hidden relative">
       <div className="mx-auto max-w-[1200px]">
         <div className="flex flex-col items-center mb-16 text-center">
@@ -20,7 +26,7 @@ const AboutUs = () => {
           </h2>
         </div>
 
-        {/* Arturee Intro */}
+        {/* arturee Intro */}
         <div className="max-w-3xl mx-auto mb-20 text-center space-y-5">
           <p className="text-lg text-navy/70 leading-relaxed">
             Every great journey comes with moments of doubt and unexpected challenges, but we anchored ourselves in one simple truth.
@@ -69,7 +75,7 @@ const AboutUs = () => {
               </div>
               <div className="border-l-2 border-[#ce6a6b] pl-6 py-2">
                 <p className="text-white/70 text-sm italic">
-                  Suchi Bansal lives life with a singular mission: to explore everything it has to offer. A Chartered Accountant by day and a storyteller at heart, she is a Financial Analyst who balances the structured world of numbers with a fearless pursuit of creative and spiritual growth. <br /> <br /> Suchi embraces a multi-passionate life as a poet, storyteller, and aspiring author and actively learns Hindustani classical music and classical Kathak dance. As an avid traveler, she uses her journeys to deeply understand diverse perspectives which expand her horizons as both a human being and a creator. The latest colour to her vision is finding Arturee—a dream she intends to paint the art world with!
+                  Suchi Bansal lives life with a singular mission: to explore everything it has to offer. A Chartered Accountant by day and a storyteller at heart, she is a Financial Analyst who balances the structured world of numbers with a fearless pursuit of creative and spiritual growth. <br /> <br /> Suchi embraces a multi-passionate life as a poet, storyteller, and aspiring author and actively learns Hindustani classical music and classical Kathak dance. As an avid traveler, she uses her journeys to deeply understand diverse perspectives which expand her horizons as both a human being and a creator. The latest colour to her vision is finding arturee—a dream she intends to paint the art world with!
                 </p>
               </div>
             </div>
@@ -132,7 +138,8 @@ const AboutUs = () => {
         </div>
       </div>
     </section>
-    </div>
+      </div>
+    </Wrapper>
   )
 }
 

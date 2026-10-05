@@ -122,7 +122,7 @@ const landingConfigSchema = new mongoose.Schema(
       ctaText: {
         type: String,
         default:
-          'Arturee is your sky. Spread your wings, share your art, and earn from what you love.',
+          'arturee is your sky. Spread your wings, share your art, and earn from what you love.',
       },
     },
     genrePage: {

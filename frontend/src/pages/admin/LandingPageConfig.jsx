@@ -110,7 +110,7 @@ export default function LandingPageConfig() {
       featuredArtistId: null,
       ctaTitle: 'Ignite the Artist in You',
       ctaText:
-        'Arturee is your sky. Spread your wings, share your art, and earn from what you love.',
+        'arturee is your sky. Spread your wings, share your art, and earn from what you love.',
     },
     genrePage: {
       headline: 'Explore by Genre',
@@ -200,7 +200,7 @@ export default function LandingPageConfig() {
               fetchedConfig.artistPage?.ctaTitle || 'Ignite the Artist in You',
             ctaText:
               fetchedConfig.artistPage?.ctaText ||
-              'Arturee is your sky. Spread your wings, share your art, and earn from what you love.',
+              'arturee is your sky. Spread your wings, share your art, and earn from what you love.',
           },
           genrePage: {
             headline: fetchedConfig.genrePage?.headline || 'Explore by Genre',

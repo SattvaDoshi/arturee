@@ -17,7 +17,7 @@ const REASON_CONFIG = {
     icon:    Wifi,
     title:   'Network Changed',
     message: 'Your session was terminated because your network location changed significantly.',
-    detail:  'For security, Arturee only allows playback from the same network. Please log in again from your current location.',
+    detail:  'For security, arturee only allows playback from the same network. Please log in again from your current location.',
     color:   '#8b5cf6',
   },
   DEFAULT: {
@@ -109,7 +109,7 @@ export default function KickedModal({ reason, onDismiss }) {
           <Icon size={34} color={config.color} strokeWidth={1.5} />
         </div>
 
-        {/* Arturee badge */}
+        {/* arturee badge */}
         <div
           style={{
             display:      'inline-flex',
@@ -203,7 +203,7 @@ export default function KickedModal({ reason, onDismiss }) {
             lineHeight: 1.5,
           }}
         >
-          Arturee enforces single-device login to protect purchased content.
+          arturee enforces single-device login to protect purchased content.
         </p>
       </div>
     </div>

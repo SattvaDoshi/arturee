@@ -172,7 +172,7 @@ export default function Checkout() {
           amount,
           currency:    currency || 'INR',
           order_id:    orderId,
-          name:        'Arturee',
+          name:        'arturee',
           description: videoTitle || (items.length > 1 ? `${items.length} Videos` : items[0]?.title) || 'Video Purchase',
           image:       '/logo.png',
           theme: { color: '#4DD0E1' },

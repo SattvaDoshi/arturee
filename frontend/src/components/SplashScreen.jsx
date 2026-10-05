@@ -22,7 +22,7 @@ const SplashScreen = ({ onComplete }) => {
 
   if (!isVisible) return null
 
-  const letters = "ARTUREE".split("")
+  const letters = "arturee".split("")
 
   return (
     <div

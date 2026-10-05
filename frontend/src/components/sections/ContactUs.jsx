@@ -110,7 +110,7 @@ const ContactUs = () => {
               <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-[40px]" />
               <p className="text-white font-bold text-base relative z-10">Are you an artist?</p>
               <p className="text-white/55 text-xs leading-relaxed relative z-10">
-                Arturee is your sky. Share your art with the world and earn from what you love.
+                arturee is your sky. Share your art with the world and earn from what you love.
               </p>
               <button
                 type="button"

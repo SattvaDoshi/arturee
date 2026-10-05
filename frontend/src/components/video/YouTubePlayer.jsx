@@ -4,7 +4,7 @@ import { videoApi } from '../../api'
 /**
  * YouTubePlayer
  *
- * Renders a YouTube iframe embed with the standard Arturee player chrome:
+ * Renders a YouTube iframe embed with the standard arturee player chrome:
  *  - Ratio-locked 16:9 container
  *  - Privacy-enhanced embed domain (youtube-nocookie.com)
  *  - Autoplay on load, rel=0 (no related videos), modestbranding

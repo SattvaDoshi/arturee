@@ -23,7 +23,7 @@ const Navbar = () => {
     <header className="sticky top-4 z-[100] mx-3 my-3 md:mx-10 md:my-4">
       <div className="bg-white/90 backdrop-blur-sm rough-border px-3 py-3 sm:px-6 sm:py-4 flex items-center justify-between gap-2 shadow-[6px_6px_0px_#4DD0E1] border-primary">
         <div className="h-9 w-28 sm:h-10 sm:w-30 shrink-0">
-          <img src="/logo.png" className="h-full w-full object-contain" alt="Arturee" />
+          <img src="/logo.png" className="h-full w-full object-contain" alt="arturee" />
         </div>
         <nav className="hidden md:flex items-center gap-6">
           {navItems.map((item) => (
@@ -56,9 +56,17 @@ const Navbar = () => {
             )}
           </button>
           <Link to="/login" className="hidden sm:block text-xs font-black uppercase underline decoration-4 underline-offset-4 decoration-lime text-navy hover:text-primary transition-colors">Sign In</Link>
-          {!isInstalled && (canInstall || isIOS) && (
+          {!isInstalled && (
             <button
-              onClick={triggerInstall}
+              onClick={() => {
+                if (canInstall) {
+                  triggerInstall();
+                } else if (isIOS) {
+                  alert("To install on iOS, tap the Share button and select 'Add to Home Screen'.");
+                } else {
+                  alert("Installation prompt not ready. You can install via your browser's menu (Add to Home Screen / Install App) or address bar.");
+                }
+              }}
               title="Install App"
               className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-black uppercase text-[#051d2e] transition hover:scale-105 hover:shadow-lg"
               style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}

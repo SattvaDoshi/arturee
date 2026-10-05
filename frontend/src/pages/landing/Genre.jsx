@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import Navbar from '../../components/layout/Navbar'
+import UserLayout from '../../components/layout/UserLayout'
+import { useAuth } from '../../context/AuthContext'
 import { genreApi, videoApi, landingConfigApi } from '../../api'
 
 const genreMetadataMap = {
@@ -94,6 +96,7 @@ const fmtDuration = (secs) => {
 }
 
 const Genre = () => {
+  const { isAuthenticated } = useAuth()
   const [genres, setGenres] = useState([])
   const [videos, setVideos] = useState([])
   const [landingConfig, setLandingConfig] = useState(null)
@@ -174,9 +177,11 @@ const Genre = () => {
     landingConfig?.genrePage?.subheadline ||
     'Passionate, fearless, and unapologetically authentic.'
 
+  const Wrapper = isAuthenticated ? UserLayout : React.Fragment;
+
   return (
-    <div>
-      <Navbar />
+    <Wrapper>
+      {!isAuthenticated && <Navbar />}
       <div className="min-h-screen bg-linear-to-br from-[#E0F7FA] via-[#B2EBF2] to-[#F1F8E9]">
         {/* Hero */}
         <div className="relative pt-20 pb-14 px-6 lg:px-20 text-center overflow-hidden">
@@ -295,7 +300,7 @@ const Genre = () => {
           </div>
         </div>
       </div>
-    </div>
+    </Wrapper>
   )
 }
 

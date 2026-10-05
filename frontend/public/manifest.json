@@ -1,6 +1,6 @@
 {
-  "name": "Arturee",
-  "short_name": "Arturee",
+  "name": "arturee",
+  "short_name": "arturee",
   "description": "Stream live performances, comedy, podcasts and more",
   "start_url": "/dashboard",
   "scope": "/",

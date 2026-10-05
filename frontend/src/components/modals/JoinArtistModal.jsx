@@ -253,7 +253,7 @@ const JoinArtistModal = () => {
                     <div className="p-3 pt-0 border-t border-primary/10 bg-white/50 max-h-40 overflow-y-auto custom-scrollbar">
                       <ul className="text-xs text-navy/70 space-y-2 list-disc pl-4 text-left mt-3">
                         <li>An exclusive recorded video (with decent video and audio quality).</li>
-                        <li>Artists must not upload, distribute, or make freely available elsewhere any content submitted for paid distribution on ARTUREE. However, there are no restrictions on performing the piece live.</li>
+                        <li>Artists must not upload, distribute, or make freely available elsewhere any content submitted for paid distribution on arturee. However, there are no restrictions on performing the piece live.</li>
                         <li>All content must be 100% original and plagiarism-free. The Artist will bear full legal and financial responsibility for any copyright or plagiarism claims.</li>
                       </ul>
                     </div>
@@ -275,7 +275,7 @@ const JoinArtistModal = () => {
                     )}
                   </div>
                   <span className="text-xs text-navy/70 leading-relaxed select-none group-hover:text-navy transition-colors text-left">
-                    <strong>I Agree</strong> to the terms and conditions. By submitting this form, I confirm that the content provided is my original work and I grant Arturee permission to review it.
+                    <strong>I Agree</strong> to the terms and conditions. By submitting this form, I confirm that the content provided is my original work and I grant arturee permission to review it.
                   </span>
                 </label>
               </div>

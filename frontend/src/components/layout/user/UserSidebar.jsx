@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import {
   Home, Play, BookmarkCheck, ShoppingBag, User,
   LogIn, UserPlus, X, Shield,
+  Palette, LayoutGrid, Info, CreditCard
 } from 'lucide-react'
 import { useAuth } from '../../../context/AuthContext'
 
@@ -11,6 +12,10 @@ const navItems = [
   { label: 'Continue Watching', icon: Play, to: '/dashboard/continue' },
   { label: 'My List', icon: BookmarkCheck, to: '/dashboard/mylist' },
   { label: 'Purchased', icon: ShoppingBag, to: '/dashboard/purchased' },
+  { label: 'Artists', icon: Palette, to: '/artists' },
+  { label: 'Genre', icon: LayoutGrid, to: '/genres' },
+  { label: 'About arturee', icon: Info, to: '/aboutus' },
+  { label: 'Pricing', icon: CreditCard, to: '/pricing' },
 ]
 
 /* Tooltip — shown only when sidebar is collapsed */

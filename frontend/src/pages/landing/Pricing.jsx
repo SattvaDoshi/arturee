@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../../components/layout/Navbar'
+import UserLayout from '../../components/layout/UserLayout'
+import { useAuth } from '../../context/AuthContext'
 import { landingConfigApi } from '../../api/index.js'
 
 const subscriptionPlans = [
@@ -9,7 +11,7 @@ const subscriptionPlans = [
     price: 199,
     period: 'month',
     tag: null,
-    description: 'Perfect to explore Arturee at your own pace.',
+    description: 'Perfect to explore arturee at your own pace.',
     features: ['Unlimited streaming', 'Access to new releases', 'Mobile & desktop', 'HD quality'],
   },
   {
@@ -66,7 +68,7 @@ const termsItems = [
   {
     title: 'Refund Policy',
     content:
-      'Subscription fees are non-refundable once the billing period begins and at least one piece of content has been accessed. If no content has been accessed within 24 hours of purchase, a full refund may be requested. However it will be at the discretion of Arturee',
+      'Subscription fees are non-refundable once the billing period begins and at least one piece of content has been accessed. If no content has been accessed within 24 hours of purchase, a full refund may be requested. However it will be at the discretion of arturee',
   },
   // {
   //   title: 'Cancellation Policy',
@@ -76,7 +78,7 @@ const termsItems = [
   {
     title: 'Content Availability',
     content:
-      'Arturee reserves the right to add, modify, or remove content from the platform at any time. Purchased videos that are taken down will remain accessible to buyers for their remaining view count.',
+      'arturee reserves the right to add, modify, or remove content from the platform at any time. Purchased videos that are taken down will remain accessible to buyers for their remaining view count.',
   },
   {
     title: 'Account & Sharing',
@@ -92,6 +94,7 @@ const termsItems = [
 ]
 
 const Pricing = () => {
+  const { isAuthenticated } = useAuth()
   const navigate = useNavigate()
   const [tab, setTab] = useState('video')
   const [openTerm, setOpenTerm] = useState(null)
@@ -138,9 +141,11 @@ const Pricing = () => {
         },
       ]
 
+  const Wrapper = isAuthenticated ? UserLayout : React.Fragment;
+
   return (
-    <div>
-      <Navbar />
+    <Wrapper>
+      {!isAuthenticated && <Navbar />}
       <div className="min-h-screen bg-linear-to-br from-[#E0F7FA] via-[#B2EBF2] to-[#F1F8E9]">
         {/* Hero */}
         <div className="relative pt-20 pb-16 px-6 lg:px-20 text-center overflow-hidden">
@@ -354,12 +359,12 @@ const Pricing = () => {
             </div>
 
             <p className="text-center text-navy/30 text-xs mt-8 font-mono">
-              By using Arturee, you agree to these terms. Last updated March 2026.
+              By using arturee, you agree to these terms. Last updated March 2026.
             </p>
           </div>
         </div>
       </div>
-    </div>
+    </Wrapper>
   )
 }
 

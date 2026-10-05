@@ -11,14 +11,16 @@ export default function InstallPrompt() {
   const [showIOSGuide, setShowIOSGuide] = useState(false)
   const [dismissed, setDismissed] = useState(false)
 
-  // Hide if already installed, dismissed, or no way to install on this platform
-  if (isInstalled || dismissed || (!canInstall && !isIOS)) return null
+  // Hide if already installed or dismissed
+  if (isInstalled || dismissed) return null
 
   const handleInstall = async () => {
     if (canInstall) {
       await triggerInstall()
     } else if (isIOS) {
       setShowIOSGuide(true)
+    } else {
+      alert("Installation prompt not ready. You can install via your browser's menu (Add to Home Screen / Install App) or address bar.")
     }
   }
 
@@ -65,7 +67,7 @@ export default function InstallPrompt() {
               <div className="w-16 h-16 mx-auto mb-3 rounded-2xl bg-white/30 flex items-center justify-center shadow-lg">
                 <Download className="w-8 h-8 text-[#051d2e]" />
               </div>
-              <h3 className="text-lg font-black text-[#051d2e]">Install Arturee</h3>
+              <h3 className="text-lg font-black text-[#051d2e]">Install arturee</h3>
               <p className="text-xs text-[#051d2e]/70 mt-1">Add to your home screen for the best experience</p>
             </div>
 

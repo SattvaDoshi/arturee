@@ -38,7 +38,7 @@ export const getLandingConfig = asyncHandler(async (req, res) => {
         featuredArtistId: artists[0]?._id || null,
         ctaTitle: 'Ignite the Artist in You',
         ctaText:
-          'Arturee is your sky. Spread your wings, share your art, and earn from what you love.',
+          'arturee is your sky. Spread your wings, share your art, and earn from what you love.',
       },
       genrePage: {
         headline: 'Explore by Genre',

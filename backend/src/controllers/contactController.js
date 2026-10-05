@@ -49,7 +49,7 @@ export const submitContactMessage = asyncHandler(async (req, res) => {
             
             <!-- Footer -->
             <div style="background-color: #f8fafc; padding: 20px; text-align: center; border-top: 1px solid #f1f5f9;">
-              <p style="margin: 0; color: #94a3b8; font-size: 12px; font-weight: 500;">&copy; ${new Date().getFullYear()} Arturee. All rights reserved.</p>
+              <p style="margin: 0; color: #94a3b8; font-size: 12px; font-weight: 500;">&copy; ${new Date().getFullYear()} arturee. All rights reserved.</p>
             </div>
           </div>
         </div>

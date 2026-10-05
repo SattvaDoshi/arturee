@@ -5,24 +5,24 @@ const CTASection = () => {
 
   const faqs = [
     {
-      question: "What is Arturee?",
-      answer: "Arturee is an exclusive online video streaming platform — a passion-driven space where art meets soul. Modern life has its weights; art makes it worth living. Think of Arturee as your art meal plan: a curated destination that nourishes your heART, serving as the bridge between visionary artists and the people who love their work."
+      question: "What is arturee?",
+      answer: "arturee is an exclusive online video streaming platform — a passion-driven space where art meets soul. Modern life has its weights; art makes it worth living. Think of arturee as your art meal plan: a curated destination that nourishes your heART, serving as the bridge between visionary artists and the people who love their work."
     },
     {
-      question: "Who is Arturee for?",
-      answer: "Arturee is for YOU. Whether you're an art lover seeking an emotional journey or a creator ready to share your voice with the world — this is your sky to fly, spread your wings, and let art breathe. Because art is not just something you watch; art is YOU."
+      question: "Who is arturee for?",
+      answer: "arturee is for YOU. Whether you're an art lover seeking an emotional journey or a creator ready to share your voice with the world — this is your sky to fly, spread your wings, and let art breathe. Because art is not just something you watch; art is YOU."
     },
     {
-      question: "What does Arturee offer?",
-      answer: "Arturee brings everything you love about art to a single destination at your fingertips — exclusive content crafted by our artists specially for you, a platform where artists earn for their passion, and an experience designed to ignite the artist within you. Our content is your rainbow in a gloomy sky."
+      question: "What does arturee offer?",
+      answer: "arturee brings everything you love about art to a single destination at your fingertips — exclusive content crafted by our artists specially for you, a platform where artists earn for their passion, and an experience designed to ignite the artist within you. Our content is your rainbow in a gloomy sky."
     },
     {
       question: "How much does it cost?",
-      answer: "We believe in simple, transparent pricing: 1 minute = 1 Rs. You only pay for the exact length of the content. For artists ready to share their craft, click the Join Us button to become part of the Arturee family and start earning from your passion."
+      answer: "We believe in simple, transparent pricing: 1 minute = 1 Rs. You only pay for the exact length of the content. For artists ready to share their craft, click the Join Us button to become part of the arturee family and start earning from your passion."
     },
     {
-      question: "Why choose Arturee?",
-      answer: "We are sincere, simple, and honest dreamers coming together to fulfil our passion for art. We live by three values: True to Art and Artist, What's Inside is Outside, and Free Will. By choosing Arturee, you're not just subscribing to content — you're becoming part of a movement. By not choosing us, well… you'd break our heART."
+      question: "Why choose arturee?",
+      answer: "We are sincere, simple, and honest dreamers coming together to fulfil our passion for art. We live by three values: True to Art and Artist, What's Inside is Outside, and Free Will. By choosing arturee, you're not just subscribing to content — you're becoming part of a movement. By not choosing us, well… you'd break our heART."
     }
   ]
 
