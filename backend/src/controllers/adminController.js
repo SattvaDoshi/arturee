@@ -2,6 +2,9 @@ import asyncHandler from '../utils/asyncHandler.js'
 import User from '../models/User.js'
 import Video from '../models/Video.js'
 import Purchase from '../models/Purchase.js'
+import Artist from '../models/Artist.js'
+import Genre from '../models/Genre.js'
+import Category from '../models/Category.js'
 import ApiError from '../utils/ApiError.js'
 import DeletionFeedback from '../models/DeletionFeedback.js'
 
@@ -169,16 +172,16 @@ export const getRevenueStats = asyncHandler(async (req, res) => {
 
     // Lifetime totals
     Purchase.aggregate([
-      { $match: { status: 'completed' } },
+      { $match: { status: { $in: ['completed', 'expired'] } } },
       { $group: { _id: null, total: { $sum: '$amountPaise' }, count: { $sum: 1 } } },
     ]),
 
     // Total purchases count
-    Purchase.countDocuments({ status: 'completed' }),
+    Purchase.countDocuments({ status: { $in: ['completed', 'expired'] } }),
 
     // Monthly revenue for the last 12 months
     Purchase.aggregate([
-      { $match: { status: 'completed', completedAt: { $gte: twelveMonthsAgo } } },
+      { $match: { status: { $in: ['completed', 'expired'] }, completedAt: { $gte: twelveMonthsAgo } } },
       {
         $group: {
           _id: { year: { $year: '$completedAt' }, month: { $month: '$completedAt' } },
@@ -191,7 +194,7 @@ export const getRevenueStats = asyncHandler(async (req, res) => {
 
     // Daily revenue for the last 30 days
     Purchase.aggregate([
-      { $match: { status: 'completed', completedAt: { $gte: thirtyDaysAgo } } },
+      { $match: { status: { $in: ['completed', 'expired'] }, completedAt: { $gte: thirtyDaysAgo } } },
       {
         $group: {
           _id: { year: { $year: '$completedAt' }, month: { $month: '$completedAt' }, day: { $dayOfMonth: '$completedAt' } },
@@ -204,7 +207,7 @@ export const getRevenueStats = asyncHandler(async (req, res) => {
 
     // Top 15 videos by revenue
     Purchase.aggregate([
-      { $match: { status: 'completed' } },
+      { $match: { status: { $in: ['completed', 'expired'] } } },
       {
         $group: {
           _id: '$videoId',
@@ -241,7 +244,7 @@ export const getRevenueStats = asyncHandler(async (req, res) => {
 
     // Top 10 by purchase count
     Purchase.aggregate([
-      { $match: { status: 'completed' } },
+      { $match: { status: { $in: ['completed', 'expired'] } } },
       { $group: { _id: '$videoId', purchases: { $sum: 1 }, revenue: { $sum: '$amountPaise' } } },
       { $sort: { purchases: -1 } },
       { $limit: 10 },
@@ -264,12 +267,19 @@ export const getRevenueStats = asyncHandler(async (req, res) => {
       },
     ]),
 
-    // 10 most recent completed purchases
-    Purchase.find({ status: 'completed' })
-      .sort({ completedAt: -1 })
+    // 10 most recent completed purchases with artist details
+    Purchase.find({ status: { $in: ['completed', 'expired'] } })
+      .sort({ completedAt: -1, createdAt: -1 })
       .limit(10)
       .populate('userId', 'name email')
-      .populate('videoId', 'title thumbnailUrl price'),
+      .populate({
+        path: 'videoId',
+        select: 'title thumbnailUrl price durationSeconds artistId genre',
+        populate: [
+          { path: 'artistId', select: 'name' },
+          { path: 'genre', select: 'name' }
+        ]
+      }),
   ])
 
   const lifetimeRevenueInr = (totalRevenue[0]?.total || 0) / 100
@@ -287,6 +297,153 @@ export const getRevenueStats = asyncHandler(async (req, res) => {
     },
   })
 })
+
+// GET /api/admin/revenue/purchases
+// Returns all purchase records with complete user, video, artist, pricing, and transaction details
+export const getRevenuePurchases = asyncHandler(async (req, res) => {
+  const { status, startDate, endDate } = req.query
+
+  const filter = {}
+  if (status && status !== 'all') {
+    filter.status = status
+  } else {
+    filter.status = { $in: ['completed', 'expired'] }
+  }
+
+  if (startDate || endDate) {
+    filter.completedAt = {}
+    if (startDate) filter.completedAt.$gte = new Date(startDate)
+    if (endDate) {
+      const end = new Date(endDate)
+      end.setHours(23, 59, 59, 999)
+      filter.completedAt.$lte = end
+    }
+  }
+
+  const purchases = await Purchase.find(filter)
+    .populate('userId', 'name email createdAt')
+    .populate({
+      path: 'videoId',
+      select: 'title description price costPrice discountedPrice currency durationSeconds genre categories artistId thumbnailUrl isPublished viewCount videoSource',
+      populate: [
+        { path: 'artistId', select: 'name email avatarUrl' },
+        { path: 'genre', select: 'name' },
+        { path: 'categories', select: 'name' }
+      ]
+    })
+    .sort({ completedAt: -1, createdAt: -1 })
+
+  res.status(200).json({
+    success: true,
+    data: purchases,
+    count: purchases.length,
+  })
+})
+
+// GET /api/admin/revenue/export-csv
+// Directly exports and streams CSV with full revenue, user, artist, and video details
+export const exportRevenueCsv = asyncHandler(async (req, res) => {
+  const { status, startDate, endDate } = req.query
+
+  const filter = {}
+  if (status && status !== 'all') {
+    filter.status = status
+  } else {
+    filter.status = { $in: ['completed', 'expired'] }
+  }
+
+  if (startDate || endDate) {
+    filter.completedAt = {}
+    if (startDate) filter.completedAt.$gte = new Date(startDate)
+    if (endDate) {
+      const end = new Date(endDate)
+      end.setHours(23, 59, 59, 999)
+      filter.completedAt.$lte = end
+    }
+  }
+
+  const purchases = await Purchase.find(filter)
+    .populate('userId', 'name email')
+    .populate({
+      path: 'videoId',
+      select: 'title price costPrice discountedPrice currency durationSeconds genre categories artistId',
+      populate: [
+        { path: 'artistId', select: 'name' },
+        { path: 'genre', select: 'name' },
+        { path: 'categories', select: 'name' }
+      ]
+    })
+    .sort({ completedAt: -1, createdAt: -1 })
+
+  const headers = [
+    'Order ID',
+    'Payment ID',
+    'Purchase Date',
+    'User Name',
+    'User Email',
+    'Video Title',
+    'Artist Name',
+    'Genre',
+    'Categories',
+    'Duration',
+    'MRP (INR)',
+    'Amount Paid (INR)',
+    'Currency',
+    'Coupon Code',
+    'Views Used',
+    'Payment Status'
+  ]
+
+  const formatDuration = (sec) => {
+    if (!sec && sec !== 0) return '—'
+    const m = Math.floor(sec / 60)
+    const s = Math.floor(sec % 60)
+    return `${m}m ${s}s`
+  }
+
+  const escapeCsv = (val) => {
+    if (val === null || val === undefined) return '""'
+    const str = String(val).replace(/"/g, '""')
+    return `"${str}"`
+  }
+
+  const rows = purchases.map((p) => {
+    const u = p.userId || {}
+    const v = p.videoId || {}
+    const artist = v.artistId ? v.artistId.name : 'Arturee'
+    const genre = v.genre ? v.genre.name : '—'
+    const cats = Array.isArray(v.categories) ? v.categories.map((c) => c.name).filter(Boolean).join(', ') : '—'
+    const dateObj = p.completedAt || p.createdAt
+    const dateStr = dateObj ? new Date(dateObj).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) : '—'
+
+    return [
+      escapeCsv(p.razorpayOrderId || p._id),
+      escapeCsv(p.razorpayPaymentId || '—'),
+      escapeCsv(dateStr),
+      escapeCsv(u.name || '—'),
+      escapeCsv(u.email || '—'),
+      escapeCsv(v.title || '—'),
+      escapeCsv(artist),
+      escapeCsv(genre),
+      escapeCsv(cats || '—'),
+      escapeCsv(formatDuration(v.durationSeconds)),
+      escapeCsv(v.costPrice || v.price || 0),
+      escapeCsv((p.amountPaise / 100).toFixed(2)),
+      escapeCsv(p.currency || 'INR'),
+      escapeCsv(p.couponCode || 'None'),
+      escapeCsv(p.viewsUsed || 0),
+      escapeCsv(p.status || 'completed'),
+    ].join(',')
+  })
+
+  const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\r\n')
+  const fileName = `arturee_revenue_report_${new Date().toISOString().slice(0, 10)}.csv`
+
+  res.setHeader('Content-Type', 'text/csv; charset=utf-8')
+  res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`)
+  res.status(200).send(csvContent)
+})
+
 
 // POST /api/admin/upload-image
 // Uploads an image to Cloudinary and returns the URL

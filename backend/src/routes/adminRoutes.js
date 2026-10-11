@@ -10,6 +10,8 @@ import {
   listAllVideos,
   updateFeaturedVideos,
   getRevenueStats,
+  getRevenuePurchases,
+  exportRevenueCsv,
   uploadImage,
   getAccountDeletions
 } from '../controllers/adminController.js'
@@ -36,6 +38,8 @@ router.get('/users/:userId', getUserById)
 router.patch('/users/:userId/role', updateUserRole)
 router.delete('/users/:userId', deleteUser)
 router.get('/videos', listAllVideos)
+router.get('/revenue/purchases', getRevenuePurchases)
+router.get('/revenue/export-csv', exportRevenueCsv)
 router.get('/revenue', getRevenueStats)
 router.get('/account-deletions', getAccountDeletions)
 

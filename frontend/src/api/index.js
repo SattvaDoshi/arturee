@@ -154,6 +154,8 @@ export const adminApi = {
   listAllVideos: (params) => api.get('/admin/videos', { params }),
   updateFeaturedVideos: (data) => api.put('/admin/videos/featured', data),
   getRevenue: () => api.get('/admin/revenue'),
+  getRevenuePurchases: (params) => api.get('/admin/revenue/purchases', { params }),
+  exportRevenueCsv: (params) => api.get('/admin/revenue/export-csv', { params, responseType: 'blob' }),
   uploadImage: (formData) => api.post('/admin/upload-image', formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),
