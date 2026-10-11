@@ -163,7 +163,26 @@ const UserTopbar = ({ onMobileMenuToggle }) => {
         {/* Shopping Cart */}
         <CartButton />
 
-        {/* Removed PWA Install button from here as requested */}
+        {/* PWA Install button */}
+        {!isInstalled && (
+          <button
+            onClick={() => {
+              if (canInstall) {
+                triggerInstall()
+              } else if (isIOS) {
+                alert("To install on iOS, tap the Share button and select 'Add to Home Screen'.")
+              } else {
+                alert("Installation prompt not ready. You can install via your browser's menu (Add to Home Screen / Install App) or address bar.")
+              }
+            }}
+            title="Install App"
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-bold text-[#051d2e] transition hover:scale-105 hover:shadow-lg"
+            style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Install</span>
+          </button>
+        )}
 
         {/* Notification bell */}
         

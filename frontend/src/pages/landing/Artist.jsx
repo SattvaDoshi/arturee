@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Navbar from '../../components/layout/Navbar'
+import Footer from '../../components/layout/Footer'
 import UserLayout from '../../components/layout/UserLayout'
 import { useAuth } from '../../context/AuthContext'
 import { useArtistModal } from '../../context/ArtistModalContext'
@@ -55,7 +56,7 @@ const getArtistTag = (artist, index, customTag, customColor) => {
   return null
 }
 
-const Artist = () => {
+const Artist = ({ inDashboard = false }) => {
   const { isAuthenticated } = useAuth()
   const navigate = useNavigate()
   const [artists, setArtists] = useState([])
@@ -207,11 +208,11 @@ const Artist = () => {
     landingConfig?.artistPage?.ctaText ||
     'arturee is your sky. Spread your wings, share your art, and earn from what you love.'
 
-  const Wrapper = isAuthenticated ? UserLayout : React.Fragment;
+  const Wrapper = inDashboard ? UserLayout : React.Fragment;
 
   return (
     <Wrapper>
-      {!isAuthenticated && <Navbar />}
+      {!inDashboard && <Navbar />}
       <div className="min-h-screen bg-linear-to-br from-[#E0F7FA] via-[#B2EBF2] to-[#F1F8E9]">
         {/* Hero */}
         <div className="relative pt-20 pb-14 px-6 lg:px-20 text-center overflow-hidden">
@@ -466,6 +467,7 @@ const Artist = () => {
           </div>
         </div>
       </div>
+      {!inDashboard && <Footer />}
     </Wrapper>
   )
 }

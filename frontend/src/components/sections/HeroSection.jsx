@@ -31,13 +31,13 @@ const HeroSection = () => {
         <div className="w-full lg:w-1/2 relative min-h-[500px] sm:min-h-[550px] md:min-h-[600px] mt-8 lg:mt-0 mb-16 sm:mb-20">
           {/* Background cyan frame - hidden on mobile */}
           <div className="absolute top-20 md:top-16 lg:top-20 -left-6 md:-left-10 w-48 h-60 md:w-56 md:h-72 lg:w-64 lg:h-80 bg-linear-to-br from-salmon to-lime rough-border transform rotate-6 z-0 overflow-hidden hidden md:block">
-            <img className="w-full h-full object-cover mix-blend-multiply opacity-60" src="./Landing.jpeg" alt="Background" />
+            <img className="w-full h-full object-cover mix-blend-multiply opacity-60" src="./Landing.jpeg?v=20261011" alt="Background" />
           </div>
 
           {/* Main polaroid image */}
           <div className="absolute top-0 right-0 sm:right-4 md:right-8 lg:right-0 w-[75%] sm:w-[70%] md:w-[65%] bg-white p-3 pb-12 md:p-4 md:pb-16 rough-border polaroid-shadow transform rotate-3 z-20">
             <img className="w-full aspect-[4/5] object-cover " alt="Featured Artist"
-              src="./ArtureeLogo1.png" />
+              src="./ArtureeLogo1.png?v=20261011" />
             <div className="absolute bottom-3 left-4 md:bottom-4 md:left-16 font-black uppercase italic text-base sm:text-lg md:text-2xl tracking-tighter text-navy">
               arturee_art
             </div>

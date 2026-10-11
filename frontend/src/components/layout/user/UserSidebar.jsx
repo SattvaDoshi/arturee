@@ -3,19 +3,20 @@ import { Link, useLocation } from 'react-router-dom'
 import {
   Home, Play, BookmarkCheck, ShoppingBag, User,
   LogIn, UserPlus, X, Shield,
-  Palette, LayoutGrid, Info, CreditCard
+  Palette, LayoutGrid, Info, CreditCard, Download
 } from 'lucide-react'
 import { useAuth } from '../../../context/AuthContext'
+import { usePWAInstall } from '../../../hooks/usePWAInstall'
 
 const navItems = [
   { label: 'Home', icon: Home, to: '/dashboard' },
   { label: 'Continue Watching', icon: Play, to: '/dashboard/continue' },
   { label: 'My List', icon: BookmarkCheck, to: '/dashboard/mylist' },
   { label: 'Purchased', icon: ShoppingBag, to: '/dashboard/purchased' },
-  { label: 'Artists', icon: Palette, to: '/artists' },
-  { label: 'Genre', icon: LayoutGrid, to: '/genres' },
-  { label: 'About arturee', icon: Info, to: '/aboutus' },
-  { label: 'Pricing', icon: CreditCard, to: '/pricing' },
+  { label: 'Artists', icon: Palette, to: '/dashboard/artists' },
+  { label: 'Genre', icon: LayoutGrid, to: '/dashboard/genres' },
+  { label: 'About arturee', icon: Info, to: '/dashboard/about' },
+  { label: 'Pricing Policy', icon: CreditCard, to: '/dashboard/pricing' },
 ]
 
 /* Tooltip — shown only when sidebar is collapsed */
@@ -41,6 +42,7 @@ const UserSidebar = ({ mobile = false, onMobileClose }) => {
   const location = useLocation()
   const [hovered, setHovered] = useState(false)
   const { isAuthenticated: isLoggedIn, user, isAdmin } = useAuth()
+  const { canInstall, isInstalled, isIOS, triggerInstall } = usePWAInstall()
 
   // On desktop: collapsed unless hovered. On mobile drawer: always expanded.
   const expanded = mobile || hovered
@@ -127,6 +129,31 @@ const UserSidebar = ({ mobile = false, onMobileClose }) => {
         {navItems.map((item) => (
           <NavLink key={item.label} {...item} />
         ))}
+        {!isInstalled && (
+          <Tip label="Install App" show={collapsed}>
+            <button
+              onClick={() => {
+                if (canInstall) triggerInstall()
+                else if (isIOS) alert("To install on iOS, tap the Share button and select 'Add to Home Screen'.")
+                else alert("Installation prompt not ready. You can install via your browser's menu (Add to Home Screen / Install App) or address bar.")
+              }}
+              className={[
+                'flex items-center rounded-xl transition-all duration-200 w-full overflow-hidden mt-2 text-left',
+                collapsed ? 'justify-center p-3' : 'gap-3.5 px-4 py-3',
+                'text-[#051d2e] font-bold hover:shadow-md hover:scale-[1.02]',
+              ].join(' ')}
+              style={{ background: 'linear-gradient(135deg, rgba(77,208,225,0.4) 0%, rgba(192,232,99,0.4) 100%)' }}
+            >
+              <Download className="shrink-0 w-[18px] h-[18px] text-[#051d2e]" />
+              <span
+                className="text-sm leading-none tracking-normal whitespace-nowrap overflow-hidden transition-all duration-300"
+                style={{ width: collapsed ? 0 : 'auto', opacity: collapsed ? 0 : 1 }}
+              >
+                Install App
+              </span>
+            </button>
+          </Tip>
+        )}
       </nav>
 
       {/* ── Auth section ── */}

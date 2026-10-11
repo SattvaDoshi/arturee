@@ -1,10 +1,10 @@
-const CACHE_NAME = 'arturee-pwa-v5'
+const CACHE_NAME = 'arturee-pwa-v6'
 const PRECACHE_URLS = [
   '/',
   '/dashboard',
-  '/manifest.json?v=20260412',
-  '/icons/icon-192x192.png?v=20260412',
-  '/icons/icon-512x512.png?v=20260412',
+  '/manifest.json?v=20261011',
+  '/icon/launchericon-192x192.png?v=20261011',
+  '/icon/launchericon-512x512.png?v=20261011',
 ]
 
 // Install — pre-cache shell
@@ -15,7 +15,7 @@ self.addEventListener('install', (event) => {
   self.skipWaiting()
 })
 
-// Activate — clean old caches
+// Activate — clean old caches immediately
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
@@ -25,24 +25,20 @@ self.addEventListener('activate', (event) => {
   self.clients.claim()
 })
 
-// Fetch — network-first for navigations, cache-first for assets
+// Fetch — network-first for navigations and static assets, cache fallback
 self.addEventListener('fetch', (event) => {
   const { request } = event
   const url = request.url
 
   // ── SECURITY: Never intercept or cache HLS stream requests ──────────────
-  // CloudFront signed URLs and API calls must always go straight to the
-  // network. Caching them would allow replaying expired signed URLs from
-  // the service-worker cache, bypassing CloudFront's TTL enforcement.
   const isProtectedRequest = (
     url.includes('cloudfront.net') ||   // CloudFront CDN (HLS segments + manifests)
     url.includes('.m3u8') ||            // HLS manifest files
-    url.includes('.ts?') ||             // HLS transport stream segments (with signing params)
+    url.includes('.ts?') ||             // HLS transport stream segments
     url.includes('Policy=') ||          // CloudFront signed URL query params
-    url.includes('/api/')               // All API calls (auth, playback, etc.)
+    url.includes('/api/')               // All API calls
   )
   if (isProtectedRequest) {
-    // Pass straight through to the network — no SW caching or interception
     event.respondWith(fetch(request))
     return
   }
@@ -61,12 +57,10 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // Static assets — cache first, then network
+  // Static assets — network first so updated thumbnails are immediately fresh, fall back to cache
   event.respondWith(
-    caches.match(request).then((cached) => {
-      if (cached) return cached
-      return fetch(request).then((response) => {
-        // Only cache same-origin GET responses for non-API, non-stream assets
+    fetch(request)
+      .then((response) => {
         if (
           response.ok &&
           request.method === 'GET' &&
@@ -77,6 +71,6 @@ self.addEventListener('fetch', (event) => {
         }
         return response
       })
-    })
+      .catch(() => caches.match(request))
   )
 })

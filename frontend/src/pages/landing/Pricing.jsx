@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../../components/layout/Navbar'
+import Footer from '../../components/layout/Footer'
 import UserLayout from '../../components/layout/UserLayout'
 import { useAuth } from '../../context/AuthContext'
 import { landingConfigApi } from '../../api/index.js'
@@ -93,7 +94,7 @@ const termsItems = [
   },
 ]
 
-const Pricing = () => {
+const Pricing = ({ inDashboard = false }) => {
   const { isAuthenticated } = useAuth()
   const navigate = useNavigate()
   const [tab, setTab] = useState('video')
@@ -141,11 +142,11 @@ const Pricing = () => {
         },
       ]
 
-  const Wrapper = isAuthenticated ? UserLayout : React.Fragment;
+  const Wrapper = inDashboard ? UserLayout : React.Fragment;
 
   return (
     <Wrapper>
-      {!isAuthenticated && <Navbar />}
+      {!inDashboard && <Navbar />}
       <div className="min-h-screen bg-linear-to-br from-[#E0F7FA] via-[#B2EBF2] to-[#F1F8E9]">
         {/* Hero */}
         <div className="relative pt-20 pb-16 px-6 lg:px-20 text-center overflow-hidden">
@@ -364,6 +365,7 @@ const Pricing = () => {
           </div>
         </div>
       </div>
+      {!inDashboard && <Footer />}
     </Wrapper>
   )
 }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import Navbar from '../../components/layout/Navbar'
+import Footer from '../../components/layout/Footer'
 import UserLayout from '../../components/layout/UserLayout'
 import { useAuth } from '../../context/AuthContext'
 import { genreApi, videoApi, landingConfigApi } from '../../api'
@@ -95,7 +96,7 @@ const fmtDuration = (secs) => {
   return `${m}:${s < 10 ? '0' : ''}${s}`
 }
 
-const Genre = () => {
+const Genre = ({ inDashboard = false }) => {
   const { isAuthenticated } = useAuth()
   const [genres, setGenres] = useState([])
   const [videos, setVideos] = useState([])
@@ -177,11 +178,11 @@ const Genre = () => {
     landingConfig?.genrePage?.subheadline ||
     'Passionate, fearless, and unapologetically authentic.'
 
-  const Wrapper = isAuthenticated ? UserLayout : React.Fragment;
+  const Wrapper = inDashboard ? UserLayout : React.Fragment;
 
   return (
     <Wrapper>
-      {!isAuthenticated && <Navbar />}
+      {!inDashboard && <Navbar />}
       <div className="min-h-screen bg-linear-to-br from-[#E0F7FA] via-[#B2EBF2] to-[#F1F8E9]">
         {/* Hero */}
         <div className="relative pt-20 pb-14 px-6 lg:px-20 text-center overflow-hidden">
@@ -300,6 +301,7 @@ const Genre = () => {
           </div>
         </div>
       </div>
+      {!inDashboard && <Footer />}
     </Wrapper>
   )
 }

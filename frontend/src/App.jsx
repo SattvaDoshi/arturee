@@ -128,6 +128,10 @@ const App = () => {
                 <Route path="/dashboard/continue"  element={<ProtectedRoute><ContinueWatching /></ProtectedRoute>} />
                 <Route path="/dashboard/mylist"    element={<ProtectedRoute><MyList /></ProtectedRoute>} />
                 <Route path="/dashboard/purchased" element={<ProtectedRoute><Purchased /></ProtectedRoute>} />
+                <Route path="/dashboard/artists"   element={<ProtectedRoute><ArtistPage inDashboard /></ProtectedRoute>} />
+                <Route path="/dashboard/genres"    element={<ProtectedRoute><Genre inDashboard /></ProtectedRoute>} />
+                <Route path="/dashboard/about"     element={<ProtectedRoute><AboutUs inDashboard /></ProtectedRoute>} />
+                <Route path="/dashboard/pricing"   element={<ProtectedRoute><Pricing inDashboard /></ProtectedRoute>} />
                 <Route path="/checkout"            element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
                 <Route path="/account"             element={<ProtectedRoute><Account /></ProtectedRoute>} />
 

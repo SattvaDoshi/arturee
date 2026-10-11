@@ -649,7 +649,7 @@ export default function VideoPlayer({ videoId, poster, user, isVertical = false 
               Both Views Used
             </h3>
             <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '14px', lineHeight: 1.6, maxWidth: '320px', margin: '0 auto 8px' }}>
-              You have watched this video to completion twice. Your access to this video has expired.
+              Your access to this video has expired.
             </p>
             <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '12px', lineHeight: 1.5 }}>
               You can re-purchase the video to watch it again.
