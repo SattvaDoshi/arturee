@@ -354,15 +354,6 @@ const Artist = ({ inDashboard = false }) => {
                             {getInitials(artist.name)}
                           </span>
                         )}
-
-                        {tagData && (
-                          <span
-                            className={`absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-[10px] font-bold shadow-xs ${tagData.tagColor}`}
-                          >
-                            {tagData.tag}
-                          </span>
-                        )}
-
                         {isSelected && (
                           <div className="absolute inset-0 bg-navy/30 backdrop-blur-[1px] flex items-center justify-center transition-opacity">
                             <span className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white text-lg font-bold shadow-md">

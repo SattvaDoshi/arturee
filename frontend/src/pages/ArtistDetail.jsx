@@ -145,44 +145,45 @@ const ArtistDetail = () => {
               <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(5,29,46,0.95) 0%, rgba(5,29,46,0.5) 50%, transparent 100%)' }} />
             </div>
             
-            <div className="relative pt-32 sm:pt-48 pb-6 md:pb-8 px-5 md:px-8 flex flex-col lg:flex-row lg:items-end gap-6 md:gap-8">
-              <div className="flex flex-col md:flex-row items-start md:items-end gap-5 md:gap-6 flex-1">
-                <img
-                  src={artist?.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(artist?.name || '?')}&background=4DD0E1&color=051d2e&size=256`}
-                  alt={artist?.name}
-                  className="w-24 h-24 md:w-32 md:h-32 rounded-2xl object-cover shrink-0 shadow-2xl"
-                  style={{ border: '3px solid rgba(255,255,255,0.15)' }}
-                />
-                
-                <div className="text-white">
+            <div className="relative pt-12 md:pt-16 pb-6 md:pb-8 px-5 md:px-8 flex flex-col lg:flex-row lg:items-end justify-between gap-6 md:gap-8">
+              <div className="flex flex-col sm:flex-row items-start gap-5 md:gap-6 flex-1">
+                <div className="flex flex-col items-center sm:items-start gap-3 shrink-0">
+                  <img
+                    src={artist?.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(artist?.name || '?')}&background=4DD0E1&color=051d2e&size=256`}
+                    alt={artist?.name}
+                    className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-2xl object-cover shadow-2xl"
+                    style={{ border: '3px solid rgba(255,255,255,0.15)' }}
+                  />
                   
-                  <h1 className="text-3xl md:text-5xl font-black tracking-tight mb-2">{artist?.name}</h1>
-                  <p className="text-sm md:text-base text-gray-200 max-w-2xl mb-4 whitespace-pre-wrap">
-                    {artist?.bio || 'An amazing artist on the platform.'}
-                  </p>
-                  
-                  {/* Social Links */}
-                  <div className="flex items-center gap-4 mt-2">
+                  {/* Social Links under Avatar */}
+                  <div className="flex items-center gap-3">
                     {artist?.socialLinks?.instagram && (
                       <a href={artist.socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-[#4DD0E1] transition-colors" title="Instagram">
-                        <Instagram className="w-5 h-5" />
+                        <Instagram className="w-4 h-4 md:w-5 md:h-5" />
                       </a>
                     )}
                     {artist?.socialLinks?.twitter && (
                       <a href={artist.socialLinks.twitter} target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-[#4DD0E1] transition-colors" title="Twitter / X">
-                        <Twitter className="w-5 h-5" />
+                        <Twitter className="w-4 h-4 md:w-5 md:h-5" />
                       </a>
                     )}
                     {artist?.socialLinks?.website && (
                       <a href={artist.socialLinks.website} target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-[#4DD0E1] transition-colors" title="Website">
-                        <Globe className="w-5 h-5" />
+                        <Globe className="w-4 h-4 md:w-5 md:h-5" />
                       </a>
                     )}
                   </div>
                 </div>
+                
+                <div className="text-white flex-1 min-w-0">
+                  <h1 className="text-2xl sm:text-3xl md:text-5xl font-black tracking-tight mb-3">{artist?.name}</h1>
+                  <p className="text-sm md:text-base text-gray-200 max-w-3xl leading-relaxed whitespace-pre-wrap">
+                    {artist?.bio || 'An amazing artist on the platform.'}
+                  </p>
+                </div>
               </div>
 
-              <div className="flex items-center gap-3 w-full lg:w-auto overflow-x-auto pb-2 lg:pb-0 scrollbar-hide">
+              <div className="flex items-center gap-3 w-full lg:w-auto shrink-0 overflow-x-auto pb-2 lg:pb-0 scrollbar-hide">
                 <div className="rounded-2xl p-4 min-w-[110px]" style={{ background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.15)' }}>
                   <p className="text-[11px] uppercase font-bold tracking-wider text-gray-300 mb-1">Uploads</p>
                   <p className="text-2xl font-black text-white">{videos.length}</p>

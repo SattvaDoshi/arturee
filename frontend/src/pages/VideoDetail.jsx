@@ -138,6 +138,7 @@ export default function VideoDetail() {
   const [error,     setError]     = useState('')
 
   const [purchased,   setPurchased]   = useState(false)
+  const [purchaseInfo, setPurchaseInfo] = useState(null)
   const [purchasedEpisodes, setPurchasedEpisodes] = useState([])
   const [checkingPurchase, setCheckingPurchase] = useState(false)
 
@@ -208,9 +209,24 @@ export default function VideoDetail() {
       purchaseApi.checkPurchase(videoId),
       purchaseApi.getMyPurchases()
     ]).then(([checkRes, allPurchasesRes]) => {
-      setPurchased(checkRes.data.data.purchased)
-      if (allPurchasesRes.data?.data) {
-        const pEps = allPurchasesRes.data.data.map(p => p.videoId?._id || p.videoId)
+      const checkData = checkRes.data.data
+      setPurchased(checkData.purchased)
+      
+      const allPurchases = allPurchasesRes.data?.data || []
+      const currentPurch = allPurchases.find(p => (p.videoId?._id || p.videoId) === videoId)
+      
+      const viewsUsed = currentPurch?.viewsUsed ?? checkData.viewsUsed ?? 0
+      const maxViews = 2
+      const viewsRemaining = Math.max(0, maxViews - viewsUsed)
+      
+      setPurchaseInfo({
+        viewsUsed,
+        maxViews,
+        viewsRemaining: checkData.viewsRemaining ?? viewsRemaining,
+      })
+
+      if (allPurchases.length > 0) {
+        const pEps = allPurchases.map(p => p.videoId?._id || p.videoId)
         setPurchasedEpisodes(pEps)
       }
     })
@@ -450,22 +466,47 @@ export default function VideoDetail() {
                       )}
 
                       {/* Play button for free or purchased */}
-                      {!needsPurchase && (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <button
-                            onClick={() => {
-                              if (video?.videoSource === 'series' && !activeEpisode && video?.seriesEpisodes?.length > 0) {
-                                setActiveEpisode(video.seriesEpisodes[0])
-                              }
-                              setIsPlaying(true)
-                            }}
-                            className="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center transition hover:scale-110 shadow-2xl"
-                            style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)', boxShadow: '0 0 32px rgba(77,208,225,0.6)' }}
-                          >
-                            <Play className="w-7 h-7 md:w-9 md:h-9 ml-1" style={{ color: C.navy }} fill={C.navy} />
-                          </button>
-                        </div>
-                      )}
+                      {!needsPurchase && (() => {
+                        const isPurchasedVideo = purchased || purchasedEpisodes.includes(currentVideo._id || videoId)
+                        const remaining = purchaseInfo?.viewsRemaining ?? 2
+
+                        return (
+                          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+                            <div className="relative flex items-center justify-center group/play">
+                              <button
+                                onClick={() => {
+                                  if (video?.videoSource === 'series' && !activeEpisode && video?.seriesEpisodes?.length > 0) {
+                                    setActiveEpisode(video.seriesEpisodes[0])
+                                  }
+                                  setIsPlaying(true)
+                                }}
+                                className="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center transition hover:scale-110 shadow-2xl cursor-pointer"
+                                style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)', boxShadow: '0 0 32px rgba(77,208,225,0.6)' }}
+                                title="Play Video"
+                              >
+                                <Play className="w-7 h-7 md:w-9 md:h-9 ml-1" style={{ color: C.navy }} fill={C.navy} />
+                              </button>
+                            </div>
+
+                            {/* Views remaining badge for purchased videos */}
+                            {isPurchasedVideo && (
+                              <div
+                                className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold shadow-lg backdrop-blur-md animate-fade-in"
+                                style={{
+                                  background: remaining <= 1
+                                    ? 'rgba(239,68,68,0.85)'
+                                    : 'rgba(5,29,46,0.8)',
+                                  color: 'white',
+                                  border: `1px solid ${remaining <= 1 ? 'rgba(239,68,68,0.5)' : 'rgba(77,208,225,0.4)'}`,
+                                }}
+                              >
+                                <span className="w-2 h-2 rounded-full" style={{ background: remaining <= 1 ? '#FCA5A5' : '#C0E863' }} />
+                                <span>{remaining} {remaining === 1 ? 'view' : 'views'} left</span>
+                              </div>
+                            )}
+                          </div>
+                        )
+                      })()}
 
                       {/* Price badge — dual pricing (on active video) */}
                       <div className="absolute top-4 right-4 pointer-events-none">

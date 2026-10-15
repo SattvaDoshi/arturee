@@ -28,8 +28,12 @@ const fallbackGradients = [
 ]
 
 const getGenreMeta = (genre) => {
-  const key = (genre.name || '').trim().toLowerCase()
-  return genreMetadataMap[key] || fallbackGradients[0]
+  const key = (genre?.name || '').trim().toLowerCase()
+  const meta = genreMetadataMap[key] || fallbackGradients[0]
+  return {
+    ...meta,
+    icon: genre?.icon || meta.icon || '🎨',
+  }
 }
 
 const fmtDuration = (secs) => {

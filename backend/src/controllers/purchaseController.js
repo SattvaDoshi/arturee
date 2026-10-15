@@ -236,5 +236,18 @@ export const checkPurchase = asyncHandler(async (req, res) => {
   const { videoId } = req.params
   const userId      = req.user._id
   const purchase    = await Purchase.findOne({ userId, videoId, status: 'completed' })
-  res.status(200).json({ success: true, data: { purchased: !!purchase, purchaseId: purchase?._id || null } })
+  const maxViews    = 2
+  const viewsUsed   = purchase ? (purchase.viewsUsed ?? 0) : 0
+  const viewsRemaining = purchase ? Math.max(0, maxViews - viewsUsed) : 0
+
+  res.status(200).json({
+    success: true,
+    data: {
+      purchased: !!purchase,
+      purchaseId: purchase?._id || null,
+      viewsUsed,
+      maxViews,
+      viewsRemaining,
+    },
+  })
 })

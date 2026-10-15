@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Play, ChevronLeft, BookmarkCheck, Trash2, Loader2 } from 'lucide-react'
+import { Play, ChevronLeft, BookmarkCheck, Trash2, Loader2, ShoppingCart, Check } from 'lucide-react'
 import UserLayout from '../../components/layout/UserLayout'
 import { wishlistApi } from '../../api/index.js'
 import { useCart } from '../../context/CartContext'
@@ -8,7 +8,7 @@ import { useCart } from '../../context/CartContext'
 // Genres are now generated dynamically based on items in wishlist
 
 export default function MyList() {
-  const { toggleSavedList, isInSavedList } = useCart()
+  const { toggleSavedList, isInSavedList, setCart, toggleCart, isInCart } = useCart()
   const [activeGenre, setActiveGenre] = useState('All')
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
@@ -45,22 +45,79 @@ export default function MyList() {
     return `${currency === 'INR' ? '₹' : '$'}${price.toFixed(2)}`
   }
 
+  // Get all paid items in the filtered/current list
+  const paidItems = filtered.filter(item => {
+    const price = item.discountedPrice ?? item.price ?? 0
+    return price > 0
+  })
+
+  const allPaidInCart = paidItems.length > 0 && paidItems.every(item => isInCart(item._id))
+
+  const handleBuyAll = (e) => {
+    e.stopPropagation()
+    setCart((prev) => {
+      const newItems = [...prev]
+      paidItems.forEach(video => {
+        const price = video.discountedPrice ?? video.price ?? 0
+        if (price > 0 && !newItems.find(item => item.id === video._id)) {
+          newItems.push({
+            id: video._id,
+            image: video.thumbnailUrl,
+            title: video.title,
+            price: price,
+            artistName: video.artistId?.name || '',
+            quantity: 1,
+          })
+        }
+      })
+      return newItems
+    })
+  }
+
   return (
     <UserLayout>
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-12 py-10">
 
         {/* ── Page header ── */}
-        <div className="flex items-center gap-4 mb-2">
-          <Link
-            to="/dashboard"
-            className="flex items-center justify-center w-9 h-9 rounded-xl border border-[#4DD0E1]/30 text-[#051d2e]/60 hover:text-[#051d2e] hover:border-[#4DD0E1] hover:bg-white/50 transition shrink-0"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </Link>
-          <div>
-            <h1 className="text-3xl font-black text-[#051d2e] tracking-tight">My List</h1>
-            <p className="text-sm text-[#051d2e]/50 mt-0.5">{items.length} saved titles</p>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
+          <div className="flex items-center gap-4">
+            <Link
+              to="/dashboard"
+              className="flex items-center justify-center w-9 h-9 rounded-xl border border-[#4DD0E1]/30 text-[#051d2e]/60 hover:text-[#051d2e] hover:border-[#4DD0E1] hover:bg-white/50 transition shrink-0"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </Link>
+            <div>
+              <h1 className="text-3xl font-black text-[#051d2e] tracking-tight">My List</h1>
+              <p className="text-sm text-[#051d2e]/50 mt-0.5">{items.length} saved titles</p>
+            </div>
           </div>
+
+          {paidItems.length > 0 && (
+            <button
+              onClick={handleBuyAll}
+              disabled={allPaidInCart}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm shadow-md transition-all self-start sm:self-auto hover:scale-105 active:scale-95 disabled:opacity-75 disabled:hover:scale-100"
+              style={{
+                background: allPaidInCart
+                  ? 'rgba(77,208,225,0.2)'
+                  : 'linear-gradient(135deg,#4DD0E1,#C0E863)',
+                color: '#051d2e',
+              }}
+            >
+              {allPaidInCart ? (
+                <>
+                  <Check className="w-4 h-4 text-green-700" />
+                  <span>All in Cart</span>
+                </>
+              ) : (
+                <>
+                  <ShoppingCart className="w-4 h-4" />
+                  <span>Buy Saved ({paidItems.length} videos)</span>
+                </>
+              )}
+            </button>
+          )}
         </div>
 
         {/* ── Genre filter ── */}
@@ -122,43 +179,78 @@ export default function MyList() {
             return (hasMobileCat || hasMobileGen)
           })
 
-          const ListCard = ({ item, isPortrait }) => (
-            <div className="group relative">
-              <Link to={`/video/${item._id}`} className="block">
-                <div className={`relative rounded-xl overflow-hidden mb-3 shadow-md border border-[#4DD0E1]/20 ${isPortrait ? 'aspect-[9/16]' : 'aspect-video'}`}>
-                  <img
-                    src={item.thumbnailUrl || undefined}
-                    alt={item.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                  />
-                  <div className="absolute inset-0 bg-[#051d2e]/60 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
-                    <div
-                      className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg"
-                      style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
-                    >
-                      <Play className="w-5 h-5 ml-0.5" fill="#051d2e" />
+          const ListCard = ({ item, isPortrait }) => {
+            const price = item.discountedPrice ?? item.price ?? 0
+            const isPaid = price > 0
+            const inCart = isInCart(item._id)
+
+            const handleToggleCart = (e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              toggleCart({
+                id: item._id,
+                title: item.title,
+                price: price,
+                image: item.thumbnailUrl,
+                artistName: item.artistId?.name || '',
+              })
+            }
+
+            return (
+              <div className="group relative">
+                <Link to={`/video/${item._id}`} className="block">
+                  <div className={`relative rounded-xl overflow-hidden mb-3 shadow-md border border-[#4DD0E1]/20 ${isPortrait ? 'aspect-[9/16]' : 'aspect-video'}`}>
+                    <img
+                      src={item.thumbnailUrl || undefined}
+                      alt={item.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                    />
+                    <div className="absolute inset-0 bg-[#051d2e]/60 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                      <div
+                        className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg"
+                        style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
+                      >
+                        <Play className="w-5 h-5 ml-0.5" fill="#051d2e" />
+                      </div>
+                    </div>
+                    <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>
+                      {formatPrice(item.price, item.currency)}
+                    </div>
+                    <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold border border-white/30 text-white/80" style={{ background: 'rgba(5,29,46,0.55)' }}>
+                      {item.genre?.name || 'Video'}
+                    </div>
+
+                    {/* Action buttons (Cart + Bookmark) */}
+                    <div className="absolute bottom-2 right-2 flex items-center gap-1.5 z-10">
+                      {isPaid && (
+                        <button
+                          onClick={handleToggleCart}
+                          className="p-1.5 rounded-full hover:scale-110 transition-transform cursor-pointer shadow-md"
+                          style={{
+                            background: inCart ? '#00BCD4' : 'rgba(255,255,255,0.92)',
+                            color: '#051d2e',
+                          }}
+                          title={inCart ? "Remove from Cart" : "Add to Cart"}
+                        >
+                          <ShoppingCart className={`w-3.5 h-3.5 ${inCart ? 'fill-[#051d2e]' : ''}`} />
+                        </button>
+                      )}
+                      <button
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); remove(item._id) }}
+                        className="p-1.5 rounded-full hover:scale-110 transition-transform cursor-pointer shadow-md"
+                        style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
+                        title="Remove from My List"
+                      >
+                        <BookmarkCheck className="w-3.5 h-3.5 text-[#051d2e]" fill="#051d2e" />
+                      </button>
                     </div>
                   </div>
-                  <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>
-                    {formatPrice(item.price, item.currency)}
-                  </div>
-                  <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold border border-white/30 text-white/80" style={{ background: 'rgba(5,29,46,0.55)' }}>
-                    {item.genre?.name || 'Video'}
-                  </div>
-                  <button
-                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); remove(item._id) }}
-                    className="absolute bottom-2 right-2 p-1.5 rounded-full hover:scale-110 transition-transform cursor-pointer"
-                    style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}
-                    title="Remove from My List"
-                  >
-                    <BookmarkCheck className="w-3.5 h-3.5 text-[#051d2e]" fill="#051d2e" />
-                  </button>
-                </div>
-                <h3 className="font-black text-xs text-[#051d2e] truncate mb-0.5">{item.title}</h3>
-                <p className="text-[10px] text-[#051d2e]/55">{item.genre?.name || 'Video'}</p>
-              </Link>
-            </div>
-          )
+                  <h3 className="font-black text-xs text-[#051d2e] truncate mb-0.5">{item.title}</h3>
+                  <p className="text-[10px] text-[#051d2e]/55">{item.artistId?.name || item.genre?.name || 'Video'}</p>
+                </Link>
+              </div>
+            )
+          }
 
           return (
             <div className="space-y-10">

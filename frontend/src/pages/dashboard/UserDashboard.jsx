@@ -491,6 +491,38 @@ export default function UserDashboard() {
           </div>
         )}
 
+         {/* Categories sections */}
+        {!loadingContent && categoriesWithVideos.length > 0 && categoriesWithVideos.map((category) => (
+          <div key={`cat-${category._id}`}>
+            <SectionHeader 
+              title={`${category.icon || ''} ${category.name}`} 
+              sub={category.description} 
+              viewAllTo={{ pathname: `/category/${category._id}`, state: { fromDashboard: true } }}
+            />
+            <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
+              {category.videos.map((v) => {
+                const isVertical = category.name?.toUpperCase().includes('MOBILE') || v.genre?.name?.toUpperCase().includes('MOBILE')
+                return (
+                <Link to={`/video/${v._id}`} key={`cat-vid-${v._id}`} className={`flex-shrink-0 ${isVertical ? 'w-44 sm:w-52 md:w-64' : 'w-56 sm:w-64 md:w-72'} group cursor-pointer block`}>
+                  <div className={`relative ${isVertical ? 'aspect-[9/16]' : 'aspect-video'} rounded-xl overflow-hidden mb-3 shadow-lg border border-[#4DD0E1]/20`}>
+                    <img src={v.thumbnailUrl || FALLBACK_IMG} alt={v.title} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
+                    {isVertical ? <HoverOverlayTall /> : <HoverOverlayWide />}
+                    <VideoActionButtons videoId={v._id} videoData={{ id: v._id, image: v.thumbnailUrl, title: v.title, price: fmtPrice(v.discountedPrice || v.price, v.currency), artistName: v.artistId?.name }} />
+                    <div className="absolute top-2 left-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>{category.name}</div>
+                    {(v.discountedPrice || v.price) > 0
+                      ? <PriceBadge price={v.discountedPrice || v.price} currency={v.currency} />
+                      : <div className="absolute bottom-2 left-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: '#C0E863' }}>Free</div>
+                    }
+                  </div>
+                  <h3 className="font-black text-sm text-[#051d2e] mb-0.5 truncate">{v.title}</h3>
+                  <p className="text-xs text-[#051d2e]/60 mb-1">{v.artistId?.name || v.genre?.name || ''}</p>
+
+                </Link>
+              )})}
+            </div>
+          </div>
+        ))}
+
         {/* Genres sections */}
         {loadingContent ? (
           <>
@@ -530,37 +562,7 @@ export default function UserDashboard() {
           ))
         ) : null}
 
-        {/* Categories sections */}
-        {!loadingContent && categoriesWithVideos.length > 0 && categoriesWithVideos.map((category) => (
-          <div key={`cat-${category._id}`}>
-            <SectionHeader 
-              title={`${category.icon || ''} ${category.name}`} 
-              sub={category.description} 
-              viewAllTo={{ pathname: `/category/${category._id}`, state: { fromDashboard: true } }}
-            />
-            <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
-              {category.videos.map((v) => {
-                const isVertical = category.name?.toUpperCase().includes('MOBILE') || v.genre?.name?.toUpperCase().includes('MOBILE')
-                return (
-                <Link to={`/video/${v._id}`} key={`cat-vid-${v._id}`} className={`flex-shrink-0 ${isVertical ? 'w-44 sm:w-52 md:w-64' : 'w-56 sm:w-64 md:w-72'} group cursor-pointer block`}>
-                  <div className={`relative ${isVertical ? 'aspect-[9/16]' : 'aspect-video'} rounded-xl overflow-hidden mb-3 shadow-lg border border-[#4DD0E1]/20`}>
-                    <img src={v.thumbnailUrl || FALLBACK_IMG} alt={v.title} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
-                    {isVertical ? <HoverOverlayTall /> : <HoverOverlayWide />}
-                    <VideoActionButtons videoId={v._id} videoData={{ id: v._id, image: v.thumbnailUrl, title: v.title, price: fmtPrice(v.discountedPrice || v.price, v.currency), artistName: v.artistId?.name }} />
-                    <div className="absolute top-2 left-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: 'linear-gradient(135deg,#4DD0E1,#C0E863)' }}>{category.name}</div>
-                    {(v.discountedPrice || v.price) > 0
-                      ? <PriceBadge price={v.discountedPrice || v.price} currency={v.currency} />
-                      : <div className="absolute bottom-2 left-2 px-2.5 py-1 rounded-full text-[10px] font-black text-[#051d2e]" style={{ background: '#C0E863' }}>Free</div>
-                    }
-                  </div>
-                  <h3 className="font-black text-sm text-[#051d2e] mb-0.5 truncate">{v.title}</h3>
-                  <p className="text-xs text-[#051d2e]/60 mb-1">{v.artistId?.name || v.genre?.name || ''}</p>
-
-                </Link>
-              )})}
-            </div>
-          </div>
-        ))}
+       
         
         {/* My List — from wishlist API */}
         {wishlist.length > 0 && (

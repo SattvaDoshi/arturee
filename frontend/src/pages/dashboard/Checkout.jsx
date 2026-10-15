@@ -495,7 +495,8 @@ function SuggestedCheckoutVideos({ currentItems, setItems }) {
 
   useEffect(() => {
     import('../../api/index.js').then(({ videoApi }) => {
-      videoApi.list({ limit: 5, sort: 'popular' })
+      // Fetch up to 50 videos sorted by popular
+      videoApi.list({ limit: 50, sort: 'popular' })
         .then(res => {
           const vids = res.data?.data?.videos || res.data?.data || []
           setVideos(Array.isArray(vids) ? vids : [])
@@ -507,22 +508,31 @@ function SuggestedCheckoutVideos({ currentItems, setItems }) {
 
   if (loading) return null
 
-  const checkoutIds  = currentItems.map(i => i.videoId || i.id)
-  const suggestions  = videos.filter(v => !checkoutIds.includes(v._id)).slice(0, 4)
+  const checkoutIds = currentItems.map(i => i.videoId || i.id || i._id)
+  
+  // Only paid videos (price or discountedPrice > 0) and not in current checkout
+  const paidSuggestions = videos.filter(v => {
+    const effectivePrice = v.discountedPrice ?? v.price ?? 0
+    return effectivePrice > 0 && !checkoutIds.includes(v._id)
+  })
+
+  // Display top 4 available paid suggestions (as one is added, the next paid video automatically takes its place)
+  const suggestions = paidSuggestions.slice(0, 4)
   if (!suggestions.length) return null
 
   const handleAdd = (video) => {
+    const effectivePrice = video.discountedPrice ?? video.price
     toggleCart({
       id:      video._id,
       title:   video.title,
-      price:   video.discountedPrice ?? video.price,
+      price:   effectivePrice,
       image:   video.thumbnailUrl,
       creator: video.artistId?.name || 'Artist',
     })
     setItems(prev => [...prev, {
       videoId:    video._id,
       title:      video.title,
-      price:      video.discountedPrice ?? video.price,
+      price:      effectivePrice,
       thumbnail:  video.thumbnailUrl,
       artistName: video.artistId?.name || 'Artist',
     }])

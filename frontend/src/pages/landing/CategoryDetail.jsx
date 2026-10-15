@@ -20,8 +20,12 @@ const fallbackGradients = [
 ]
 
 const getCategoryMeta = (category) => {
-  const key = (category.name || '').trim().toLowerCase()
-  return categoryMetadataMap[key] || fallbackGradients[Math.abs(key.length % fallbackGradients.length)] || fallbackGradients[0]
+  const key = (category?.name || '').trim().toLowerCase()
+  const meta = categoryMetadataMap[key] || fallbackGradients[Math.abs(key.length % fallbackGradients.length)] || fallbackGradients[0]
+  return {
+    ...meta,
+    icon: category?.icon || meta.icon || '🎨',
+  }
 }
 
 const fmtDuration = (secs) => {

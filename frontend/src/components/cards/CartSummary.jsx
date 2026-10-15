@@ -111,7 +111,7 @@ function SuggestedVideos({ onClose }) {
 
   React.useEffect(() => {
     import('../../api/index.js').then(({ videoApi }) => {
-      videoApi.list({ limit: 4, sort: 'popular' })
+      videoApi.list({ limit: 50, sort: 'popular' })
         .then(res => {
           const vids = res.data?.data?.videos || res.data?.data || []
           setVideos(Array.isArray(vids) ? vids : [])
@@ -125,9 +125,14 @@ function SuggestedVideos({ onClose }) {
     return <div className="text-xs text-[#051d2e]/50 text-center py-2">Loading suggestions...</div>
   }
 
-  // Filter out videos already in cart
+  // Filter out videos already in cart and free videos
   const cartIds = items.map(i => i.id)
-  const suggestions = videos.filter(v => !cartIds.includes(v._id)).slice(0, 3)
+  const suggestions = videos
+    .filter(v => {
+      const price = v.discountedPrice ?? v.price ?? 0
+      return price > 0 && !cartIds.includes(v._id)
+    })
+    .slice(0, 3)
 
   if (suggestions.length === 0) return null
 
