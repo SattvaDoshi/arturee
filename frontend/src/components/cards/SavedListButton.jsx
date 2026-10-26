@@ -1,11 +1,34 @@
-import React, { useState } from 'react'
-import { Bookmark } from 'lucide-react'
+import React, { useState, useEffect } from 'react'
+import { Bookmark, Film } from 'lucide-react'
 import { useCart } from '../../context/CartContext'
+import { wishlistApi } from '../../api/index.js'
 import { Link } from 'react-router-dom'
 
 export default function SavedListButton() {
-  const { savedList } = useCart()
+  const { savedList, setSavedList } = useCart()
   const [isOpen, setIsOpen] = useState(false)
+
+  // Automatically refresh savedList from backend if items are missing titles (e.g. from previous stale localStorage)
+  useEffect(() => {
+    if (savedList.length > 0 && savedList.some(item => !item.title)) {
+      wishlistApi.get().then(res => {
+        const items = res.data?.data || []
+        const formatted = items
+          .filter(v => v && (v._id || v.id))
+          .map(v => ({
+            id: v._id || v.id,
+            title: v.title || '',
+            creator: v.artistId?.name || v.creator || v.artistName || '',
+            artistName: v.artistId?.name || v.creator || v.artistName || '',
+            image: v.thumbnailUrl || v.image || '',
+            price: v.price || 0,
+          }))
+        if (formatted.length > 0) {
+          setSavedList(formatted)
+        }
+      }).catch(() => {})
+    }
+  }, [savedList, setSavedList])
 
   return (
     <div className="relative">
@@ -43,17 +66,38 @@ export default function SavedListButton() {
               </div>
             ) : (
               <div className="space-y-2 max-h-64 overflow-y-auto">
-                {savedList.map((item) => (
-                  <Link
-                    key={item.id}
-                    to={`/video/${item.id}`}
-                    onClick={() => setIsOpen(false)}
-                    className="p-2 bg-[#051d2e]/5 rounded-lg hover:bg-[#051d2e]/10 transition block"
-                  >
-                    <p className="text-sm font-semibold text-[#051d2e] line-clamp-1">{item.title}</p>
-                    <p className="text-xs text-[#051d2e]/60">{item.creator || 'Creator'}</p>
-                  </Link>
-                ))}
+                {savedList.map((item) => {
+                  const title = item.title || 'Untitled Video'
+                  const creator = item.creator || item.artistName || item.artistId?.name || ''
+                  const image = item.image || item.thumbnailUrl
+
+                  return (
+                    <Link
+                      key={item.id}
+                      to={`/video/${item.id}`}
+                      onClick={() => setIsOpen(false)}
+                      className="p-2.5 bg-[#051d2e]/5 rounded-xl hover:bg-[#051d2e]/10 transition flex items-center gap-3 group"
+                    >
+                      {image ? (
+                        <img
+                          src={image}
+                          alt={title}
+                          className="w-12 h-9 rounded-lg object-cover shrink-0 border border-[#051d2e]/10 group-hover:scale-105 transition"
+                        />
+                      ) : (
+                        <div className="w-12 h-9 rounded-lg bg-[#051d2e]/10 flex items-center justify-center shrink-0">
+                          <Film className="w-4 h-4 text-[#051d2e]/40" />
+                        </div>
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold text-[#051d2e] line-clamp-1">{title}</p>
+                        {creator && (
+                          <p className="text-xs text-[#051d2e]/60 line-clamp-1 mt-0.5">{creator}</p>
+                        )}
+                      </div>
+                    </Link>
+                  )
+                })}
               </div>
             )}
             

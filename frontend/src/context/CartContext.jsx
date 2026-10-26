@@ -23,7 +23,16 @@ export const CartProvider = ({ children }) => {
     if (isAuthenticated) {
       wishlistApi.get().then(res => {
         const items = res.data?.data || []
-        const formatted = items.map(v => ({ id: v._id }))
+        const formatted = items
+          .filter(v => v && (v._id || v.id))
+          .map(v => ({
+            id: v._id || v.id,
+            title: v.title || '',
+            creator: v.artistId?.name || v.creator || v.artistName || '',
+            artistName: v.artistId?.name || v.creator || v.artistName || '',
+            image: v.thumbnailUrl || v.image || '',
+            price: v.price || 0,
+          }))
         setSavedListState(formatted)
         save('art_savedlist', formatted)
       }).catch(() => {})
@@ -63,12 +72,28 @@ export const CartProvider = ({ children }) => {
 
   // Add or remove from saved list
   const toggleSavedList = (video) => {
+    const videoId = video.id || video._id
+    const normalized = {
+      ...video,
+      id: videoId,
+      title: video.title || '',
+      creator: video.creator || video.artistName || video.artistId?.name || '',
+      artistName: video.artistName || video.creator || video.artistId?.name || '',
+      image: video.image || video.thumbnailUrl || '',
+    }
+
     setSavedList((prevList) => {
-      const exists = prevList.find((item) => item.id === video.id)
+      const exists = prevList.find((item) => (item.id || item._id) === videoId)
       if (exists) {
-        return prevList.filter((item) => item.id !== video.id)
+        if (isAuthenticated) {
+          wishlistApi.remove(videoId).catch(() => {})
+        }
+        return prevList.filter((item) => (item.id || item._id) !== videoId)
       } else {
-        return [...prevList, video]
+        if (isAuthenticated) {
+          wishlistApi.add(videoId).catch(() => {})
+        }
+        return [...prevList, normalized]
       }
     })
   }
