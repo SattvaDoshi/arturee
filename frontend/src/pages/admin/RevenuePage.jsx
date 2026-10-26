@@ -57,61 +57,147 @@ const StatCard = ({ icon: Icon, label, value, sub, accent, trend }) => (
   </div>
 )
 
-/* ─── SVG Line Chart ────────────────────────────────── */
-const LineChart = ({ data, color = CYAN, height = 140 }) => {
-  const H = height
-  if (!data?.length) return (
-    <div className="flex items-center justify-center text-white/20 text-xs" style={{ height }}>No data yet</div>
-  )
-  const vals = data.map(d => d.revenue)
-  const max  = Math.max(...vals, 1)
-  const pts  = data.map((d, i) => {
-    const x = (i / (data.length - 1 || 1)) * 100
-    const y = H - (d.revenue / max) * (H - 20) - 8
-    return `${x},${y}`
-  })
-  const pathD = `M ${pts.join(' L ')}`
-  const areaD = `M 0,${H} L ${pts.join(' L ')} L 100,${H} Z`
-  return (
-    <svg viewBox={`0 0 100 ${H}`} preserveAspectRatio="none" className="w-full" style={{ height }}>
-      <defs>
-        <linearGradient id="lg1" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={color} stopOpacity="0.3" />
-          <stop offset="100%" stopColor={color} stopOpacity="0.01" />
-        </linearGradient>
-      </defs>
-      <path d={areaD} fill="url(#lg1)" />
-      <path d={pathD} fill="none" stroke={color} strokeWidth="0.8" strokeLinecap="round" />
-      {data.map((d, i) => {
-        const x = (i / (data.length - 1 || 1)) * 100
-        const y = H - (d.revenue / max) * (H - 20) - 8
-        return <circle key={i} cx={x} cy={y} r="1.2" fill={color} />
-      })}
-    </svg>
-  )
-}
+/* ─── Interactive Revenue Chart (Monthly / Daily) ──────────────── */
+const InteractiveRevenueChart = ({ data, chartView }) => {
+  const [hoveredIdx, setHoveredIdx] = useState(null)
 
-/* ─── SVG Bar Chart (Daily) ─────────────────────────── */
-const BarChart = ({ data, color = LIME, height = 120 }) => {
-  if (!data?.length) return (
-    <div className="flex items-center justify-center text-white/20 text-xs" style={{ height }}>No data yet</div>
-  )
-  const max = Math.max(...data.map(d => d.revenue), 1)
-  const barW = 100 / (data.length * 1.5)
-  const gap   = (100 - barW * data.length) / (data.length + 1)
+  if (!data?.length) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 gap-3">
+        <TrendingUp className="w-10 h-10 text-white/15" />
+        <p className="text-white/30 text-sm">No revenue data yet.</p>
+      </div>
+    )
+  }
+
+  const maxVal = Math.max(...data.map(d => d.revenue), 1000) // minimum ₹10 ceiling so scale isn't 0
+  const totalRevenue = data.reduce((s, d) => s + d.revenue, 0)
+  const totalPurchases = data.reduce((s, d) => s + d.purchases, 0)
+  const activeItem = hoveredIdx !== null ? data[hoveredIdx] : null
+
+  // Y-axis grid levels (top, 2/3, 1/3, 0)
+  const yTicks = [
+    { label: inr(maxVal, 0) },
+    { label: inr(maxVal * 0.66, 0) },
+    { label: inr(maxVal * 0.33, 0) },
+    { label: '₹0' },
+  ]
+
   return (
-    <svg viewBox={`0 0 100 ${height}`} preserveAspectRatio="none" className="w-full" style={{ height }}>
-      {data.map((d, i) => {
-        const barH = Math.max((d.revenue / max) * (height - 12), 2)
-        const x = gap + i * (barW + gap)
-        const y = height - barH - 4
-        return (
-          <g key={i}>
-            <rect x={x} y={y} width={barW} height={barH} rx="1" fill={color} opacity="0.75" />
-          </g>
-        )
-      })}
-    </svg>
+    <div className="space-y-4">
+      {/* Chart Canvas */}
+      <div className="relative h-60 pt-8 pb-7 select-none">
+        {/* Background Gridlines & Y-axis labels */}
+        <div className="absolute inset-0 flex flex-col justify-between pointer-events-none pb-7">
+          {yTicks.map((tick, idx) => (
+            <div key={idx} className="flex items-center w-full">
+              <span className="w-16 text-right pr-3 text-[10px] font-mono text-white/35 shrink-0">
+                {tick.label}
+              </span>
+              <div className="w-full border-b border-white/[0.06]" />
+            </div>
+          ))}
+        </div>
+
+        {/* Hover Tooltip Overlay */}
+        {activeItem && (
+          <div
+            className="absolute top-0 z-30 pointer-events-none transition-all duration-150 -translate-x-1/2 bg-[#0a1e2f] border border-[#4DD0E1]/50 rounded-xl px-3.5 py-2 shadow-2xl backdrop-blur-md"
+            style={{
+              left: `${Math.min(90, Math.max(10, ((hoveredIdx + 0.5) / data.length) * 100))}%`,
+            }}
+          >
+            <p className="text-[11px] font-bold text-white/80">{activeItem.label}</p>
+            <div className="flex items-center gap-3 mt-1 text-xs">
+              <span className="font-black text-[#C0E863]">
+                {inr(activeItem.revenue, 2)}
+              </span>
+              <span className="text-white/60 text-[11px]">
+                {activeItem.purchases} {activeItem.purchases === 1 ? 'purchase' : 'purchases'}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Bars Container */}
+        <div className="absolute inset-0 left-16 bottom-7 flex items-end justify-between gap-1 sm:gap-2 px-2">
+          {data.map((item, idx) => {
+            const heightPct = (item.revenue / maxVal) * 100
+            const isHovered = hoveredIdx === idx
+            const hasRevenue = item.revenue > 0
+
+            return (
+              <div
+                key={idx}
+                onMouseEnter={() => setHoveredIdx(idx)}
+                onMouseLeave={() => setHoveredIdx(null)}
+                className="flex-1 h-full flex flex-col justify-end items-center group cursor-pointer relative"
+              >
+                {/* Bar Pillar */}
+                <div
+                  className="w-full max-w-[38px] rounded-t-lg transition-all duration-200 relative"
+                  style={{
+                    height: hasRevenue ? `${Math.max(8, heightPct)}%` : '4px',
+                    background: isHovered
+                      ? 'linear-gradient(180deg, #4DD0E1 0%, #C0E863 100%)'
+                      : hasRevenue
+                        ? chartView === 'monthly'
+                          ? 'linear-gradient(180deg, #4DD0E1 0%, rgba(77,208,225,0.3) 100%)'
+                          : 'linear-gradient(180deg, #C0E863 0%, rgba(192,232,99,0.3) 100%)'
+                        : 'rgba(255,255,255,0.08)',
+                    boxShadow: isHovered && hasRevenue ? '0 0 16px rgba(77,208,225,0.6)' : 'none',
+                  }}
+                >
+                  {/* Subtle top cap */}
+                  {hasRevenue && (
+                    <div
+                      className="absolute top-0 inset-x-0 h-1 rounded-t-lg"
+                      style={{
+                        background: isHovered ? '#ffffff' : chartView === 'monthly' ? '#4DD0E1' : '#C0E863',
+                      }}
+                    />
+                  )}
+                </div>
+
+                {/* X-axis Label below the bar */}
+                <span
+                  className={`absolute -bottom-6 text-[10px] truncate max-w-full text-center transition ${
+                    isHovered
+                      ? 'text-[#4DD0E1] font-bold scale-110'
+                      : hasRevenue
+                        ? 'text-white/80 font-semibold'
+                        : 'text-white/30'
+                  }`}
+                >
+                  {chartView === 'monthly'
+                    ? item.shortLabel
+                    : (idx % 3 === 0 || idx === data.length - 1 ? item.shortLabel : '')}
+                </span>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Legend & Summary Info */}
+      <div className="pt-4 border-t border-white/[0.06] flex items-center justify-between flex-wrap gap-4 text-xs">
+        <div className="flex items-center gap-5 flex-wrap">
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full" style={{ background: chartView === 'monthly' ? CYAN : LIME }} />
+            <span className="text-white/40">Total Period Revenue:</span>
+            <span className="text-white font-black text-sm">{inr(totalRevenue, 2)}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-white/20" />
+            <span className="text-white/40">Total Purchases:</span>
+            <span className="text-white font-bold">{totalPurchases}</span>
+          </div>
+        </div>
+        <p className="text-[11px] text-white/35 italic">
+          💡 Hover over any {chartView === 'monthly' ? 'month' : 'day'} bar to see exact revenue and order count.
+        </p>
+      </div>
+    </div>
   )
 }
 
@@ -196,23 +282,68 @@ export default function RevenuePage() {
       .finally(() => setPurchasesLoading(false))
   }, [])
 
-  /* ── Derived Charts Data ── */
+  /* ── Derived Charts Data (Full consecutive timelines) ── */
   const monthlyData = useMemo(() => {
     if (!data?.monthlyTrend) return []
-    return data.monthlyTrend.map(m => ({
-      label: `${MONTH_NAMES[m._id.month - 1]} ${m._id.year}`,
-      revenue: m.revenue,
-      purchases: m.purchases,
-    }))
+    const map = new Map()
+    data.monthlyTrend.forEach(m => {
+      map.set(`${m._id.year}-${m._id.month}`, {
+        revenue: m.revenue || 0,
+        purchases: m.purchases || 0,
+      })
+    })
+
+    const result = []
+    const now = new Date()
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+      const year = d.getFullYear()
+      const month = d.getMonth() + 1
+      const key = `${year}-${month}`
+      const found = map.get(key) || { revenue: 0, purchases: 0 }
+      result.push({
+        label: `${MONTH_NAMES[d.getMonth()]} ${year}`,
+        shortLabel: MONTH_NAMES[d.getMonth()],
+        year,
+        month,
+        revenue: found.revenue,
+        purchases: found.purchases,
+      })
+    }
+    return result
   }, [data])
 
   const dailyData = useMemo(() => {
     if (!data?.dailyTrend) return []
-    return data.dailyTrend.map(d => ({
-      label: `${d._id.day}/${d._id.month}`,
-      revenue: d.revenue,
-      purchases: d.purchases,
-    }))
+    const map = new Map()
+    data.dailyTrend.forEach(d => {
+      map.set(`${d._id.year}-${d._id.month}-${d._id.day}`, {
+        revenue: d.revenue || 0,
+        purchases: d.purchases || 0,
+      })
+    })
+
+    const result = []
+    const now = new Date()
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date()
+      d.setDate(now.getDate() - i)
+      const year = d.getFullYear()
+      const month = d.getMonth() + 1
+      const day = d.getDate()
+      const key = `${year}-${month}-${day}`
+      const found = map.get(key) || { revenue: 0, purchases: 0 }
+      result.push({
+        label: `${day} ${MONTH_NAMES[d.getMonth()]} ${year}`,
+        shortLabel: `${day} ${MONTH_NAMES[d.getMonth()].slice(0, 3)}`,
+        day,
+        month,
+        year,
+        revenue: found.revenue,
+        purchases: found.purchases,
+      })
+    }
+    return result
   }, [data])
 
   const chartData = chartView === 'monthly' ? monthlyData : dailyData
@@ -226,7 +357,9 @@ export default function RevenuePage() {
     })
   }, [data, tableSort])
 
-  const maxRevenue = sortedVideos[0]?.revenue || 1
+  const totalTableRevenue = useMemo(() => {
+    return (data?.topVideosByRevenue || []).reduce((sum, v) => sum + (v.revenue || 0), 0)
+  }, [data])
 
   const donutSlices = useMemo(() => {
     const PALETTE = [CYAN, LIME, GREEN, PURPLE, RED]
@@ -549,47 +682,7 @@ export default function RevenuePage() {
             </div>
           </div>
 
-          {chartData.length > 0 ? (
-            <>
-              <div className="relative">
-                {chartView === 'monthly'
-                  ? <LineChart data={chartData} color={CYAN} height={160} />
-                  : <BarChart  data={chartData} color={LIME} height={160} />
-                }
-              </div>
-              {/* X-axis labels */}
-              <div className="flex justify-between mt-2 px-1">
-                {chartData
-                  .filter((_, i) => {
-                    const step = Math.max(1, Math.floor(chartData.length / 6))
-                    return i % step === 0 || i === chartData.length - 1
-                  })
-                  .map((d, i) => (
-                    <span key={i} className="text-[10px] text-white/25">{d.label}</span>
-                  ))}
-              </div>
-              {/* Revenue sum label */}
-              <div className="mt-3 flex items-center gap-6 flex-wrap">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full" style={{ background: chartView === 'monthly' ? CYAN : LIME }} />
-                  <span className="text-xs text-white/50">
-                    Total: <span className="text-white font-bold">{inr(chartData.reduce((s, d) => s + d.revenue, 0), 2)}</span>
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-0.5 rounded-full bg-white/20" />
-                  <span className="text-xs text-white/50">
-                    Purchases: <span className="text-white font-bold">{chartData.reduce((s, d) => s + d.purchases, 0)}</span>
-                  </span>
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="flex flex-col items-center justify-center py-16 gap-3">
-              <TrendingUp className="w-10 h-10 text-white/15" />
-              <p className="text-white/30 text-sm">No revenue data yet.</p>
-            </div>
-          )}
+          <InteractiveRevenueChart data={chartData} chartView={chartView} />
         </div>
 
         {/* ── Middle Row: Donut + Top by purchases ── */}
@@ -686,7 +779,9 @@ export default function RevenuePage() {
                     </td>
                   </tr>
                 ) : sortedVideos.map((v, i) => {
-                  const pct = Math.round((v.revenue / maxRevenue) * 100)
+                  const rawPct = totalTableRevenue > 0 ? (v.revenue / totalTableRevenue) * 100 : 0
+                  const displayPct = rawPct >= 1 ? `${Math.round(rawPct)}%` : rawPct > 0 ? `${rawPct.toFixed(1)}%` : '0%'
+                  const barPct = Math.min(100, Math.max(0, Math.round(rawPct)))
                   return (
                     <tr key={v.videoId} className="hover:bg-white/[0.025] transition">
                       <td className="px-5 py-3">
@@ -718,8 +813,8 @@ export default function RevenuePage() {
                       </td>
                       <td className="px-5 py-3 hidden md:table-cell">
                         <div className="flex items-center gap-2">
-                          <MiniBar pct={pct} color={LIME} />
-                          <span className="text-[10px] text-white/25">{pct}%</span>
+                          <MiniBar pct={barPct} color={LIME} />
+                          <span className="text-[10px] text-white/40">{displayPct}</span>
                         </div>
                       </td>
                       <td className="px-5 py-3 text-right hidden lg:table-cell">
